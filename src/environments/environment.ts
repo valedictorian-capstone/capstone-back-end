@@ -10,11 +10,11 @@ export const environment = {
     },
     production: {
       dialect: 'mysql',
-      host: 'localhost',
+      host: process.env.GGCLOUD_SQL_IP,
       port: 3306,
-      username: 'root',
-      password: 'password',
-      database: 'crm',
+      username: process.env.GGCLOUD_SQL_USER,
+      password: process.env.GGCLOUD_SQL_PASS,
+      database: process.env.GGCLOUD_SQL_SCHEMA,
     },
   },
 };

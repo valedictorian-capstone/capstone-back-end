@@ -1,15 +1,32 @@
 import { Sequelize } from 'sequelize-typescript';
 import { BASIC_MODELS, BPMN_MODELS } from 'src/app/models';
-import { environment } from 'src/environments/environment';
 
 export class SequelizeProvider {
   public static readonly init = () => {
     return {
       provide: 'SEQUELIZE',
       useFactory: async () => {
-        const config: any = environment.databases.development;
+        const databases = {
+          development: {
+            dialect: 'mysql',
+            host: 'localhost',
+            port: 3306,
+            username: 'root',
+            password: '123456cb',
+            database: 'crm',
+          },
+          production: {
+            dialect: 'mysql',
+            host: process.env.GGCLOUD_SQL_IP,
+            port: 3306,
+            username: process.env.GGCLOUD_SQL_USER,
+            password: process.env.GGCLOUD_SQL_PASS,
+            database: process.env.GGCLOUD_SQL_SCHEMA,
+          },
+        };
+        const config = databases.production;
         const sequelize = new Sequelize({
-          models: [...BASIC_MODELS, ...BPMN_MODELS], ...config,
+          models: [...BASIC_MODELS, ...BPMN_MODELS], ...config as any,
           dialect: config.dialect,
           host: config.host,
           name: config.database,

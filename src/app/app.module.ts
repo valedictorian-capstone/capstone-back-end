@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { BASIC_SERVICES, EXTRA_SERVICES, BPMN_SERVICES } from './services';
 import {
   BASIC_CONTROLLERS,
@@ -8,7 +9,11 @@ import {
 import { SequelizeProvider } from 'src/app/extras/providers/sequelize.provider';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
   controllers: [
     ...BASIC_CONTROLLERS,
     ...EXTRA_CONTROLLERS,

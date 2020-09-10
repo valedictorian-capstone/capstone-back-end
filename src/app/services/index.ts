@@ -17,6 +17,8 @@ export * from './bpmn-services/work-flow-connection.service';
 export * from './bpmn-services/work-flow-instance.service';
 
 import { FirebaseService } from './extra-services/firebase.service';
+import { AuthService } from './extra-services/auth.service';
 
-export const EXTRA_SERVICES = [FirebaseService];
+export const EXTRA_SERVICES = [FirebaseService, AuthService];
 export * from './extra-services/firebase.service';
+export * from './extra-services/auth.service';
