@@ -1,6 +1,5 @@
 import { Model, Repository, Sequelize } from "sequelize-typescript";
 import { WhereOptions } from "sequelize/types";
-import { Inject } from "@nestjs/common";
 
 export class CRMRepository<T extends Model> {
 

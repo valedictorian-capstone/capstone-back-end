@@ -5,7 +5,7 @@ export const environment = {
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '123456cb',
+      password: 'root',
       database: 'crm',
     },
     production: {
@@ -13,7 +13,7 @@ export const environment = {
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'password',
+      password: 'root',
       database: 'crm',
     },
   },
