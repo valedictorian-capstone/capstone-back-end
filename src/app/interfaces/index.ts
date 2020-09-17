@@ -6,4 +6,4 @@ export * from './bpmn-interfaces/work-flow.interface';
 export * from './bpmn-interfaces/work-flow-connection.interface';
 export * from './bpmn-interfaces/work-flow-instance.interface';
 
-export * from './extra-interfaces/auth.interface';
+// export * from './extra-interfaces/auth.interface';

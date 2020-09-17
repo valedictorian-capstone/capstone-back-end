@@ -1,7 +1,6 @@
 import { Model, IsUUID, Default, PrimaryKey, Column, HasMany, CreatedAt, UpdatedAt, Table } from "sequelize-typescript";
 import { uuid } from "uuidv4";
 import { AccountRole } from "./account-role.model";
-
 @Table
 export class Role extends Model<Role> {
 
@@ -9,21 +8,30 @@ export class Role extends Model<Role> {
     @Default(uuid)
     @PrimaryKey
     @Column
-    public Id!: string;
+    public Id: string;
 
     @Column
-    public Name!: string;
+    public Name: string;
+
+    @Column
+    public Description: string;
 
     @HasMany(() => AccountRole)
-    public AccountRoles!: AccountRole[];
+    public AccountRoles: AccountRole[];
+
+    @Column
+    public CreatedBy: string;
+
+    @Column
+    public UpdatedBy: string;
 
     @Default(false)
     @Column
-    public IsDelete!: boolean;
+    public IsDelete: boolean;
 
     @CreatedAt
-    public CreatedAt!: Date;
+    public CreatedAt: Date;
 
     @UpdatedAt
-    public UpdatedAt!: Date;
+    public UpdatedAt: Date;
 }

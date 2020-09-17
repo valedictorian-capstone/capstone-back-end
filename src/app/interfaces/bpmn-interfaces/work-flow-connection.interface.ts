@@ -1,4 +1,4 @@
-import { WorkFlowConnectionVM, WorkFlowConnectionCM, WorkFlowConnectionUM } from "src/app/dtos";
+import { WorkFlowConnectionVM, WorkFlowConnectionCM, WorkFlowConnectionUM } from "src/app/view-models";
 
 export interface IWorkFlowConnectionController {
     readonly findAll: () => Promise<WorkFlowConnectionVM[]>;

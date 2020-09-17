@@ -22,7 +22,7 @@ import {
   WorkFlowConnectionCM,
   WorkFlowConnectionUM,
   WorkFlowConnectionVM,
-} from 'src/app/dtos';
+} from 'src/app/view-models';
 import { IWorkFlowConnectionController } from 'src/app/interfaces';
 import { WorkFlowConnectionService } from 'src/app/services';
 
@@ -32,7 +32,7 @@ import { WorkFlowConnectionService } from 'src/app/services';
 export class WorkFlowConnectionController
   implements IWorkFlowConnectionController {
   constructor(
-    protected readonly workFlowConnectionService: WorkFlowConnectionService,
+    protected readonly service: WorkFlowConnectionService,
     @Inject('SEQUELIZE') protected readonly sequelize: Sequelize,
   ) {}
 
@@ -40,8 +40,8 @@ export class WorkFlowConnectionController
   @ApiOperation({ summary: 'Get all workFlowConnections' })
   @ApiOkResponse({ description: 'Success return all workFlowConnections' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async findAll(): Promise<WorkFlowConnectionVM[]> {
-    return await this.workFlowConnectionService.findAll();
+  public findAll(): Promise<WorkFlowConnectionVM[]> {
+    return this.service.findAll();
   }
 
   @Get(':id')
@@ -51,46 +51,44 @@ export class WorkFlowConnectionController
   })
   @ApiNotFoundResponse({ description: 'Fail to find workFlowConnection by Id' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async findById(
-    @Param('id') id: string,
-  ): Promise<WorkFlowConnectionVM> {
-    return await this.workFlowConnectionService.findById(id);
+  public findById(@Param('id') id: string): Promise<WorkFlowConnectionVM> {
+    return this.service.findById(id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Insert new workFlowConnection' })
   @ApiCreatedResponse({ description: 'Success create new workFlowConnection' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(
+  public insert(
     @Body() body: WorkFlowConnectionCM,
   ): Promise<WorkFlowConnectionVM> {
-    return await this.workFlowConnectionService.insert(body);
+    return this.service.insert(body);
   }
 
   @Put()
   @ApiOperation({ summary: 'Update an workFlowConnection by Id' })
   @ApiCreatedResponse({ description: 'Success update new workFlowConnection' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(
+  public update(
     @Body() body: WorkFlowConnectionUM,
   ): Promise<WorkFlowConnectionVM> {
-    return await this.workFlowConnectionService.update(body);
+    return this.service.update(body);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an workFlowConnection by Id' })
   @ApiCreatedResponse({ description: 'Success delete new workFlowConnection' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async remove(id: string): Promise<WorkFlowConnectionVM> {
-    return await this.workFlowConnectionService.remove(id);
+  public remove(id: string): Promise<WorkFlowConnectionVM> {
+    return this.service.remove(id);
   }
 
   @Put('Active')
   @ApiOperation({ summary: 'Active an workFlowConnection by Id' })
   @ApiCreatedResponse({ description: 'Success active new workFlowConnection' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async active(id: string): Promise<WorkFlowConnectionVM> {
-    return await this.workFlowConnectionService.active(id);
+  public active(id: string): Promise<WorkFlowConnectionVM> {
+    return this.service.active(id);
   }
 
   @Put('DeActive')
@@ -99,7 +97,7 @@ export class WorkFlowConnectionController
     description: 'Success deactive new workFlowConnection',
   })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async deactive(id: string): Promise<WorkFlowConnectionVM> {
-    return await this.workFlowConnectionService.deactive(id);
+  public deactive(id: string): Promise<WorkFlowConnectionVM> {
+    return this.service.deactive(id);
   }
 }

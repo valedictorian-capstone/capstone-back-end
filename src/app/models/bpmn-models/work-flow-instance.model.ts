@@ -29,13 +29,19 @@ export class WorkFlowInstance extends Model<WorkFlowInstance> {
     @HasMany(() => WorkFlowConnection)
     public WorkFlowConnections!: WorkFlowConnection[];
 
+    @Column
+    public CreatedBy: string;
+
+    @Column
+    public UpdatedBy: string;
+
     @Default(false)
     @Column
-    public IsDelete!: boolean;
+    public IsDelete: boolean;
 
     @CreatedAt
-    public CreatedAt!: Date;
+    public CreatedAt: Date;
 
     @UpdatedAt
-    public UpdatedAt!: Date;
+    public UpdatedAt: Date;
 }

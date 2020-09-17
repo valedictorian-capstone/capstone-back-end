@@ -1,4 +1,4 @@
-import { WorkFlowInstanceVM, WorkFlowInstanceCM, WorkFlowInstanceUM } from "src/app/dtos";
+import { WorkFlowInstanceVM, WorkFlowInstanceCM, WorkFlowInstanceUM } from "src/app/view-models";
 
 export interface IWorkFlowInstanceController {
     readonly findAll: () => Promise<WorkFlowInstanceVM[]>;

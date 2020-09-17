@@ -22,7 +22,7 @@ import {
   WorkFlowInstanceCM,
   WorkFlowInstanceUM,
   WorkFlowInstanceVM,
-} from 'src/app/dtos';
+} from 'src/app/view-models';
 import { IWorkFlowInstanceController } from 'src/app/interfaces';
 import { WorkFlowInstanceService } from 'src/app/services';
 
@@ -31,16 +31,16 @@ import { WorkFlowInstanceService } from 'src/app/services';
 @Controller('/api/v1/WorkFlowInstance')
 export class WorkFlowInstanceController implements IWorkFlowInstanceController {
   constructor(
-    protected readonly workFlowInstanceService: WorkFlowInstanceService,
+    protected readonly service: WorkFlowInstanceService,
     @Inject('SEQUELIZE') protected readonly sequelize: Sequelize,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all workFlowInstances' })
   @ApiOkResponse({ description: 'Success return all workFlowInstances' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findAll(): Promise<WorkFlowInstanceVM[]> {
-    return await this.workFlowInstanceService.findAll();
+    return await this.service.findAll();
   }
 
   @Get(':id')
@@ -51,7 +51,7 @@ export class WorkFlowInstanceController implements IWorkFlowInstanceController {
   @ApiNotFoundResponse({ description: 'Fail to find workFlowInstance by Id' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findById(@Param('id') id: string): Promise<WorkFlowInstanceVM> {
-    return await this.workFlowInstanceService.findById(id);
+    return await this.service.findById(id);
   }
 
   @Post()
@@ -61,7 +61,7 @@ export class WorkFlowInstanceController implements IWorkFlowInstanceController {
   public async insert(
     @Body() body: WorkFlowInstanceCM,
   ): Promise<WorkFlowInstanceVM> {
-    return await this.workFlowInstanceService.insert(body);
+    return await this.service.insert(body);
   }
 
   @Put()
@@ -71,7 +71,7 @@ export class WorkFlowInstanceController implements IWorkFlowInstanceController {
   public async update(
     @Body() body: WorkFlowInstanceUM,
   ): Promise<WorkFlowInstanceVM> {
-    return await this.workFlowInstanceService.update(body);
+    return await this.service.update(body);
   }
 
   @Delete(':id')
@@ -79,7 +79,7 @@ export class WorkFlowInstanceController implements IWorkFlowInstanceController {
   @ApiCreatedResponse({ description: 'Success delete new workFlowInstance' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async remove(id: string): Promise<WorkFlowInstanceVM> {
-    return await this.workFlowInstanceService.remove(id);
+    return await this.service.remove(id);
   }
 
   @Put('Active')
@@ -87,7 +87,7 @@ export class WorkFlowInstanceController implements IWorkFlowInstanceController {
   @ApiCreatedResponse({ description: 'Success active new workFlowInstance' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async active(id: string): Promise<WorkFlowInstanceVM> {
-    return await this.workFlowInstanceService.active(id);
+    return await this.service.active(id);
   }
 
   @Put('DeActive')
@@ -95,6 +95,6 @@ export class WorkFlowInstanceController implements IWorkFlowInstanceController {
   @ApiCreatedResponse({ description: 'Success deactive new workFlowInstance' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async deactive(id: string): Promise<WorkFlowInstanceVM> {
-    return await this.workFlowInstanceService.deActivate(id);
+    return await this.service.deactive(id);
   }
 }

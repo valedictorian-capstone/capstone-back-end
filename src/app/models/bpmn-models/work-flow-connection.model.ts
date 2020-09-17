@@ -33,13 +33,19 @@ export class WorkFlowConnection extends Model<WorkFlowConnection> {
     @BelongsTo(() => WorkFlowInstance, "ToWorkFlowInstanceId")
     public ToWorkFlowInstance!: WorkFlowInstance;
 
+    @Column
+    public CreatedBy: string;
+
+    @Column
+    public UpdatedBy: string;
+
     @Default(false)
     @Column
-    public IsDelete!: boolean;
+    public IsDelete: boolean;
 
     @CreatedAt
-    public CreatedAt!: Date;
+    public CreatedAt: Date;
 
     @UpdatedAt
-    public UpdatedAt!: Date;
+    public UpdatedAt: Date;
 }

@@ -26,13 +26,19 @@ export class AccountRole extends Model<AccountRole> {
     @BelongsTo(() => Role, "RoleId")
     public Role!: Role;
 
+    @Column
+    public CreatedBy: string;
+
+    @Column
+    public UpdatedBy: string;
+
     @Default(false)
     @Column
-    public IsDelete!: boolean;
+    public IsDelete: boolean;
 
     @CreatedAt
-    public CreatedAt!: Date;
+    public CreatedAt: Date;
 
     @UpdatedAt
-    public UpdatedAt!: Date;
+    public UpdatedAt: Date;
 }

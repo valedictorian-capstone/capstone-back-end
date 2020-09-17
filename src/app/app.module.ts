@@ -1,12 +1,18 @@
 import { Module } from '@nestjs/common';
-import { SequelizeProvider } from 'src/app/extras/providers/sequelize.provider';
+import { SequelizeProvider } from 'src/app/extras/providers';
 import {
   BASIC_CONTROLLERS,
-
-  BPMN_CONTROLLERS, EXTRA_CONTROLLERS
-} from './controllers';
-import { BASIC_PROVIDERS, BPMN_PROVIDERS } from './providers';
-import { BASIC_SERVICES, BPMN_SERVICES, EXTRA_SERVICES } from './services';
+  BPMN_CONTROLLERS,
+  EXTRA_CONTROLLERS
+} from 'src/app/controllers';
+import {
+  BASIC_REPOSITORY,
+  BPMN_REPOSITORY
+} from 'src/app/repositories';
+import {
+  BASIC_SERVICES, BPMN_SERVICES, EXTRA_SERVICES
+} from 'src/app/services';
+import { FILTERS } from 'src/app/extras/filters';
 
 @Module({
   imports: [],
@@ -18,10 +24,11 @@ import { BASIC_SERVICES, BPMN_SERVICES, EXTRA_SERVICES } from './services';
   providers: [
     ...BASIC_SERVICES,
     ...EXTRA_SERVICES,
-    ...BPMN_SERVICES, 
+    ...BPMN_SERVICES,
     SequelizeProvider.init(),
-    ...BASIC_PROVIDERS,
-    ...BPMN_PROVIDERS,
+    ...BASIC_REPOSITORY,
+    ...BPMN_REPOSITORY,
+    ...FILTERS
   ],
 })
-export class AppModule {}
+export class AppModule { }

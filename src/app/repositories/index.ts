@@ -7,9 +7,9 @@ export * from './basic-repositories/account.repository';
 export * from './basic-repositories/role.repository';
 
 export const BASIC_REPOSITORY = [
-  AccountRepository,
-  AccountRoleRepository,
-  RoleRepository,
+  AccountRepository.inject,
+  AccountRoleRepository.inject,
+  RoleRepository.inject,
 ];
 
 import { WorkFlowRepository } from './bpmn-repositories/work-flow.repository';
@@ -17,9 +17,9 @@ import { WorkFlowConnectionRepository } from './bpmn-repositories/work-flow-conn
 import { WorkFlowInstanceRepository } from './bpmn-repositories/work-flow-instance.repository';
 
 export const BPMN_REPOSITORY = [
-  WorkFlowConnectionRepository,
-  WorkFlowRepository,
-  WorkFlowInstanceRepository,
+  WorkFlowConnectionRepository.inject,
+  WorkFlowRepository.inject,
+  WorkFlowInstanceRepository.inject,
 ];
 
 export * from './bpmn-repositories/work-flow.repository';

@@ -6,7 +6,7 @@ import {
   Inject,
   Param,
   Post,
-  Put,
+  Put
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -15,19 +15,19 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { Sequelize } from 'sequelize-typescript';
-import { RoleCM, RoleUM, RoleVM } from 'src/app/dtos';
 import { IRoleController } from 'src/app/interfaces';
 import { RoleService } from 'src/app/services';
+import { RoleCM, RoleUM, RoleVM } from 'src/app/view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Role')
 @Controller('/api/v1/Role')
 export class RoleController implements IRoleController {
   constructor(
-    protected readonly roleService: RoleService,
+    protected readonly service: RoleService,
     @Inject('SEQUELIZE') protected readonly sequelize: Sequelize,
   ) {}
 
@@ -36,7 +36,7 @@ export class RoleController implements IRoleController {
   @ApiOkResponse({ description: 'Success return all roles' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findAll(): Promise<RoleVM[]> {
-    return await this.roleService.findAll();
+    return await this.service.findAll();
   }
 
   @Get(':id')
@@ -45,7 +45,7 @@ export class RoleController implements IRoleController {
   @ApiNotFoundResponse({ description: 'Fail to find role by Id' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findById(@Param('id') id: string): Promise<RoleVM> {
-    return await this.roleService.findById(id);
+    return await this.service.findById(id);
   }
 
   @Post()
@@ -53,7 +53,7 @@ export class RoleController implements IRoleController {
   @ApiCreatedResponse({ description: 'Success create new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async insert(@Body() body: RoleCM): Promise<RoleVM> {
-    return await this.roleService.insert(body);
+    return await this.service.insert(body);
   }
 
   @Put()
@@ -61,7 +61,7 @@ export class RoleController implements IRoleController {
   @ApiCreatedResponse({ description: 'Success update new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async update(@Body() body: RoleUM): Promise<RoleVM> {
-    return await this.roleService.update(body);
+    return await this.service.update(body);
   }
 
   @Delete(':id')
@@ -69,7 +69,7 @@ export class RoleController implements IRoleController {
   @ApiCreatedResponse({ description: 'Success delete new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async remove(id: string): Promise<RoleVM> {
-    return await this.roleService.remove(id);
+    return await this.service.remove(id);
   }
 
   @Put('Active')
@@ -77,7 +77,7 @@ export class RoleController implements IRoleController {
   @ApiCreatedResponse({ description: 'Success active new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async active(id: string): Promise<RoleVM> {
-    return await this.roleService.active(id);
+    return await this.service.active(id);
   }
 
   @Put('DeActive')
@@ -85,6 +85,6 @@ export class RoleController implements IRoleController {
   @ApiCreatedResponse({ description: 'Success deactive new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async deactive(id: string): Promise<RoleVM> {
-    return await this.roleService.deactive(id);
+    return await this.service.deactive(id);
   }
 }

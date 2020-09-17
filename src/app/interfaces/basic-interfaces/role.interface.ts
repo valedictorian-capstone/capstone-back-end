@@ -1,4 +1,4 @@
-import { RoleVM, RoleCM, RoleUM } from "src/app/dtos";
+import { RoleVM, RoleCM, RoleUM } from "src/app/view-models";
 
 export interface IRoleController {
     readonly findAll: () => Promise<RoleVM[]>;

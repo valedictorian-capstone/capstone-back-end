@@ -1,12 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
+import { AppModule } from 'src/app/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 declare const module: any;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const open = require("open");
 (async () => {
   const app = await NestFactory.create(AppModule);
-
   const options = new DocumentBuilder()
     .setTitle('CRM BE')
     .setDescription('ALL API OF CRM')
