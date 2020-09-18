@@ -13,7 +13,7 @@ export class AccountService {
   ) {}
 
   public readonly findAll = async (): Promise<AccountVM[]> => {
-    return await this.repository.find()
+    return await this.repository.useHTTP().find()
       .then((models) => this.mapper.mapArray(models, AccountVM, Account))
       .catch((e) => {
         throw new HttpException(
@@ -24,7 +24,7 @@ export class AccountService {
   };
 
   public readonly findById = async (id: string): Promise<AccountVM> => {
-    return await this.repository.findOne(id)
+    return await this.repository.useHTTP().findOne(id)
       .then((model) => {
         if (model !== null) {
           return this.mapper.map(model, AccountVM, Account);
@@ -43,7 +43,7 @@ export class AccountService {
   };
 
   public readonly insert = (body: AccountCM): Promise<AccountVM> => {
-    return this.repository.save(body)
+    return this.repository.useHTTP().save(body)
       .then((model) => (this.mapper.map(model, AccountVM, Account)))
       .catch((e) => {
         throw new HttpException(
@@ -54,9 +54,9 @@ export class AccountService {
   };
 
   public readonly update = async (body: AccountUM): Promise<AccountVM> => {
-    return await this.repository.findOne(body.Id)
+    return await this.repository.useHTTP().findOne(body.Id)
       .then(async () => {
-        return await this.repository
+        return await this.repository.useHTTP()
           .save(body)
           .then(() => (this.mapper.map(body, AccountVM, AccountUM)))
           .catch(e => {
@@ -70,9 +70,9 @@ export class AccountService {
   };
 
   public readonly remove = async (id: string): Promise<AccountVM> => {
-    return await this.repository.findOne(id)
+    return await this.repository.useHTTP().findOne(id)
       .then(async (model) => {
-        return await this.repository
+        return await this.repository.useHTTP()
           .remove(model)
           .then(() => {
             throw new HttpException(
@@ -91,9 +91,9 @@ export class AccountService {
   };
 
   public readonly active = async (id: string): Promise<AccountVM> => {
-    return await this.repository.findOne(id)
+    return await this.repository.useHTTP().findOne(id)
       .then(async (model) => {
-        return await this.repository
+        return await this.repository.useHTTP()
           .save({...model, IsDelete: false})
           .then(() => {
             throw new HttpException(
@@ -112,9 +112,9 @@ export class AccountService {
   };
 
   public readonly deactive = async (id: string): Promise<AccountVM> => {
-    return await this.repository.findOne(id)
+    return await this.repository.useHTTP().findOne(id)
       .then(async (model) => {
-        return await this.repository
+        return await this.repository.useHTTP()
           .save({...model, IsDelete: true})
           .then(() => {
             throw new HttpException(

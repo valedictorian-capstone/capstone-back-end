@@ -3,7 +3,6 @@ import { Role } from "@models";
 import { RoleUM, RoleVM } from "@view-models";
 import { Profile } from "nestjsx-automapper";
 
-@Profile()
 export class RoleMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
     super();

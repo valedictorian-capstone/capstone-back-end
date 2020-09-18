@@ -6,9 +6,9 @@ import {
   Injectable
 } from '@nestjs/common';
 import { RoleRepository } from '@repositories';
-import { ROLE_REPOSITORY } from '@types';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { RoleCM, RoleUM, RoleVM } from 'src/app/view-models';
+import { ROLE_REPOSITORY } from '@types';
 @Injectable()
 export class RoleService {
   constructor(
@@ -17,7 +17,7 @@ export class RoleService {
   ) { }
 
   public readonly findAll = async (): Promise<RoleVM[]> => {
-    return await this.repository.find()
+    return await this.repository.useHTTP().find()
       .then((models) => this.mapper.mapArray(models, RoleVM, Role))
       .catch((e) => {
         throw new HttpException(
@@ -28,7 +28,7 @@ export class RoleService {
   };
 
   public readonly findById = async (id: string): Promise<RoleVM> => {
-    return await this.repository.findOne(id)
+    return await this.repository.useHTTP().findOne(id)
       .then((model) => {
         if (model !== null) {
           return this.mapper.map(model, RoleVM, Role);
@@ -47,7 +47,7 @@ export class RoleService {
   };
 
   public readonly insert = (body: RoleCM): Promise<RoleVM> => {
-    return this.repository.save(body)
+    return this.repository.useHTTP().save(body)
       .then((model) => (this.mapper.map(model, RoleVM, Role)))
       .catch((e) => {
         throw new HttpException(
@@ -58,9 +58,9 @@ export class RoleService {
   };
 
   public readonly update = async (body: RoleUM): Promise<RoleVM> => {
-    return await this.repository.findOne(body.Id)
+    return await this.repository.useHTTP().findOne(body.Id)
       .then(async () => {
-        return await this.repository
+        return await this.repository.useHTTP()
           .save(body)
           .then(() => (this.mapper.map(body, RoleVM, RoleUM)))
           .catch(e => {
@@ -74,9 +74,9 @@ export class RoleService {
   };
 
   public readonly remove = async (id: string): Promise<RoleVM> => {
-    return await this.repository.findOne(id)
+    return await this.repository.useHTTP().findOne(id)
       .then(async (model) => {
-        return await this.repository
+        return await this.repository.useHTTP()
           .remove(model)
           .then(() => {
             throw new HttpException(
@@ -95,9 +95,9 @@ export class RoleService {
   };
 
   public readonly active = async (id: string): Promise<RoleVM> => {
-    return await this.repository.findOne(id)
+    return await this.repository.useHTTP().findOne(id)
       .then(async (model) => {
-        return await this.repository
+        return await this.repository.useHTTP()
           .save({...model, IsDelete: false})
           .then(() => {
             throw new HttpException(
@@ -116,9 +116,9 @@ export class RoleService {
   };
 
   public readonly deactive = async (id: string): Promise<RoleVM> => {
-    return await this.repository.findOne(id)
+    return await this.repository.useHTTP().findOne(id)
       .then(async (model) => {
-        return await this.repository
+        return await this.repository.useHTTP()
           .save({...model, IsDelete: true})
           .then(() => {
             throw new HttpException(

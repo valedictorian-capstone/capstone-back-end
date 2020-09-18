@@ -1,13 +1,13 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { Account } from '@models';
+import { Inject } from '@nestjs/common';
 import { inject } from 'src/app/extras/functions';
-import { Account } from 'src/app/models';
 import { ACCOUNT_REPOSITORY } from 'src/app/types';
-import { Repository } from 'typeorm';
-
-export class AccountRepository extends Repository<Account> {
-  constructor() {
-    super();
+import { Connection } from 'typeorm';
+export class AccountRepository {
+  constructor(@Inject('DATABASE_CONNECTION') protected readonly connection: Connection) {
   }
-
   public static readonly inject = inject(ACCOUNT_REPOSITORY, AccountRepository);
+  public readonly useHTTP = () => {
+    return this.connection.getRepository(Account);
+  }
 }
