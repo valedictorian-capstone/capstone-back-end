@@ -6,33 +6,36 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
-import { Group } from './group.model';
+import { WFStep } from '../bpmn-models/wf-step.model';
+import { FormControl } from './form-control.models';
 
 @Entity()
-export class Customer extends BaseEntity {
+export class FormGroup extends BaseEntity {
+
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
   @AutoMap()
-  @Column({ nullable: false })
-  public fullname!: string;
+  @Column({ default: null })
+  public name: string;
 
   @AutoMap()
-  @Column({ nullable: false, unique: true })
-  public email!: string;
+  @Column({ default: null })
+  public description: string;
 
   @AutoMap()
-  @Column({ nullable: false, unique: true })
-  public phone: string;
-
-  @AutoMap(() => Group)
-  @ManyToMany(() => Group)
+  @ManyToMany(() => WFStep)
   @JoinTable()
-  public customerGroup: Group[];
+  public wFSteps: WFStep[]
+
+  @AutoMap()
+  @OneToMany(() => FormControl, formControl => formControl.formGroup)
+  public formControls: FormControl[]
 
   @AutoMap()
   @Column({ default: null })

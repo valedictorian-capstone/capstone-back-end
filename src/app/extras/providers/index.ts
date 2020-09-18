@@ -1,4 +1,5 @@
-import { BASIC_MODELS } from '@models';
+import { BASIC_MODELS, BPMN_MODELS } from '@models';
+
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { createConnection } from 'typeorm';
 import { uuid } from 'uuidv4';
@@ -16,15 +17,15 @@ export class AppProvider {
           username: process.env.GGCLOUD_SQL_USERNAME,
           password: process.env.GGCLOUD_SQL_PASS,
           database: process.env.GGCLOUD_SQL_DATABASE,
-          entities: [...BASIC_MODELS],
-          synchronize: true
+          entities: [...BASIC_MODELS,...BPMN_MODELS],
+          synchronize: true,
+          logging: true
         }))
       }
     ]
   }
   public static readonly type = (): TypeOrmModuleOptions => {
     return {
-      name: uuid(),
       type: 'mysql',
       host: process.env.GGCLOUD_SQL_HOST,
       port: parseInt(process.env.GGCLOUD_SQL_POST),

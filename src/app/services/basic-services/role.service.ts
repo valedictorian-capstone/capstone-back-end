@@ -1,19 +1,15 @@
 import { Role } from '@models';
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { RoleRepository } from '@repositories';
+import { ROLE_REPOSITORY } from '@types';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { RoleCM, RoleUM, RoleVM } from 'src/app/view-models';
-import { ROLE_REPOSITORY } from '@types';
 @Injectable()
 export class RoleService {
+  
   constructor(
-    @Inject(ROLE_REPOSITORY) protected readonly repository: RoleRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(ROLE_REPOSITORY)protected readonly repository: RoleRepository
   ) { }
 
   public readonly findAll = async (): Promise<RoleVM[]> => {
@@ -22,7 +18,7 @@ export class RoleService {
       .catch((e) => {
         throw new HttpException(
           `Error at [RoleController] [findAll function] with [message]: ${e.message}`,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       });
   };
@@ -35,24 +31,24 @@ export class RoleService {
         }
         throw new HttpException(
           `Error at [RoleController] [findById function] with [message]: Can not find ${id}`,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       })
-      .catch((e) => {
+      .catch(e => {
         throw new HttpException(
           `Error at [RoleController] [findById function] with [message]: ${e.message}`,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       });
   };
 
   public readonly insert = (body: RoleCM): Promise<RoleVM> => {
-    return this.repository.useHTTP().save(body)
+    return this.repository.useHTTP().save(body as any)
       .then((model) => (this.mapper.map(model, RoleVM, Role)))
       .catch((e) => {
         throw new HttpException(
           `Error at [RoleController] [insert function] with [message]: ${e.message}`,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       });
   };
@@ -61,16 +57,16 @@ export class RoleService {
     return await this.repository.useHTTP().findOne(body.Id)
       .then(async () => {
         return await this.repository.useHTTP()
-          .save(body)
+          .save(body as any)
           .then(() => (this.mapper.map(body, RoleVM, RoleUM)))
           .catch(e => {
             throw new HttpException(
               'Error at [RoleController] [update function] with [message]: ' +
               e.message,
-              HttpStatus.BAD_REQUEST,
-            );
-          });
-      });
+            HttpStatus.BAD_REQUEST,
+          );
+        });
+    });
   };
 
   public readonly remove = async (id: string): Promise<RoleVM> => {
@@ -88,10 +84,10 @@ export class RoleService {
             throw new HttpException(
               'Error at [RoleController] [remove function] with [message]: ' +
               e.message,
-              HttpStatus.BAD_REQUEST,
-            );
-          });
-      });
+            HttpStatus.BAD_REQUEST,
+          );
+        });
+    });
   };
 
   public readonly active = async (id: string): Promise<RoleVM> => {
@@ -109,10 +105,10 @@ export class RoleService {
             throw new HttpException(
               'Error at [RoleController] [active function] with [message]: ' +
               e.message,
-              HttpStatus.BAD_REQUEST,
-            );
-          });
-      });
+            HttpStatus.BAD_REQUEST,
+          );
+        });
+    });
   };
 
   public readonly deactive = async (id: string): Promise<RoleVM> => {
@@ -130,9 +126,9 @@ export class RoleService {
             throw new HttpException(
               'Error at [RoleController] [deactive function] with [message]: ' +
               e.message,
-              HttpStatus.BAD_REQUEST,
-            );
-          });
-      });
+            HttpStatus.BAD_REQUEST,
+          );
+        });
+    });
   };
 }

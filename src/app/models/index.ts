@@ -1,17 +1,23 @@
 import { Account } from './basic-models/account.model';
 import { Role } from './basic-models/role.model';
+import { Customer } from './basic-models/customer.model';
+import { Group } from './basic-models/group.model';
+import { WF } from './bpmn-models/wf.model';
+import { WFCondition } from './bpmn-models/wf-condition.model';
+import { WFConnection } from './bpmn-models/wf-connection.model';
+import { WFInstance } from './bpmn-models/wf-instance';
+import { WFStep } from './bpmn-models/wf-step.model';
+import { WFStepInstance } from './bpmn-models/wf-step-instance.model';
 
-// import { Customer } from './basic-models/customer.model';
-// import { Group } from './basic-models/group.model';
-// import { CustomerGroup } from './basic-models/customer-group';
 
 export * from './basic-models/account.model';
 export * from './basic-models/role.model';
+
 
 // export * from './basic-models/customer.model';
 // export * from './basic-models/group.model';
 // export * from './basic-models/customer-group';
 
 
-export const BASIC_MODELS = [Account, Role];
-// export const BPMN_MODELS = [WorkFlow, WorkFlowInstance, WorkFlowConnection];
+export const BASIC_MODELS = [Account, Role, Group, Customer];
+export const BPMN_MODELS = [WF, WFCondition, WFConnection, WFInstance, WFStep, WFStepInstance];

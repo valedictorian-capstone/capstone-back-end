@@ -4,35 +4,35 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
-import { Group } from './group.model';
+import { WFCondition } from './wf-condition.model';
+import { WFStep } from './wf-step.model';
 
 @Entity()
-export class Customer extends BaseEntity {
+export class WF extends BaseEntity {
+
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
   @AutoMap()
-  @Column({ nullable: false })
-  public fullname!: string;
+  @Column({ default: null })
+  public name: string;
 
   @AutoMap()
-  @Column({ nullable: false, unique: true })
-  public email!: string;
+  @Column({ default: null })
+  public description: string;
 
-  @AutoMap()
-  @Column({ nullable: false, unique: true })
-  public phone: string;
+  @AutoMap(() => WFStep)
+  @OneToMany(() => WFStep, wFStep => wFStep.wF)
+  public wFStep: WFStep[];
 
-  @AutoMap(() => Group)
-  @ManyToMany(() => Group)
-  @JoinTable()
-  public customerGroup: Group[];
+  @AutoMap(() => WFCondition)
+  @OneToMany(() => WFCondition, wFCondition => wFCondition.wF)
+  public wFConditions: WFCondition[];
 
   @AutoMap()
   @Column({ default: null })

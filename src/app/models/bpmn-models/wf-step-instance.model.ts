@@ -4,35 +4,41 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Group } from './group.model';
+import { WFInstance } from './wf-instance';
+import { WFStep } from './wf-step.model';
 
 @Entity()
-export class Customer extends BaseEntity {
+export class WFStepInstance extends BaseEntity {
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
   @AutoMap()
-  @Column({ nullable: false })
-  public fullname!: string;
+  @Column({ default: null })
+  public status: string;
 
   @AutoMap()
-  @Column({ nullable: false, unique: true })
-  public email!: string;
+  @Column({ default: null })
+  public note: string;
 
   @AutoMap()
-  @Column({ nullable: false, unique: true })
-  public phone: string;
+  @ManyToOne(
+    () => WFStep,
+    wFStep => wFStep.wFStepsInstances,
+  )
+  public wFStep: WFStep;
 
-  @AutoMap(() => Group)
-  @ManyToMany(() => Group)
-  @JoinTable()
-  public customerGroup: Group[];
+  @AutoMap()
+  @ManyToOne(
+    () => WFInstance,
+    wFStep => wFStep.wFStepInstances,
+  )
+  public wFInstance: WFInstance;
 
   @AutoMap()
   @Column({ default: null })

@@ -6,37 +6,37 @@ export class Role extends BaseEntity {
 
     @AutoMap()
     @PrimaryGeneratedColumn('uuid')
-    public Id: string;
+    public id: string;
 
     @AutoMap()
-    @Column({ nullable: false })
-    public Name: string;
+    @Column({ nullable: false, default:'jame'})
+    public name: string;
 
     @AutoMap()
-    @Column({ length: 500 })
-    public Description: string;
+    @Column({default:null})
+    public description: string;
 
     @AutoMap(() => Account)
-    @ManyToMany(() => Account, Account => Account.Roles)
-    public Accounts: Account[];
+    @ManyToMany(() => Account, account => account.Roles)
+    public accounts: Account[];
 
     @AutoMap()
     @Column({ default: 'crm' })
-    public CreatedBy: string;
+    public areatedBy: string;
 
     @AutoMap()
     @Column({ default: 'crm' })
-    public UpdatedBy: string;
+    public apdatedBy: string;
 
     @AutoMap()
     @Column({ default: false })
-    public IsDelete: boolean;
+    public asDelete: boolean;
 
     @AutoMap()
     @CreateDateColumn()
-    public CreatedAt: Date;
+    public createdAt: Date;
 
     @AutoMap()
     @UpdateDateColumn()
-    public UpdatedAt: Date;
+    public updatedAt: Date;
 }

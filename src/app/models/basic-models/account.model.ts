@@ -26,15 +26,15 @@ export class Account extends BaseEntity {
   public Password!: string;
 
   @AutoMap(() => Role)
-  @ManyToMany(() => Role, Role => Role.Accounts)
+  @ManyToMany(() => Role, Role => Role.accounts)
   public Roles: Role[];
 
   @AutoMap()
-  @Column()
+  @Column({ default: 'admin' })
   public CreatedBy: string;
 
   @AutoMap()
-  @Column()
+  @Column({ default: null })
   public UpdatedBy: string;
 
   @AutoMap()

@@ -1,38 +1,52 @@
-// import { Model, PrimaryKey, Column, HasMany, Default, CreatedAt, UpdatedAt, Table, IsUUID, Unique } from 'sequelize-typescript';
-// import { uuid } from 'uuidv4';
-// import { CustomerGroup } from './customer-group';
-// @Table
-// export class Group extends Model<Group> {
+import { AutoMap } from 'nestjsx-automapper';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Customer } from './customer.model';
 
-//     @IsUUID(4)
-//     @Default(uuid)
-//     @PrimaryKey
-//     @Column
-//     public Id!: string;
+@Entity()
+export class Group extends BaseEntity {
+  @AutoMap()
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
 
-//     @Unique
-//     @Column
-//     public Name!: string;
+  @AutoMap()
+  @Column({ nullable: false })
+  public name!: string;
 
-//     @Column
-//     public Description!: string;
-    
-//     @HasMany(() => CustomerGroup)
-//     public CustomerGroup!: CustomerGroup[];
+  @AutoMap()
+  @Column({ default: null })
+  public description!: string;
 
-//     @Column
-//     public CreatedBy: string;
+  @AutoMap(() => Customer)
+  @ManyToMany(() => Customer)
+  @JoinTable()
+  public customer: Customer[];
 
-//     @Column
-//     public UpdatedBy: string;
+  @AutoMap()
+  @Column({ default: null })
+  public createdBy: string;
 
-//     @Default(false)
-//     @Column
-//     public IsDelete: boolean;
+  @AutoMap()
+  @Column({ default: null })
+  public updatedBy: string;
 
-//     @CreatedAt
-//     public CreatedAt: Date;
+  @AutoMap()
+  @Column({ default: false })
+  public isDelete: boolean;
 
-//     @UpdatedAt
-//     public UpdatedAt: Date;
-// }
+  @AutoMap()
+  @CreateDateColumn()
+  public createdAt: Date;
+
+  @AutoMap()
+  @UpdateDateColumn()
+  public updatedAt: Date;
+}
