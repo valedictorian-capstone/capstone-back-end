@@ -1,32 +1,42 @@
+import { AutoMap } from "nestjsx-automapper";
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Account } from "./account.model";
 @Entity()
 export class Role extends BaseEntity {
 
+    @AutoMap()
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
+    @AutoMap()
     @Column({ nullable: false })
     public name: string;
 
+    @AutoMap()
     @Column({ length: 500 })
     public description: string;
 
-    @ManyToMany(() => Account, Account => Account.roles)
+    @AutoMap(() => Account)
+    @ManyToMany(() => Account, account => account.Roles)
     public accounts: Account[];
 
-    @Column()
-    public createdBy: string;
+    @AutoMap()
+    @Column({ default: 'crm' })
+    public areatedBy: string;
 
-    @Column()
-    public updatedBy: string;
+    @AutoMap()
+    @Column({ default: 'crm' })
+    public apdatedBy: string;
 
-    @Column({default: false})
-    public isDelete: boolean;
+    @AutoMap()
+    @Column({ default: false })
+    public asDelete: boolean;
 
+    @AutoMap()
     @CreateDateColumn()
     public createdAt: Date;
 
+    @AutoMap()
     @UpdateDateColumn()
     public updatedAt: Date;
 }

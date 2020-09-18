@@ -1,3 +1,4 @@
+import { RoleVM } from './role.view-model';
 import { AccountRoleVM } from './account-role.view-model';
 import { AccountExtraInformationVM } from "./account-extra-information.view-model";
 import { AccountExtraDataVM } from './account-extra-data.view-model';
@@ -38,19 +39,21 @@ export class AccountVM {
   @AutoMap()
   public readonly Position: string;
 
-  @AutoMap()
-  public readonly AccountExtraInformationVMs: AccountExtraInformationVM[];
+  @AutoMap(() => RoleVM)
+  public readonly Roles: RoleVM[];
+  // @AutoMap()
+  // public readonly AccountExtraInformationVMs: AccountExtraInformationVM[];
 
-  @AutoMap()
-  public readonly AccountRoleVMs: AccountRoleVM[];
-  @AutoMap()
-  public readonly AccountExtraDataVMs: AccountExtraDataVM[];
-  @AutoMap()
-  public readonly AccountDepartmentVMs: AccountDepartmentVM[];
-  @AutoMap()
-  public readonly AccountWorkFlowStepInstanceVMs: AccountWorkFlowStepInstanceVM[];
-  @AutoMap()
-  public readonly CommentVMs: CommentVM[];
+  // @AutoMap()
+  // public readonly AccountRoleVMs: AccountRoleVM[];
+  // @AutoMap()
+  // public readonly AccountExtraDataVMs: AccountExtraDataVM[];
+  // @AutoMap()
+  // public readonly AccountDepartmentVMs: AccountDepartmentVM[];
+  // @AutoMap()
+  // public readonly AccountWorkFlowStepInstanceVMs: AccountWorkFlowStepInstanceVM[];
+  // @AutoMap()
+  // public readonly CommentVMs: CommentVM[];
 
   @AutoMap()
   public readonly IsDelete: boolean;

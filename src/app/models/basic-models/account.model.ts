@@ -1,44 +1,56 @@
 import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { hashSync } from 'bcrypt';
 import { Role } from './role.model';
+import { AutoMap } from 'nestjsx-automapper';
 @Entity()
 export class Account extends BaseEntity {
 
-    @PrimaryGeneratedColumn('uuid')
-    public id: string;
+  @AutoMap()
+  @PrimaryGeneratedColumn('uuid')
+  public Id: string;
 
-    @Column({ nullable: false })
-    public fullname!: string;
+  @AutoMap()
+  @Column({ nullable: false })
+  public Fullname!: string;
 
-    @Column({nullable: false, unique: true})
-    public email!: string;
+  @AutoMap()
+  @Column({ nullable: false, unique: true })
+  public Email!: string;
 
-    @Column({nullable: false, unique: true})
-    public phone!: string;
+  @AutoMap()
+  @Column({ nullable: false, unique: true })
+  public Phone!: string;
 
-    @Column({nullable: false})
-    public password!: string;
+  @AutoMap()
+  @Column({ nullable: false })
+  public Password!: string;
 
-    @ManyToMany(() => Role, Role => Role.accounts)
-    public roles: Role[];
+  @AutoMap(() => Role)
+  @ManyToMany(() => Role, Role => Role.accounts)
+  public Roles: Role[];
 
-    @Column()
-    public createdBy: string;
+  @AutoMap()
+  @Column()
+  public CreatedBy: string;
 
-    @Column()
-    public updatedBy: string;
+  @AutoMap()
+  @Column()
+  public UpdatedBy: string;
 
-    @Column({default: false})
-    public isDelete: boolean;
+  @AutoMap()
+  @Column({ default: false })
+  public IsDelete: boolean;
 
-    @CreateDateColumn()
-    public createdAt: Date;
+  @AutoMap()
+  @CreateDateColumn()
+  public CreatedAt: Date;
 
-    @UpdateDateColumn()
-    public updatedAt: Date;
+  @AutoMap()
+  @UpdateDateColumn()
+  public UpdatedAt: Date;
 
-    @BeforeInsert()
-    async hashPassword() {
-      this.password = await hashSync(this.password, 10);
-    }
+  @BeforeInsert()
+  async hashPassword() {
+    this.Password = await hashSync(this.Password, 10);
+  }
 }

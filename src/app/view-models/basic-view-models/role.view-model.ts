@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { RolePermissionVM } from "../bpmn-view-models";
-import { AccountRoleVM } from "./account-role.view-model";
+import { AccountVM } from "./account.view-model";
 
 export class RoleVM {
   @AutoMap()
@@ -13,11 +13,10 @@ export class RoleVM {
   @AutoMap()
   public readonly Description: string;
 
-  @AutoMap()
-  public readonly AccountRoles: AccountRoleVM[];
+  @AutoMap(() => AccountVM)
+  public readonly Accounts: AccountVM[];
 
-  @AutoMap()
-  public readonly RolePermissionVMs: RolePermissionVM[];
+  // public readonly RolePermissionVMs: RolePermissionVM[];
 
   @AutoMap()
   public readonly IsDelete!: boolean;
@@ -33,10 +32,6 @@ export class RoleVM {
 
   @AutoMap()
   public readonly UpdatedAt!: Date;
-
-  constructor(props: Partial<RoleVM>) {
-    Object.assign(this, props);
-  }
 }
 
 export class RoleCM {

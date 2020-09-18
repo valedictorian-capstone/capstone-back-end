@@ -3,7 +3,6 @@ import { Account } from "@models";
 import { AccountUM, AccountVM } from "@view-models";
 import { Profile } from "nestjsx-automapper";
 
-@Profile()
 export class AccountMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
     super();
