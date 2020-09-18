@@ -13,5 +13,5 @@ export * from './basic-models/group.model';
 export * from './basic-models/customer-group';
 
 
-export const BASIC_MODELS = [Account, Role, Customer, Group, CustomerGroup];
+export const BASIC_MODELS = [Account, Role];
 // export const BPMN_MODELS = [WorkFlow, WorkFlowInstance, WorkFlowConnection];

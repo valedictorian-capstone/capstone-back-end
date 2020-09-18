@@ -1,5 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { BASIC_MODLES } from '@models';
+import { BASIC_MODELS } from '@models';
 import { uuid } from 'uuidv4';
 
 export class AppProvider {
@@ -12,7 +12,7 @@ export class AppProvider {
       username: process.env.GGCLOUD_SQL_USERNAME,
       password: process.env.GGCLOUD_SQL_PASS,
       database: process.env.GGCLOUD_SQL_DATABASE,
-      entities: [...BASIC_MODLES],
+      entities: [...BASIC_MODELS],
       synchronize: true,
       dropSchema: false,
       autoLoadEntities: true,
