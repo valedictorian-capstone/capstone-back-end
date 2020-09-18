@@ -17,10 +17,9 @@ import {
   ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
-import { Sequelize } from 'sequelize-typescript';
-import { IRoleController } from 'src/app/interfaces';
-import { RoleService } from 'src/app/services';
-import { RoleCM, RoleUM, RoleVM } from 'src/app/view-models';
+import { IRoleController } from '@interfaces';
+import { RoleService } from '@services';
+import { RoleCM, RoleUM, RoleVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Role')
@@ -28,7 +27,6 @@ import { RoleCM, RoleUM, RoleVM } from 'src/app/view-models';
 export class RoleController implements IRoleController {
   constructor(
     protected readonly service: RoleService,
-    @Inject('SEQUELIZE') protected readonly sequelize: Sequelize,
   ) {}
 
   @Get()

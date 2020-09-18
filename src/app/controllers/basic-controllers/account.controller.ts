@@ -17,10 +17,9 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { Sequelize } from 'sequelize-typescript';
-import { AccountCM, AccountUM, AccountVM } from 'src/app/view-models';
-import { IAccountController } from 'src/app/interfaces';
-import { AccountService } from 'src/app/services';
+import { AccountCM, AccountUM, AccountVM } from '@view-models';
+import { IAccountController } from '@interfaces';
+import { AccountService } from '@services';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Account')
@@ -28,7 +27,6 @@ import { AccountService } from 'src/app/services';
 export class AccountController implements IAccountController {
   constructor(
     protected service: AccountService,
-    @Inject('SEQUELIZE') protected sequelize: Sequelize,
   ) {}
 
   @Get()

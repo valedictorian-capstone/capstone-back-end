@@ -1,23 +1,24 @@
+import { Role } from '@models';
 import {
   HttpException,
   HttpStatus,
   Inject,
   Injectable
 } from '@nestjs/common';
-import { Sequelize } from 'sequelize-typescript';
-import { RoleRepository } from 'src/app/repositories';
-import { ROLE_REPOSITORY } from 'src/app/types';
+import { RoleRepository } from '@repositories';
+import { ROLE_REPOSITORY } from '@types';
+import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { RoleCM, RoleUM, RoleVM } from 'src/app/view-models';
 @Injectable()
 export class RoleService {
   constructor(
-    @Inject('SEQUELIZE') protected readonly sequelize: Sequelize,
     @Inject(ROLE_REPOSITORY) protected readonly repository: RoleRepository,
+    @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
   public readonly findAll = async (): Promise<RoleVM[]> => {
-    return await this.repository.findAll({}, [])
-      .then((models) => models.map((model) => new RoleVM({...model.get()})))
+    return await this.repository.find()
+      .then((models) => this.mapper.mapArray(models, RoleVM, Role))
       .catch((e) => {
         throw new HttpException(
           `Error at [RoleController] [findAll function] with [message]: ${e.message}`,
@@ -27,10 +28,10 @@ export class RoleService {
   };
 
   public readonly findById = async (id: string): Promise<RoleVM> => {
-    return await this.repository.findById({ Id: id }, [])
+    return await this.repository.findOne(id)
       .then((model) => {
         if (model !== null) {
-          return new RoleVM({...model.get()});
+          return this.mapper.map(model, RoleVM, Role);
         }
         throw new HttpException(
           `Error at [RoleController] [findById function] with [message]: Can not find ${id}`,
@@ -46,8 +47,8 @@ export class RoleService {
   };
 
   public readonly insert = (body: RoleCM): Promise<RoleVM> => {
-    return this.repository.insert(body as any)
-      .then((model) => (new RoleVM({...model.get()})))
+    return this.repository.save(body)
+      .then((model) => (this.mapper.map(model, RoleVM, Role)))
       .catch((e) => {
         throw new HttpException(
           `Error at [RoleController] [insert function] with [message]: ${e.message}`,
@@ -57,11 +58,11 @@ export class RoleService {
   };
 
   public readonly update = async (body: RoleUM): Promise<RoleVM> => {
-    return await this.findById(body.Id)
+    return await this.repository.findOne(body.Id)
       .then(async () => {
         return await this.repository
-          .update(body as any, { Id: body.Id })
-          .then(() => (new RoleVM({...body})))
+          .save(body)
+          .then(() => (this.mapper.map(body, RoleVM, RoleUM)))
           .catch(e => {
             throw new HttpException(
               'Error at [RoleController] [update function] with [message]: ' +
@@ -73,10 +74,10 @@ export class RoleService {
   };
 
   public readonly remove = async (id: string): Promise<RoleVM> => {
-    return await this.findById(id)
-      .then(async () => {
+    return await this.repository.findOne(id)
+      .then(async (model) => {
         return await this.repository
-          .remove({Id: id})
+          .remove(model)
           .then(() => {
             throw new HttpException(
               `Remove information of ${id} successfully !!!`,
@@ -94,10 +95,10 @@ export class RoleService {
   };
 
   public readonly active = async (id: string): Promise<RoleVM> => {
-    return await this.findById(id)
-      .then(async () => {
+    return await this.repository.findOne(id)
+      .then(async (model) => {
         return await this.repository
-          .update({IsDelete: false} as any, { Id: id })
+          .save({...model, IsDelete: false})
           .then(() => {
             throw new HttpException(
               `Update information of ${id} successfully !!!`,
@@ -115,10 +116,10 @@ export class RoleService {
   };
 
   public readonly deactive = async (id: string): Promise<RoleVM> => {
-    return await this.findById(id)
-      .then(async () => {
+    return await this.repository.findOne(id)
+      .then(async (model) => {
         return await this.repository
-          .update({IsDelete: true} as any, { Id: id })
+          .save({...model, IsDelete: true})
           .then(() => {
             throw new HttpException(
               `Update information of ${id} successfully !!!`,

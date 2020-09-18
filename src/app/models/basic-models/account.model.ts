@@ -1,49 +1,44 @@
-import { Model, PrimaryKey, Column, HasMany, Default, CreatedAt, UpdatedAt, Table, IsUUID, Unique } from 'sequelize-typescript';
-import { AccountRole } from './account-role.model';
-import { uuid } from 'uuidv4';
-@Table
-export class Account extends Model<Account> {
+import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { hashSync } from 'bcrypt';
+import { Role } from './role.model';
+@Entity()
+export class Account extends BaseEntity {
 
-    @IsUUID(4)
-    @Default(uuid)
-    @PrimaryKey
-    @Column
-    public Id!: string;
+    @PrimaryGeneratedColumn('uuid')
+    public Id: string;
 
-    @Unique
-    @Column
-    public Username!: string;
-
-    @Column
+    @Column({ nullable: false })
     public Fullname!: string;
 
-    @Unique
-    @Column
+    @Column({nullable: false, unique: true})
     public Email!: string;
 
-    @Unique
-    @Column
+    @Column({nullable: false, unique: true})
     public Phone!: string;
 
-    @Column
-    public PasswordHash!: string;
+    @Column({nullable: false})
+    public Password!: string;
 
-    @HasMany(() => AccountRole)
-    public AccountRoles!: AccountRole[];
+    @ManyToMany(() => Role, Role => Role.Accounts)
+    public Roles: Role[];
 
-    @Column
+    @Column()
     public CreatedBy: string;
 
-    @Column
+    @Column()
     public UpdatedBy: string;
 
-    @Default(false)
-    @Column
+    @Column({default: false})
     public IsDelete: boolean;
 
-    @CreatedAt
+    @CreateDateColumn()
     public CreatedAt: Date;
 
-    @UpdatedAt
+    @UpdateDateColumn()
     public UpdatedAt: Date;
+
+    @BeforeInsert()
+    async hashPassword() {
+      this.Password = await hashSync(this.Password, 10);
+    }
 }

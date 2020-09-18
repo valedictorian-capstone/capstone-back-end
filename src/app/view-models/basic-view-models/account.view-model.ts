@@ -4,50 +4,68 @@ import { AccountExtraDataVM } from './account-extra-data.view-model';
 import { AccountDepartmentVM } from './account-department.view-model';
 import { CommentVM, AccountWorkFlowStepInstanceVM } from '../bpmn-view-models';
 import { ApiProperty } from '@nestjs/swagger';
+import { AutoMap } from 'nestjsx-automapper';
 
 export class AccountVM {
 
+  @AutoMap()
   public readonly Id: string;
 
+  @AutoMap()
   public readonly Phone: string;
 
+  @AutoMap()
   public readonly Email: string;
 
+  @AutoMap()
   public readonly Code: string;
 
+  @AutoMap()
   public readonly Fullname: string;
 
+  @AutoMap()
   public readonly Avatar: string;
 
+  @AutoMap()
   public readonly Address: string;
 
+  @AutoMap()
   public readonly Gender: string;
 
+  @AutoMap()
   public readonly CurrentValidateCode: string;
 
+  @AutoMap()
   public readonly Position: string;
 
+  @AutoMap()
   public readonly AccountExtraInformationVMs: AccountExtraInformationVM[];
 
+  @AutoMap()
   public readonly AccountRoleVMs: AccountRoleVM[];
+  @AutoMap()
   public readonly AccountExtraDataVMs: AccountExtraDataVM[];
+  @AutoMap()
   public readonly AccountDepartmentVMs: AccountDepartmentVM[];
+  @AutoMap()
   public readonly AccountWorkFlowStepInstanceVMs: AccountWorkFlowStepInstanceVM[];
+  @AutoMap()
   public readonly CommentVMs: CommentVM[];
 
+  @AutoMap()
   public readonly IsDelete: boolean;
 
+  @AutoMap()
   public readonly CreatedBy: string;
 
+  @AutoMap()
   public readonly UpdatedBy: string;
 
+  @AutoMap()
   public readonly CreatedAt: Date;
 
+  @AutoMap()
   public readonly UpdatedAt: Date;
-
-  constructor(props: Partial<AccountVM>) {
-    Object.assign(this, props);
-  }
 }
 
 export class AccountCM {

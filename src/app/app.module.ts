@@ -1,21 +1,27 @@
 import { Module } from '@nestjs/common';
-import { SequelizeProvider } from 'src/app/extras/providers';
+import { AppProvider } from '@extras/providers';
 import {
   BASIC_CONTROLLERS,
   BPMN_CONTROLLERS,
   EXTRA_CONTROLLERS
-} from 'src/app/controllers';
+} from '@controllers';
 import {
   BASIC_REPOSITORY,
   BPMN_REPOSITORY
-} from 'src/app/repositories';
+} from '@repositories';
 import {
   BASIC_SERVICES, BPMN_SERVICES, EXTRA_SERVICES
-} from 'src/app/services';
-import { FILTERS } from 'src/app/extras/filters';
+} from '@services';
+import { FILTERS } from '@extras/filters';
+import { AppGateway } from '@extras/gateways';
+import { AutomapperModule } from 'nestjsx-automapper';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [],
+  imports: [
+    AutomapperModule.withMapper(),
+    TypeOrmModule.forRoot(AppProvider.init())
+  ],
   controllers: [
     ...BASIC_CONTROLLERS,
     ...EXTRA_CONTROLLERS,
@@ -25,10 +31,10 @@ import { FILTERS } from 'src/app/extras/filters';
     ...BASIC_SERVICES,
     ...EXTRA_SERVICES,
     ...BPMN_SERVICES,
-    SequelizeProvider.init(),
     ...BASIC_REPOSITORY,
     ...BPMN_REPOSITORY,
-    ...FILTERS
+    ...FILTERS,
+    AppGateway
   ],
 })
 export class AppModule { }

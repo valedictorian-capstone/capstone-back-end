@@ -1,20 +1,20 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { hashSync } from 'bcrypt';
-import { Sequelize } from 'sequelize-typescript';
-import { AccountRepository } from 'src/app/repositories';
-import { ACCOUNT_REPOSITORY } from 'src/app/types';
-import { AccountCM, AccountUM, AccountVM } from 'src/app/view-models';
+import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { AccountRepository } from '@repositories';
+import { ACCOUNT_REPOSITORY } from '@types';
+import { AccountCM, AccountUM, AccountVM } from '@view-models';
+import { Account } from '@models';
 
 @Injectable()
 export class AccountService {
   constructor(
-    @Inject('SEQUELIZE') protected readonly sequelize: Sequelize,
     @Inject(ACCOUNT_REPOSITORY) protected readonly repository: AccountRepository,
+    @InjectMapper() protected readonly mapper: AutoMapper
   ) {}
 
   public readonly findAll = async (): Promise<AccountVM[]> => {
-    return await this.repository.findAll({}, [])
-      .then((models) => models.map((model) => new AccountVM({...model.get()})))
+    return await this.repository.find()
+      .then((models) => this.mapper.mapArray(models, AccountVM, Account))
       .catch((e) => {
         throw new HttpException(
           `Error at [AccountController] [findAll function] with [message]: ${e.message}`,
@@ -24,10 +24,10 @@ export class AccountService {
   };
 
   public readonly findById = async (id: string): Promise<AccountVM> => {
-    return await this.repository.findById({ Id: id }, [])
+    return await this.repository.findOne(id)
       .then((model) => {
         if (model !== null) {
-          return new AccountVM({...model.get()});
+          return this.mapper.map(model, AccountVM, Account);
         }
         throw new HttpException(
           `Error at [AccountController] [findById function] with [message]: Can not find ${id}`,
@@ -43,8 +43,8 @@ export class AccountService {
   };
 
   public readonly insert = (body: AccountCM): Promise<AccountVM> => {
-    return this.repository.insert({...body as any, PasswordHash: hashSync(body.Password, 10)})
-      .then((model) => (new AccountVM({...model.get()})))
+    return this.repository.save(body)
+      .then((model) => (this.mapper.map(model, AccountVM, Account)))
       .catch((e) => {
         throw new HttpException(
           `Error at [AccountController] [insert function] with [message]: ${e.message}`,
@@ -54,11 +54,11 @@ export class AccountService {
   };
 
   public readonly update = async (body: AccountUM): Promise<AccountVM> => {
-    return await this.findById(body.Id)
+    return await this.repository.findOne(body.Id)
       .then(async () => {
         return await this.repository
-          .update(body as any, { Id: body.Id })
-          .then(() => (new AccountVM({...body})))
+          .save(body)
+          .then(() => (this.mapper.map(body, AccountVM, AccountUM)))
           .catch(e => {
             throw new HttpException(
               'Error at [AccountController] [update function] with [message]: ' +
@@ -70,10 +70,10 @@ export class AccountService {
   };
 
   public readonly remove = async (id: string): Promise<AccountVM> => {
-    return await this.findById(id)
-      .then(async () => {
+    return await this.repository.findOne(id)
+      .then(async (model) => {
         return await this.repository
-          .remove({Id: id})
+          .remove(model)
           .then(() => {
             throw new HttpException(
               `Remove information of ${id} successfully !!!`,
@@ -91,10 +91,10 @@ export class AccountService {
   };
 
   public readonly active = async (id: string): Promise<AccountVM> => {
-    return await this.findById(id)
-      .then(async () => {
+    return await this.repository.findOne(id)
+      .then(async (model) => {
         return await this.repository
-          .update({IsDelete: false} as any, { Id: id })
+          .save({...model, IsDelete: false})
           .then(() => {
             throw new HttpException(
               `Update information of ${id} successfully !!!`,
@@ -112,10 +112,10 @@ export class AccountService {
   };
 
   public readonly deactive = async (id: string): Promise<AccountVM> => {
-    return await this.findById(id)
-      .then(async () => {
+    return await this.repository.findOne(id)
+      .then(async (model) => {
         return await this.repository
-          .update({IsDelete: true} as any, { Id: id })
+          .save({...model, IsDelete: true})
           .then(() => {
             throw new HttpException(
               `Update information of ${id} successfully !!!`,

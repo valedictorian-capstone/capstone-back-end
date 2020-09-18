@@ -1,37 +1,32 @@
-import { Model, IsUUID, Default, PrimaryKey, Column, HasMany, CreatedAt, UpdatedAt, Table } from "sequelize-typescript";
-import { uuid } from "uuidv4";
-import { AccountRole } from "./account-role.model";
-@Table
-export class Role extends Model<Role> {
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Account } from "./account.model";
+@Entity()
+export class Role extends BaseEntity {
 
-    @IsUUID(4)
-    @Default(uuid)
-    @PrimaryKey
-    @Column
+    @PrimaryGeneratedColumn('uuid')
     public Id: string;
 
-    @Column
+    @Column({ nullable: false })
     public Name: string;
 
-    @Column
+    @Column({ length: 500 })
     public Description: string;
 
-    @HasMany(() => AccountRole)
-    public AccountRoles: AccountRole[];
+    @ManyToMany(() => Account, Account => Account.Roles)
+    public Accounts: Account[];
 
-    @Column
+    @Column()
     public CreatedBy: string;
 
-    @Column
+    @Column()
     public UpdatedBy: string;
 
-    @Default(false)
-    @Column
+    @Column({default: false})
     public IsDelete: boolean;
 
-    @CreatedAt
+    @CreateDateColumn()
     public CreatedAt: Date;
 
-    @UpdatedAt
+    @UpdateDateColumn()
     public UpdatedAt: Date;
 }
