@@ -39,7 +39,7 @@ export class AccountVM {
   @AutoMap()
   public readonly Position: string;
 
-  @AutoMap()
+  @AutoMap(() => RoleVM)
   public readonly Roles: RoleVM[];
   // @AutoMap()
   // public readonly AccountExtraInformationVMs: AccountExtraInformationVM[];

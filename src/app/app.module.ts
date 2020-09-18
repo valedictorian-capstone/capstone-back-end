@@ -15,11 +15,15 @@ import {
 import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
+import { PascalCaseNamingConvention} from '@nartc/automapper';
 import { AccountMapper, RoleMapper } from './mappers';
 
 @Module({
   imports: [
-    AutomapperModule.withMapper(),
+    AutomapperModule.withMapper({
+      sourceNamingConvention: PascalCaseNamingConvention,
+      destinationNamingConvention: PascalCaseNamingConvention
+    }),
   ],
   controllers: [
     ...BASIC_CONTROLLERS,

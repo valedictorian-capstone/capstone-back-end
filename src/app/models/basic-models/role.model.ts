@@ -16,20 +16,20 @@ export class Role extends BaseEntity {
     @Column({ length: 500 })
     public Description: string;
 
-    @AutoMap()
+    @AutoMap(() => Account)
     @ManyToMany(() => Account, Account => Account.Roles)
     public Accounts: Account[];
 
     @AutoMap()
-    @Column({ default: 'crm'})
+    @Column({ default: 'crm' })
     public CreatedBy: string;
 
     @AutoMap()
-    @Column({ default: 'crm'})
+    @Column({ default: 'crm' })
     public UpdatedBy: string;
 
     @AutoMap()
-    @Column({default: false})
+    @Column({ default: false })
     public IsDelete: boolean;
 
     @AutoMap()

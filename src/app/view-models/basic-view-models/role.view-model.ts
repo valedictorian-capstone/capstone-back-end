@@ -13,7 +13,7 @@ export class RoleVM {
   @AutoMap()
   public readonly Description: string;
 
-  @AutoMap()
+  @AutoMap(() => AccountVM)
   public readonly Accounts: AccountVM[];
 
   // public readonly RolePermissionVMs: RolePermissionVM[];
