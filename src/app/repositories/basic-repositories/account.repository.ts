@@ -3,6 +3,7 @@ import { Inject } from '@nestjs/common';
 import { inject } from 'src/app/extras/functions';
 import { ACCOUNT_REPOSITORY } from 'src/app/types';
 import { Connection } from 'typeorm';
+
 export class AccountRepository {
   constructor(@Inject('DATABASE_CONNECTION') protected readonly connection: Connection) {
   }

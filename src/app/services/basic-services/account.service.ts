@@ -1,14 +1,14 @@
 import { Account } from '@models';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { AccountRepository } from '@repositories';
+import { ACCOUNT_REPOSITORY } from '@types';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 
 @Injectable()
 export class AccountService {
   constructor(
-    protected readonly repository: AccountRepository,
+    @Inject(ACCOUNT_REPOSITORY)protected readonly repository: AccountRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) {}
 
@@ -43,8 +43,8 @@ export class AccountService {
   };
 
   public readonly insert = (body: AccountCM): Promise<AccountVM> => {
-    return this.repository.useHTTP().save(body)
-      .then((model) => (this.mapper.map(model, AccountVM, Account)))
+    return this.repository.useHTTP().insert(body)
+      .then((model) => (this.mapper.map(model, AccountVM, Account as any)))
       .catch((e) => {
         throw new HttpException(
           `Error at [AccountController] [insert function] with [message]: ${e.message}`,

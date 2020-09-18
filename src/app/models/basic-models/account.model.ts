@@ -30,11 +30,11 @@ export class Account extends BaseEntity {
   public Roles: Role[];
 
   @AutoMap()
-  @Column()
+  @Column({ default: 'admin' })
   public CreatedBy: string;
 
   @AutoMap()
-  @Column()
+  @Column({ default: null })
   public UpdatedBy: string;
 
   @AutoMap()

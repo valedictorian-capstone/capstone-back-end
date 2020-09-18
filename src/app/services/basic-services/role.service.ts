@@ -43,7 +43,7 @@ export class RoleService {
   };
 
   public readonly insert = (body: RoleCM): Promise<RoleVM> => {
-    return this.repository.useHTTP().save(body)
+    return this.repository.useHTTP().save(body as any)
       .then((model) => (this.mapper.map(model, RoleVM, Role)))
       .catch((e) => {
         throw new HttpException(
@@ -57,7 +57,7 @@ export class RoleService {
     return await this.repository.useHTTP().findOne(body.Id)
       .then(async () => {
         return await this.repository.useHTTP()
-          .save(body)
+          .save(body as any)
           .then(() => (this.mapper.map(body, RoleVM, RoleUM)))
           .catch(e => {
             throw new HttpException(

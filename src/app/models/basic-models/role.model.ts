@@ -9,11 +9,11 @@ export class Role extends BaseEntity {
     public id: string;
 
     @AutoMap()
-    @Column({ nullable: false })
+    @Column({ nullable: false, default:'jame'})
     public name: string;
 
     @AutoMap()
-    @Column({ length: 500 })
+    @Column({default:null})
     public description: string;
 
     @AutoMap(() => Account)

@@ -5,8 +5,8 @@ export * from './basic-repositories/account.repository';
 export * from './basic-repositories/role.repository';
 
 export const BASIC_REPOSITORY = [
-  AccountRepository,
-  RoleRepository,
+  AccountRepository.inject,
+  RoleRepository.inject,
 ];
 
 // import { WorkFlowRepository } from './bpmn-repositories/work-flow.repository';

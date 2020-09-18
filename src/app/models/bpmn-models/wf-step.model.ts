@@ -1,7 +1,9 @@
+import { AutoMap } from 'nestjsx-automapper';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -10,40 +12,52 @@ import {
 import { WFStepInstance } from './wf-step-instance.model';
 import { WF } from './wf.model';
 
+@Entity()
 export class WFStep extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   public id!: string;
 
-  @Column()
+  @AutoMap()
+  @Column({ default: null })
   public name: string;
 
-  @Column()
+  @AutoMap()
+  @Column({ default: null })
   public type: string;
 
-  @Column()
+  @AutoMap()
+  @Column({ default: null })
   public subType: string;
-  
-  @Column()
+
+  @AutoMap()
+  @Column({ default: null })
   public description: string;
 
+  @AutoMap()
   @ManyToOne(() => WF, wF => wF.wFStep)
   public wF: WF;
 
+  @AutoMap(() => WFStepInstance)
   @OneToMany(() => WFStep, wFStep => wFStep.wFStepsInstances)
   public wFStepsInstances: WFStepInstance[];
 
-  @Column()
+  @AutoMap()
+  @Column({ default: null })
   public createdBy: string;
 
-  @Column()
+  @AutoMap()
+  @Column({ default: null })
   public updatedBy: string;
 
+  @AutoMap()
   @Column({ default: false })
   public isDelete: boolean;
 
+  @AutoMap()
   @CreateDateColumn()
   public createdAt: Date;
 
+  @AutoMap()
   @UpdateDateColumn()
   public updatedAt: Date;
 }

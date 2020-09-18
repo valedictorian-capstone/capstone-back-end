@@ -1,40 +1,62 @@
+import { AutoMap } from 'nestjsx-automapper';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
+import { WFInstance } from './wf-instance';
 import { WFStep } from './wf-step.model';
 
-
+@Entity()
 export class WFStepInstance extends BaseEntity {
+  @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @Column()
+  @AutoMap()
+  @Column({ default: null })
   public status: string;
 
-  @Column()
+  @AutoMap()
+  @Column({ default: null })
   public note: string;
 
-  @ManyToOne(() => WFStep, wFStep => wFStep.wFStepsInstances)
+  @AutoMap()
+  @ManyToOne(
+    () => WFStep,
+    wFStep => wFStep.wFStepsInstances,
+  )
   public wFStep: WFStep;
 
-  @Column()
+  @AutoMap()
+  @ManyToOne(
+    () => WFInstance,
+    wFStep => wFStep.wFStepInstances,
+  )
+  public wFInstance: WFInstance;
+
+  @AutoMap()
+  @Column({ default: null })
   public createdBy: string;
 
-  @Column()
+  @AutoMap()
+  @Column({ default: null })
   public updatedBy: string;
 
+  @AutoMap()
   @Column({ default: false })
   public isDelete: boolean;
 
+  @AutoMap()
   @CreateDateColumn()
   public createdAt: Date;
 
+  @AutoMap()
   @UpdateDateColumn()
   public updatedAt: Date;
 }
