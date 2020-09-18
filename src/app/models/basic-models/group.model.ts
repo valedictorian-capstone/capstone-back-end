@@ -1,38 +1,34 @@
-import { Model, PrimaryKey, Column, HasMany, Default, CreatedAt, UpdatedAt, Table, IsUUID, Unique } from 'sequelize-typescript';
-import { uuid } from 'uuidv4';
-import { CustomerGroup } from './customer-group';
-@Table
-export class Group extends Model<Group> {
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Customer } from "./customer.model";
 
-    @IsUUID(4)
-    @Default(uuid)
-    @PrimaryKey
-    @Column
-    public Id!: string;
+@Entity()
+export class Group extends BaseEntity {
+    @PrimaryGeneratedColumn('uuid')
+    public id: string;
 
-    @Unique
-    @Column
-    public Name!: string;
+    @Column({ nullable: false })
+    public name!: string;
 
-    @Column
-    public Description!: string;
+    @Column()
+    public description!: string;
     
-    @HasMany(() => CustomerGroup)
-    public CustomerGroup!: CustomerGroup[];
+    @ManyToMany(() => Customer)
+    @JoinTable()
+    public customer: Customer[];
 
-    @Column
-    public CreatedBy: string;
-
-    @Column
-    public UpdatedBy: string;
-
-    @Default(false)
-    @Column
-    public IsDelete: boolean;
-
-    @CreatedAt
-    public CreatedAt: Date;
-
-    @UpdatedAt
-    public UpdatedAt: Date;
+    @Column()
+    public createdBy: string;
+  
+    @Column()
+    public updatedBy: string;
+  
+    @Column({ default: false })
+    public isDelete: boolean;
+  
+    @CreateDateColumn()
+    public createdAt: Date;
+  
+    @UpdateDateColumn()
+    public updatedAt: Date;
+  
 }

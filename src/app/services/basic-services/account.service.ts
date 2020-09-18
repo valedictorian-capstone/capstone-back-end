@@ -1,14 +1,14 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { AccountRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY } from '@types';
-import { AccountCM, AccountUM, AccountVM } from '@view-models';
 import { Account } from '@models';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AccountRepository } from '@repositories';
+import { AccountCM, AccountUM, AccountVM } from '@view-models';
+import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 
 @Injectable()
 export class AccountService {
   constructor(
-    @Inject(ACCOUNT_REPOSITORY) protected readonly repository: AccountRepository,
+    protected readonly repository: AccountRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) {}
 

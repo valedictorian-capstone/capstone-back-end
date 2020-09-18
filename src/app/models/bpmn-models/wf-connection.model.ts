@@ -1,7 +1,8 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Account } from "./account.model";
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { WFStep } from "./wf-step.model";
+
 @Entity()
-export class Role extends BaseEntity {
+export class WFConnection extends BaseEntity {
 
     @PrimaryGeneratedColumn('uuid')
     public id: string;
@@ -12,8 +13,14 @@ export class Role extends BaseEntity {
     @Column({ length: 500 })
     public description: string;
 
-    @ManyToMany(() => Account, Account => Account.roles)
-    public accounts: Account[];
+    @Column()
+    public type: string;
+
+    @OneToOne(() => WFStep)
+    public preWFStep: WFStep;
+
+    @OneToOne(() => WFStep)
+    public nxtWFStep: WFStep;
 
     @Column()
     public createdBy: string;

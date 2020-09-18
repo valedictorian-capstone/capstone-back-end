@@ -5,40 +5,40 @@ import { Role } from './role.model';
 export class Account extends BaseEntity {
 
     @PrimaryGeneratedColumn('uuid')
-    public Id: string;
+    public id: string;
 
     @Column({ nullable: false })
-    public Fullname!: string;
+    public fullname!: string;
 
     @Column({nullable: false, unique: true})
-    public Email!: string;
+    public email!: string;
 
     @Column({nullable: false, unique: true})
-    public Phone!: string;
+    public phone!: string;
 
     @Column({nullable: false})
-    public Password!: string;
+    public password!: string;
 
-    @ManyToMany(() => Role, Role => Role.Accounts)
-    public Roles: Role[];
-
-    @Column()
-    public CreatedBy: string;
+    @ManyToMany(() => Role, Role => Role.accounts)
+    public roles: Role[];
 
     @Column()
-    public UpdatedBy: string;
+    public createdBy: string;
+
+    @Column()
+    public updatedBy: string;
 
     @Column({default: false})
-    public IsDelete: boolean;
+    public isDelete: boolean;
 
     @CreateDateColumn()
-    public CreatedAt: Date;
+    public createdAt: Date;
 
     @UpdateDateColumn()
-    public UpdatedAt: Date;
+    public updatedAt: Date;
 
     @BeforeInsert()
     async hashPassword() {
-      this.Password = await hashSync(this.Password, 10);
+      this.password = await hashSync(this.password, 10);
     }
 }

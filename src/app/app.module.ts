@@ -6,8 +6,11 @@ import {
   EXTRA_CONTROLLERS
 } from '@controllers';
 import {
+  AccountRepository,
   BASIC_REPOSITORY,
-  BPMN_REPOSITORY
+  BPMN_REPOSITORY,
+  RoleRepository,
+  
 } from '@repositories';
 import {
   BASIC_SERVICES, BPMN_SERVICES, EXTRA_SERVICES
@@ -16,11 +19,14 @@ import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
 import { AutomapperModule } from 'nestjsx-automapper';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Role } from './models/basic-models/role.model';
+import { Account } from './models/basic-models/account.model';
 
 @Module({
   imports: [
     AutomapperModule.withMapper(),
-    TypeOrmModule.forRoot(AppProvider.init())
+    TypeOrmModule.forRoot(AppProvider.init()),
+    TypeOrmModule.forFeature([RoleRepository,Role, AccountRepository, Account])
   ],
   controllers: [
     ...BASIC_CONTROLLERS,

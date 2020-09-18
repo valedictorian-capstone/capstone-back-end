@@ -1,41 +1,45 @@
-import { Model, PrimaryKey, Column, HasMany, Default, CreatedAt, UpdatedAt, Table, IsUUID, Unique } from 'sequelize-typescript';
-import { uuid } from 'uuidv4';
-import { CustomerGroup } from './customer-group';
-@Table
-export class Customer extends Model<Customer> {
-    @IsUUID(4)
-    @Default(uuid)
-    @PrimaryKey
-    @Column
-    public Id!: string;
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Group } from './group.model';
 
-    @Column
-    public Fullname!: string;
+@Entity()
+export class Customer extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
 
-    @Unique
-    @Column
-    public Email!: string;
+  @Column({ nullable: false })
+  public fullname!: string;
 
-    @Unique
-    @Column
-    public Phone!: string;
+  @Column({ nullable: false, unique: true })
+  public email!: string;
 
-    @HasMany(() => CustomerGroup)
-    public CustomerGroup!: CustomerGroup[];
+  @Column({ nullable: false, unique: true })
+  public phone!: string;
 
-    @Column
-    public CreatedBy: string;
+  @ManyToMany(() => Group)
+  @JoinTable()
+  public customerGroup: Group[];
 
-    @Column
-    public UpdatedBy: string;
+  @Column()
+  public createdBy: string;
 
-    @Default(false)
-    @Column
-    public IsDelete: boolean;
+  @Column()
+  public updatedBy: string;
 
-    @CreatedAt
-    public CreatedAt: Date;
+  @Column({ default: false })
+  public isDelete: boolean;
 
-    @UpdatedAt
-    public UpdatedAt: Date;
+  @CreateDateColumn()
+  public createdAt: Date;
+
+  @UpdateDateColumn()
+  public updatedAt: Date;
 }

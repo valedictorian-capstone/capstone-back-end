@@ -1,11 +1,9 @@
-import { inject } from 'src/app/extras/functions';
 import { Role } from 'src/app/models';
-import { ROLE_REPOSITORY } from 'src/app/types';
-import { Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 
+@EntityRepository(Role)
 export class RoleRepository extends Repository<Role> {
-  constructor() {
-    super();
+  public readonly findOneCopy = (id:string):Promise<Role> => {
+    return this.findOne(id)
   }
-  public static readonly inject = inject(ROLE_REPOSITORY, RoleRepository);
 }
