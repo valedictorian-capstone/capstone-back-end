@@ -22,15 +22,15 @@ export class Role extends BaseEntity {
 
     @AutoMap()
     @Column({ default: 'crm' })
-    public areatedBy: string;
+    public createdBy: string;
 
     @AutoMap()
     @Column({ default: 'crm' })
-    public apdatedBy: string;
+    public updatedBy: string;
 
     @AutoMap()
     @Column({ default: false })
-    public asDelete: boolean;
+    public isDelete: boolean;
 
     @AutoMap()
     @CreateDateColumn()

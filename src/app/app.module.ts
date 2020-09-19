@@ -20,10 +20,7 @@ import { AccountMapper, RoleMapper } from './mappers';
 
 @Module({
   imports: [
-    AutomapperModule.withMapper({
-      sourceNamingConvention: PascalCaseNamingConvention,
-      destinationNamingConvention: PascalCaseNamingConvention
-    }),
+    AutomapperModule.withMapper(),
   ],
   controllers: [
     ...BASIC_CONTROLLERS,

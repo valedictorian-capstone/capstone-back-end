@@ -5,33 +5,33 @@ import { AccountVM } from "./account.view-model";
 
 export class RoleVM {
   @AutoMap()
-  public readonly Id: string;
+  public readonly id: string;
 
   @AutoMap()
-  public readonly Name: string;
+  public readonly name: string;
 
   @AutoMap()
   public readonly Description: string;
 
   @AutoMap(() => AccountVM)
-  public readonly Accounts: AccountVM[];
+  public readonly accounts: AccountVM[];
 
   // public readonly RolePermissionVMs: RolePermissionVM[];
 
   @AutoMap()
-  public readonly IsDelete!: boolean;
+  public readonly isDelete!: boolean;
 
   @AutoMap()
-  public readonly CreatedBy!: string;
+  public readonly createdBy!: string;
 
   @AutoMap()
-  public readonly UpdatedBy!: string;
+  public readonly updatedBy!: string;
 
   @AutoMap()
-  public readonly CreatedAt!: Date;
+  public readonly createdAt!: Date;
 
   @AutoMap()
-  public readonly UpdatedAt!: Date;
+  public readonly updatedAt!: Date;
 }
 
 export class RoleCM {
