@@ -26,7 +26,7 @@ export class AccountService {
           return this.mapper.map(model, AccountVM, Account);
         }
         throw new NotFoundException(
-          `Error at [AccountController] [findById function] with [message]: Can not find ${id}`,
+          `Error at [AccountService] [findById function] with [message]: Can not find ${id}`,
         );
       })
   };

@@ -31,7 +31,7 @@ export class FormControl extends BaseEntity {
   @ManyToOne(() => FormGroup, formGroup => formGroup.formControls)
   public formGroup: FormGroup;
 
-  @AutoMap()
+  @AutoMap(() => FormValue)
   @OneToMany(() =>FormValue, formValues => formValues.formControl)
   public formValues: FormValue[];
 
