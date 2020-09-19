@@ -1,7 +1,7 @@
 import { AccountWFStepInstanceVM } from "./account-work-flow-step-instance.view-model";
 import { CommentVM } from "./comment.view-model";
 import { CustomerWFStepInstanceVM } from "./customer-work-flow--step-instance.view-model";
-import { FormDataVM } from "./form-data.view-model";
+import { FormDataVM } from "../form-view-models/form-data.view-model";
 
 export class WFStepInstanceVM {
   public readonly Id!: string;

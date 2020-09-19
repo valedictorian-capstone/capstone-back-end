@@ -18,13 +18,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
-import { IAccountController } from '@interfaces';
 import { AccountService } from '@services';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Account')
 @Controller('/api/v1/Account')
-export class AccountController implements IAccountController {
+export class AccountController{
   constructor(
     protected service: AccountService,
   ) {}
