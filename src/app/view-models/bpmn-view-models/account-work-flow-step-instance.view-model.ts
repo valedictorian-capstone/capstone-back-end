@@ -1,7 +1,7 @@
-export class AccountWorkFlowStepInstanceVM {
+export class AccountWFStepInstanceVM {
   public readonly Id!: string;
   public readonly AccountId!: string;
-  public readonly WorkFlowStepInstanceId!: string;
+  public readonly WFStepInstanceId!: string;
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
   public readonly UpdatedBy!: string;
@@ -9,13 +9,13 @@ export class AccountWorkFlowStepInstanceVM {
   public readonly UpdatedAt!: Date;
 }
 
-export class AccountWorkFlowStepInstanceCM {
+export class AccountWFStepInstanceCM {
   public readonly AccountId!: string;
-  public readonly WorkFlowStepInstanceId!: string;
+  public readonly WFStepInstanceId!: string;
 }
 
-export class AccountWorkFlowStepInstanceUM {
+export class AccountWFStepInstanceUM {
   public readonly Id!: string;
   public readonly AccountId!: string;
-  public readonly WorkFlowStepInstanceId!: string;
+  public readonly WFStepInstanceId!: string;
 }

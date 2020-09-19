@@ -1,7 +1,7 @@
 export class CommentVM {
   public readonly Id!: string;
   public readonly AccountId!: string;
-  public readonly WorkFlowStepInstanceId!: string;
+  public readonly WFStepInstanceId!: string;
   public readonly Value!: string;
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
@@ -12,13 +12,13 @@ export class CommentVM {
 
 export class CommentCM {
   public readonly AccountId!: string;
-  public readonly WorkFlowStepInstanceId!: string;
+  public readonly WFStepInstanceId!: string;
   public readonly Value!: string;
 }
 
 export class CommentUM {
   public readonly Id!: string;
   public readonly AccountId!: string;
-  public readonly WorkFlowStepInstanceId!: string;
+  public readonly WFStepInstanceId!: string;
   public readonly Value!: string;
 }

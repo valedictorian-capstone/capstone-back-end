@@ -1,6 +1,6 @@
 import { FormControlVM } from "./form-control.view-model";
 import { FormDataVM } from "./form-data.view-model";
-import { FormGroupWorkFlowStepVM } from "./form-group-work-flow-step.view-model";
+import { FormGroupWFStepVM } from "./form-group-work-flow-step.view-model";
 
 export class FormGroupVM {
   public readonly Id!: string;
@@ -8,7 +8,7 @@ export class FormGroupVM {
   public readonly Description!: string;
   public readonly FormControlVMs!: FormControlVM[];
   public readonly FormDataVMs!: FormDataVM[];
-  public readonly FormGroupWorkFlowStepVMs!: FormGroupWorkFlowStepVM[];
+  public readonly FormGroupWFStepVMs!: FormGroupWFStepVM[];
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
   public readonly UpdatedBy!: string;

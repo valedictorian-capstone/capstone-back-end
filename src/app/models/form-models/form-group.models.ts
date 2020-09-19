@@ -28,10 +28,10 @@ export class FormGroup extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
-  @AutoMap()
-  @ManyToMany(() => WFStep)
+  @AutoMap(()=> WFStep)
+  @ManyToMany(()=> WFStep, wFStep => wFStep.formGroups)
   @JoinTable()
-  public wFSteps: WFStep[]
+  public wfSteps: WFStep[];
 
   @AutoMap()
   @OneToMany(() => FormControl, formControl => formControl.formGroup)

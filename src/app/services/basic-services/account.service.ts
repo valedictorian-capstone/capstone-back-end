@@ -8,25 +8,20 @@ import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 @Injectable()
 export class AccountService {
   constructor(
-    @Inject(ACCOUNT_REPOSITORY)protected readonly repository: AccountRepository,
+    @Inject(ACCOUNT_REPOSITORY) protected readonly repository: AccountRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
-  ) {}
+  ) { }
 
   public readonly findAll = async (): Promise<AccountVM[]> => {
     return await this.repository.useHTTP().find()
       .then((models) => this.mapper.mapArray(models, AccountVM, Account))
-      .catch((e) => {
-        throw new HttpException(
-          `Error at [AccountController] [findAll function] with [message]: ${e.message}`,
-          HttpStatus.BAD_REQUEST
-        );
-      });
   };
 
   public readonly findById = async (id: string): Promise<AccountVM> => {
     return await this.repository.useHTTP().findOne(id)
       .then((model) => {
-        if (model !== null) {
+        console.log(model)
+        if (model) {
           return this.mapper.map(model, AccountVM, Account);
         }
         throw new HttpException(
@@ -34,38 +29,19 @@ export class AccountService {
           HttpStatus.NOT_FOUND
         );
       })
-      .catch((e) => {
-        throw new HttpException(
-          `Error at [AccountController] [findById function] with [message]: ${e.message}`,
-          HttpStatus.BAD_REQUEST
-        );
-      });
   };
 
   public readonly insert = (body: AccountCM): Promise<AccountVM> => {
     return this.repository.useHTTP().insert(body)
       .then((model) => (this.mapper.map(model, AccountVM, Account as any)))
-      .catch((e) => {
-        throw new HttpException(
-          `Error at [AccountController] [insert function] with [message]: ${e.message}`,
-          HttpStatus.BAD_REQUEST
-        );
-      });
   };
 
   public readonly update = async (body: AccountUM): Promise<AccountVM> => {
-    return await this.repository.useHTTP().findOne(body.Id)
+    return await this.repository.useHTTP().findOne(body.id)
       .then(async () => {
         return await this.repository.useHTTP()
           .save(body)
           .then(() => (this.mapper.map(body, AccountVM, AccountUM)))
-          .catch(e => {
-            throw new HttpException(
-              'Error at [AccountController] [update function] with [message]: ' +
-              e.message,
-              HttpStatus.BAD_REQUEST,
-            );
-          });
       });
   };
 
@@ -80,13 +56,6 @@ export class AccountService {
               HttpStatus.CREATED,
             );
           })
-          .catch(e => {
-            throw new HttpException(
-              'Error at [AccountController] [remove function] with [message]: ' +
-              e.message,
-              HttpStatus.BAD_REQUEST,
-            );
-          });
       });
   };
 
@@ -94,20 +63,13 @@ export class AccountService {
     return await this.repository.useHTTP().findOne(id)
       .then(async (model) => {
         return await this.repository.useHTTP()
-          .save({...model, IsDelete: false})
+          .save({ ...model, IsDelete: false })
           .then(() => {
             throw new HttpException(
               `Update information of ${id} successfully !!!`,
               HttpStatus.CREATED,
             );
           })
-          .catch(e => {
-            throw new HttpException(
-              'Error at [AccountController] [active function] with [message]: ' +
-              e.message,
-              HttpStatus.BAD_REQUEST,
-            );
-          });
       });
   };
 
@@ -115,20 +77,13 @@ export class AccountService {
     return await this.repository.useHTTP().findOne(id)
       .then(async (model) => {
         return await this.repository.useHTTP()
-          .save({...model, IsDelete: true})
+          .save({ ...model, IsDelete: true })
           .then(() => {
             throw new HttpException(
               `Update information of ${id} successfully !!!`,
               HttpStatus.CREATED,
             );
           })
-          .catch(e => {
-            throw new HttpException(
-              'Error at [AccountController] [deactive function] with [message]: ' +
-              e.message,
-              HttpStatus.BAD_REQUEST,
-            );
-          });
       });
   };
 }

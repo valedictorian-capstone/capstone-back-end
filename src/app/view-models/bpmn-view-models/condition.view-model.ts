@@ -1,10 +1,10 @@
-import { WorkFlowConditionVM } from "./work-flow-condition.view-model";
+import { WFConditionVM } from "./work-flow-condition.view-model";
 
 export class ConditionVM {
   public readonly Id!: string;
   public readonly Name!: string;
   public readonly Value!: string;
-  public readonly WorkFlowConditionVMs!: WorkFlowConditionVM[];
+  public readonly WFConditionVMs!: WFConditionVM[];
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
   public readonly UpdatedBy!: string;

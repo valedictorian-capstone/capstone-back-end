@@ -17,7 +17,7 @@ export class Role extends BaseEntity {
     public description: string;
 
     @AutoMap(() => Account)
-    @ManyToMany(() => Account, account => account.Roles)
+    @ManyToMany(() => Account, account => account.roles)
     public accounts: Account[];
 
     @AutoMap()

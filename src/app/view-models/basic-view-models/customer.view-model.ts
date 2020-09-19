@@ -1,6 +1,6 @@
 import { CustomerExtraInformationVM } from "./customer-extra-information.view-model";
 import { CustomerExtraDataVM } from './customer-extra-data.view-model';
-import { CustomerWorkFlowStepInstanceVM } from "../bpmn-view-models";
+import { CustomerWFStepInstanceVM } from "../bpmn-view-models";
 import { CustomerGroupVM } from "./customer-group.view-model";
 
 export class CustomerVM {
@@ -15,7 +15,7 @@ export class CustomerVM {
   public readonly CustomerExtraInformationVMs!: CustomerExtraInformationVM[];
   public readonly CustomerGroupVMs!: CustomerGroupVM[];
   public readonly CustomerExtraDataVMs!: CustomerExtraDataVM[];
-  public readonly CustomerWorkFlowStepInstanceVMs!: CustomerWorkFlowStepInstanceVM[];
+  public readonly CustomerWFStepInstanceVMs!: CustomerWFStepInstanceVM[];
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
   public readonly UpdatedBy!: string;

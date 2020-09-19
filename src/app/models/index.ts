@@ -8,6 +8,8 @@ import { WFConnection } from './bpmn-models/wf-connection.model';
 import { WFInstance } from './bpmn-models/wf-instance';
 import { WFStep } from './bpmn-models/wf-step.model';
 import { WFStepInstance } from './bpmn-models/wf-step-instance.model';
+import { FormGroup } from './form-models/form-group.models';
+import { FormControl } from './form-models/form-control.models';
 
 
 export * from './basic-models/account.model';
@@ -21,3 +23,4 @@ export * from './basic-models/role.model';
 
 export const BASIC_MODELS = [Account, Role, Group, Customer];
 export const BPMN_MODELS = [WF, WFCondition, WFConnection, WFInstance, WFStep, WFStepInstance];
+export const FORM_MODELS = [FormGroup, FormControl];

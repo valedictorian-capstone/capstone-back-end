@@ -1,7 +1,7 @@
-export class PermissionWorkFlowStepVM {
+export class PermissionWFStepVM {
   public readonly Id!: string;
   public readonly PermissionId!: string;
-  public readonly WorkFlowStepId!: string;
+  public readonly WFStepId!: string;
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
   public readonly UpdatedBy!: string;
@@ -9,13 +9,13 @@ export class PermissionWorkFlowStepVM {
   public readonly UpdatedAt!: Date;
 }
 
-export class PermissionWorkFlowStepCM {
+export class PermissionWFStepCM {
   public readonly PermissionId!: string;
-  public readonly WorkFlowStepId!: string;
+  public readonly WFStepId!: string;
 }
 
-export class PermissionWorkFlowStepUM {
+export class PermissionWFStepUM {
   public readonly Id!: string;
   public readonly PermissionId!: string;
-  public readonly WorkFlowStepId!: string;
+  public readonly WFStepId!: string;
 }

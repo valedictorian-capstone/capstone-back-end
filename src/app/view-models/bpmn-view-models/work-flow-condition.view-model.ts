@@ -1,7 +1,7 @@
-export class WorkFlowConditionVM {
+export class WFConditionVM {
   public readonly Id!: string;
   public readonly ConditionId!: string;
-  public readonly WorkFlowId!: string;
+  public readonly WFId!: string;
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
   public readonly UpdatedBy!: string;
@@ -9,13 +9,13 @@ export class WorkFlowConditionVM {
   public readonly UpdatedAt!: Date;
 }
 
-export class WorkFlowConditionCM {
+export class WFConditionCM {
   public readonly ConditionId!: string;
-  public readonly WorkFlowId!: string;
+  public readonly WFId!: string;
 }
 
-export class WorkFlowConditionUM {
+export class WFConditionUM {
   public readonly Id!: string;
   public readonly ConditionId!: string;
-  public readonly WorkFlowId!: string;
+  public readonly WFId!: string;
 }
