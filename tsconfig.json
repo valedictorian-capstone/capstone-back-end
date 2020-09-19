@@ -23,6 +23,7 @@
 			"@types": ["src/app/types"],
       "@services": ["src/app/services"],
       "@mappers": ["src/app/mappers"],
+      "@exceptions": ["src/app/exceptions"],
     }
   },
   "include": ["src/**/*.ts"],

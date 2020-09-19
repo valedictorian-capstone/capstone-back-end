@@ -4,6 +4,7 @@ import { AccountRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY } from '@types';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { NotFoundException } from '@exceptions';
 
 @Injectable()
 export class AccountService {
@@ -24,9 +25,8 @@ export class AccountService {
         if (model) {
           return this.mapper.map(model, AccountVM, Account);
         }
-        throw new HttpException(
+        throw new NotFoundException(
           `Error at [AccountController] [findById function] with [message]: Can not find ${id}`,
-          HttpStatus.NOT_FOUND
         );
       })
   };

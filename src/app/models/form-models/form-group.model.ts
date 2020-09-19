@@ -11,7 +11,8 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { WFStep } from '../bpmn-models/wf-step.model';
-import { FormControl } from './form-control.models';
+import { FormControl } from './form-control.model';
+import { FormData } from './form-data.model';
 
 @Entity()
 export class FormGroup extends BaseEntity {
@@ -33,9 +34,13 @@ export class FormGroup extends BaseEntity {
   @JoinTable()
   public wfSteps: WFStep[];
 
-  @AutoMap()
+  @AutoMap(() => FormControl)
   @OneToMany(() => FormControl, formControl => formControl.formGroup)
   public formControls: FormControl[]
+
+  @AutoMap(() => FormData)
+  @OneToMany(() => FormData, formData => formData.formGroup)
+  public formData: FormData[];
 
   @AutoMap()
   @Column({ default: null })

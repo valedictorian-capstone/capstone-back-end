@@ -10,7 +10,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { FormGroup } from '../form-models/form-group.models';
+import { FormGroup } from '../form-models/form-group.model';
+
+
 import { WFStepInstance } from './wf-step-instance.model';
 import { WF } from './wf.model';
 
