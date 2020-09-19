@@ -5,10 +5,12 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { FormGroup } from './form-group.models';
+import { FormGroup } from './form-group.model';
+import { FormValue } from './form-value.model';
 
 @Entity()
 export class FormControl extends BaseEntity {
@@ -25,8 +27,13 @@ export class FormControl extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
+  @AutoMap(() => FormGroup)
   @ManyToOne(() => FormGroup, formGroup => formGroup.formControls)
   public formGroup: FormGroup;
+
+  @AutoMap()
+  @OneToMany(() =>FormValue, formValues => formValues.formControl)
+  public formValues: FormValue[];
 
   @AutoMap()
   @Column({ default: null })
