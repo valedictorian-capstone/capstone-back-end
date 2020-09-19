@@ -1,56 +1,77 @@
-import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { hashSync } from 'bcrypt';
-import { Role } from './role.model';
 import { AutoMap } from 'nestjsx-automapper';
+import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Role } from './role.model';
 @Entity()
 export class Account extends BaseEntity {
 
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
-  public Id: string;
+  public id: string;
 
   @AutoMap()
-  @Column({ nullable: false })
-  public Fullname!: string;
+  @Column({ nullable: false, default: '' })
+  public fullname!: string;
 
   @AutoMap()
-  @Column({ nullable: false, unique: true })
-  public Email!: string;
+  @Column({ nullable: false, unique: true, default: '' })
+  public email!: string;
+  @Column({ nullable: false, unique: true, default: '' })
 
   @AutoMap()
-  @Column({ nullable: false, unique: true })
-  public Phone!: string;
+  @Column({ default: '' })
+  public phone: string;
 
   @AutoMap()
-  @Column({ nullable: false })
-  public Password!: string;
+  @Column({ default: '' })
+  public code: string;
+
+  @AutoMap()
+  @Column({ default: '' })
+  public position: string;
+
+  @AutoMap()
+  @Column({ default: '' })
+  public avatar: string;
+
+  @AutoMap()
+  @Column({ default: '' })
+  public address: string;
+
+  @AutoMap()
+  @Column({ default: '' })
+  public gender: string;
+
+  @Column({ nullable: false, default: '1' })
+  public password!: string;
 
   @AutoMap(() => Role)
   @ManyToMany(() => Role, Role => Role.accounts)
-  public Roles: Role[];
+  @JoinTable()
+  public roles: Role[];
 
   @AutoMap()
   @Column({ default: 'admin' })
-  public CreatedBy: string;
+  public createdBy: string;
 
   @AutoMap()
   @Column({ default: null })
-  public UpdatedBy: string;
+  public updatedBy: string;
 
   @AutoMap()
   @Column({ default: false })
-  public IsDelete: boolean;
+  public isDelete: boolean;
 
   @AutoMap()
   @CreateDateColumn()
-  public CreatedAt: Date;
+  public createdAt: Date;
 
   @AutoMap()
   @UpdateDateColumn()
-  public UpdatedAt: Date;
+  public updatedAt: Date;
 
   @BeforeInsert()
   async hashPassword() {
-    this.Password = await hashSync(this.Password, 10);
+    this.password = await hashSync(this.password, 10);
   }
 }

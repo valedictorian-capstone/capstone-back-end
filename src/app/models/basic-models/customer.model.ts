@@ -30,9 +30,8 @@ export class Customer extends BaseEntity {
   public phone: string;
 
   @AutoMap(() => Group)
-  @ManyToMany(() => Group)
-  @JoinTable()
-  public customerGroup: Group[];
+  @ManyToMany(() => Group, group => group.customers)
+  public customerGroups: Group[];
 
   @AutoMap()
   @Column({ default: null })

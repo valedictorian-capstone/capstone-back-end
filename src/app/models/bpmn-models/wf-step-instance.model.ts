@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { WFInstance } from './wf-instance';
 import { WFStep } from './wf-step.model';
+import { FormData } from '../form-models/form-data.model';
 
 @Entity()
 export class WFStepInstance extends BaseEntity {
@@ -39,6 +40,10 @@ export class WFStepInstance extends BaseEntity {
     wFStep => wFStep.wFStepInstances,
   )
   public wFInstance: WFInstance;
+
+  @AutoMap(() => FormData)
+  @OneToMany(() => FormData, formDatas => formDatas.wFStepInstance)
+  public formDatas: FormData[];
 
   @AutoMap()
   @Column({ default: null })

@@ -1,19 +1,19 @@
-import { FormGroupWorkFlowStepVM } from "./form-group-work-flow-step.view-model";
-import { PermissionWorkFlowStepVM } from "./permission-work-flow-step.view-model";
-import { WorkFlowConnectionVM } from "./work-flow-connection.view-model";
-import { WorkFlowStepInstanceVM } from "./work-flow-step-instance.view-model";
+import { FormGroupWFStepVM } from "./form-group-work-flow-step.view-model";
+import { PermissionWFStepVM } from "./permission-work-flow-step.view-model";
+import { WFConnectionVM } from "./work-flow-connection.view-model";
+import { WFStepInstanceVM } from "./work-flow-step-instance.view-model";
 
-export class WorkFlowStepVM {
+export class WFStepVM {
   public readonly Id!: string;
   public readonly Name!: string;
   public readonly Description!: string;
   public readonly Type!: string;
   public readonly SubType!: string;
-  public readonly WorkFlowId!: string;
-  public readonly WorkFlowConnectionVMs!: WorkFlowConnectionVM[];
-  public readonly WorkFlowStepInstanceVMs!: WorkFlowStepInstanceVM[];
-  public readonly PermissionWorkFlowStepVMs!: PermissionWorkFlowStepVM[];
-  public readonly FormGroupWorkFlowStepVMs!: FormGroupWorkFlowStepVM[];
+  public readonly WFId!: string;
+  public readonly WFConnectionVMs!: WFConnectionVM[];
+  public readonly WFStepInstanceVMs!: WFStepInstanceVM[];
+  public readonly PermissionWFStepVMs!: PermissionWFStepVM[];
+  public readonly FormGroupWFStepVMs!: FormGroupWFStepVM[];
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
   public readonly UpdatedBy!: string;
@@ -21,19 +21,19 @@ export class WorkFlowStepVM {
   public readonly UpdatedAt!: Date;
 }
 
-export class WorkFlowStepCM {
+export class WFStepCM {
   public readonly Name!: string;
   public readonly Description!: string;
   public readonly Type!: string;
   public readonly SubType!: string;
-  public readonly WorkFlowId!: string;
+  public readonly WFId!: string;
 }
 
-export class WorkFlowStepUM {
+export class WFStepUM {
   public readonly Id!: string;
   public readonly Name!: string;
   public readonly Description!: string;
   public readonly Type!: string;
   public readonly SubType!: string;
-  public readonly WorkFlowId!: string;
+  public readonly WFId!: string;
 }

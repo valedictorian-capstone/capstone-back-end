@@ -4,11 +4,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { FormGroup } from '../form-models/form-group.model';
+
+
 import { WFStepInstance } from './wf-step-instance.model';
 import { WF } from './wf.model';
 
@@ -40,6 +44,10 @@ export class WFStep extends BaseEntity {
   @AutoMap(() => WFStepInstance)
   @OneToMany(() => WFStep, wFStep => wFStep.wFStepsInstances)
   public wFStepsInstances: WFStepInstance[];
+
+  @AutoMap(() => FormGroup)
+  @ManyToMany(() => FormGroup, formGroup => formGroup.wfSteps)
+  public formGroups: FormGroup[];
 
   @AutoMap()
   @Column({ default: null })

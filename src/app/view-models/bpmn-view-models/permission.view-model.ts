@@ -1,11 +1,11 @@
-import { PermissionWorkFlowStepVM } from "./permission-work-flow-step.view-model";
+import { PermissionWFStepVM } from "./permission-work-flow-step.view-model";
 import { RolePermissionVM } from "./role-permission.view-model";
 
 export class PermissionVM {
   public readonly Id!: string;
   public readonly Name!: string;
   public readonly Description!: string;
-  public readonly PermissionWorkFlowStepVMs!: PermissionWorkFlowStepVM[];
+  public readonly PermissionWFStepVMs!: PermissionWFStepVM[];
   public readonly RolePermissionVMs!: RolePermissionVM[];
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;

@@ -1,17 +1,17 @@
-import { AccountWorkFlowStepInstanceVM } from "./account-work-flow-step-instance.view-model";
+import { AccountWFStepInstanceVM } from "./account-work-flow-step-instance.view-model";
 import { CommentVM } from "./comment.view-model";
-import { CustomerWorkFlowStepInstanceVM } from "./customer-work-flow--step-instance.view-model";
+import { CustomerWFStepInstanceVM } from "./customer-work-flow--step-instance.view-model";
 import { FormDataVM } from "./form-data.view-model";
 
-export class WorkFlowStepInstanceVM {
+export class WFStepInstanceVM {
   public readonly Id!: string;
   public readonly Status!: string;
   public readonly Note!: string;
-  public readonly WorkFlowStepId!: string;
-  public readonly WorkFlowInstanceId!: string;
+  public readonly WFStepId!: string;
+  public readonly WFInstanceId!: string;
   public readonly CommentVMs!: CommentVM[];
-  public readonly CustomerWorkFlowStepInstanceVMs!: CustomerWorkFlowStepInstanceVM[];
-  public readonly AccountWorkFlowStepInstanceVMs!: AccountWorkFlowStepInstanceVM[];
+  public readonly CustomerWFStepInstanceVMs!: CustomerWFStepInstanceVM[];
+  public readonly AccountWFStepInstanceVMs!: AccountWFStepInstanceVM[];
   public readonly FormDataVMs!: FormDataVM[];
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
@@ -20,17 +20,17 @@ export class WorkFlowStepInstanceVM {
   public readonly UpdatedAt!: Date;
 }
 
-export class WorkFlowStepInstanceCM {
+export class WFStepInstanceCM {
   public readonly Status!: string;
   public readonly Note!: string;
-  public readonly WorkFlowStepId!: string;
-  public readonly WorkFlowInstanceId!: string;
+  public readonly WFStepId!: string;
+  public readonly WFInstanceId!: string;
 }
 
-export class WorkFlowStepInstanceUM {
+export class WFStepInstanceUM {
   public readonly Id!: string;
   public readonly Status!: string;
   public readonly Note!: string;
-  public readonly WorkFlowStepId!: string;
-  public readonly WorkFlowInstanceId!: string;
+  public readonly WFStepId!: string;
+  public readonly WFInstanceId!: string;
 }

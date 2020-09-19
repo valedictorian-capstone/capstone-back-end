@@ -2,7 +2,7 @@ import { FormValueVM } from "./form-value.view-model";
 
 export class FormDataVM {
   public readonly Id!: string;
-  public readonly WorkFlowStepInstanceId!: string;
+  public readonly WFStepInstanceId!: string;
   public readonly FormGroupId!: string;
   public readonly FormValueVMs!: FormValueVM[];
   public readonly IsDelete!: boolean;
@@ -13,12 +13,12 @@ export class FormDataVM {
 }
 
 export class FormDataCM {
-  public readonly WorkFlowStepInstanceId!: string;
+  public readonly WFStepInstanceId!: string;
   public readonly FormGroupId!: string;
 }
 
 export class FormDataUM {
   public readonly Id!: string;
-  public readonly WorkFlowStepInstanceId!: string;
+  public readonly WFStepInstanceId!: string;
   public readonly FormGroupId!: string;
 }

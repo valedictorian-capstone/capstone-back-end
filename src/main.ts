@@ -1,11 +1,14 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from 'src/app/app.module';
+import { AllExceptionsFilter } from '@extras/filters';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from 'src/app/app.module';
 declare const module: any;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const open = require("open");
 (async () => {
   const app = await NestFactory.create(AppModule);
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter())
   const options = new DocumentBuilder()
     .setTitle('CRM BE')
     .setDescription('ALL API OF CRM')

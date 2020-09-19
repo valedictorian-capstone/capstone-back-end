@@ -1,6 +1,6 @@
-export class FormGroupWorkFlowStepVM {
+export class FormGroupWFStepVM {
   public readonly Id!: string;
-  public readonly WorkFlowStepId!: string;
+  public readonly WFStepId!: string;
   public readonly FormGroupId!: string;
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
@@ -9,13 +9,13 @@ export class FormGroupWorkFlowStepVM {
   public readonly UpdatedAt!: Date;
 }
 
-export class FormGroupWorkFlowStepCM {
-  public readonly WorkFlowStepId!: string;
+export class FormGroupWFStepCM {
+  public readonly WFStepId!: string;
   public readonly FormGroupId!: string;
 }
 
-export class FormGroupWorkFlowStepUM {
+export class FormGroupWFStepUM {
   public readonly Id!: string;
-  public readonly WorkFlowStepId!: string;
+  public readonly WFStepId!: string;
   public readonly FormGroupId!: string;
 }

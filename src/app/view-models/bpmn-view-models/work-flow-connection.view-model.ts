@@ -1,31 +1,31 @@
-export class WorkFlowConnectionVM {
+export class WFConnectionVM {
   public readonly Id!: string;
   public readonly Type!: string;
   public readonly Description!: string;
-  public readonly FromWorkFlowStepId!: string;
-  public readonly ToWorkFlowStepId!: string;
+  public readonly FromWFStepId!: string;
+  public readonly ToWFStepId!: string;
   public readonly IsDelete!: boolean;
   public readonly CreatedBy!: string;
   public readonly UpdatedBy!: string;
   public readonly CreatedAt!: Date;
   public readonly UpdatedAt!: Date;
 
-  constructor(props: Partial<WorkFlowConnectionVM>) {
+  constructor(props: Partial<WFConnectionVM>) {
     Object.assign(this, props);
   }
 }
 
-export class WorkFlowConnectionCM {
+export class WFConnectionCM {
   public readonly Type!: string;
   public readonly Description!: string;
-  public readonly FromWorkFlowStepId!: string;
-  public readonly ToWorkFlowStepId!: string;
+  public readonly FromWFStepId!: string;
+  public readonly ToWFStepId!: string;
 }
 
-export class WorkFlowConnectionUM {
+export class WFConnectionUM {
   public readonly Id!: string;
   public readonly Type!: string;
   public readonly Description!: string;
-  public readonly FromWorkFlowStepId!: string;
-  public readonly ToWorkFlowStepId!: string;
+  public readonly FromWFStepId!: string;
+  public readonly ToWFStepId!: string;
 }
