@@ -1,0 +1,13 @@
+{
+    "watch": ["src"],
+    "ext": "ts",
+    "ignore": ["src/**/*.spec.ts"],
+    "exec": "node --inspect -r tsconfig-paths/register -r ts-node/register src/main.ts",
+    "env": {
+        "GGCLOUD_SQL_HOST": "localhost",
+        "GGCLOUD_SQL_POST": "3306",
+        "GGCLOUD_SQL_USERNAME": "root",
+        "GGCLOUD_SQL_PASS": "123456",
+        "GGCLOUD_SQL_DATABASE": "crm"
+    }
+}
