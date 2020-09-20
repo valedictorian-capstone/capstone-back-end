@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { RolePermissionVM } from "../bpmn-view-models";
 import { AccountVM } from "./account.view-model";
 
 export class RoleVM {
@@ -37,20 +36,20 @@ export class RoleVM {
 export class RoleCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 8 })
-  public readonly Name: string;
+  public readonly name: string;
 
   @ApiProperty({ required: false, format: 'string', minLength: 8 })
-  public readonly Description: string;
+  public readonly description: string;
 }
 
 export class RoleUM {
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
-  public readonly Id: string;
+  public readonly id: string;
   
   @ApiProperty({ required: true, format: 'string', minLength: 8 })
-  public readonly Name: string;
+  public readonly name: string;
 
   @ApiProperty({ required: false, format: 'string', minLength: 8 })
-  public readonly Description: string;
+  public readonly description: string;
 }

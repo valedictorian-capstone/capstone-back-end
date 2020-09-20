@@ -32,15 +32,16 @@ export class RoleService {
 
   public readonly insert = (body: RoleCM): Promise<RoleVM> => {
     return this.repository.useHTTP().save(body as any)
-      .then((model) => (this.mapper.map(model, RoleVM, Role)))
+      .then((model) => {return this.mapper.map(model, RoleVM, Role)}).catch()
   };
 
   public readonly update = async (body: RoleUM): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne(body.Id)
+    return await this.repository.useHTTP().findOne(body.id)
       .then(async () => {
         return await this.repository.useHTTP()
           .save(body as any)
-          .then(() => (this.mapper.map(body, RoleVM, RoleUM)))
+          .then((model) => (this.mapper.map(model, RoleVM, Role)))
+          .catch()
       });
   };
 

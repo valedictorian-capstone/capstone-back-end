@@ -13,9 +13,18 @@ import { FormData } from './form-models/form-data.model'
 import { FormGroup } from './form-models/form-group.model'
 import { FormValue } from './form-models/form-value.model'
 
-
+//basic model export
 export * from './basic-models/account.model';
 export * from './basic-models/role.model';
+
+//bmn model export
+export * from './bpmn-models/wf.model'
+export * from './bpmn-models/wf-condition.model'
+export * from './bpmn-models/wf-connection.model'
+export * from './bpmn-models/wf-instance'
+export * from './bpmn-models/wf-step-instance.model'
+export * from './bpmn-models/wf-step.model'
+
 
 
 // export * from './basic-models/customer.model';
