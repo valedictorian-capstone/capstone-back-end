@@ -1,24 +1,24 @@
-import { WF } from "@models";
+import { WFInstance } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { WF_REPOSITORY } from "@types";
-import { WFCM, WFUM, WFVM } from "@view-models";
+import { WF_INSTANCE_REPOSITORY } from "@types";
+import { WFInstanceCM, WFInstanceUM, WFInstanceVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
-import { WFRepository } from "src/app/repositories/bpmn-repositories/wf.repository";
+import { WFInstanceRepository } from "@repositories";
 
 @Injectable()
-export class WFService {
+export class WFInstanceService {
 
   constructor(
-    @Inject(WF_REPOSITORY) protected readonly wfRepository: WFRepository,
+    @Inject(WF_INSTANCE_REPOSITORY) protected readonly wfRepository: WFInstanceRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<WFVM[]> => {
+  public readonly findAll = async (): Promise<WFInstanceVM[]> => {
     return await this.wfRepository.useHTTP().find()
-      .then((models) => this.mapper.mapArray(models, WFVM, WF))
+      .then((models) => this.mapper.mapArray(models, WFInstanceVM, WFInstance))
   }
 
-  public readonly findById = async (id: string): Promise<WFVM> => {
+  public readonly findById = async (id: string): Promise<WFInstanceVM> => {
     return await this.wfRepository.useHTTP().findOne({id: id})
       .then((model) => {
         if (!model) {
@@ -26,17 +26,17 @@ export class WFService {
             `Can not find ${id}`,
           );
         } else {
-          return this.mapper.map(model, WFVM, WF)
+          return this.mapper.map(model, WFInstanceVM, WFInstance)
         }
       })
   }
 
-  public readonly insert = async (body: WFCM): Promise<WFVM> => {
+  public readonly insert = async (body: WFInstanceCM): Promise<WFInstanceVM> => {
     return await this.wfRepository.useHTTP().insert(body as any)
-      .then((model) => this.mapper.map(model.generatedMaps[0], WFVM, WF))
+      .then((model) => this.mapper.map(model.generatedMaps[0], WFInstanceVM, WFInstance))
   }
 
-  public readonly update = async (body: WFUM): Promise<WFVM> => {
+  public readonly update = async (body: WFInstanceUM): Promise<WFInstanceVM> => {
     return await this.wfRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -46,7 +46,7 @@ export class WFService {
         }
         return await this.wfRepository.useHTTP()
           .save(body)
-          .then((model) => (this.mapper.map(model, WFVM, WF)))
+          .then((model) => (this.mapper.map(model, WFInstanceVM, WFInstance)))
       });
   }
 

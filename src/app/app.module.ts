@@ -1,26 +1,26 @@
-import {  Module, OnModuleInit } from '@nestjs/common';
-import { AppProvider } from '@extras/providers';
 import {
   BASIC_CONTROLLERS,
   BPMN_CONTROLLERS,
   EXTRA_CONTROLLERS,
   FORM_CONTROLLERS
 } from '@controllers';
+import { FILTERS } from '@extras/filters';
+import { AppGateway } from '@extras/gateways';
+import { AppProvider } from '@extras/providers';
+import { Module, OnModuleInit } from '@nestjs/common';
 import {
   BASIC_REPOSITORY,
   BPMN_REPOSITORY,
-  FORM_REPOSITORY,
+  FORM_REPOSITORY
 } from '@repositories';
 import {
-  BASIC_SERVICES, 
-  BPMN_SERVICES, 
+  BASIC_SERVICES,
+  BPMN_SERVICES,
   EXTRA_SERVICES,
   FORM_SERVICE
 } from '@services';
-import { FILTERS } from '@extras/filters';
-import { AppGateway } from '@extras/gateways';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
-import { AccountMapper, RoleMapper, FormControlMapper, FormDataMapper,FormGroupMapper,FormValueMapper } from './mappers';
+import { AccountMapper, RoleMapper, WFMapper } from './mappers';
 
 @Module({
   imports: [
@@ -33,7 +33,7 @@ import { AccountMapper, RoleMapper, FormControlMapper, FormDataMapper,FormGroupM
     ...BASIC_CONTROLLERS,
     ...EXTRA_CONTROLLERS,
     ...BPMN_CONTROLLERS,
-    ...FORM_CONTROLLERS
+    ...FORM_CONTROLLERS,
   ],
   providers: [
     ...BASIC_SERVICES,
@@ -53,10 +53,11 @@ export class AppModule implements OnModuleInit {
   onModuleInit() {
     this.mapper.addProfile(RoleMapper);
     this.mapper.addProfile(AccountMapper);
-    this.mapper.addProfile(FormControlMapper);
+    // this.mapper.addProfile(FormControlMapper);
     // this.mapper.addProfile(FormDataMapper);
     // this.mapper.addProfile(FormGroupMapper);
     // this.mapper.addProfile(FormValueMapper)
+    // this.mapper.addProfile(WFMapper)
   }
   
 }

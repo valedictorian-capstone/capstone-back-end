@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -65,23 +66,23 @@ export class AccountController{
   @ApiOperation({ summary: 'Delete an account by Id' })
   @ApiCreatedResponse({ description: 'Success delete new account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public remove(id: string): Promise<AccountVM> {
+  public remove(@Param('id') id: string): Promise<AccountVM> {
     return this.service.remove(id);
   }
 
-  @Put('Active')
+  @Put('Active/:id')
   @ApiOperation({ summary: 'Active an account by Id' })
   @ApiCreatedResponse({ description: 'Success active new account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(id: string): Promise<AccountVM> {
+  public active(@Param('id') id: string): Promise<AccountVM> {
     return this.service.active(id);
   }
 
-  @Put('DeActive')
+  @Put('DeActive/:id')
   @ApiOperation({ summary: 'Deative an account by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(id: string): Promise<AccountVM> {
+  public deactive(@Param('id') id: string): Promise<AccountVM> {
     return this.service.deactive(id);
   }
 }

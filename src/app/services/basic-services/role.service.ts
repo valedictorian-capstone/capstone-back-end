@@ -1,5 +1,5 @@
 import { Role } from '@models';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { RoleRepository } from '@repositories';
 import { ROLE_REPOSITORY } from '@types';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
@@ -18,26 +18,33 @@ export class RoleService {
   };
 
   public readonly findById = async (id: string): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne(id)
+    return await this.repository.useHTTP().findOne({id: id})
       .then((model) => {
         if (model !== null) {
           return this.mapper.map(model, RoleVM, Role);
         }
-        throw new HttpException(
-          `Error at [RoleController] [findById function] with [message]: Can not find ${id}`,
-          HttpStatus.NOT_FOUND,
-        );
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${id}`,
+          );
+        }
       })
   };
 
   public readonly insert = (body: RoleCM): Promise<RoleVM> => {
     return this.repository.useHTTP().save(body as any)
-      .then((model) => {return this.mapper.map(model, RoleVM, Role)}).catch()
+      .then((model) => {
+        return this.mapper.map(model, RoleVM, Role)}).catch()
   };
 
   public readonly update = async (body: RoleUM): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne(body.id)
-      .then(async () => {
+    return await this.repository.useHTTP().findOne({id: body.id})
+      .then(async (model) => {
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${body.id}`,
+          );
+        }
         return await this.repository.useHTTP()
           .save(body as any)
           .then((model) => (this.mapper.map(model, RoleVM, Role)))
@@ -46,22 +53,32 @@ export class RoleService {
   };
 
   public readonly remove = async (id: string): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne(id)
+    return await this.repository.useHTTP().findOne({id: id})
       .then(async (model) => {
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${id}`,
+          );
+        }
         return await this.repository.useHTTP()
           .remove(model)
           .then(() => {
             throw new HttpException(
               `Remove information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
+              HttpStatus.NO_CONTENT,
             );
           })
       });
   };
 
   public readonly active = async (id: string): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne(id)
+    return await this.repository.useHTTP().findOne({id: id})
       .then(async (model) => {
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${id}`,
+          );
+        }
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: false })
           .then(() => {
@@ -74,8 +91,13 @@ export class RoleService {
   };
 
   public readonly deactive = async (id: string): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne(id)
+    return await this.repository.useHTTP().findOne({id: id})
       .then(async (model) => {
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${id}`,
+          );
+        }
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: true })
           .then(() => {
