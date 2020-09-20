@@ -14,6 +14,16 @@ export const BPMN_SERVICES = [];
 // export * from './bpmn-services/work-flow-connection.service';
 // export * from './bpmn-services/work-flow-instance.service';
 
+import { FormControlService } from './form-services/form-control.service';
+import { FormDataService } from './form-services/form-data.service';
+import { FormGroupService } from './form-services/form-group.service';
+import { FormValueService } from './form-services/form-value.service';
+export const FORM_SERVICE = [FormControlService, FormDataService, FormGroupService, FormValueService];
+export * from './form-services/form-control.service';
+export * from './form-services/form-data.service';
+export * from './form-services/form-group.service';
+export * from './form-services/form-value.service';
+ 
 import { FirebaseService } from './extra-services/firebase.service';
 
 export const EXTRA_SERVICES = [FirebaseService];
