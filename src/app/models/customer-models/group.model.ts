@@ -27,7 +27,6 @@ export class Group extends BaseEntity {
 
   @AutoMap(() => Customer)
   @ManyToMany(() => Customer, Customer => Customer.customerGroups)
-  @JoinTable()
   public customers: Customer[];
 
   @AutoMap()

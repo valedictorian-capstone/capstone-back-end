@@ -6,11 +6,14 @@ import {
 
   Entity,
 
+  ManyToOne,
+
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 import { WFStepInstance } from './wf-step-instance.model';
+import { Customer } from '../customer-models/customer.model';
 
 @Entity()
 export class WFInstance extends BaseEntity {
@@ -27,11 +30,13 @@ export class WFInstance extends BaseEntity {
   public note: string;
 
   @AutoMap()
-  @OneToMany(
-    () => WFStepInstance,
-    wFStepInstances => wFStepInstances.wFInstance,
+  @OneToMany(() => WFStepInstance, wFStepInstances => wFStepInstances.wFInstance,
   )
   public wFStepInstances: WFStepInstance[];
+
+  @AutoMap(() => Customer)
+  @ManyToOne(() => Customer, customer => customer.wFInstances)
+  public customer: Customer;
 
   @AutoMap()
   @Column({ default: null })
