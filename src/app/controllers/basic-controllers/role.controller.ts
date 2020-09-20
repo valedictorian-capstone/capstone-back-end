@@ -1,9 +1,9 @@
+import { IRoleController } from '@interfaces';
 import {
   Body,
   Controller,
   Delete,
   Get,
-  Inject,
   Param,
   Post,
   Put
@@ -17,7 +17,6 @@ import {
   ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
-import { IRoleController } from '@interfaces';
 import { RoleService } from '@services';
 import { RoleCM, RoleUM, RoleVM } from '@view-models';
 
@@ -27,7 +26,7 @@ import { RoleCM, RoleUM, RoleVM } from '@view-models';
 export class RoleController implements IRoleController {
   constructor(
     protected readonly service: RoleService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all roles' })
@@ -66,23 +65,23 @@ export class RoleController implements IRoleController {
   @ApiOperation({ summary: 'Delete an role by Id' })
   @ApiCreatedResponse({ description: 'Success delete new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async remove(id: string): Promise<RoleVM> {
+  public async remove(@Param('id') id: string): Promise<RoleVM> {
     return await this.service.remove(id);
   }
 
-  @Put('Active')
+  @Put('Active/:id')
   @ApiOperation({ summary: 'Active an role by Id' })
   @ApiCreatedResponse({ description: 'Success active new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async active(id: string): Promise<RoleVM> {
+  public async active(@Param('id') id: string): Promise<RoleVM> {
     return await this.service.active(id);
   }
 
-  @Put('DeActive')
+  @Put('DeActive/:id')
   @ApiOperation({ summary: 'Deative an role by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async deactive(id: string): Promise<RoleVM> {
+  public async deactive(@Param('id') id: string): Promise<RoleVM> {
     return await this.service.deactive(id);
   }
 }

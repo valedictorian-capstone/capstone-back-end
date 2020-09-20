@@ -1,7 +1,6 @@
-import { ProfileBase, AutoMapper } from "@nartc/automapper";
 import { Role } from "@models";
+import { AutoMapper, ProfileBase } from "@nartc/automapper";
 import { RoleUM, RoleVM } from "@view-models";
-import { Profile } from "nestjsx-automapper";
 
 export class RoleMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
