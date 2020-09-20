@@ -21,7 +21,6 @@ export class AccountService {
   public readonly findById = async (id: string): Promise<AccountVM> => {
     return await this.repository.useHTTP().findOne(id)
       .then((model) => {
-        console.log(model)
         if (model) {
           return this.mapper.map(model, AccountVM, Account);
         }
@@ -33,7 +32,7 @@ export class AccountService {
 
   public readonly insert = (body: AccountCM): Promise<AccountVM> => {
     return this.repository.useHTTP().insert(body)
-      .then((model) => (this.mapper.map(model, AccountVM, Account as any)))
+      .then((model) => (this.mapper.map(model.generatedMaps[0], AccountVM, Account as any)))
   };
 
   public readonly update = async (body: AccountUM): Promise<AccountVM> => {
