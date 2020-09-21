@@ -9,6 +9,11 @@ import { FormControlRepository } from './form-repositories/form-control.reposito
 import { FormDataRepository } from './form-repositories/form-data.repository';
 import { FormGroupRepository } from './form-repositories/form-group.repository';
 import { FormValueRepository } from './form-repositories/form-value.repository';
+import { GroupRepository } from './customer-repositories/group.repository';
+import { CustomerRepository } from './customer-repositories/customer.repository';
+import { CustomerExtraDataRepository } from './customer-repositories/customer-extra-data.repository';
+import { CustomerExtraInformationDataRepository } from './customer-repositories/customer-extra-information-data.repository';
+import { CustomerExtraInformationRepository } from './customer-repositories/customer-extra-information.repository';
 
 //basic
 export * from './basic-repositories/account.repository';
@@ -24,6 +29,14 @@ export * from './form-repositories/form-control.repository';
 export * from './form-repositories/form-data.repository';
 export * from './form-repositories/form-group.repository';
 export * from './form-repositories/form-value.repository';
+
+//customer
+export * from './customer-repositories/group.repository';
+export * from './customer-repositories/customer.repository';
+export * from './customer-repositories/customer-extra-data.repository';
+export * from './customer-repositories/customer-extra-information-data.repository';
+export * from './customer-repositories/customer-extra-information.repository';
+
 
 
 
@@ -45,4 +58,12 @@ export const FORM_REPOSITORY = [
   FormDataRepository.inject,
   FormGroupRepository.inject,
   FormValueRepository.inject
-]
+];
+
+export const CUSTOMER_REPOSITORY = [
+  GroupRepository.inject,
+  CustomerRepository.inject,
+  CustomerExtraDataRepository.inject,
+  CustomerExtraInformationDataRepository.inject,
+  CustomerExtraInformationRepository.inject
+];
