@@ -14,8 +14,8 @@ export class FormDataVM {
   @AutoMap()
   public readonly formGroupId: string;
   
-  @AutoMap(()=>FormValueVM)
-  public readonly formValues: FormValueVM[];
+  @AutoMap(() => FormValueVM, 1)
+  public readonly formValueVMs: FormValueVM[];
   
   @AutoMap()
   public readonly isDelete: boolean;

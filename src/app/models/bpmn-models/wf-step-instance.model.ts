@@ -30,21 +30,21 @@ export class WFStepInstance extends BaseEntity {
   @Column({ default: null })
   public note: string;
 
-  @AutoMap()
+  @AutoMap(() => WFStep, 1)
   @ManyToOne(
     () => WFStep,
     wFStep => wFStep.wFStepsInstances,
   )
   public wFStep: WFStep;
 
-  @AutoMap()
+  @AutoMap(() => WFStepInstance, 1)
   @ManyToOne(
     () => WFInstance,
     wFStep => wFStep.wFStepInstances,
   )
   public wFInstance: WFInstance;
 
-  @AutoMap(() => FormData)
+  @AutoMap(() => FormData, 1)
   @OneToMany(() => FormData, formDatas => formDatas.wFStepInstance)
   public formDatas: FormData[];
 

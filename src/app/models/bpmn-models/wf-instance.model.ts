@@ -9,8 +9,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { WFStepInstance } from './wf-step-instance.model';
 import { Customer } from '../customer-models/customer.model';
+import { WFStepInstance } from './wf-step-instance.model';
+import { WF } from './wf.model';
 
 @Entity()
 export class WFInstance extends BaseEntity {
@@ -26,14 +27,19 @@ export class WFInstance extends BaseEntity {
   @Column({ default: null })
   public note: string;
 
-  @AutoMap()
-  @OneToMany(() => WFStepInstance, wFStepInstances => wFStepInstances.wFInstance,
+  // @AutoMap(() => WFStepInstance, 1)
+  @OneToMany(
+    () => WFStepInstance,
+    wFStepInstances => wFStepInstances.wFInstance,
   )
   public wFStepInstances: WFStepInstance[];
 
-  @AutoMap(() => Customer)
+  @AutoMap(() => Customer, 1)
   @ManyToOne(() => Customer, customer => customer.wFInstances)
   public customer: Customer;
+
+  @AutoMap(() => WF, 1)
+  public wf: WF;
 
   @AutoMap()
   @Column({ default: null })

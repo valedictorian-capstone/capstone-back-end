@@ -12,12 +12,9 @@ export class WFVM {
   public readonly description!: string;
   @AutoMap()
   public readonly code!: string;
-  @AutoMap(() => WFConditionVM)
-  public readonly wFConditionVMs!: WFConditionVM[];
-  @AutoMap(() => WFStepVM)
+  // public readonly wFConditionVMs!: WFConditionVM[];
   public readonly wFStepVMs!: WFStepVM[];
-  @AutoMap(() => WFInstanceVM)
-  public readonly wFInstanceVMs!: WFInstanceVM[];
+  // public readonly wFInstanceVMs!: WFInstanceVM[];
   @AutoMap()
   public readonly isDelete!: boolean;
   @AutoMap()

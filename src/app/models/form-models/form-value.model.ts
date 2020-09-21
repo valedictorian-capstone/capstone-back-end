@@ -16,12 +16,12 @@ export class FormValue extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
-    @AutoMap(() => FormData)
+    @AutoMap(() => FormData, 1)
     @ManyToOne(() => FormData, formData => formData.formValues)
     public formData: FormData;
 
-    @AutoMap(() => FormControl)
-    @ManyToOne(() => FormControl, formControl =>formControl.formValues)
+    @AutoMap(() => FormControl, 1)
+    @ManyToOne(() => FormControl, formControl => formControl.formValues)
     public formControl: FormControl;
 
     @AutoMap()

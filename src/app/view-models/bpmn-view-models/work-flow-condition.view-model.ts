@@ -1,21 +1,31 @@
+import { AutoMap } from "nestjsx-automapper";
+
 export class WFConditionVM {
-  public readonly Id!: string;
-  public readonly ConditionId!: string;
-  public readonly WFId!: string;
-  public readonly IsDelete!: boolean;
-  public readonly CreatedBy!: string;
-  public readonly UpdatedBy!: string;
-  public readonly CreatedAt!: Date;
-  public readonly UpdatedAt!: Date;
+  @AutoMap()
+  public readonly id!: string;
+  @AutoMap()
+  public readonly conditionId!: string;
+  @AutoMap()
+  public readonly wFId!: string;
+  @AutoMap()
+  public readonly isDelete!: boolean;
+  @AutoMap()
+  public readonly createdBy!: string;
+  @AutoMap()
+  public readonly updatedBy!: string;
+  @AutoMap()
+  public readonly createdAt!: Date;
+  @AutoMap()
+  public readonly updatedAt!: Date;
 }
 
 export class WFConditionCM {
-  public readonly ConditionId!: string;
-  public readonly WFId!: string;
+  public readonly conditionId!: string;
+  public readonly wFId!: string;
 }
 
 export class WFConditionUM {
-  public readonly Id!: string;
-  public readonly ConditionId!: string;
-  public readonly WFId!: string;
+  public readonly id!: string;
+  public readonly conditionId!: string;
+  public readonly wFId!: string;
 }
