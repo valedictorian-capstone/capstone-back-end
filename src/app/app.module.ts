@@ -2,7 +2,8 @@ import {
   BASIC_CONTROLLERS,
   BPMN_CONTROLLERS,
   EXTRA_CONTROLLERS,
-  FORM_CONTROLLERS
+  FORM_CONTROLLERS,
+  CUSTOMER_CONTROLLERS
 } from '@controllers';
 import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
@@ -11,16 +12,22 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import {
   BASIC_REPOSITORY,
   BPMN_REPOSITORY,
-  FORM_REPOSITORY
+  FORM_REPOSITORY,
+  CUSTOMER_REPOSITORY
 } from '@repositories';
 import {
   BASIC_SERVICES,
   BPMN_SERVICES,
   EXTRA_SERVICES,
-  FORM_SERVICE
+  FORM_SERVICE,
+  CUSTOMER_SERVICES
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
+<<<<<<< HEAD
 import { AccountMapper, FormControlMapper, FormDataMapper, FormGroupMapper, FormValueMapper, RoleMapper, WFMapper } from './mappers';
+=======
+import { AccountMapper, RoleMapper } from './mappers';
+>>>>>>> ee8f3789debbfef3e297eb16a1a9c67545e21369
 
 @Module({
   imports: [
@@ -34,15 +41,18 @@ import { AccountMapper, FormControlMapper, FormDataMapper, FormGroupMapper, Form
     ...EXTRA_CONTROLLERS,
     ...BPMN_CONTROLLERS,
     ...FORM_CONTROLLERS,
+    ...CUSTOMER_CONTROLLERS,
   ],
   providers: [
     ...BASIC_SERVICES,
     ...EXTRA_SERVICES,
     ...BPMN_SERVICES,
     ...FORM_SERVICE,
+    ...CUSTOMER_SERVICES,
     ...BASIC_REPOSITORY,
     ...BPMN_REPOSITORY,
     ...FORM_REPOSITORY,
+    ...CUSTOMER_REPOSITORY,
     ...FILTERS,
     AppGateway,
     ...AppProvider.init()
@@ -57,7 +67,11 @@ export class AppModule implements OnModuleInit {
     // this.mapper.addProfile(FormDataMapper);
     // this.mapper.addProfile(FormGroupMapper);
     // this.mapper.addProfile(FormValueMapper);
+<<<<<<< HEAD
     this.mapper.addProfile(WFMapper);
+=======
+    // this.mapper.addProfile(WFMapper);
+>>>>>>> ee8f3789debbfef3e297eb16a1a9c67545e21369
   }
   
 }

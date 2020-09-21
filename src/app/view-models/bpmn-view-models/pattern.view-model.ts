@@ -1,4 +1,5 @@
-import { AccountExtraInformationPatternVM, CustomerExtraInformationPatternVM } from "../basic-view-models";
+import { CustomerExtraInformationPatternVM } from "../customer-view-models";
+import { AccountExtraInformationPatternVM } from "../basic-view-models";
 import { RolePermissionVM } from "./role-permission.view-model";
 
 export class PatternVM {

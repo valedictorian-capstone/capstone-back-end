@@ -1,37 +1,51 @@
+//basic_controllers
 import { AccountController } from './basic-controllers/account.controller';
 import { RoleController } from './basic-controllers/role.controller';
+export * from './basic-controllers/account.controller';
+export * from './basic-controllers/role.controller';
+export const BASIC_CONTROLLERS = [AccountController, RoleController];
+
+//basic_controllers
 import { WFConnectionController } from './bpmn-controllers/wf-connection.controller';
 import { WFInstanceController } from './bpmn-controllers/wf-instance.controller';
 import { WFStepInstanceController } from './bpmn-controllers/wf-step-instance.controller';
 import { WFStepController } from './bpmn-controllers/wf-step.controller';
 import { WFController } from './bpmn-controllers/wf.controller';
+export * from './bpmn-controllers/wf-connection.controller';
+export * from './bpmn-controllers/wf.controller';
+export const BPMN_CONTROLLERS = [
+  WFController,
+  WFConnectionController,
+  WFStepController,
+  WFInstanceController,
+  WFStepInstanceController,
+];
+
+//extra controllers
 import { AuthController } from './extra-controllers/auth.controller';
+export * from './extra-controllers/auth.controller';
+export const EXTRA_CONTROLLERS = [AuthController];
+
+//form controllers
 import { FormControlController } from './form-controllers/form-control.controller';
 import { FormDataController } from './form-controllers/form-data.controller';
 import { FormGroupController } from './form-controllers/form-group.controller';
 import { FormValueController } from './form-controllers/form-value.controller';
-
-export const BASIC_CONTROLLERS = [AccountController, RoleController];
-export * from './basic-controllers/account.controller';
-export * from './basic-controllers/role.controller';
-export * from './bpmn-controllers/wf-connection.controller';
-export * from './bpmn-controllers/wf.controller';
-export * from './extra-controllers/auth.controller';
 export * from './form-controllers/form-control.controller';
 export * from './form-controllers/form-data.controller';
 export * from './form-controllers/form-group.controller';
 export * from './form-controllers/form-value.controller';
-
-export const BPMN_CONTROLLERS = [
-  WFController,
-   WFConnectionController,
-   WFStepController, 
-   WFInstanceController,
-   WFStepInstanceController,
-  ];
-
-
-export const EXTRA_CONTROLLERS = [AuthController];
-
-
 export const FORM_CONTROLLERS = [FormControlController, FormDataController, FormGroupController, FormValueController];
+
+//Customer controllers
+import { CustomerController } from './customer-controller/customer.controller';
+import { GroupController } from './customer-controller/group.controller';
+import { CustomerExtraInformationController } from './customer-controller/customer-extra-information.controller';
+import { CustomerExtraInformationDataController } from './customer-controller/customer-extra-information-data.controller';
+import { CustomerExtraDataController } from './customer-controller/customer-extra-data.controller';
+export * from './customer-controller/customer.controller';
+export * from './customer-controller/group.controller';
+export * from './customer-controller/customer-extra-information.controller';
+export * from './customer-controller/customer-extra-information-data.controller';
+export * from './customer-controller/customer-extra-data.controller';
+export const CUSTOMER_CONTROLLERS = [CustomerController, GroupController, CustomerExtraInformationController, CustomerExtraInformationDataController, CustomerExtraDataController];
