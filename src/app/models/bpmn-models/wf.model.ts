@@ -9,7 +9,7 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { WFCondition } from './wf-condition.model';
-import { WFInstance } from './wf-instance';
+import { WFInstance } from './wf-instance.model';
 import { WFStep } from './wf-step.model';
 
 @Entity()

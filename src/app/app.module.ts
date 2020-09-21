@@ -23,11 +23,7 @@ import {
   CUSTOMER_SERVICES
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
-<<<<<<< HEAD
 import { AccountMapper, FormControlMapper, FormDataMapper, FormGroupMapper, FormValueMapper, RoleMapper, WFMapper } from './mappers';
-=======
-import { AccountMapper, RoleMapper } from './mappers';
->>>>>>> ee8f3789debbfef3e297eb16a1a9c67545e21369
 
 @Module({
   imports: [
@@ -67,11 +63,7 @@ export class AppModule implements OnModuleInit {
     // this.mapper.addProfile(FormDataMapper);
     // this.mapper.addProfile(FormGroupMapper);
     // this.mapper.addProfile(FormValueMapper);
-<<<<<<< HEAD
     this.mapper.addProfile(WFMapper);
-=======
-    // this.mapper.addProfile(WFMapper);
->>>>>>> ee8f3789debbfef3e297eb16a1a9c67545e21369
   }
   
 }

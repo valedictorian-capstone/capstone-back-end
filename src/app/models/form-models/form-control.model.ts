@@ -27,11 +27,11 @@ export class FormControl extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
-  @AutoMap(() => FormGroup)
+  @AutoMap(() => FormGroup,1)
   @ManyToOne(() => FormGroup, formGroup => formGroup.formControls)
   public formGroup: FormGroup;
 
-  @AutoMap(() => FormValue)
+  @AutoMap(() => FormValue,1)
   @OneToMany(() =>FormValue, formValues => formValues.formControl)
   public formValues: FormValue[];
 

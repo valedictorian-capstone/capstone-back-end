@@ -14,13 +14,8 @@ export class FormDataVM {
   @AutoMap()
   public readonly formGroupId: string;
   
-<<<<<<< HEAD
   @AutoMap(() => FormValueVM, 1)
   public readonly formValueVMs: FormValueVM[];
-=======
-  @AutoMap(()=>FormValueVM)
-  public readonly formValues: FormValueVM[];
->>>>>>> ee8f3789debbfef3e297eb16a1a9c67545e21369
   
   @AutoMap()
   public readonly isDelete: boolean;
