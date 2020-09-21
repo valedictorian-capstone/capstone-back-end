@@ -21,11 +21,11 @@ export class WFConnection extends BaseEntity {
     @Column({ default: null })
     public type: string;
 
-    @AutoMap()
+    @AutoMap(() =>  WFStep, 1)
     @OneToOne(() => WFStep)
     public preWFStep: WFStep;
 
-    @AutoMap()
+    @AutoMap(()=> WFStep, 1)
     @OneToOne(() => WFStep)
     public nxtWFStep: WFStep;
 

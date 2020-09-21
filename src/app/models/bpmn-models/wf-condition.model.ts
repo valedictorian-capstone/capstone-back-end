@@ -9,7 +9,7 @@ export class WFCondition extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @AutoMap()
+  @AutoMap(() => WF,1)
   @ManyToOne(() => WF, wF => wF.wFConditions)
   public wF: WF;
 

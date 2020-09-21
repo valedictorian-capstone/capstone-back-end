@@ -11,6 +11,7 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { WFStepInstance } from './wf-step-instance.model';
+import { WF } from './wf.model';
 
 @Entity()
 export class WFInstance extends BaseEntity {
@@ -26,12 +27,15 @@ export class WFInstance extends BaseEntity {
   @Column({ default: null })
   public note: string;
 
-  @AutoMap()
+  // @AutoMap(() => WFStepInstance, 1)
   @OneToMany(
     () => WFStepInstance,
     wFStepInstances => wFStepInstances.wFInstance,
   )
   public wFStepInstances: WFStepInstance[];
+
+  @AutoMap(() => WF, 1)
+  public wf: WF;
 
   @AutoMap()
   @Column({ default: null })

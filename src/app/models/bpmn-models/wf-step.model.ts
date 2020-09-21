@@ -37,15 +37,13 @@ export class WFStep extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
-  @AutoMap()
-  @ManyToOne(() => WF, wF => wF.wFStep)
+  @AutoMap(() => WF, 1)
+  @ManyToOne(() => WF, wF => wF.wFSteps)
   public wF: WF;
 
-  @AutoMap(() => WFStepInstance)
   @OneToMany(() => WFStep, wFStep => wFStep.wFStepsInstances)
   public wFStepsInstances: WFStepInstance[];
 
-  @AutoMap(() => FormGroup)
   @ManyToMany(() => FormGroup, formGroup => formGroup.wfSteps)
   public formGroups: FormGroup[];
 

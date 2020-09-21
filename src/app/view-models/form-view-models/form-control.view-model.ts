@@ -47,10 +47,10 @@ export class FormControlVM {
   @AutoMap()
   public readonly color: string;
   
-  @AutoMap(() => FormGroupVM)
+  @AutoMap(() => FormGroupVM, 1)
   public readonly formGroup: FormGroupVM;
   
-  @AutoMap(() => FormValueVM)
+  @AutoMap(() => FormValueVM, 1)
   public readonly formValues: FormValueVM[];
   
   @AutoMap()

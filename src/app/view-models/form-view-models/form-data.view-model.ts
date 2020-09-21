@@ -13,7 +13,7 @@ export class FormDataVM {
   @AutoMap()
   public readonly formGroupId: string;
   
-  @AutoMap()
+  @AutoMap(() => FormValueVM, 1)
   public readonly formValueVMs: FormValueVM[];
   
   @AutoMap()

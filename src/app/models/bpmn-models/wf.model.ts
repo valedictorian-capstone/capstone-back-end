@@ -9,6 +9,7 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { WFCondition } from './wf-condition.model';
+import { WFInstance } from './wf-instance';
 import { WFStep } from './wf-step.model';
 
 @Entity()
@@ -26,11 +27,12 @@ export class WF extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
-  @AutoMap(() => WFStep)
-  @OneToMany(() => WFStep, wFStep => wFStep.wF)
-  public wFStep: WFStep[];
+  @OneToMany(() => WFInstance, wFInstance => wFInstance.wf)
+  public wFInstances: WFInstance[];
 
-  @AutoMap(() => WFCondition)
+  @OneToMany(() => WFStep, wFStep => wFStep.wF)
+  public wFSteps: WFStep[];
+
   @OneToMany(() => WFCondition, wFCondition => wFCondition.wF)
   public wFConditions: WFCondition[];
 
