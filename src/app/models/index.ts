@@ -21,17 +21,25 @@ export * from './basic-models/account.model';
 export * from './basic-models/role.model';
 
 //bmn model export
-export * from './bpmn-models/wf.model'
-export * from './bpmn-models/wf-condition.model'
-export * from './bpmn-models/wf-connection.model'
-export * from './bpmn-models/wf-instance'
-export * from './bpmn-models/wf-step-instance.model'
-export * from './bpmn-models/wf-step.model'
+export * from './bpmn-models/wf.model';
+export * from './bpmn-models/wf-condition.model';
+export * from './bpmn-models/wf-connection.model';
+export * from './bpmn-models/wf-instance.model';
+export * from './bpmn-models/wf-step-instance.model';
+export * from './bpmn-models/wf-step.model';
 
+//form model
 export * from './form-models/form-group.model';
 export * from './form-models/form-value.model';
 export * from './form-models/form-data.model';
 export * from './form-models/form-control.model';
+
+// customer models
+export * from './customer-models/customer.model';
+export * from './customer-models/group.model';
+export * from './customer-models/customer-extra-information.model'
+export * from './customer-models/customer-extra-information-data.model'
+export * from './customer-models/customer-extra-data.model';
 
 
 // export * from './basic-models/customer.model';
