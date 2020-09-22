@@ -32,7 +32,7 @@ export class FormDataService {
     };
 
     public readonly insert = (body: FormDataCM): Promise<FormDataVM> => {
-        return this.repository.useHTTP().insert(body as any)
+        return this.repository.useHTTP().save(body as any)
             .then((model) => (this.mapper.map(model.generatedMaps[0], FormDataVM, FormData as any)))
     };
 

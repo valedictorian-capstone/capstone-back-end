@@ -18,10 +18,10 @@ export class FormControlVM {
   public readonly placeHolder: string;
   
   @AutoMap()
-  public readonly fontSize: number;
+  public readonly fontSize: string;
   
   @AutoMap()
-  public readonly size: number;
+  public readonly size: string;
   
   @AutoMap()
   public readonly options: string;
@@ -33,10 +33,10 @@ export class FormControlVM {
   public readonly subType: string;
   
   @AutoMap()
-  public readonly width: number;
+  public readonly width: string;
   
   @AutoMap()
-  public readonly height: number;
+  public readonly height: string;
   
   @AutoMap()
   public readonly isCapitialize: boolean;
@@ -47,10 +47,8 @@ export class FormControlVM {
   @AutoMap()
   public readonly color: string;
   
-  @AutoMap(() => FormGroupVM, 1)
   public readonly formGroup: FormGroupVM;
   
-  @AutoMap(() => FormValueVM, 1)
   public readonly formValues: FormValueVM[];
   
   @AutoMap()
@@ -76,11 +74,11 @@ export class FormControlCM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly placeHolder: string;
 
-  @ApiProperty({ required: true, format: 'number', minLength: 2 })
-  public readonly fontSize: number;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly fontSize: string;
 
-  @ApiProperty({ required: true, format: 'number', minLength: 2 })
-  public readonly size: number;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly size: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly options: string;
@@ -91,11 +89,11 @@ export class FormControlCM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly subType: string;
 
-  @ApiProperty({ required: true, format: 'number', minLength: 2 })
-  public readonly width: number;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly width: string;
 
-  @ApiProperty({ required: true, format: 'number', minLength: 2 })
-  public readonly height: number;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly height: string;
 
   @ApiProperty({ required: true, format: 'boolean', minLength: 2 })
   public readonly isCapitialize: boolean;
@@ -105,9 +103,13 @@ export class FormControlCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly color: string;
+
+  @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
+  public fromGroupId: string;
 }
 
 export class FormControlUM {
+
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly id: string;
@@ -118,11 +120,11 @@ export class FormControlUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly placeHolder: string;
 
-  @ApiProperty({ required: true, format: 'number', minLength: 2 })
-  public readonly fontSize: number;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly fontSize: string;
 
-  @ApiProperty({ required: true, format: 'number', minLength: 2 })
-  public readonly size: number;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly size: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly options: string;
@@ -133,11 +135,11 @@ export class FormControlUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly subType: string;
 
-  @ApiProperty({ required: true, format: 'number', minLength: 2 })
-  public readonly width: number;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly width: string;
 
-  @ApiProperty({ required: true, format: 'number', minLength: 2 })
-  public readonly height: number;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly height: string;
 
   @ApiProperty({ required: true, format: 'boolean', minLength: 2 })
   public readonly isCapitialize: boolean;

@@ -4,10 +4,7 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    JoinTable,
-    ManyToMany,
     ManyToOne,
-    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
@@ -25,11 +22,9 @@ export class CustomerExtraInformationData extends BaseEntity {
     @Column({ nullable: false, unique: true })
     public value: string;
 
-    @AutoMap()
     @ManyToOne(() => CustomerExtraInformation, customerExtraInformation => customerExtraInformation.customerExtraInformationDatas)
     public customerExtraInformation: CustomerExtraInformation;
 
-    @AutoMap(() => CustomerExtraData)
     @ManyToOne(() => CustomerExtraData, customerExtraData=> customerExtraData.customerExtraInformationDatas)
     public customerExtraData: CustomerExtraData;
 

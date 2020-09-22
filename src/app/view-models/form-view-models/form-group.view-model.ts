@@ -1,8 +1,8 @@
-import { FormControlVM } from "./form-control.view-model";
+import { FormControlVM, FormControlCM } from "./form-control.view-model";
 import { FormDataVM } from "./form-data.view-model";
-import { FormGroupWFStepVM } from "../bpmn-view-models/form-group-work-flow-step.view-model";
+import { WFStepVM } from "../bpmn-view-models/work-flow-step.view-model";
 import { AutoMap } from "nestjsx-automapper";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, getSchemaPath } from "@nestjs/swagger";
 
 export class FormGroupVM {
 
@@ -15,14 +15,11 @@ export class FormGroupVM {
   @AutoMap()
   public readonly description:  string;
 
-  @AutoMap(() => FormControlVM)
   public readonly formControls:  FormControlVM[];
 
-  @AutoMap(()=> FormDataVM)
   public readonly formDatas:  FormDataVM[];
 
-  @AutoMap(()=>FormGroupWFStepVM)
-  public readonly formGroupWFSteps:  FormGroupWFStepVM[];
+  public readonly wFSteps:  WFStepVM[];
 
   @AutoMap()
   public readonly isDelete:  boolean;
@@ -43,10 +40,14 @@ export class FormGroupVM {
 
 export class FormGroupCM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly Name:  string;
+  public readonly name:  string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly Description:  string;
+  public readonly description:  string;
+
+  @ApiProperty({ required: true, type: 'array', items:{$ref: getSchemaPath(FormControlCM)} })
+  public readonly formControls: FormControlCM[];
+
 }
 
 export class FormGroupUM {

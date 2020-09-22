@@ -16,11 +16,9 @@ export class FormValue extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
-    @AutoMap(() => FormData, 1)
     @ManyToOne(() => FormData, formData => formData.formValues)
     public formData: FormData;
 
-    @AutoMap(() => FormControl, 1)
     @ManyToOne(() => FormControl, formControl => formControl.formValues)
     public formControl: FormControl;
 

@@ -1,7 +1,7 @@
 import { FormGroup } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { FormGroupRepository } from '@repositories';
-import { FORM_GROUP_REPOSITORY } from '@types';
+import { FormControlRepository, FormGroupRepository } from '@repositories';
+import { FORM_CONTROL_REPOSITORY, FORM_GROUP_REPOSITORY } from '@types';
 import { FormGroupCM, FormGroupUM, FormGroupVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { NotFoundException } from '@exceptions';
@@ -11,6 +11,7 @@ export class FormGroupService {
 
     constructor(
         @Inject(FORM_GROUP_REPOSITORY) protected readonly repository: FormGroupRepository,
+        @Inject(FORM_CONTROL_REPOSITORY) protected readonly controlRepository: FormControlRepository,
         @InjectMapper() protected readonly mapper: AutoMapper
     ) { }
 
@@ -32,8 +33,12 @@ export class FormGroupService {
     };
 
     public readonly insert = (body: FormGroupCM): Promise<FormGroupVM> => {
-        return this.repository.useHTTP().insert(body as any)
-            .then((model) => (this.mapper.map(model.generatedMaps[0], FormGroupVM, FormGroup as any)))
+        return this.repository.useHTTP().insert(body)
+            .then((model) => {
+                this.controlRepository.useHTTP().insert(body.formControls.map(formControl => ({...formControl, formGroup: model.generatedMaps[0]})));
+                (this.mapper.map(model, FormGroupVM, FormGroup as any));
+            })
+            .catch((err) =>{console.log(err); return null});
     };
 
     public readonly update = async (body: FormGroupUM): Promise<FormGroupVM> => {

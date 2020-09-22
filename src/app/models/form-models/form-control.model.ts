@@ -27,12 +27,10 @@ export class FormControl extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
-  @AutoMap(() => FormGroup,1)
   @ManyToOne(() => FormGroup, formGroup => formGroup.formControls)
   public formGroup: FormGroup;
 
-  @AutoMap(() => FormValue,1)
-  @OneToMany(() =>FormValue, formValues => formValues.formControl)
+  @OneToMany(() => FormValue, formValues => formValues.formControl)
   public formValues: FormValue[];
 
   @AutoMap()
@@ -41,11 +39,11 @@ export class FormControl extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
-  public fontSize: number;
+  public fontSize: string;
 
   @AutoMap()
   @Column({ default: null })
-  public size: number;
+  public size: string;
 
   @AutoMap()
   @Column({ default: null })
@@ -61,11 +59,11 @@ export class FormControl extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
-  public width: number;
+  public width: string;
 
   @AutoMap()
   @Column({ default: null })
-  public height: number;
+  public height: string;
 
   @AutoMap()
   @Column({ default: null })

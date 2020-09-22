@@ -33,20 +33,16 @@ export class Customer extends BaseEntity {
   @Column({ nullable: false, unique: true })
   public phone: string;
 
-  @AutoMap(() => Group)
   @ManyToMany(() => Group, group => group.customers)
   @JoinTable()
-  public customerGroups: Group[];
+  public groups: Group[];
 
-  @AutoMap(() =>WFInstance)
   @OneToMany(() => WFInstance, wFInstances=> wFInstances.customer )
   public wFInstances: WFInstance[];
 
-  @AutoMap()
   @OneToMany(() => CustomerExtraInformation, customerExtraInformations => customerExtraInformations.customer)
   public customerExtraInformations: CustomerExtraInformation[];
 
-  @AutoMap(() => CustomerExtraData)
   @OneToMany(() => CustomerExtraData, customerExtraDatas => customerExtraDatas.customer)
   public customerExtraDatas: CustomerExtraData[];
 
