@@ -4,7 +4,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -25,8 +24,7 @@ export class Group extends BaseEntity {
   @Column({ default: null })
   public description!: string;
 
-  @AutoMap(() => Customer)
-  @ManyToMany(() => Customer, Customer => Customer.customerGroups)
+  @ManyToMany(() => Customer, Customer => Customer.groups)
   public customers: Customer[];
 
   @AutoMap()

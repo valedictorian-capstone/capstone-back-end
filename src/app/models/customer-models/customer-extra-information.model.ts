@@ -4,8 +4,6 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    JoinTable,
-    ManyToMany,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
@@ -37,11 +35,9 @@ export class CustomerExtraInformation extends BaseEntity {
     @Column({ nullable: false })
     public options: string;
 
-    @AutoMap(() => Customer)
     @ManyToOne(() => Customer, customer => customer.customerExtraInformations)
     public customer: Customer;
 
-    @AutoMap(() => CustomerExtraInformationData)
     @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.customerExtraInformation )
     public customerExtraInformationDatas: CustomerExtraInformationData[];
 
