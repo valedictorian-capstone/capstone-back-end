@@ -11,11 +11,11 @@ export class Account extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: false, default: '' })
-  public fullname!: string;
+  public fullname: string;
 
   @AutoMap()
   @Column({ nullable: false, unique: true, default: '' })
-  public email!: string;
+  public email: string;
   @Column({ nullable: false, unique: true, default: '' })
 
   @AutoMap()
@@ -42,10 +42,10 @@ export class Account extends BaseEntity {
   @Column({ default: '' })
   public gender: string;
 
+  @AutoMap()
   @Column({ nullable: false, default: '1' })
-  public password!: string;
+  public password: string;
 
-  @AutoMap(() => Role)
   @ManyToMany(() => Role, Role => Role.accounts)
   @JoinTable()
   public roles: Role[];

@@ -1,7 +1,8 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { WFConditionVM } from "./work-flow-condition.view-model";
 import { WFInstanceVM } from "./work-flow-instance.view-model";
-import { WFStepVM } from "./work-flow-step.view-model";
+import { WFStepCM, WFStepVM } from "./work-flow-step.view-model";
 
 export class WFVM {
   @AutoMap()
@@ -12,9 +13,9 @@ export class WFVM {
   public readonly description!: string;
   @AutoMap()
   public readonly code!: string;
-  // public readonly wFConditionVMs!: WFConditionVM[];
-  public readonly wFStepVMs!: WFStepVM[];
-  // public readonly wFInstanceVMs!: WFInstanceVM[];
+  public readonly wFConditions!: WFConditionVM[];
+  public readonly wFSteps!:WFStepVM[];
+  public readonly wFInstances!: WFInstanceVM[];
   @AutoMap()
   public readonly isDelete!: boolean;
   @AutoMap()
@@ -32,9 +33,14 @@ export class WFVM {
 }
 
 export class WFCM {
+  @ApiProperty()
   public readonly name!: string;
+  @ApiProperty()
   public readonly description!: string;
+  @ApiProperty()
   public readonly code!: string;
+  // @ApiProperty()
+  public readonly wFSteps: any[]
 }
 
 export class WFUM {

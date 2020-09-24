@@ -1,5 +1,6 @@
+import { WF } from "@models";
 import { AutoMap } from "nestjsx-automapper";
-import { BaseEntity, Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { WFStep } from "./wf-step.model";
 
 @Entity()
@@ -10,24 +11,27 @@ export class WFConnection extends BaseEntity {
     public id: string;
 
     @AutoMap()
-    @Column({ nullable: false })
+    @Column({ nullable: false , default: ''})
     public name: string;
 
     @AutoMap()
-    @Column({ length: 500 })
+    @Column({ length: 500 , default: ''})
     public description: string;
 
     @AutoMap()
     @Column({ default: null })
     public type: string;
 
-    @AutoMap(() =>  WFStep, 1)
-    @OneToOne(() => WFStep)
-    public preWFStep: WFStep;
+    // @AutoMap(() =>  WFStep, 1)
+    @ManyToOne(() => WFStep, wFStep => wFStep.wfFromConnections)
+    public fromWFStep: WFStep;
 
-    @AutoMap(()=> WFStep, 1)
-    @OneToOne(() => WFStep)
-    public nxtWFStep: WFStep;
+    // @AutoMap(()=> WFStep, 1)
+    @ManyToOne(() => WFStep, wFStep => wFStep.wfToConnections)
+    public toWFStep: WFStep;
+
+    @ManyToOne(() => WF, wf => wf.wfConnections)
+    public wf: WF;
 
     @AutoMap()
     @Column({ default: null })
