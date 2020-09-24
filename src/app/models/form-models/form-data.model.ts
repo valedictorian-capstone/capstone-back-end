@@ -20,15 +20,12 @@ export class FormData extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
-    @AutoMap(() => WFStepInstance,1)
     @ManyToOne(() => WFStepInstance, wFStepInstance => wFStepInstance.formDatas)
     public wFStepInstance: WFStepInstance;
 
-    @AutoMap(() => FormGroup,1)
-    @ManyToOne(() => FormGroup, formGroup => formGroup.formData)
+    @ManyToOne(() => FormGroup, formGroup => formGroup.formDatas)
     public formGroup: FormGroup;
 
-    @AutoMap(() => FormValue,1)
     @OneToMany(() => FormValue, formValues => formValues.formData)
     public formValues: FormValue[];
 

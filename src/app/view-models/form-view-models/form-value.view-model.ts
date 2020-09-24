@@ -8,11 +8,9 @@ export class FormValueVM {
   @AutoMap()
   public readonly id: string;
   
-  @AutoMap(()=>FormControlVM)
   public readonly formControl: FormControlVM;
   
-  @AutoMap(()=>FormDataVM)
-  public readonly formDataId: FormDataVM;
+  public readonly formData: FormDataVM;
   
   @AutoMap()
   public readonly value: string;

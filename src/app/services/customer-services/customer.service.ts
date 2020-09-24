@@ -31,8 +31,9 @@ export class CustomerService {
   };
 
   public readonly insert = (body: CustomerCM): Promise<CustomerVM> => {
-    return this.repository.useHTTP().insert(body)
-      .then((model) => (this.mapper.map(model.generatedMaps[0], CustomerVM, Customer as any)))
+    return this.repository.useHTTP().save(body)
+      .then((model) => {console.log(model); return this.mapper.map(model, CustomerVM, Customer)})
+      .catch((err) =>{console.log(err); return null});
   };
 
   public readonly update = async (body: CustomerUM): Promise<CustomerVM> => {

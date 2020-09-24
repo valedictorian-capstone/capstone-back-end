@@ -20,7 +20,7 @@ import { FormDataCM, FormDataUM, FormDataVM } from '@view-models';
 import { FormDataService } from '@services';
 
 @ApiBearerAuth('JWT')
-@ApiTags('Formdata')
+@ApiTags('FormData')
 @Controller('/api/v1/FormData')
 export class FormDataController {
     constructor(

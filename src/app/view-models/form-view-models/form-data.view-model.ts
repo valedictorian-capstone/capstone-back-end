@@ -1,6 +1,7 @@
 import { AutoMap } from "nestjsx-automapper";
 import { FormValueVM } from "./form-value.view-model";
 import { WFStepInstanceVM } from "../bpmn-view-models/work-flow-step-instance.view-model";
+import { FormGroupVM } from "./form-group.view-model";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class FormDataVM {
@@ -8,14 +9,11 @@ export class FormDataVM {
   @AutoMap()
   public readonly id: string;
   
-  @AutoMap(() => WFStepInstanceVM)
   public readonly wFStepInstance: WFStepInstanceVM;
   
-  @AutoMap()
-  public readonly formGroupId: string;
+  public readonly formGroup: FormGroupVM;
   
-  @AutoMap(() => FormValueVM, 1)
-  public readonly formValueVMs: FormValueVM[];
+  public readonly formValues: FormValueVM[];
   
   @AutoMap()
   public readonly isDelete: boolean;
