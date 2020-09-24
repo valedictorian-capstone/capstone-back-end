@@ -12,14 +12,17 @@ import { WFInstanceController } from './bpmn-controllers/wf-instance.controller'
 import { WFStepInstanceController } from './bpmn-controllers/wf-step-instance.controller';
 import { WFStepController } from './bpmn-controllers/wf-step.controller';
 import { WFController } from './bpmn-controllers/wf.controller';
+import { WFDiagramController } from './bpmn-controllers/wf-diagram.controller';
 export * from './bpmn-controllers/wf-connection.controller';
 export * from './bpmn-controllers/wf.controller';
+export * from './bpmn-controllers/wf-diagram.controller'
 export const BPMN_CONTROLLERS = [
   WFController,
   WFConnectionController,
   WFStepController,
   WFInstanceController,
   WFStepInstanceController,
+  WFDiagramController,
 ];
 
 //extra controllers

@@ -23,13 +23,16 @@ import {
   CUSTOMER_SERVICES
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
+
 import { AccountMapper, FormControlMapper, FormDataMapper, FormGroupMapper, FormValueMapper, RoleMapper, WFMapper, 
   CustomerExtraDataMapper, CustomerExtraInformationDataMapper, CustomerExtraInformationMapper, CustomerMapper, GroupMapper, DepartmentMapper} from './mappers';
+import { WFConnectionMapper } from './mappers/bpmn-mappers/wf-connection.mapper';
+import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
 
 @Module({
   imports: [
     AutomapperModule.withMapper({
-      throwError: false,
+      throwError: true,
       skipUnmappedAssertion: true
     }),
   ],
@@ -65,6 +68,8 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(FormGroupMapper);
     this.mapper.addProfile(FormValueMapper);
     this.mapper.addProfile(WFMapper);
+    this.mapper.addProfile(WFStepMapper);
+    this.mapper.addProfile(WFConnectionMapper);
     this.mapper.addProfile(CustomerExtraDataMapper);
     this.mapper.addProfile(CustomerExtraInformationDataMapper);
     this.mapper.addProfile(CustomerExtraInformationMapper);
@@ -72,5 +77,5 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(GroupMapper);
     this.mapper.addProfile(DepartmentMapper);
   }
-  
+
 }

@@ -19,17 +19,20 @@ import { WFConnectionService } from './bpmn-services/wf-connection.service';
 import { WFInstanceService } from './bpmn-services/wf-instance.service';
 import { WFStepInstanceService } from './bpmn-services/wf-step-instance.service';
 import { WFStepService } from './bpmn-services/wf-step.service';
+import { WFDiagramService } from './bpmn-services/wf-diagram.service';
 export * from './bpmn-services/wf-connection.service';
 export * from './bpmn-services/wf-instance.service';
 export * from './bpmn-services/wf-step-instance.service';
 export * from './bpmn-services/wf-step.service';
 export * from './bpmn-services/wf.service';
+export * from './bpmn-services/wf-diagram.service'
 export const BPMN_SERVICES = [
   WFService, 
   WFConnectionService,
   WFStepService,
   WFInstanceService,
-  WFStepInstanceService
+  WFStepInstanceService,
+  WFDiagramService
 ];
 
 //form service

@@ -1,5 +1,5 @@
 import { WF } from "@models";
-import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { WF_REPOSITORY } from "@types";
 import { WFCM, WFUM, WFVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
@@ -14,12 +14,13 @@ export class WFService {
   ) { }
 
   public readonly findAll = async (): Promise<WFVM[]> => {
-    return await this.wfRepository.useHTTP().find()
-      .then((models) => this.mapper.mapArray(models, WFVM, WF))
+    return await this.wfRepository.useHTTP().find({relations: ["wFSteps"]})
+      .then((models) => {Logger.log(models); return this.mapper.mapArray(models, WFVM, WF)})
+      .catch(e => {Logger.error(e); return null;})
   }
 
   public readonly findById = async (id: string): Promise<WFVM> => {
-    return await this.wfRepository.useHTTP().findOne({id: id})
+    return await this.wfRepository.useHTTP().findOne({ id: id }, { relations: ["WFStep", "WFCondition"] })
       .then((model) => {
         if (!model) {
           throw new NotFoundException(
@@ -32,7 +33,7 @@ export class WFService {
   }
 
   public readonly insert = async (body: WFCM): Promise<WFVM> => {
-    return await this.wfRepository.useHTTP().insert(body as any)
+    return await this.wfRepository.useHTTP().save(body as any)
       .then((model) => this.mapper.map(model.generatedMaps[0], WFVM, WF))
   }
 
@@ -51,7 +52,7 @@ export class WFService {
   }
 
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.wfRepository.useHTTP().findOne({id: id})
+    return await this.wfRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(

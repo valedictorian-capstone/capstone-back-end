@@ -1,0 +1,350 @@
+{
+  "id": "WF7_test",
+  "content": "asc",
+  "description": "asd",
+  "width": "string",
+  "height": "string",
+  "nodes": [
+    {
+      "shape": {
+        "type": "Flow",
+        "shape": "Terminator"
+      },
+      "id": "WF6_TEST",
+      "description": "string",
+      "height": 50,
+      "width": 100,
+      "offsetX": 250,
+      "offsetY": 60,
+      "annotations": [
+        {
+          "id": "xH0WO",
+          "content": "Start",
+          "annotationType": "String",
+          "style": {
+            "strokeWidth": 0,
+            "strokeColor": "transparent",
+            "fill": "transparent",
+            "bold": false,
+            "textWrapping": "WrapWithOverflow",
+            "color": "black",
+            "whiteSpace": "CollapseSpace",
+            "fontFamily": "Arial",
+            "fontSize": 12,
+            "italic": false,
+            "opacity": 1,
+            "strokeDashArray": "",
+            "textAlign": "Center",
+            "textOverflow": "Wrap",
+            "textDecoration": "None"
+          },
+          "hyperlink": {
+            "link": "",
+            "content": "",
+            "textDecoration": "None"
+          },
+          "constraints": 4,
+          "visibility": true,
+          "rotateAngle": 0,
+          "margin": {
+            "right": 0,
+            "bottom": 0,
+            "left": 0,
+            "top": 0
+          },
+          "horizontalAlignment": "Center",
+          "verticalAlignment": "Center",
+          "offset": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        }
+      ],
+      "style": {
+        "fill": "#d0f0f1",
+        "strokeColor": "#797979",
+        "strokeWidth": 1,
+        "strokeDashArray": "",
+        "opacity": 1,
+        "gradient": {
+          "type": "None"
+        }
+      },
+      "zIndex": 0,
+      "container": null,
+      "visible": true,
+      "horizontalAlignment": "Left",
+      "verticalAlignment": "Top",
+      "backgroundColor": "transparent",
+      "borderColor": "none",
+      "borderWidth": 0,
+      "rotateAngle": 0,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "margin": {},
+      "flip": "None",
+      "wrapper": {
+        "actualSize": {
+          "width": 100,
+          "height": 50
+        },
+        "offsetX": 250,
+        "offsetY": 60
+      },
+      "constraints": 5240814,
+      "ports": [],
+      "isExpanded": true,
+      "expandIcon": {
+        "shape": "None"
+      },
+      "tooltip": {
+        "openOn": "Auto"
+      },
+      "inEdges": [],
+      "outEdges": [
+        "connector1"
+      ],
+      "parentId": "",
+      "processId": "",
+      "umlIndex": -1,
+      "isPhase": false,
+      "isLane": false
+    },
+    {
+      "shape": {
+        "type": "Flow",
+        "shape": "Terminator"
+      },
+      "id": "WF6_TEST2",
+      "description": "string",
+      "height": 50,
+      "width": 100,
+      "offsetX": 250,
+      "offsetY": 60,
+      "annotations": [
+        {
+          "id": "xH0WO",
+          "content": "Start",
+          "annotationType": "String",
+          "style": {
+            "strokeWidth": 0,
+            "strokeColor": "transparent",
+            "fill": "transparent",
+            "bold": false,
+            "textWrapping": "WrapWithOverflow",
+            "color": "black",
+            "whiteSpace": "CollapseSpace",
+            "fontFamily": "Arial",
+            "fontSize": 12,
+            "italic": false,
+            "opacity": 1,
+            "strokeDashArray": "",
+            "textAlign": "Center",
+            "textOverflow": "Wrap",
+            "textDecoration": "None"
+          },
+          "hyperlink": {
+            "link": "",
+            "content": "",
+            "textDecoration": "None"
+          },
+          "constraints": 4,
+          "visibility": true,
+          "rotateAngle": 0,
+          "margin": {
+            "right": 0,
+            "bottom": 0,
+            "left": 0,
+            "top": 0
+          },
+          "horizontalAlignment": "Center",
+          "verticalAlignment": "Center",
+          "offset": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        }
+      ],
+      "style": {
+        "fill": "#d0f0f1",
+        "strokeColor": "#797979",
+        "strokeWidth": 1,
+        "strokeDashArray": "",
+        "opacity": 1,
+        "gradient": {
+          "type": "None"
+        }
+      },
+      "zIndex": 0,
+      "container": null,
+      "visible": true,
+      "horizontalAlignment": "Left",
+      "verticalAlignment": "Top",
+      "backgroundColor": "transparent",
+      "borderColor": "none",
+      "borderWidth": 0,
+      "rotateAngle": 0,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "margin": {},
+      "flip": "None",
+      "wrapper": {
+        "actualSize": {
+          "width": 100,
+          "height": 50
+        },
+        "offsetX": 250,
+        "offsetY": 60
+      },
+      "constraints": 5240814,
+      "ports": [],
+      "isExpanded": true,
+      "expandIcon": {
+        "shape": "None"
+      },
+      "tooltip": {
+        "openOn": "Auto"
+      },
+      "inEdges": [],
+      "outEdges": [
+        "connector1"
+      ],
+      "parentId": "",
+      "processId": "",
+      "umlIndex": -1,
+      "isPhase": false,
+      "isLane": false
+    }
+  ],
+  "snapSettings": [
+    "string"
+  ],
+  "connectors": [
+    {
+      "shape": {
+        "type": "None"
+      },
+      "id": "step_2",
+      "sourceID": "WF6_TEST",
+      "targetID": "WF6_TEST2",
+      "zIndex": 7,
+      "targetDecorator": {
+        "shape": "Arrow",
+        "height": 5,
+        "width": 5,
+        "style": {
+          "fill": "#797979",
+          "strokeColor": "#797979",
+          "strokeWidth": 1,
+          "strokeDashArray": "",
+          "opacity": 1,
+          "gradient": {
+            "type": "None"
+          }
+        },
+        "pivot": {
+          "x": 0,
+          "y": 0.5
+        }
+      },
+      "style": {
+        "strokeWidth": 1,
+        "strokeColor": "#797979",
+        "fill": "transparent",
+        "strokeDashArray": "",
+        "opacity": 1,
+        "gradient": {
+          "type": "None"
+        }
+      },
+      "segments": [
+        {
+          "type": "Straight",
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      ],
+      "sourcePortID": "",
+      "targetPortID": "",
+      "type": "Straight",
+      "sourcePoint": {
+        "x": 250,
+        "y": 85
+      },
+      "targetPoint": {
+        "x": 250,
+        "y": 135
+      },
+      "sourcePadding": 0,
+      "targetPadding": 0,
+      "sourceDecorator": {
+        "shape": "None",
+        "width": 10,
+        "height": 10,
+        "pivot": {
+          "x": 0,
+          "y": 0.5
+        },
+        "style": {
+          "fill": "black",
+          "strokeColor": "black",
+          "strokeWidth": 1,
+          "strokeDashArray": "",
+          "opacity": 1,
+          "gradient": {
+            "type": "None"
+          }
+        }
+      },
+      "cornerRadius": 0,
+      "wrapper": {
+        "actualSize": {
+          "width": 0,
+          "height": 50
+        },
+        "offsetX": 250,
+        "offsetY": 110
+      },
+      "annotations": [],
+      "visible": true,
+      "constraints": 470590,
+      "hitPadding": 10,
+      "tooltip": {
+        "openOn": "Auto"
+      },
+      "parentId": ""
+    }
+  ],
+  "getConnectorDefaults": {},
+  "dragEnter": {},
+  "enableRtl": true,
+  "locale": "string",
+  "enablePersistence": true,
+  "scrollSettings": {},
+  "rulerSettings": {},
+  "backgroundColor": "string",
+  "dataSourceSettings": {},
+  "mode": "string",
+  "layers": {},
+  "diagramSettings": {},
+  "constraints": 0,
+  "layout": {},
+  "pageSettings": {},
+  "selectedItems": {},
+  "basicElements": [
+    "string"
+  ],
+  "tooltip": {},
+  "commandManager": {},
+  "tool": 0,
+  "customCursor": [
+    "string"
+  ],
+  "version": 0
+}
