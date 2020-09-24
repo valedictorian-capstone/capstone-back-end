@@ -1,9 +1,10 @@
 //basic_controllers
 import { AccountController } from './basic-controllers/account.controller';
 import { RoleController } from './basic-controllers/role.controller';
+import { DepartmentController } from './basic-controllers/department.controller';
 export * from './basic-controllers/account.controller';
 export * from './basic-controllers/role.controller';
-export const BASIC_CONTROLLERS = [AccountController, RoleController];
+export const BASIC_CONTROLLERS = [AccountController, RoleController, DepartmentController];
 
 //basic_controllers
 import { WFConnectionController } from './bpmn-controllers/wf-connection.controller';

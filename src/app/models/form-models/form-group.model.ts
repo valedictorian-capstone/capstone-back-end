@@ -33,10 +33,10 @@ export class FormGroup extends BaseEntity {
   @JoinTable()
   public wfSteps: WFStep[];
 
-  @OneToMany(() => FormControl, formControl => formControl.formGroup)
+  @OneToMany(() => FormControl, formControls => formControls.formGroup)
   public formControls: FormControl[]
 
-  @OneToMany(() => FormData, formData => formData.formGroup)
+  @OneToMany(() => FormData, formDatas => formDatas.formGroup)
   public formDatas: FormData[];
 
   @AutoMap()
