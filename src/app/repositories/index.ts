@@ -14,10 +14,13 @@ import { CustomerRepository } from './customer-repositories/customer.repository'
 import { CustomerExtraDataRepository } from './customer-repositories/customer-extra-data.repository';
 import { CustomerExtraInformationDataRepository } from './customer-repositories/customer-extra-information-data.repository';
 import { CustomerExtraInformationRepository } from './customer-repositories/customer-extra-information.repository';
+import { DepartmentRepository } from './basic-repositories/department.repository';
 
 //basic
 export * from './basic-repositories/account.repository';
 export * from './basic-repositories/role.repository';
+export * from './basic-repositories/department.repository';
+
 //bpmn
 export * from './bpmn-repositories/wf-connection.repository';
 export * from './bpmn-repositories/wf-instance.repository';
@@ -43,6 +46,7 @@ export * from './customer-repositories/customer-extra-information.repository';
 export const BASIC_REPOSITORY = [
   AccountRepository.inject,
   RoleRepository.inject,
+  DepartmentRepository.inject,
 ];
 
 export const BPMN_REPOSITORY = [
