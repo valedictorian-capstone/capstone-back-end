@@ -1,4 +1,5 @@
 import { AutoMap } from 'nestjsx-automapper';
+import { json } from 'sequelize';
 import {
   BaseEntity,
   Column,
@@ -9,6 +10,7 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { WFCondition } from './wf-condition.model';
+import { WFConnection } from './wf-connection.model';
 import { WFInstance } from './wf-instance.model';
 import { WFStep } from './wf-step.model';
 
@@ -27,7 +29,7 @@ export class WF extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
-  @OneToMany(() => WFInstance, wFInstance => wFInstance.wf)
+  @OneToMany(() => WFInstance, wFInstance => wFInstance.wf, {cascade: true, eager: true})
   public wFInstances: WFInstance[];
 
   @OneToMany(() => WFStep, wFStep => wFStep.wF)
@@ -35,6 +37,12 @@ export class WF extends BaseEntity {
 
   @OneToMany(() => WFCondition, wFCondition => wFCondition.wF)
   public wFConditions: WFCondition[];
+
+  @OneToMany(() => WFConnection, wfConnetion => wfConnetion.wf)
+  public wfConnections: WFConnection[]
+
+  @Column("json")
+  public style: any;
 
   @AutoMap()
   @Column({ default: null })

@@ -1,0 +1,111 @@
+[
+  {
+    "type": "text",
+    "name": "Text Card - c20f75fd",
+    "config": "{\"conditions\": [], \"text\": \"{{sender_name}} vui l\\u00f2ng \\u0111\\u1ee3i trong gi\\u00e2y l\\u00e1t. H\\u1ec7 th\\u1ed1ng \\u0111ang ki\\u1ec3m tra th\\u00f4ng tin c\\u1ee7a {{sender_name}}.\", \"buttons\": []}",
+    "position": 0,
+    "active": 1
+  },
+  {
+    "type": "json_api",
+    "name": "Thẻ JSON API - 9aca0d62 - ab1b19da",
+    "config": "{\"title\": \"JSON API\", \"show_error_messages\": false, \"method\": \"POST\", \"headers\": [{\"key\": \"Authorization\", \"value\": \"{{api_key}}\"}], \"user_attributes\": [\"sender_id\", \"channel\"], \"url\": \"https://{{api_url}}/chat-bot/kyc-status\", \"conditions\": []}",
+    "position": 1,
+    "active": 1
+  },
+  {
+    "type": "go_to_step",
+    "name": "Đi đến bước - c99c5eab - 343b679a - ff8351e0",
+    "config": "{\"conditions\": [{\"type\": \"attribute\", \"name\": \"fec_kyc_status_res_code\", \"operator\": \"=\", \"value\": \"1\"}], \"random\": false, \"step_codes\": [\"qzu76mgbigvt108yzgwnk8x0ldkk1xth\"]}",
+    "position": 2,
+    "active": 1
+  },
+  {
+    "type": "text",
+    "name": "Text Card - 6d33881f",
+    "config": "{\"conditions\": [{\"type\": \"attribute\", \"name\": \"fec_kyc_status_res_code\", \"operator\": \"=\", \"value\": \"4\"}], \"text\": \"Th\\u00f4ng tin {{sender_name}}  cung c\\u1ea5p \\u0111\\u00e3 \\u0111\\u01b0\\u1ee3c \\u0111\\u0103ng k\\u00fd. {{sender_name}} vui l\\u00f2ng th\\u1eed l\\u1ea1i\", \"buttons\": []}",
+    "position": 3,
+    "active": 0
+  },
+  {
+    "type": "config",
+    "name": "Thẻ bộ nhớ - caae690e",
+    "config": "{\"clear_memory\": {\"options\": [], \"variables\": [\"fec_card_block_syntax\"]}, \"set_memory\": [], \"conditions\": []}",
+    "position": 4,
+    "active": 1
+  },
+  {
+    "type": "text",
+    "name": "Text Card - 177d0f0e",
+    "config": "{\"conditions\": [], \"text\": \"alo \", \"buttons\": []}",
+    "position": 5,
+    "active": 0
+  },
+  {
+    "type": "form",
+    "name": "Form Card - 1ac8e204",
+    "config": "{\"title\": \"Form Title\", \"properties\": [{\"title\": \"fec_card_block_syntax\", \"caption\": \"{{sender_name}} vui l\\u00f2ng nh\\u1eadp theo c\\u00fa ph\\u00e1p: KT<space>4 s\\u1ed1 cu\\u1ed1i th\\u1ebb. Trong \\u0111\\u00f3, 4 s\\u1ed1 cu\\u1ed1i th\\u1ebb l\\u00e0 4 ch\\u1eef s\\u1ed1 cu\\u1ed1i c\\u00f9ng c\\u1ee7a d\\u00e3y 16 ch\\u1eef s\\u1ed1 \\u0111\\u01b0\\u1ee3c in tr\\u00ean m\\u1eb7t tr\\u01b0\\u1edbc c\\u1ee7a th\\u1ebb.\", \"prompt\": {\"caption\": \"\"}, \"type\": \"text\"}], \"conditions\": [], \"force_assign_variable\": 1}",
+    "position": 6,
+    "active": 1
+  },
+  {
+    "type": "form",
+    "name": "Form Card - b8c4b800",
+    "config": "{\"title\": \"Form Title\", \"properties\": [{\"title\": \"fec_card_block_syntax\", \"caption\": \"{{sender_name}} vui l\\u00f2ng nh\\u1eadp theo c\\u00fa ph\\u00e1p: KT<space>4 s\\u1ed1 cu\\u1ed1i th\\u1ebb. Trong \\u0111\\u00f3, 4 s\\u1ed1 cu\\u1ed1i th\\u1ebb l\\u00e0 4 ch\\u1eef s\\u1ed1 cu\\u1ed1i c\\u00f9ng c\\u1ee7a d\\u00e3y 16 ch\\u1eef s\\u1ed1 \\u0111\\u01b0\\u1ee3c in tr\\u00ean m\\u1eb7t tr\\u01b0\\u1edbc c\\u1ee7a th\\u1ebb.\", \"prompt\": {\"caption\": \"\"}, \"type\": \"text\"}], \"conditions\": [], \"force_assign_variable\": 1}",
+    "position": 7,
+    "active": 0
+  },
+  {
+    "type": "lua_script",
+    "name": "Lua Script - e5f875c2",
+    "config": "{\"conditions\": [], \"script\": \"local input = GetVar(ctx, \\\"fec_card_block_syntax\\\")\\nsyntax_input = string.match(input, \\\"KT%s%d+\\\")\\nlocal isValidKTSyntax = 0\\nif syntax_input ~= nil\\n  then\\n    if ((string.len(syntax_input) == 7) and (string.len(input)==7))\\n      then\\n    \\t  isValidKTSyntax = 1\\n          syntax_input = string.match(syntax_input, \\\"%d+\\\")\\n          SetVar(ctx, \\\"fec_card_block_card_no\\\", syntax_input)\\n          \\n      else\\n    \\t  syntax_input = \\\"\\\"\\n    end\\n  end\\nSetVar(ctx, \\\"isValidKTSyntax\\\", isValidKTSyntax)\\n\", \"buttons\": [], \"show_error_messages\": false}",
+    "position": 8,
+    "active": 1
+  },
+  {
+    "type": "text",
+    "name": "Text Card - a302ca37",
+    "config": "{\"conditions\": [], \"text\": \"halllo {{isValidKTSyntax}}\\nabc: {{fec_kyc_status_res_code}}\\ndef: {{fec_kyc_response_code}}\", \"buttons\": []}",
+    "position": 9,
+    "active": 0
+  },
+  {
+    "type": "go_to_step",
+    "name": "Đi đến bước - 186607ea",
+    "config": "{\"conditions\": [{\"type\": \"attribute\", \"name\": \"fec_kyc_status_res_code\", \"operator\": \"=\", \"value\": \"1\"}], \"random\": false, \"step_codes\": [\"qzu76mgbigvt108yzgwnk8x0ldkk1xth\"]}",
+    "position": 10,
+    "active": 1
+  },
+  {
+    "type": "go_to_step",
+    "name": "Đi đến bước - 42361241",
+    "config": "{\"conditions\": [{\"type\": \"attribute\", \"name\": \"isValidKTSyntax\", \"operator\": \"=\", \"value\": \"1\"}, {\"type\": \"attribute\", \"name\": \"fec_kyc_status_res_code\", \"operator\": \"=\", \"value\": \"3\"}], \"random\": false, \"step_codes\": [\"911314d879ab7754fd4300f6ead47d61\"]}",
+    "position": 11,
+    "active": 1
+  },
+  {
+    "type": "go_to_step",
+    "name": "Đi đến bước - fb2ab191",
+    "config": "{\"conditions\": [{\"type\": \"attribute\", \"name\": \"isValidKTSyntax\", \"operator\": \"=\", \"value\": \"0\"}, {\"type\": \"attribute\", \"name\": \"fec_kyc_status_res_code\", \"operator\": \"=\", \"value\": \"3\"}], \"random\": false, \"step_codes\": [\"6d80a079e88f01e09cf7ed7ef521dda4\"]}",
+    "position": 12,
+    "active": 1
+  },
+  {
+    "name": "wfTest1",
+    "description": "wfTest1",
+    "code": "wfTest1",
+    "wfSteps": [
+       {
+      "name": "wfStepTest2",
+      "description": "wfDescription",
+      "type": "start"
+    },
+  {
+      "name": "wfStepTest2",
+      "description": "wfDescription",
+      "type": "process"
+    }
+    
+    ]
+  }
+]

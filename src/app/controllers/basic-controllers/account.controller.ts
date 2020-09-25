@@ -20,6 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
 import { AccountService } from '@services';
+import { Account } from '@models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Account')

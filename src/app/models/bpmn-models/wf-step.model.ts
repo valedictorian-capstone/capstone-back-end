@@ -7,10 +7,12 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 import { FormGroup } from '../form-models/form-group.model';
+import { WFConnection } from './wf-connection.model';
 
 
 import { WFStepInstance } from './wf-step-instance.model';
@@ -19,7 +21,7 @@ import { WF } from './wf.model';
 @Entity()
 export class WFStep extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  public id!: string;
+  public id: string;
 
   @AutoMap()
   @Column({ default: null })
@@ -37,12 +39,20 @@ export class WFStep extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
-  @AutoMap(() => WF, 1)
   @ManyToOne(() => WF, wF => wF.wFSteps)
   public wF: WF;
 
   @OneToMany(() => WFStep, wFStep => wFStep.wFStepsInstances)
   public wFStepsInstances: WFStepInstance[];
+
+  @OneToMany(() => WFConnection, wfConnection => wfConnection.fromWFStep)
+  public wfFromConnections: WFConnection[]
+
+  @OneToMany(() => WFConnection, wfConnection => wfConnection.toWFStep)
+  public wfToConnections: WFConnection[]
+
+  @Column("json")
+  public style: any
 
   @ManyToMany(() => FormGroup, formGroup => formGroup.wfSteps)
   public formGroups: FormGroup[];
