@@ -32,11 +32,16 @@ export class DepartmentService {
   };
 
   public readonly getDepartmentChild = async (id: string): Promise<DepartmentVM> => {
-    return await this.repository.useHTTP().findOne({ id: id }, { relations: ["departmentChildrens", "departmentParent"] })
-      .then((model) => {
-        if (model) {
-          model.departmentChildrens.map((department) => this.getDepartmentChild(department.id));
-          return this.mapper.map(model, DepartmentVM, Department);
+    return await this.repository.useHTTP().findOne({ id: id }, { relations: ["departmentChildrens"] })
+      .then(async (model) => {
+        if(model){
+          const childs = [];
+          for (let i = 0; i < model.departmentChildrens.length; i++) {
+            const department = model.departmentChildrens[i];
+            childs.push(await this.getDepartmentChild(department.id));
+          }
+          model.departmentChildrens = childs;
+          return await this.mapper.map(model, DepartmentVM, DepartmentVM);
         }
         throw new NotFoundException(
           `Can not find ${id}`,
