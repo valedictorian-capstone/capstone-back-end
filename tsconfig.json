@@ -10,6 +10,21 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true
-  }
+    "typeRoots": ["node_modules/@types", "types"],
+		"paths": {
+			"@extras/*": ["src/app/extras/*"],
+			"@interfaces": ["src/app/interfaces"],
+			"@models": ["src/app/models"],
+			"@environments": ["src/environments"],
+			"@repositories": ["src/app/repositories"],
+			"@controllers": ["src/app/controllers"],
+			"@resolvers": ["src/app/resolvers"],
+			"@view-models": ["src/app/view-models"],
+			"@types": ["src/app/types"],
+      "@services": ["src/app/services"],
+      "@mappers": ["src/app/mappers"],
+      "@exceptions": ["src/app/exceptions"],
+    }
+  },
+  "include": ["src/**/*.ts"],
 }

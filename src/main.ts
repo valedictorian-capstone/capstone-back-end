@@ -1,12 +1,15 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
+import { AllExceptionsFilter } from '@extras/filters';
+import { LogRequestInterceptor } from '@extras/intercepters/log.intercepter';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from 'src/app/app.module';
 declare const module: any;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const open = require("open");
 (async () => {
-  const app = await NestFactory.create(AppModule);
-
+  const app = await NestFactory.create(AppModule, {logger: true});
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalInterceptors(new LogRequestInterceptor())
   const options = new DocumentBuilder()
     .setTitle('CRM BE')
     .setDescription('ALL API OF CRM')
@@ -25,6 +28,4 @@ const open = require("open");
     module.hot.accept();
     module.hot.dispose(() => app.close());
   }
-
-  open("http://localhost:3000/api/v1/swagger");
 })();

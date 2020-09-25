@@ -1,9 +1,17 @@
-import { Sequelize } from 'sequelize-typescript';
-import { CRMRepository } from 'src/app/extras/repositories';
-import { Role } from 'src/app/models';
+import { Role } from '@models';
+import { Inject } from '@nestjs/common';
+import { inject } from 'src/app/extras/functions';
+import { ROLE_REPOSITORY } from 'src/app/types';
+import { Connection } from 'typeorm';
+export class RoleRepository {
+  constructor(
+    @Inject('DATABASE_CONNECTION') protected readonly connection: Connection,
+  ) {}
 
-export class RoleRepository extends CRMRepository<Role> {
-  constructor(protected readonly sequelize: Sequelize) {
-    super(Role, sequelize);
-  }
+  public static readonly inject = inject(ROLE_REPOSITORY, RoleRepository);
+
+  public readonly useHTTP = () => {
+    return this.connection.getRepository(Role);
+  };
+  
 }

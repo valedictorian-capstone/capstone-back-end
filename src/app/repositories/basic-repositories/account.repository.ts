@@ -1,9 +1,14 @@
-import { Sequelize } from 'sequelize-typescript';
-import { CRMRepository } from 'src/app/extras/repositories';
-import { Account } from 'src/app/models';
+import { Account } from '@models';
+import { Inject } from '@nestjs/common';
+import { inject } from 'src/app/extras/functions';
+import { ACCOUNT_REPOSITORY } from 'src/app/types';
+import { Connection } from 'typeorm';
 
-export class AccountRepository extends CRMRepository<Account> {
-  constructor(protected readonly sequelize: Sequelize) {
-    super(Account, sequelize);
+export class AccountRepository {
+  constructor(@Inject('DATABASE_CONNECTION') protected readonly connection: Connection) {
+  }
+  public static readonly inject = inject(ACCOUNT_REPOSITORY, AccountRepository);
+  public readonly useHTTP = () => {
+    return this.connection.getRepository(Account);
   }
 }

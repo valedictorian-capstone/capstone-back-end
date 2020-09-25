@@ -1,29 +1,42 @@
-import { Model, IsUUID, Default, PrimaryKey, Column, HasMany, CreatedAt, UpdatedAt, Table } from "sequelize-typescript";
-import { uuid } from "uuidv4";
-import { AccountRole } from "./account-role.model";
+import { AutoMap } from "nestjsx-automapper";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Account } from "./account.model";
+@Entity()
+export class Role extends BaseEntity {
 
-@Table
-export class Role extends Model<Role> {
+    @AutoMap()
+    @PrimaryGeneratedColumn('uuid')
+    public id: string;
 
-    @IsUUID(4)
-    @Default(uuid)
-    @PrimaryKey
-    @Column
-    public Id!: string;
+    @AutoMap()
+    @Column({ nullable: false, default:'jame'})
+    public name: string;
 
-    @Column
-    public Name!: string;
+    @AutoMap()
+    @Column({default:null})
+    public description: string;
 
-    @HasMany(() => AccountRole)
-    public AccountRoles!: AccountRole[];
+    @AutoMap(() => Account)
+    @ManyToMany(() => Account, account => account.roles)
+    public accounts: Account[];
 
-    @Default(false)
-    @Column
-    public IsDelete!: boolean;
+    @AutoMap()
+    @Column({ default: 'crm' })
+    public createdBy: string;
 
-    @CreatedAt
-    public CreatedAt!: Date;
+    @AutoMap()
+    @Column({ default: 'crm' })
+    public updatedBy: string;
 
-    @UpdatedAt
-    public UpdatedAt!: Date;
+    @AutoMap()
+    @Column({ default: false })
+    public isDelete: boolean;
+
+    @AutoMap()
+    @CreateDateColumn()
+    public createdAt: Date;
+
+    @AutoMap()
+    @UpdateDateColumn()
+    public updatedAt: Date;
 }

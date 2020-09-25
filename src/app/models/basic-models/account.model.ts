@@ -1,44 +1,77 @@
-import { Model, PrimaryKey, Column, HasMany, Default, CreatedAt, UpdatedAt, Table, IsUUID, Unique } from 'sequelize-typescript';
-import { AccountRole } from './account-role.model';
-import { uuid } from 'uuidv4';
+import { hashSync } from 'bcrypt';
+import { AutoMap } from 'nestjsx-automapper';
+import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Role } from './role.model';
+@Entity()
+export class Account extends BaseEntity {
 
-@Table
-export class Account extends Model<Account> {
+  @AutoMap()
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
 
-    @IsUUID(4)
-    @Default(uuid)
-    @PrimaryKey
-    @Column
-    public Id!: string;
+  @AutoMap()
+  @Column({ nullable: false, default: '' })
+  public fullname: string;
 
-    @Unique
-    @Column
-    public Username!: string;
+  @AutoMap()
+  @Column({ nullable: false, unique: true, default: '' })
+  public email: string;
+  @Column({ nullable: false, unique: true, default: '' })
 
-    @Column
-    public Fullname!: string;
+  @AutoMap()
+  @Column({ default: '' })
+  public phone: string;
 
-    @Unique
-    @Column
-    public Email!: string;
+  @AutoMap()
+  @Column({ default: '' })
+  public code: string;
 
-    @Unique
-    @Column
-    public Phone!: string;
+  @AutoMap()
+  @Column({ default: '' })
+  public position: string;
 
-    @Column
-    public PasswordHash!: string;
+  @AutoMap()
+  @Column({ default: '' })
+  public avatar: string;
 
-    @HasMany(() => AccountRole)
-    public AccountRoles!: AccountRole[];
+  @AutoMap()
+  @Column({ default: '' })
+  public address: string;
 
-    @Default(false)
-    @Column
-    public IsDelete!: boolean;
+  @AutoMap()
+  @Column({ default: '' })
+  public gender: string;
 
-    @CreatedAt
-    public CreatedAt!: Date;
+  @AutoMap()
+  @Column({ nullable: false, default: '1' })
+  public password: string;
 
-    @UpdatedAt
-    public UpdatedAt!: Date;
+  @ManyToMany(() => Role, Role => Role.accounts)
+  @JoinTable()
+  public roles: Role[];
+
+  @AutoMap()
+  @Column({ default: 'admin' })
+  public createdBy: string;
+
+  @AutoMap()
+  @Column({ default: null })
+  public updatedBy: string;
+
+  @AutoMap()
+  @Column({ default: false })
+  public isDelete: boolean;
+
+  @AutoMap()
+  @CreateDateColumn()
+  public createdAt: Date;
+
+  @AutoMap()
+  @UpdateDateColumn()
+  public updatedAt: Date;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await hashSync(this.password, 10);
+  }
 }

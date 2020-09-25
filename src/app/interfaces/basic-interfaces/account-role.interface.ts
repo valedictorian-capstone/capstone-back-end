@@ -1,4 +1,4 @@
-import { AccountRoleVM, AccountRoleUM, AccountRoleCM } from 'src/app/dtos';
+import { AccountRoleVM, AccountRoleUM, AccountRoleCM } from 'src/app/view-models';
 
 export interface IAccountRoleController {
     readonly findAll: () => Promise<AccountRoleVM[]>;
