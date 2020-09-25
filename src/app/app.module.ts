@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-=======
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { BASIC_SERVICES, EXTRA_SERVICES, BPMN_SERVICES } from './services';
->>>>>>> 427873011a2e103e353f5f536b0f6180fd00cfc7
 import {
   BASIC_CONTROLLERS,
   BPMN_CONTROLLERS,
