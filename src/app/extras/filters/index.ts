@@ -8,8 +8,7 @@ import {
 } from '@nestjs/common';
 import {Request, Response} from 'express';
 
-const EXCEPTION = [HttpException, NotFoundException, InvalidException, InterceptorException ]
-@Catch(...EXCEPTION)
+@Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   
   catch(exception: HttpException, host: ArgumentsHost) {
