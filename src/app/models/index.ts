@@ -15,10 +15,12 @@ import { FormValue } from './form-models/form-value.model'
 import { CustomerExtraInformation } from './customer-models/customer-extra-information.model'
 import { CustomerExtraInformationData } from './customer-models/customer-extra-information-data.model'
 import { CustomerExtraData } from './customer-models/customer-extra-data.model';
-
+import { Department } from './basic-models/department.model';
+ 
 //basic model export
 export * from './basic-models/account.model';
 export * from './basic-models/role.model';
+export * from './basic-models/department.model';
 
 //bmn model export
 export * from './bpmn-models/wf.model';
@@ -47,7 +49,7 @@ export * from './customer-models/customer-extra-data.model';
 // export * from './basic-models/customer-group';
 
 
-export const BASIC_MODELS = [Account, Role];
+export const BASIC_MODELS = [Account, Role, Department];
 export const BPMN_MODELS = [WF, WFCondition, WFConnection, WFInstance, WFStep, WFStepInstance];
 export const FORM_MODELS = [FormControl, FormData, FormGroup, FormValue];
 export const CUSTOMER_MODELS = [Customer, Group, CustomerExtraInformation, CustomerExtraInformationData, CustomerExtraData];

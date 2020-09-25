@@ -1,10 +1,13 @@
 //basic service
 import { AccountService } from './basic-services/account.service';
 import { RoleService } from './basic-services/role.service';
+import { DepartmentService } from './basic-services/department.service';
 export * from './basic-services/account.service';
 export * from './basic-services/role.service';
+export * from './basic-services/department.service';
 export const BASIC_SERVICES = [AccountService, 
-  RoleService
+  RoleService,
+  DepartmentService
 ];
 
 
