@@ -9,6 +9,7 @@ import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
 import { AppProvider } from '@extras/providers';
 import { Module, OnModuleInit } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import {
   BASIC_REPOSITORY,
   BPMN_REPOSITORY,
@@ -35,6 +36,9 @@ import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
       throwError: true,
       skipUnmappedAssertion: true
     }),
+    ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV?process.env.NODE_ENV  + '.env' :'dev.env'
+    })
   ],
   controllers: [
     ...BASIC_CONTROLLERS,
