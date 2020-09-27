@@ -1,29 +1,28 @@
 import { NotFoundException } from '@exceptions';
-import { Department } from '@models';
+import { ProductExtraInformation } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { DepartmentRepository } from '@repositories';
-import { DEPARTMENT_REPOSITORY } from '@types';
-import { DepartmentCM, DepartmentUM, DepartmentVM } from '@view-models';
+import { ProductExtraInformationRepository } from '@repositories';
+import { PRODUCT_EXTRA_INFORMATION_REPOSITORY } from '@types';
+import { ProductExtraInformationCM, ProductExtraInformationUM, ProductExtraInformationVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 
 @Injectable()
-export class DepartmentService {
+export class ProductExtraInformationService {
   constructor(
-    @Inject(DEPARTMENT_REPOSITORY) protected readonly repository: DepartmentRepository,
+    @Inject(PRODUCT_EXTRA_INFORMATION_REPOSITORY) protected readonly repository: ProductExtraInformationRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<DepartmentVM[]> => {
+  public readonly findAll = async (): Promise<ProductExtraInformationVM[]> => {
     return await this.repository.useHTTP().find()
-      .then((models) => this.mapper.mapArray(models, DepartmentVM, Department))
+      .then((models) => this.mapper.mapArray(models, ProductExtraInformationVM, ProductExtraInformation))
   };
 
-  public readonly findById = async (id: string): Promise<DepartmentVM> => {
-    return await this.repository.useHTTP().findOne({ id: id }, { relations: ["departmentChildrens", "departmentParent"] })
+  public readonly findById = async (id: string): Promise<ProductExtraInformationVM> => {
+    return await this.repository.useHTTP().findOne({ id: id })
       .then((model) => {
-        console.log(model);
         if (model) {
-          return this.mapper.map(model, DepartmentVM, Department);
+          return this.mapper.map(model, ProductExtraInformationVM, ProductExtraInformation);
         }
         throw new NotFoundException(
           `Can not find ${id}`,
@@ -31,31 +30,12 @@ export class DepartmentService {
       })
   };
 
-  public readonly getDepartmentChild = async (id: string): Promise<DepartmentVM> => {
-    return await this.repository.useHTTP().findOne({ id: id }, { relations: ["departmentChildrens"] })
-      .then(async (model) => {
-        if(model){
-          const childs = [];
-          for (let i = 0; i < model.departmentChildrens.length; i++) {
-            const department = model.departmentChildrens[i];
-            childs.push(await this.getDepartmentChild(department.id));
-          }
-          model.departmentChildrens = childs;
-          return await this.mapper.map(model, DepartmentVM, DepartmentVM as any);
-        }
-        throw new NotFoundException(
-          `Can not find ${id}`,
-        );
-      })
+  public readonly insert = (body: ProductExtraInformationCM): Promise<ProductExtraInformationVM> => {
+    return this.repository.useHTTP().insert(body)
+      .then((model) => (this.mapper.map(model.generatedMaps[0], ProductExtraInformationVM, ProductExtraInformation as any)))
   };
 
-
-  public readonly insert = (body: DepartmentCM): Promise<DepartmentVM> => {
-    return this.repository.useHTTP().insert(body as any)
-      .then((model) => (this.mapper.map(model.generatedMaps[0], DepartmentVM, Department as any)))
-  };
-
-  public readonly update = async (body: DepartmentUM): Promise<DepartmentVM> => {
+  public readonly update = async (body: ProductExtraInformationUM): Promise<ProductExtraInformationVM> => {
     return await this.repository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -64,12 +44,12 @@ export class DepartmentService {
           );
         }
         return await this.repository.useHTTP()
-          .save(body as any)
-          .then(() => (this.mapper.map(body, DepartmentVM, DepartmentUM)))
+          .save(body)
+          .then(() => (this.mapper.map(body, ProductExtraInformationVM, ProductExtraInformationUM)))
       });
   };
 
-  public readonly remove = async (id: string): Promise<DepartmentVM> => {
+  public readonly remove = async (id: string): Promise<ProductExtraInformationVM> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -88,7 +68,7 @@ export class DepartmentService {
       });
   };
 
-  public readonly active = async (id: string): Promise<DepartmentVM> => {
+  public readonly active = async (id: string): Promise<ProductExtraInformationVM> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -107,7 +87,7 @@ export class DepartmentService {
       });
   };
 
-  public readonly deactive = async (id: string): Promise<DepartmentVM> => {
+  public readonly deactive = async (id: string): Promise<ProductExtraInformationVM> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {

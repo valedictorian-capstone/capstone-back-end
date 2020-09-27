@@ -1,41 +1,90 @@
-import { AccountExtraInformationDataVM } from "./account-extra-information-data.view-model";
-import { AccountExtraInformationPatternVM } from "./account-extra-information-pattern.view-model";
+
+import { ApiProperty } from "@nestjs/swagger";
+import { AutoMap } from "nestjsx-automapper";
+import { AccountExtraValueVM } from "./account-extra-value.view-model";
 
 export class AccountExtraInformationVM {
-  public readonly Id!: string;
-  public readonly Name!: string;
-  public readonly AccountId!: string;
-  public readonly Type!: string;
-  public readonly SubType!: string;
-  public readonly Options!: string;
-  public readonly PlaceHolder!: string;
-  public readonly Tooltip!: string;
-  public readonly AccountExtraInformationDatas!: AccountExtraInformationDataVM[];
-  public readonly AccountExtraInformationPatternVMs!: AccountExtraInformationPatternVM[];
-  public readonly IsDelete!: boolean;
-  public readonly CreatedBy!: string;
-  public readonly UpdatedBy!: string;
-  public readonly CreatedAt!: Date;
-  public readonly UpdatedAt!: Date;
+
+  @AutoMap()
+  public readonly id: string;
+
+  @AutoMap()
+  public readonly name: string;
+
+  @AutoMap()
+  public readonly type: string;
+
+  @AutoMap()
+  public readonly subType: string;
+
+  @AutoMap()
+  public readonly options: string;
+
+  @AutoMap()
+  public readonly placeHolder: string;
+
+  @AutoMap()
+  public readonly tooltip: string;
+
+  public accountExtraValues: AccountExtraValueVM[];
+
+  @AutoMap()
+  public readonly isDelete: boolean;
+
+  @AutoMap()
+  public readonly createdBy: string;
+
+  @AutoMap()
+  public readonly updatedBy: string;
+
+  @AutoMap()
+  public readonly createdAt: Date;
+
+  @AutoMap()
+  public readonly updatedAt: Date;
+
 }
 
 export class AccountExtraInformationCM {
-  public readonly Name!: string;
-  public readonly AccountId!: string;
-  public readonly Type!: string;
-  public readonly SubType!: string;
-  public readonly Options!: string;
-  public readonly PlaceHolder!: string;
-  public readonly Tooltip!: string;
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly name: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly type: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly subType: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly options: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly placeHolder: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly tooltip: string;
+  
 }
 
 export class AccountExtraInformationUM {
-  public readonly Id!: string;
-  public readonly Name!: string;
-  public readonly AccountId!: string;
-  public readonly Type!: string;
-  public readonly SubType!: string;
-  public readonly Options!: string;
-  public readonly PlaceHolder!: string;
-  public readonly Tooltip!: string;
+  @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
+  public readonly id: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly name: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly type: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly subType: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly options: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly placeHolder: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly tooltip: string;
 }
