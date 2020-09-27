@@ -1,4 +1,5 @@
 import { BASIC_MODELS, BPMN_MODELS, FORM_MODELS, CUSTOMER_MODELS } from '@models';
+import { ConfigService } from '@nestjs/config/dist/config.service';
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { createConnection } from 'typeorm';
@@ -10,6 +11,7 @@ export class AppProvider {
       {
         provide: 'DATABASE_CONNECTION',
         useFactory: async () => {
+          console.log(process.env.PORT)
           // eslint-disable-next-line @typescript-eslint/no-var-requires
           const mysql = require('mysql2/promise');
           await mysql.createConnection({

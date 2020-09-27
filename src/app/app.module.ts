@@ -9,6 +9,7 @@ import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
 import { AppProvider } from '@extras/providers';
 import { Module, OnModuleInit } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import {
   BASIC_REPOSITORY,
   BPMN_REPOSITORY,
@@ -23,9 +24,12 @@ import {
   CUSTOMER_SERVICES
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
+import { AuthModule } from './auth/auth.module';
 
-import { AccountMapper, FormControlMapper, FormDataMapper, FormGroupMapper, FormValueMapper, RoleMapper, WFMapper, 
-  CustomerExtraDataMapper, CustomerExtraInformationDataMapper, CustomerExtraInformationMapper, CustomerMapper, GroupMapper, DepartmentMapper} from './mappers';
+import {
+  AccountMapper, FormControlMapper, FormDataMapper, FormGroupMapper, FormValueMapper, RoleMapper, WFMapper,
+  CustomerExtraDataMapper, CustomerExtraInformationDataMapper, CustomerExtraInformationMapper, CustomerMapper, GroupMapper, DepartmentMapper
+} from './mappers';
 import { WFConnectionMapper } from './mappers/bpmn-mappers/wf-connection.mapper';
 import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
 
@@ -35,6 +39,10 @@ import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
       throwError: true,
       skipUnmappedAssertion: true
     }),
+    ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV ? process.env.NODE_ENV + '.env' : 'dev.env'
+    }),
+    AuthModule
   ],
   controllers: [
     ...BASIC_CONTROLLERS,

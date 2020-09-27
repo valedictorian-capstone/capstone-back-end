@@ -3,11 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  Inject,
   Param,
   Post,
-  Put,
-  Query,
+  Put
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -16,19 +14,18 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
-import { AccountCM, AccountUM, AccountVM } from '@view-models';
 import { AccountService } from '@services';
-import { Account } from '@models';
+import { AccountCM, AccountUM, AccountVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Account')
 @Controller('/api/v1/Account')
-export class AccountController{
+export class AccountController {
   constructor(
     protected service: AccountService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all accounts' })
