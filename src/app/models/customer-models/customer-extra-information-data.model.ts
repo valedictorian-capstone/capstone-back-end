@@ -9,7 +9,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { CustomerExtraInformation } from './customer-extra-information.model';
-import { CustomerExtraData } from './customer-extra-data.model';
+import { Customer } from './customer.model';
 
 @Entity()
 export class CustomerExtraInformationData extends BaseEntity {
@@ -25,8 +25,8 @@ export class CustomerExtraInformationData extends BaseEntity {
     @ManyToOne(() => CustomerExtraInformation, customerExtraInformation => customerExtraInformation.customerExtraInformationDatas)
     public customerExtraInformation: CustomerExtraInformation;
 
-    @ManyToOne(() => CustomerExtraData, customerExtraData=> customerExtraData.customerExtraInformationDatas)
-    public customerExtraData: CustomerExtraData;
+    @ManyToOne(() => Customer, customer=> customer.customerExtraInformationDatas)
+    public customer: Customer;
 
     @AutoMap()
     @Column({ default: null })

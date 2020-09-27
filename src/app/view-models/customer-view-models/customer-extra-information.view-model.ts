@@ -28,9 +28,6 @@ export class CustomerExtraInformationVM {
   @AutoMap()
   public readonly tooltip: string;
   
-  public readonly customer: CustomerVM;
-
-
   public readonly customerExtraInformationDatas: CustomerExtraInformationDataVM[];
     
   @AutoMap()

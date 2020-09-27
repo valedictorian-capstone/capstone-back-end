@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AutoMap } from 'nestjsx-automapper';
 import { AccountWFStepInstanceVM, CommentVM } from '../bpmn-view-models';
-import { AccountDepartmentVM } from './account-department.view-model';
-import { AccountExtraDataVM } from './account-extra-data.view-model';
 import { AccountExtraInformationVM } from './account-extra-information.view-model';
+import { AccountExtraValueVM } from './account-extra-value.view-model';
 import { AccountRoleVM } from './account-role.view-model';
+import { DepartmentVM } from './department.view-model';
 import { RoleVM } from './role.view-model';
 
 export class AccountVM {
@@ -39,20 +39,22 @@ export class AccountVM {
   public readonly position: string;
 
   public readonly roles: RoleVM[];
+  
+  public readonly departments: DepartmentVM[];
 
   @AutoMap()
-  public readonly AccountExtraInformationVMs: AccountExtraInformationVM[];
+  public readonly accountExtraInformationVMs: AccountExtraInformationVM[];
 
   @AutoMap()
   public readonly AccountRoleVMs: AccountRoleVM[];
+
+  public readonly accountExtraValues: AccountExtraValueVM[];
+
   @AutoMap()
-  public readonly AccountExtraDataVMs: AccountExtraDataVM[];
+  public readonly accountWFStepInstanceVMs: AccountWFStepInstanceVM[];
+
   @AutoMap()
-  public readonly AccountDepartmentVMs: AccountDepartmentVM[];
-  @AutoMap()
-  public readonly AccountWFStepInstanceVMs: AccountWFStepInstanceVM[];
-  @AutoMap()
-  public readonly CommentVMs: CommentVM[];
+  public readonly commentVMs: CommentVM[];
 
   @AutoMap()
   public readonly isDelete: boolean;
@@ -73,11 +75,11 @@ export class AccountVM {
 export class AccountCM {
 
   @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 10, pattern: "(\(\d{2,4}\)\s{0,1}\d{6,9})$|^\d{8,13}$|^\d{3,5}\s?\d{3}\s?\d{3,4}$|^[\d\(\)\s\-\/]{6,}"})
+  @ApiProperty({ required: true, format: 'string', minLength: 10, pattern: "(\(\d{2,4}\)\s{0,1}\d{6,9})$|^\d{8,13}$|^\d{3,5}\s?\d{3}\s?\d{3,4}$|^[\d\(\)\s\-\/]{6,}" })
   public readonly phone: string;
 
   @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 8, pattern: "[a-zA-Z0-9.#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*"})
+  @ApiProperty({ required: true, format: 'string', minLength: 8, pattern: "[a-zA-Z0-9.#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*" })
   public readonly email: string;
 
   @AutoMap()
@@ -117,10 +119,10 @@ export class AccountUM {
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly id: string;
 
-  @ApiProperty({ required: true, format: 'string', minLength: 10, pattern: "(\(\d{2,4}\)\s{0,1}\d{6,9})$|^\d{8,13}$|^\d{3,5}\s?\d{3}\s?\d{3,4}$|^[\d\(\)\s\-\/]{6,}"})
+  @ApiProperty({ required: true, format: 'string', minLength: 10, pattern: "(\(\d{2,4}\)\s{0,1}\d{6,9})$|^\d{8,13}$|^\d{3,5}\s?\d{3}\s?\d{3,4}$|^[\d\(\)\s\-\/]{6,}" })
   public readonly phone: string;
 
-  @ApiProperty({ required: true, format: 'string', minLength: 8, pattern: "[a-zA-Z0-9.#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*"})
+  @ApiProperty({ required: true, format: 'string', minLength: 8, pattern: "[a-zA-Z0-9.#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*" })
   public readonly email: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })

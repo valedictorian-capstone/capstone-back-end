@@ -4,12 +4,10 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Customer } from './customer.model';
 import { CustomerExtraInformationData } from './customer-extra-information-data.model'
 
 @Entity()
@@ -35,12 +33,8 @@ export class CustomerExtraInformation extends BaseEntity {
     @Column({ nullable: false })
     public options: string;
 
-    @ManyToOne(() => Customer, customer => customer.customerExtraInformations)
-    public customer: Customer;
-
     @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.customerExtraInformation )
     public customerExtraInformationDatas: CustomerExtraInformationData[];
-
 
     @AutoMap()
     @Column({ nullable: false })

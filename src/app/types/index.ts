@@ -4,6 +4,8 @@ export * from './basic-types/account-role.type';
 export * from './basic-types/account.type';
 export * from './basic-types/role.type';
 export * from './basic-types/department.type';
+export * from './basic-types/account-extra-value.type';
+export * from './basic-types/account-extra-information.type'
 
 //bpmn
 export * from './bpmn-types/work-flow-connection.type';
@@ -23,3 +25,6 @@ export * from './customer-types/group.types';
 export * from './customer-types/customer-extra-data.types';
 export * from './customer-types/customer-extra-information.types';
 export * from './customer-types/customer-extra-information-data.types';
+export * from './customer-types/product.types';
+export * from './customer-types/product-extra-value.types';
+export * from './customer-types/product-extra-information.types';
