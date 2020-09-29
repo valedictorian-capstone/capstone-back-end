@@ -6,10 +6,11 @@ export class WFMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
     super();
     mapper.createMap(WF, WFVM)
-    .forMember(d => d.wFSteps, mapFrom( s => mapper.mapArray(s.wFSteps, WFStepVM, WFStep)))
+      .forMember(d => d.wFSteps, mapFrom(d => mapper.mapArray(d.wFSteps, WFStepVM, WFStep)))
+      .forMember(d => d.style, mapFrom(d => d.style ))
     // .forMember(d => d.wFInstances, mapWith(WFVM, s => s.wFInstances))
     // .forMember(d => d.wFConditions, mapWith(WFVM, s => s.wFConditions));
     mapper.createMap(WFUM, WFVM);
-    mapper.createMap(WFCM,WF);
+    mapper.createMap(WFCM, WF);
   }
 }

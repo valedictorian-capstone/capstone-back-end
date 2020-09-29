@@ -143,3 +143,38 @@ export class AccountUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly Position: string;
 }
+
+export class AccountAuthVM {
+
+  @AutoMap()
+  public readonly id: string;
+
+  @AutoMap()
+  public readonly phone: string;
+
+  @AutoMap()
+  public readonly email: string;
+
+  @AutoMap()
+  public readonly code: string;
+
+  public readonly roles: RoleVM[];
+
+  @AutoMap()
+  public readonly password: string;
+
+  @AutoMap()
+  public readonly isDelete: boolean;
+
+  @AutoMap()
+  public readonly createdBy: string;
+
+  @AutoMap()
+  public readonly updatedBy: string;
+
+  @AutoMap()
+  public readonly createdAt: Date;
+
+  @AutoMap()
+  public readonly updatedAt: Date;
+}
