@@ -51,6 +51,8 @@ export class FormGroupService {
     public readonly update = async (body: FormGroupUM): Promise<FormGroupVM> => {
         return this.repository.useHTTP().save(body)
         .then((model) => {
+            // body.formControlRemove.map(id => this.controlRepository.useHTTP().delete({id: id}));
+            this.controlRepository.useHTTP().delete(body.formControlRemove);
             this.controlRepository.useHTTP().save(body.formControls.map(formControl => ({...formControl, formGroup: model})));
             (this.mapper.map(model, FormGroupVM, FormGroup as any));
         })

@@ -65,4 +65,7 @@ export class FormGroupUM {
 
   @ApiProperty({ required: true, type: 'array', items:{$ref: getSchemaPath(FormControlUM)} })
   public readonly formControls: FormControlUM[];
+
+  @ApiProperty({ required: true, format: 'array'})
+  public readonly formControlRemove: string[];
 }

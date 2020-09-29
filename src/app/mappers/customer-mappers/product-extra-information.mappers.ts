@@ -1,12 +1,13 @@
 import { ProfileBase, AutoMapper, mapWith } from "@nartc/automapper";
-import { ProductExtraInformation } from "@models";
-import { ProductExtraInformationUM, ProductExtraInformationVM } from "@view-models";
+import { ProductExtraInformation, ProductExtraValue } from "@models";
+import { ProductExtraInformationUM, ProductExtraInformationVM, ProductExtraValueVM } from "@view-models";
+import { mapFrom } from "nestjsx-automapper";
 
 export class ProductExtraInformationMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
     super();
     mapper.createMap(ProductExtraInformation, ProductExtraInformationVM)
-      .forMember(d => d.productExtraValues, mapWith(ProductExtraInformationVM, s => s.productExtraValues));
+    .forMember(d => d.productExtraValues, mapFrom(s => mapper.mapArray(s.productExtraValues, ProductExtraValueVM, ProductExtraValue)));
     mapper.createMap(ProductExtraInformationUM, ProductExtraInformationVM);
   }
 }

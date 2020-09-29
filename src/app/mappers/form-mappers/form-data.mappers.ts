@@ -1,6 +1,6 @@
 import { ProfileBase, AutoMapper, mapWith } from "@nartc/automapper";
 import { FormData } from "@models";
-import { FormControlVM, FormDataUM, FormDataVM } from "@view-models";
+import { FormDataUM, FormDataVM } from "@view-models";
 
 export class FormDataMapper extends ProfileBase {
     constructor(mapper: AutoMapper) {
