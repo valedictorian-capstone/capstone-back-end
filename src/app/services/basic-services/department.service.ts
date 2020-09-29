@@ -41,7 +41,7 @@ export class DepartmentService {
             childs.push(await this.getDepartmentChild(department.id));
           }
           model.departmentChildrens = childs;
-          return await this.mapper.map(model, DepartmentVM, DepartmentVM);
+          return await this.mapper.map(model, DepartmentVM, DepartmentVM as any);
         }
         throw new NotFoundException(
           `Can not find ${id}`,
@@ -64,7 +64,7 @@ export class DepartmentService {
           );
         }
         return await this.repository.useHTTP()
-          .save(body)
+          .save(body as any)
           .then(() => (this.mapper.map(body, DepartmentVM, DepartmentUM)))
       });
   };

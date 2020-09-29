@@ -28,26 +28,28 @@ export class AuthService {
     return from(this.jwtService.signAsync({account}))
   }
 
-  private comparePasswords(newPassword: string, passwordHash: string): Observable <any> {
+  private comparePasswords(newPassword: string, passwordHash: string): Observable<any> {
     return of<any | boolean>(compare(newPassword, passwordHash));
   }
 
   private validateAccount = async (emailOrPhone: string, password: string): Promise<Account> => {
     const option = isNaN(+emailOrPhone) ?
-      { email: emailOrPhone, password: password }
-      : { phone: emailOrPhone, password: password }
+      { email: emailOrPhone }
+      : { phone: emailOrPhone}
     return await this.accountRepository.useHTTP().findOne(option).then(
       account => {
-        this.comparePasswords(password, account.password).pipe(
+        if (!account) {
+          throw new UnauthorizedException("Invalid email or phone","Invalid email or phone");
+        }
+        this.comparePasswords(password, account?.password).pipe(
           map((match:boolean) => {
             if(!match) {
-              throw new UnauthorizedException({},"Invalid Password");
+              throw new UnauthorizedException("Invalid Password","Invalid Password");
             }
           })
         )
         return account;
       }
     )
-    
   }
 }

@@ -11,7 +11,6 @@ export class AppProvider {
       {
         provide: 'DATABASE_CONNECTION',
         useFactory: async () => {
-          console.log(process.env.PORT)
           // eslint-disable-next-line @typescript-eslint/no-var-requires
           const mysql = require('mysql2/promise');
           await mysql.createConnection({

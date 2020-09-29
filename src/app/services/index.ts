@@ -2,12 +2,19 @@
 import { AccountService } from './basic-services/account.service';
 import { RoleService } from './basic-services/role.service';
 import { DepartmentService } from './basic-services/department.service';
+import { AccountExtraInformationService } from './basic-services/account-extra-information.service';
+import { AccountExtraValueService } from './basic-services/account-extra-value.service';
 export * from './basic-services/account.service';
 export * from './basic-services/role.service';
 export * from './basic-services/department.service';
-export const BASIC_SERVICES = [AccountService, 
+export * from './basic-services/account-extra-information.service';
+export * from './basic-services/account-extra-value.service';
+export const BASIC_SERVICES = [
+  AccountService,
   RoleService,
-  DepartmentService
+  DepartmentService,
+  AccountExtraInformationService,
+  AccountExtraValueService
 ];
 
 
@@ -27,7 +34,7 @@ export * from './bpmn-services/wf-step.service';
 export * from './bpmn-services/wf.service';
 export * from './bpmn-services/wf-diagram.service'
 export const BPMN_SERVICES = [
-  WFService, 
+  WFService,
   WFConnectionService,
   WFStepService,
   WFInstanceService,
@@ -44,17 +51,18 @@ export * from './form-services/form-control.service';
 export * from './form-services/form-data.service';
 export * from './form-services/form-group.service';
 export * from './form-services/form-value.service';
-export const FORM_SERVICE = [FormControlService, 
-  FormDataService, 
-  FormGroupService, 
+export const FORM_SERVICE = [FormControlService,
+  FormDataService,
+  FormGroupService,
   FormValueService
 ];
 
 
 
 //extra services
+import { AuthService } from './extra-services/auth.service';
 export * from './extra-services/firebase.service';
-export const EXTRA_SERVICES = [FirebaseService];
+export const EXTRA_SERVICES = [FirebaseService, AuthService];
 
 
 //customer services
@@ -62,14 +70,21 @@ import { CustomerService } from './customer-services/customer.service';
 import { GroupService } from './customer-services/group.service';
 import { CustomerExtraInformationService } from './customer-services/customer-extra-information.service';
 import { CustomerExtraInformationDataService } from './customer-services/customer-extra-information-data.service';
-import { CustomerExtraDataService } from './customer-services/customer-extra-data.service';
+import { ProductService } from './customer-services/product.service';
+import { ProductExtraInformationService } from './customer-services/product-extra-information.service';
+import { ProductExtraValueService } from './customer-services/product-extra-value.service';
 export * from './customer-services/customer.service';
 export * from './customer-services/group.service';
 export * from './customer-services/customer-extra-information.service';
 export * from './customer-services/customer-extra-information-data.service';
-export * from './customer-services/customer-extra-data.service';
-export const CUSTOMER_SERVICES = [CustomerService, 
-  GroupService, 
-  CustomerExtraInformationService, 
-  CustomerExtraInformationDataService, 
-  CustomerExtraDataService];
+export * from './customer-services/product.service';
+export * from './customer-services/product-extra-information.service';
+export * from './customer-services/product-extra-value.service';
+export const CUSTOMER_SERVICES = [CustomerService,
+  GroupService,
+  CustomerExtraInformationService,
+  CustomerExtraInformationDataService,
+  ProductService,
+  ProductExtraInformationService,
+  ProductExtraValueService
+];

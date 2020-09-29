@@ -1,4 +1,4 @@
-import { NotFoundException } from '@exceptions';
+import { InvalidException, NotFoundException } from '@exceptions';
 import { Account, Role } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { AccountRepository, RoleRepository } from '@repositories';
@@ -24,7 +24,6 @@ export class AccountService {
     return await this.accountRepository.useHTTP().findOne({ id: id },{ relations: ["roles"] })
       .then((model) => {
         if (model) {
-          console.log(model)
           return this.mapper.map(model, AccountVM, Account);
         }
         throw new NotFoundException(
@@ -41,10 +40,6 @@ export class AccountService {
     account.roles = await this.roleRepository.useHTTP().find({ name: In(body.roleName) });
     return await this.accountRepository.useHTTP().save(account)
       .then((model) => (this.mapper.map(model, AccountVM, Account as any)))
-      .catch(e => {
-        Logger.error(e);
-        return null;
-      })
   };
 
   public readonly update = async (body: AccountUM): Promise<AccountVM> => {

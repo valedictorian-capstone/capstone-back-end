@@ -9,7 +9,8 @@ import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
 import { AppProvider } from '@extras/providers';
 import { Module, OnModuleInit } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import {
   BASIC_REPOSITORY,
   BPMN_REPOSITORY,
@@ -24,14 +25,15 @@ import {
   CUSTOMER_SERVICES
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
-import { AuthModule } from './auth/auth.module';
 
 import {
   AccountMapper, FormControlMapper, FormDataMapper, FormGroupMapper, FormValueMapper, RoleMapper, WFMapper,
-  CustomerExtraDataMapper, CustomerExtraInformationDataMapper, CustomerExtraInformationMapper, CustomerMapper, GroupMapper, DepartmentMapper
+  CustomerExtraInformationDataMapper, CustomerExtraInformationMapper, CustomerMapper, GroupMapper, DepartmentMapper,
+  ProductMapper, ProductExtraInformationMapper, ProductExtraValueMapper, AccountExtraInformationMapper, AccountExtraValueMapper
 } from './mappers';
 import { WFConnectionMapper } from './mappers/bpmn-mappers/wf-connection.mapper';
 import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
+import { AuthService } from './services/extra-services/auth.service';
 
 @Module({
   imports: [
@@ -42,7 +44,10 @@ import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
     ConfigModule.forRoot({
       envFilePath: process.env.NODE_ENV ? process.env.NODE_ENV + '.env' : 'dev.env'
     }),
-    AuthModule
+    JwtModule.register({
+      secretOrPrivateKey: '10',
+      signOptions: { expiresIn: '60s' },
+    }),
   ],
   controllers: [
     ...BASIC_CONTROLLERS,
@@ -78,12 +83,16 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(WFMapper);
     this.mapper.addProfile(WFStepMapper);
     this.mapper.addProfile(WFConnectionMapper);
-    this.mapper.addProfile(CustomerExtraDataMapper);
     this.mapper.addProfile(CustomerExtraInformationDataMapper);
     this.mapper.addProfile(CustomerExtraInformationMapper);
     this.mapper.addProfile(CustomerMapper);
     this.mapper.addProfile(GroupMapper);
     this.mapper.addProfile(DepartmentMapper);
+    this.mapper.addProfile(AccountExtraInformationMapper);
+    this.mapper.addProfile(AccountExtraValueMapper);
+    this.mapper.addProfile(ProductMapper);
+    this.mapper.addProfile(ProductExtraInformationMapper);
+    this.mapper.addProfile(ProductExtraValueMapper);
   }
 
 }
