@@ -16,7 +16,7 @@ export class FormGroupService {
     ) { }
 
     public readonly findAll = async (): Promise<FormGroupVM[]> => {
-        return await this.repository.useHTTP().find()
+        return await this.repository.useHTTP().find({relations: ["formControls"]})
             .then((models) => this.mapper.mapArray(models, FormGroupVM, FormGroup))
     };
 
