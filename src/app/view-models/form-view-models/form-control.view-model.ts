@@ -46,6 +46,9 @@ export class FormControlVM {
   
   @AutoMap()
   public readonly color: string;
+
+  @AutoMap()
+  public readonly position: number;
   
   public readonly formGroup: FormGroupVM;
   
@@ -103,13 +106,9 @@ export class FormControlCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly color: string;
-
-  @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
-  public fromGroupId: string;
 }
 
 export class FormControlUM {
-
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly id: string;
@@ -149,4 +148,6 @@ export class FormControlUM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly color: string;
+
+
 }

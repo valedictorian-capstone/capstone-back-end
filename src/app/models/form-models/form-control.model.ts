@@ -79,6 +79,10 @@ export class FormControl extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
+  public position: number;
+
+  @AutoMap()
+  @Column({ default: null })
   public createdBy: string;
 
   @AutoMap()
