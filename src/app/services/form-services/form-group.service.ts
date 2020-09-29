@@ -15,10 +15,10 @@ export class FormGroupService {
         @InjectMapper() protected readonly mapper: AutoMapper
     ) { }
 
-    public readonly findAll = async (): Promise<FormGroupVM[]> => {
-        return await this.repository.useHTTP().find()
-            .then((models) => this.mapper.mapArray(models, FormGroupVM, FormGroup))
-    };
+    // public readonly findAll = async (): Promise<FormGroupVM[]> => {
+    //     return await this.repository.useHTTP().find()
+    //         .then((models) => this.mapper.mapArray(models, FormGroupVM, FormGroup))
+    // };
 
     public readonly findAllContainFormControl = async (): Promise<FormGroupVM[]> => {
         return await this.repository.useHTTP().find({ relations: ["formControls", "formDatas", "wfSteps"]})
@@ -49,17 +49,12 @@ export class FormGroupService {
     };
 
     public readonly update = async (body: FormGroupUM): Promise<FormGroupVM> => {
-        return await this.repository.useHTTP().findOne({ id: body.id })
-            .then(async (model) => {
-                if (!model) {
-                    throw new NotFoundException(
-                        `Can not find ${body.id}`,
-                    );
-                }
-                return await this.repository.useHTTP()
-                    .save(body)
-                    .then(() => (this.mapper.map(body, FormGroupVM, FormGroupUM)))
-            });
+        return this.repository.useHTTP().save(body)
+        .then((model) => {
+            this.controlRepository.useHTTP().save(body.formControls.map(formControl => ({...formControl, formGroup: model})));
+            (this.mapper.map(model, FormGroupVM, FormGroup as any));
+        })
+        .catch((err) =>{console.log(err); return null});
     };
 
     public readonly remove = async (id: string): Promise<FormGroupVM> => {

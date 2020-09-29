@@ -1,4 +1,4 @@
-import { FormControlVM, FormControlCM } from "./form-control.view-model";
+import { FormControlVM, FormControlCM, FormControlUM } from "./form-control.view-model";
 import { FormDataVM } from "./form-data.view-model";
 import { WFStepVM } from "../bpmn-view-models/work-flow-step.view-model";
 import { AutoMap } from "nestjsx-automapper";
@@ -59,7 +59,10 @@ export class FormGroupUM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly name:  string;
-  
+
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly description:  string;
+
+  @ApiProperty({ required: true, type: 'array', items:{$ref: getSchemaPath(FormControlUM)} })
+  public readonly formControls: FormControlUM[];
 }
