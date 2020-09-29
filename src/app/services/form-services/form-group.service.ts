@@ -20,6 +20,13 @@ export class FormGroupService {
             .then((models) => this.mapper.mapArray(models, FormGroupVM, FormGroup))
     };
 
+    public readonly findAllContainFormControl = async (): Promise<FormGroupVM[]> => {
+        return await this.repository.useHTTP().find({ relations: ["formControls", "formDatas", "wfSteps"]})
+            .then( (models) => { 
+                return this.mapper.mapArray(models, FormGroupVM, FormGroup);
+            })
+    };
+
     public readonly findById = async (id: string): Promise<FormGroupVM> => {
         return await this.repository.useHTTP().findOne({ id: id })
             .then((model) => {

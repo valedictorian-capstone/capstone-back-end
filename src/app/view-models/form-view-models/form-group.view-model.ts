@@ -13,6 +13,9 @@ export class FormGroupVM {
   public readonly name:  string;
 
   @AutoMap()
+  public readonly code: string;
+
+  @AutoMap()
   public readonly description:  string;
 
   public readonly formControls:  FormControlVM[];

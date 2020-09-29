@@ -35,6 +35,14 @@ export class FormGroupController {
         return this.service.findAll();
     }
 
+    @Get('/FormControl')
+    @ApiOperation({ summary: 'Get all form-group contain form-control' })
+    @ApiOkResponse({ description: 'Success return all form-group' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public findAllContainFormControl(): Promise<FormGroupVM[]> {
+        return this.service.findAllContainFormControl();
+    }
+
     @Get(':id')
     @ApiOperation({ summary: 'Get an form-group by Id' })
     @ApiOkResponse({ description: "Success return an form-group's information" })
