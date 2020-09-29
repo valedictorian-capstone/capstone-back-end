@@ -15,13 +15,20 @@ export class FormGroupService {
         @InjectMapper() protected readonly mapper: AutoMapper
     ) { }
 
-    public readonly findAll = async (): Promise<FormGroupVM[]> => {
-        return await this.repository.useHTTP().find({relations: ["formControls"]})
-            .then((models) => this.mapper.mapArray(models, FormGroupVM, FormGroup))
+    // public readonly findAll = async (): Promise<FormGroupVM[]> => {
+    //     return await this.repository.useHTTP().find()
+    //         .then((models) => this.mapper.mapArray(models, FormGroupVM, FormGroup))
+    // };
+
+    public readonly findAllContainFormControl = async (): Promise<FormGroupVM[]> => {
+        return await this.repository.useHTTP().find({ relations: ["formControls", "formDatas", "wfSteps"]})
+            .then( (models) => { 
+                return this.mapper.mapArray(models, FormGroupVM, FormGroup);
+            })
     };
 
     public readonly findById = async (id: string): Promise<FormGroupVM> => {
-        return await this.repository.useHTTP().findOne({ id: id })
+        return await this.repository.useHTTP().findOne({ id: id }, { relations: ["formControls", "formDatas", "wfSteps"]})
             .then((model) => {
                 if (model) {
                     return this.mapper.map(model, FormGroupVM, FormGroup);
@@ -42,17 +49,14 @@ export class FormGroupService {
     };
 
     public readonly update = async (body: FormGroupUM): Promise<FormGroupVM> => {
-        return await this.repository.useHTTP().findOne({ id: body.id })
-            .then(async (model) => {
-                if (!model) {
-                    throw new NotFoundException(
-                        `Can not find ${body.id}`,
-                    );
-                }
-                return await this.repository.useHTTP()
-                    .save(body)
-                    .then(() => (this.mapper.map(body, FormGroupVM, FormGroupUM)))
-            });
+        return this.repository.useHTTP().save(body)
+        .then((model) => {
+            // body.formControlRemove.map(id => this.controlRepository.useHTTP().delete({id: id}));
+            this.controlRepository.useHTTP().delete(body.formControlRemove);
+            this.controlRepository.useHTTP().save(body.formControls.map(formControl => ({...formControl, formGroup: model})));
+            (this.mapper.map(model, FormGroupVM, FormGroup as any));
+        })
+        .catch((err) =>{console.log(err); return null});
     };
 
     public readonly remove = async (id: string): Promise<FormGroupVM> => {
@@ -74,38 +78,38 @@ export class FormGroupService {
             });
     };
 
-    public readonly active = async (id: string): Promise<FormGroupVM> => {
-        return await this.repository.useHTTP().findOne({ id: id })
+    public readonly active = async (ids: string[]): Promise<FormGroupVM> => {
+        return await this.repository.useHTTP().findByIds(ids)
             .then(async (model) => {
                 if (!model) {
                     throw new NotFoundException(
-                        `Can not find ${id}`,
+                        `Can not update`,
                     );
                 }
                 return await this.repository.useHTTP()
-                    .save({ ...model, isDelete: false })
+                    .save(model.map(formGroup => ({...formGroup, isDelete: false})))
                     .then(() => {
                         throw new HttpException(
-                            `Update information of ${id} successfully !!!`,
+                            `Update information successfully !!!`,
                             HttpStatus.CREATED,
                         );
                     })
             });
     };
 
-    public readonly deactive = async (id: string): Promise<FormGroupVM> => {
-        return await this.repository.useHTTP().findOne({ id: id })
+    public readonly deactive = async (ids: string[]): Promise<FormGroupVM> => {
+        return await this.repository.useHTTP().findByIds(ids)
             .then(async (model) => {
                 if (!model) {
                     throw new NotFoundException(
-                        `Can not find ${id}`,
+                        `Can not update`,
                     );
                 }
                 return await this.repository.useHTTP()
-                    .save({ ...model, isDelete: true })
+                    .save(model.map(formGroup => ({...formGroup, isDelete: true})))
                     .then(() => {
                         throw new HttpException(
-                            `Update information of ${id} successfully !!!`,
+                            `Update information successfully !!!`,
                             HttpStatus.CREATED,
                         );
                     })

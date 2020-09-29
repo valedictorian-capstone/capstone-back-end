@@ -1,7 +1,7 @@
 import { HttpException } from "@nestjs/common"
 
 export class InvalidException extends HttpException {
-  constructor() {
-    super('BAD REQUEST', 400)
+  constructor(message: string) {
+    super(message, 400)
   }
 }

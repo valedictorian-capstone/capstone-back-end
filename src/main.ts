@@ -7,7 +7,7 @@ declare const module: any;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const open = require("open");
 (async () => {
-  const app = await NestFactory.create(AppModule, { logger: false });
+  const app = await NestFactory.create(AppModule, { logger: true });
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new LogRequestInterceptor())
   console.log(process.env.GGCLOUD_SQL_HOST)

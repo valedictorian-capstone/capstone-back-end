@@ -33,10 +33,7 @@ import {
 } from './mappers';
 import { WFConnectionMapper } from './mappers/bpmn-mappers/wf-connection.mapper';
 import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
-import { AuthService } from './services/extra-services/auth.service';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require("dotenv").config();
 @Module({
   imports: [
     AutomapperModule.withMapper({

@@ -27,6 +27,10 @@ export class FormGroup extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
+  public code: string;
+
+  @AutoMap()
+  @Column({ default: null })
   public description: string;
 
   @ManyToMany(() => WFStep, wFStep => wFStep.formGroups)
