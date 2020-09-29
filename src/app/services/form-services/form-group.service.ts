@@ -28,7 +28,7 @@ export class FormGroupService {
     };
 
     public readonly findById = async (id: string): Promise<FormGroupVM> => {
-        return await this.repository.useHTTP().findOne({ id: id })
+        return await this.repository.useHTTP().findOne({ id: id }, { relations: ["formControls", "formDatas", "wfSteps"]})
             .then((model) => {
                 if (model) {
                     return this.mapper.map(model, FormGroupVM, FormGroup);
