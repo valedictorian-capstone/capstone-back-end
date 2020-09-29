@@ -78,38 +78,38 @@ export class FormGroupService {
             });
     };
 
-    public readonly active = async (id: string): Promise<FormGroupVM> => {
-        return await this.repository.useHTTP().findOne({ id: id })
+    public readonly active = async (ids: string[]): Promise<FormGroupVM> => {
+        return await this.repository.useHTTP().findByIds(ids)
             .then(async (model) => {
                 if (!model) {
                     throw new NotFoundException(
-                        `Can not find ${id}`,
+                        `Can not update`,
                     );
                 }
                 return await this.repository.useHTTP()
-                    .save({ ...model, isDelete: false })
+                    .save(model.map(formGroup => ({...formGroup, isDelete: false})))
                     .then(() => {
                         throw new HttpException(
-                            `Update information of ${id} successfully !!!`,
+                            `Update information successfully !!!`,
                             HttpStatus.CREATED,
                         );
                     })
             });
     };
 
-    public readonly deactive = async (id: string): Promise<FormGroupVM> => {
-        return await this.repository.useHTTP().findOne({ id: id })
+    public readonly deactive = async (ids: string[]): Promise<FormGroupVM> => {
+        return await this.repository.useHTTP().findByIds(ids)
             .then(async (model) => {
                 if (!model) {
                     throw new NotFoundException(
-                        `Can not find ${id}`,
+                        `Can not update`,
                     );
                 }
                 return await this.repository.useHTTP()
-                    .save({ ...model, isDelete: true })
+                    .save(model.map(formGroup => ({...formGroup, isDelete: true})))
                     .then(() => {
                         throw new HttpException(
-                            `Update information of ${id} successfully !!!`,
+                            `Update information successfully !!!`,
                             HttpStatus.CREATED,
                         );
                     })

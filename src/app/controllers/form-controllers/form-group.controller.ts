@@ -35,6 +35,7 @@ export class FormGroupController {
         return this.service.findAllContainFormControl();
     }
 
+
     @Get(':id')
     @ApiOperation({ summary: 'Get an form-group by Id' })
     @ApiOkResponse({ description: "Success return an form-group's information" })
@@ -68,19 +69,19 @@ export class FormGroupController {
         return this.service.remove(id);
     }
 
-    @Put('Active:id')
+    @Put('Active')
     @ApiOperation({ summary: 'Active an form-group by Id' })
     @ApiCreatedResponse({ description: 'Success active new form-group' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public active(@Param('id')id: string): Promise<FormGroupVM> {
-        return this.service.active(id);
+    public active(@Body() ids: string[]): Promise<FormGroupVM> {
+        return this.service.active(ids);
     }
 
-    @Put('DeActive:id')
+    @Put('DeActive')
     @ApiOperation({ summary: 'Deative an form-group by Id' })
     @ApiCreatedResponse({ description: 'Success deactive new form-group' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public deactive(@Param('id') id: string): Promise<FormGroupVM> {
-        return this.service.deactive(id);
+    public deactive(@Body() ids: string[]): Promise<FormGroupVM> {
+        return this.service.deactive(ids);
     }
 }
