@@ -8,8 +8,7 @@ export class CustomerMapper extends ProfileBase {
     mapper.createMap(Customer, CustomerVM)
       .forMember(d => d.groups, mapWith(CustomerVM, s => s.groups))
       .forMember(d => d.wFInstances, mapWith(CustomerVM, s => s.wFInstances))
-      .forMember(d => d.customerExtraInformations, mapWith(CustomerVM, s => s.customerExtraInformations))
-      .forMember(d => d.customerExtraDatas, mapWith(CustomerVM, s => s.customerExtraDatas));
+      .forMember(d => d.customerExtraInformationDatas, mapWith(CustomerVM, s => s.customerExtraInformationDatas));
     mapper.createMap(CustomerUM, CustomerVM);
   }
 }

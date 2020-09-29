@@ -26,7 +26,9 @@ import {
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
 
 import { AccountMapper, FormControlMapper, FormDataMapper, FormGroupMapper, FormValueMapper, RoleMapper, WFMapper, 
-  CustomerExtraDataMapper, CustomerExtraInformationDataMapper, CustomerExtraInformationMapper, CustomerMapper, GroupMapper, DepartmentMapper} from './mappers';
+ CustomerExtraInformationDataMapper, CustomerExtraInformationMapper, CustomerMapper, GroupMapper, DepartmentMapper,
+  ProductMapper, ProductExtraInformationMapper, ProductExtraValueMapper, AccountExtraInformationMapper, AccountExtraValueMapper
+} from './mappers';
 import { WFConnectionMapper } from './mappers/bpmn-mappers/wf-connection.mapper';
 import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
 
@@ -74,12 +76,16 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(WFMapper);
     this.mapper.addProfile(WFStepMapper);
     this.mapper.addProfile(WFConnectionMapper);
-    this.mapper.addProfile(CustomerExtraDataMapper);
     this.mapper.addProfile(CustomerExtraInformationDataMapper);
     this.mapper.addProfile(CustomerExtraInformationMapper);
     this.mapper.addProfile(CustomerMapper);
     this.mapper.addProfile(GroupMapper);
     this.mapper.addProfile(DepartmentMapper);
+    this.mapper.addProfile(AccountExtraInformationMapper);
+    this.mapper.addProfile(AccountExtraValueMapper);
+    this.mapper.addProfile(ProductMapper);
+    this.mapper.addProfile(ProductExtraInformationMapper);
+    this.mapper.addProfile(ProductExtraValueMapper);
   }
 
 }

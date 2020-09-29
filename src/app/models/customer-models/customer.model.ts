@@ -12,8 +12,7 @@ import {
 } from 'typeorm';
 import { Group } from './group.model';
 import { WFInstance } from '../bpmn-models/wf-instance.model';
-import { CustomerExtraInformation } from './customer-extra-information.model';
-import { CustomerExtraData } from './customer-extra-data.model';
+import { CustomerExtraInformationData } from './customer-extra-information-data.model';
 
 @Entity()
 export class Customer extends BaseEntity {
@@ -40,11 +39,8 @@ export class Customer extends BaseEntity {
   @OneToMany(() => WFInstance, wFInstances=> wFInstances.customer )
   public wFInstances: WFInstance[];
 
-  @OneToMany(() => CustomerExtraInformation, customerExtraInformations => customerExtraInformations.customer)
-  public customerExtraInformations: CustomerExtraInformation[];
-
-  @OneToMany(() => CustomerExtraData, customerExtraDatas => customerExtraDatas.customer)
-  public customerExtraDatas: CustomerExtraData[];
+  @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.customer)
+  public customerExtraInformationDatas: CustomerExtraInformationData[];
 
   @AutoMap()
   @Column({ default: null })

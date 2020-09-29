@@ -1,6 +1,5 @@
 export * from './account-department.view-model';
-export * from './account-extra-data.view-model';
-export * from './account-extra-information-data.view-model';
+export * from './account-extra-value.view-model';
 export * from './account-extra-information-pattern.view-model';
 export * from './account-extra-information.view-model';
 export * from './account-extra-information.view-model';

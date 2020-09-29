@@ -1,28 +1,28 @@
 import { NotFoundException } from '@exceptions';
-import { CustomerExtraData } from '@models';
+import { ProductExtraValue } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CustomerExtraDataRepository } from '@repositories';
-import { CUSTOMER_EXTRA_DATA_REPOSITORY } from '@types';
-import { CustomerExtraDataCM, CustomerExtraDataUM, CustomerExtraDataVM } from '@view-models';
+import { ProductExtraValueRepository } from '@repositories';
+import { PRODUCT_EXTRA_VALUE_REPOSITORY } from '@types';
+import { ProductExtraValueCM, ProductExtraValueUM, ProductExtraValueVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 
 @Injectable()
-export class CustomerExtraDataService {
+export class ProductExtraValueService {
   constructor(
-    @Inject(CUSTOMER_EXTRA_DATA_REPOSITORY) protected readonly repository: CustomerExtraDataRepository,
+    @Inject(PRODUCT_EXTRA_VALUE_REPOSITORY) protected readonly repository: ProductExtraValueRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<CustomerExtraDataVM[]> => {
+  public readonly findAll = async (): Promise<ProductExtraValueVM[]> => {
     return await this.repository.useHTTP().find()
-      .then((models) => this.mapper.mapArray(models, CustomerExtraDataVM, CustomerExtraData))
+      .then((models) => this.mapper.mapArray(models, ProductExtraValueVM, ProductExtraValue))
   };
 
-  public readonly findById = async (id: string): Promise<CustomerExtraDataVM> => {
+  public readonly findById = async (id: string): Promise<ProductExtraValueVM> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then((model) => {
         if (model) {
-          return this.mapper.map(model, CustomerExtraDataVM, CustomerExtraData);
+          return this.mapper.map(model, ProductExtraValueVM, ProductExtraValue);
         }
         throw new NotFoundException(
           `Can not find ${id}`,
@@ -30,12 +30,12 @@ export class CustomerExtraDataService {
       })
   };
 
-  public readonly insert = (body: CustomerExtraDataCM): Promise<CustomerExtraDataVM> => {
-    return this.repository.useHTTP().insert(body as any)
-      .then((model) => (this.mapper.map(model.generatedMaps[0], CustomerExtraDataVM, CustomerExtraData as any)))
+  public readonly insert = (body: ProductExtraValueCM): Promise<ProductExtraValueVM> => {
+    return this.repository.useHTTP().insert(body)
+      .then((model) => (this.mapper.map(model.generatedMaps[0], ProductExtraValueVM, ProductExtraValue as any)))
   };
 
-  public readonly update = async (body: CustomerExtraDataUM): Promise<CustomerExtraDataVM> => {
+  public readonly update = async (body: ProductExtraValueUM): Promise<ProductExtraValueVM> => {
     return await this.repository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -45,11 +45,11 @@ export class CustomerExtraDataService {
         }
         return await this.repository.useHTTP()
           .save(body)
-          .then(() => (this.mapper.map(body, CustomerExtraDataVM, CustomerExtraDataUM)))
+          .then(() => (this.mapper.map(body, ProductExtraValueVM, ProductExtraValueUM)))
       });
   };
 
-  public readonly remove = async (id: string): Promise<CustomerExtraDataVM> => {
+  public readonly remove = async (id: string): Promise<ProductExtraValueVM> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -68,7 +68,7 @@ export class CustomerExtraDataService {
       });
   };
 
-  public readonly active = async (id: string): Promise<CustomerExtraDataVM> => {
+  public readonly active = async (id: string): Promise<ProductExtraValueVM> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -87,7 +87,7 @@ export class CustomerExtraDataService {
       });
   };
 
-  public readonly deactive = async (id: string): Promise<CustomerExtraDataVM> => {
+  public readonly deactive = async (id: string): Promise<ProductExtraValueVM> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
