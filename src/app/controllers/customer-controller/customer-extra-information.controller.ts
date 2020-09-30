@@ -10,6 +10,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -48,7 +49,8 @@ export class CustomerExtraInformationController{
   @ApiOperation({ summary: 'Insert new CustomerExtraInformation' })
   @ApiCreatedResponse({ description: 'Success create new CustomerExtraInformation' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: CustomerExtraInformationCM): Promise<CustomerExtraInformationVM> {
+  @ApiBody({type: [CustomerExtraInformationCM]})
+  public insert(@Body()  body: CustomerExtraInformationCM[]): Promise<any> {
     return this.service.insert(body);
   }
 

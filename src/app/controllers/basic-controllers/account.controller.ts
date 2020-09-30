@@ -19,14 +19,13 @@ import {
 import { AccountService } from '@services';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
 
-
 @ApiBearerAuth('JWT')
 @ApiTags('Account')
 @Controller('/api/v1/Account')
-export class AccountController{
+export class AccountController {
   constructor(
     protected service: AccountService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all accounts' })

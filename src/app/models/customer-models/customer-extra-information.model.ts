@@ -18,30 +18,30 @@ export class CustomerExtraInformation extends BaseEntity {
     public id: string;
 
     @AutoMap()
-    @Column({ nullable: false })
+    @Column({ nullable: false, unique: true })
     public name: string;
 
     @AutoMap()
-    @Column({ nullable: false })
+    @Column({ nullable: false, default: '' })
     public type: string;
 
     @AutoMap()
-    @Column({ nullable: false })
+    @Column({ nullable: false, default: '' })
     public subType: string;
 
     @AutoMap()
-    @Column({ nullable: false })
+    @Column({ nullable: false, default: '' })
     public options: string;
 
     @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.customerExtraInformation )
     public customerExtraInformationDatas: CustomerExtraInformationData[];
 
     @AutoMap()
-    @Column({ nullable: false })
+    @Column({ nullable: false, default: '' })
     public label: string;
 
     @AutoMap()
-    @Column({ nullable: false })
+    @Column({ nullable: false, default: '' })
     public toolTip: string;
 
     @AutoMap()

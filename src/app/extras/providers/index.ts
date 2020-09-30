@@ -1,4 +1,5 @@
 import { BASIC_MODELS, BPMN_MODELS, FORM_MODELS, CUSTOMER_MODELS } from '@models';
+import { ConfigService } from '@nestjs/config/dist/config.service';
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { createConnection } from 'typeorm';

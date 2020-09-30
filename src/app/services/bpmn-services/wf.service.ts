@@ -14,8 +14,8 @@ export class WFService {
   ) { }
 
   public readonly findAll = async (): Promise<WFVM[]> => {
-    return await this.wfRepository.useHTTP().find({relations :["wFSteps"]})
-      .then((models) => {Logger.log(models); return this.mapper.mapArray(models, WFVM, WF)})
+    return await this.wfRepository.useHTTP().find({relations: ["wFSteps"]})
+      .then((models) => { return this.mapper.mapArray(models, WFVM, WF)});
   }
 
   public readonly findById = async (id: string): Promise<WFVM> => {

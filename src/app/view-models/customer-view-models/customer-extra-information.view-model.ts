@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { CustomerExtraInformationDataVM } from "./customer-extra-information-data.view-model";
 import { CustomerVM } from "./customer.view-model";
@@ -47,12 +48,17 @@ export class CustomerExtraInformationVM {
 }
 
 export class CustomerExtraInformationCM {
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly name: string;
-  public readonly customerId: string;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly type: string;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly subType: string;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly options: string;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly placeHolder: string;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly tooltip: string;
 }
 

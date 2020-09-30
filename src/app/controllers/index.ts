@@ -38,8 +38,9 @@ export const BPMN_CONTROLLERS = [
 ];
 
 //extra controllers
+
 import { AuthController } from './extra-controllers/auth.controller';
-export * from './extra-controllers/auth.controller';
+export * from './extra-controllers/auth.controller'
 export const EXTRA_CONTROLLERS = [AuthController];
 
 //form controllers

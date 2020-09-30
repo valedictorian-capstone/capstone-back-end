@@ -1,4 +1,4 @@
-import { NotFoundException } from '@exceptions';
+import { InvalidException, NotFoundException } from '@exceptions';
 import { Account, Role } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { AccountRepository, RoleRepository } from '@repositories';
@@ -36,7 +36,6 @@ export class AccountService {
     return await this.accountRepository.useHTTP().findOne({ id: id },{ relations: ["roles"] })
       .then((model) => {
         if (model) {
-          console.log(model)
           return this.mapper.map(model, AccountVM, Account);
         }
         throw new NotFoundException(

@@ -1,5 +1,5 @@
 import { Account, Role } from "@models";
-import { AutoMapper, mapFrom, mapWith, ProfileBase } from "@nartc/automapper";
+import { AutoMapper, mapFrom, ProfileBase } from "@nartc/automapper";
 import { AccountCM, AccountUM, AccountVM, RoleVM } from "@view-models";
 import { mapWith } from "nestjsx-automapper";
 

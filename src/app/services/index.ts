@@ -10,7 +10,7 @@ export * from './basic-services/department.service';
 export * from './basic-services/account-extra-information.service';
 export * from './basic-services/account-extra-value.service';
 export const BASIC_SERVICES = [
-  AccountService, 
+  AccountService,
   RoleService,
   DepartmentService,
   AccountExtraInformationService,
@@ -34,7 +34,7 @@ export * from './bpmn-services/wf-step.service';
 export * from './bpmn-services/wf.service';
 export * from './bpmn-services/wf-diagram.service'
 export const BPMN_SERVICES = [
-  WFService, 
+  WFService,
   WFConnectionService,
   WFStepService,
   WFInstanceService,
@@ -51,17 +51,18 @@ export * from './form-services/form-control.service';
 export * from './form-services/form-data.service';
 export * from './form-services/form-group.service';
 export * from './form-services/form-value.service';
-export const FORM_SERVICE = [FormControlService, 
-  FormDataService, 
-  FormGroupService, 
+export const FORM_SERVICE = [FormControlService,
+  FormDataService,
+  FormGroupService,
   FormValueService
 ];
 
 
 
 //extra services
+import { AuthService } from './extra-services/auth.service';
 export * from './extra-services/firebase.service';
-export const EXTRA_SERVICES = [FirebaseService];
+export const EXTRA_SERVICES = [FirebaseService, AuthService];
 
 
 //customer services
@@ -79,10 +80,10 @@ export * from './customer-services/customer-extra-information-data.service';
 export * from './customer-services/product.service';
 export * from './customer-services/product-extra-information.service';
 export * from './customer-services/product-extra-value.service';
-export const CUSTOMER_SERVICES = [CustomerService, 
-  GroupService, 
-  CustomerExtraInformationService, 
-  CustomerExtraInformationDataService, 
+export const CUSTOMER_SERVICES = [CustomerService,
+  GroupService,
+  CustomerExtraInformationService,
+  CustomerExtraInformationDataService,
   ProductService,
   ProductExtraInformationService,
   ProductExtraValueService
