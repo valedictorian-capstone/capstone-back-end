@@ -20,6 +20,18 @@ export class AccountService {
       .then((models) => this.mapper.mapArray(models, AccountVM, Account))
   };
 
+  public readonly findOne = async (options: any): Promise<Account> => {
+    return await this.accountRepository.useHTTP().findOne(options, { relations: ["roles"] })
+      .then((model) => {
+        if (model) {
+          return model;
+        }
+        throw new NotFoundException(
+          `Can not find with options ${options}`,
+        );
+      })
+  };
+
   public readonly findById = async (id: string): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().findOne({ id: id },{ relations: ["roles"] })
       .then((model) => {
@@ -29,9 +41,6 @@ export class AccountService {
         throw new NotFoundException(
           `Can not find ${id}`,
         );
-      }).catch(e => {
-        Logger.error(e);
-        return null;
       })
   };
 
@@ -53,10 +62,6 @@ export class AccountService {
         return await this.accountRepository.useHTTP()
           .save(body)
           .then(() => (this.mapper.map(body, AccountVM, AccountUM)))
-          .catch(e => {
-            Logger.error(e);
-            return null;
-          })
       });
   };
 
@@ -79,10 +84,7 @@ export class AccountService {
             Logger.error(e);
             return null;
           })
-      }).catch(e => {
-        Logger.error(e);
-        return null;
-      });
+      })
   };
 
   public readonly active = async (id: string): Promise<AccountVM> => {
@@ -104,10 +106,7 @@ export class AccountService {
             Logger.error(e);
             return null;
           })
-      }).catch(e => {
-        Logger.error(e);
-        return null;
-      });
+      })
   };
 
   public readonly deactive = async (id: string): Promise<AccountVM> => {
@@ -129,9 +128,6 @@ export class AccountService {
             Logger.error(e);
             return null;
           })
-      }).catch(e => {
-        Logger.error(e);
-        return null;
-      });
+      })
   };
 }

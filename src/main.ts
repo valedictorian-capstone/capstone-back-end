@@ -17,6 +17,7 @@ const open = require("open");
     .setVersion('1.0')
     .addBearerAuth({ type: 'apiKey', description: 'Copy valid JWT token into field', name: 'Authorization', in: 'header', bearerFormat: 'Bearer' }, 'JWT')
     .build();
+    
   const document = SwaggerModule.createDocument(app, options);
   const styles = {
     customCss: ".swagger-ui table tbody tr td:first-of-type {max-width : 30%} .swagger-ui .parameters-col_description {width:70%}",

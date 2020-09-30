@@ -1,38 +1,39 @@
 import {
   BASIC_CONTROLLERS,
   BPMN_CONTROLLERS,
-  EXTRA_CONTROLLERS,
-  FORM_CONTROLLERS,
-  CUSTOMER_CONTROLLERS
+  CUSTOMER_CONTROLLERS, EXTRA_CONTROLLERS,
+  FORM_CONTROLLERS
 } from '@controllers';
 import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
 import { AppProvider } from '@extras/providers';
 import { Module, OnModuleInit } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import {
   BASIC_REPOSITORY,
   BPMN_REPOSITORY,
-  FORM_REPOSITORY,
-  CUSTOMER_REPOSITORY
+
+  CUSTOMER_REPOSITORY, FORM_REPOSITORY
 } from '@repositories';
 import {
   BASIC_SERVICES,
   BPMN_SERVICES,
-  EXTRA_SERVICES,
-  FORM_SERVICE,
-  CUSTOMER_SERVICES
+
+
+  CUSTOMER_SERVICES, EXTRA_SERVICES,
+  FORM_SERVICE
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
-
 import {
-  AccountMapper, FormControlMapper, FormDataMapper, FormGroupMapper, FormValueMapper, RoleMapper, WFMapper,
-  CustomerExtraInformationDataMapper, CustomerExtraInformationMapper, CustomerMapper, GroupMapper, DepartmentMapper,
-  ProductMapper, ProductExtraInformationMapper, ProductExtraValueMapper, AccountExtraInformationMapper, AccountExtraValueMapper
+  AccountExtraInformationMapper, AccountExtraValueMapper, AccountMapper,
+  CustomerExtraInformationDataMapper, CustomerExtraInformationMapper, CustomerMapper, DepartmentMapper, FormControlMapper, FormDataMapper, FormGroupMapper, FormValueMapper,
+  GroupMapper,
+  ProductExtraInformationMapper, ProductExtraValueMapper, ProductMapper, RoleMapper, WFMapper
 } from './mappers';
 import { WFConnectionMapper } from './mappers/bpmn-mappers/wf-connection.mapper';
 import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
+
 
 @Module({
   imports: [

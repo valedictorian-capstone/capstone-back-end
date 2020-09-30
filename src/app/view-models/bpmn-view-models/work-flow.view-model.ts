@@ -11,6 +11,8 @@ export class WFVM {
   public readonly name!: string;
   @AutoMap()
   public readonly description!: string;
+  // @AutoMap()
+  public readonly style: any;
   @AutoMap()
   public readonly code!: string;
   public readonly wFConditions!: WFConditionVM[];
@@ -26,10 +28,6 @@ export class WFVM {
   public readonly createdAt!: Date;
   @AutoMap()
   public readonly updatedAt!: Date;
-
-  constructor(props: Partial<WFVM>) {
-    Object.assign(this, props);
-  }
 }
 
 export class WFCM {
