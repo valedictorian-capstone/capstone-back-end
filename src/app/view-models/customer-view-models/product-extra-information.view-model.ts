@@ -24,6 +24,9 @@ export class ProductExtraInformationVM {
 
   @AutoMap()
   public readonly toolTip: string;
+
+  @AutoMap()
+  public readonly label: string;
   
   public readonly productExtraValues: ProductExtraValueVM[];
   
@@ -62,6 +65,9 @@ export class ProductExtraInformationCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly toolTip: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly label: string;
 }
 
 export class ProductExtraInformationUM {
@@ -86,6 +92,9 @@ export class ProductExtraInformationUM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly toolTip: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly label: string;
 
   @ApiProperty({ required: true, format: 'boolean', default: true})
   public readonly isDelete: boolean;

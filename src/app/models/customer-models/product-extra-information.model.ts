@@ -15,7 +15,7 @@ export class ProductExtraInformation extends BaseEntity {
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
-  
+
   @AutoMap()
   @Column({ nullable: false, unique: true })
   public name: string;
@@ -31,14 +31,18 @@ export class ProductExtraInformation extends BaseEntity {
   @AutoMap()
   @Column({ nullable: false, default: '' })
   public options: string;
-  
+
   @AutoMap()
   @Column({ nullable: false, default: '' })
   public placeHolder: string;
-  
+
   @AutoMap()
   @Column({ nullable: false, default: '' })
   public toolTip: string;
+
+  @AutoMap()
+  @Column({ nullable: false, default: '' })
+  public label: string;
 
   @OneToMany(() => ProductExtraValue, productExtraValues => productExtraValues.productExtraInformation)
   public productExtraValues: ProductExtraValue[];

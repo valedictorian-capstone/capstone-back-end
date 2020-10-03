@@ -32,6 +32,10 @@ export class AccountExtraInformation extends BaseEntity {
     @Column({ nullable: false, default: '' })
     public tooltip: string;
 
+    @AutoMap()
+    @Column({ nullable: false, default: '' })
+    public label: string;
+
     @OneToMany(() => AccountExtraValue, accountExtraValues => accountExtraValues.accountExtraInformation)
     public accountExtraValues: AccountExtraValue[];
 
