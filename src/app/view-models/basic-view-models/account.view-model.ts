@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AutoMap } from 'nestjsx-automapper';
 import { AccountWFStepInstanceVM, CommentVM } from '../bpmn-view-models';
+import { AccountDepartmentVM } from './account-department.view-model';
 import { AccountExtraInformationVM } from './account-extra-information.view-model';
 import { AccountExtraValueVM } from './account-extra-value.view-model';
 import { AccountRoleVM } from './account-role.view-model';
-import { DepartmentVM } from './department.view-model';
 import { RoleVM } from './role.view-model';
 
 export class AccountVM {
@@ -40,7 +40,7 @@ export class AccountVM {
 
   public readonly roles: RoleVM[];
   
-  public readonly departments: DepartmentVM[];
+  public readonly accountDepartments: AccountDepartmentVM[];
 
   @AutoMap()
   public readonly accountExtraInformationVMs: AccountExtraInformationVM[];
@@ -112,6 +112,8 @@ export class AccountCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly roleName: string[];
+
+  public readonly accountDepartments: string[];
 }
 
 export class AccountUM {
@@ -141,7 +143,7 @@ export class AccountUM {
   public readonly gender: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly Position: string;
+  public readonly position: string;
 }
 
 export class AccountAuthVM {
