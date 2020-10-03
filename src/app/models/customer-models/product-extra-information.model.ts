@@ -17,21 +17,27 @@ export class ProductExtraInformation extends BaseEntity {
   public id: string;
   
   @AutoMap()
+  @Column({ nullable: false, unique: true })
   public name: string;
 
   @AutoMap()
+  @Column({ nullable: false, default: '' })
   public type: string;
 
   @AutoMap()
+  @Column({ nullable: false, default: '' })
   public subType: string;
 
   @AutoMap()
+  @Column({ nullable: false, default: '' })
   public options: string;
   
   @AutoMap()
+  @Column({ nullable: false, default: '' })
   public placeHolder: string;
   
   @AutoMap()
+  @Column({ nullable: false, default: '' })
   public toolTip: string;
 
   @OneToMany(() => ProductExtraValue, productExtraValues => productExtraValues.productExtraInformation)

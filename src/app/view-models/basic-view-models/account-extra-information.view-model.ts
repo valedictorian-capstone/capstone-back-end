@@ -87,4 +87,7 @@ export class AccountExtraInformationUM {
   
   @ApiProperty({ required: true, format: 'string', minLength: 8 })
   public readonly tooltip: string;
+
+  @ApiProperty({ required: true, format: 'boolean', default: true})
+  public readonly isDelete: boolean;
 }

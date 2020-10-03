@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { ProductExtraValueVM } from "./product-extra-value.view-model";
-import { ProductVM } from "./product.view-model";
 
 export class ProductExtraInformationVM {
   
@@ -87,4 +86,7 @@ export class ProductExtraInformationUM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly toolTip: string;
+
+  @ApiProperty({ required: true, format: 'boolean', default: true})
+  public readonly isDelete: boolean;
 }
