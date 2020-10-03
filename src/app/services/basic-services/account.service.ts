@@ -1,5 +1,5 @@
-import { InvalidException, NotFoundException } from '@exceptions';
-import { Account, Role } from '@models';
+import { NotFoundException } from '@exceptions';
+import { Account } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { AccountRepository, RoleRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, ROLE_REPOSITORY } from '@types';

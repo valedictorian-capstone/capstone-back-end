@@ -29,6 +29,10 @@ export class WF extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
+  @AutoMap()
+  @Column({ default: null })
+  public code: string;
+
   @OneToMany(() => WFInstance, wFInstance => wFInstance.wf)
   public wFInstances: WFInstance[];
 

@@ -14,9 +14,12 @@ export class WFVM {
   // @AutoMap()
   public readonly style: any;
   @AutoMap()
-  public readonly code!: string;
+  public readonly code: string;
+
   public readonly wFConditions!: WFConditionVM[];
+
   public readonly wFSteps!:WFStepVM[];
+
   public readonly wFInstances!: WFInstanceVM[];
   @AutoMap()
   public readonly isDelete!: boolean;
@@ -45,4 +48,5 @@ export class WFUM {
   public readonly id!: string;
   public readonly name!: string;
   public readonly description!: string;
+  public readonly code: string;
 }
