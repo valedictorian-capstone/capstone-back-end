@@ -4,12 +4,14 @@ import { Role } from './basic-models/role.model';
 import { Department } from './basic-models/department.model';
 import { AccountExtraValue } from './basic-models/account-extra-value.model';
 import { AccountExtraInformation } from './basic-models/account-extra-information.model';
-export const BASIC_MODELS = [Account, Role, Department, AccountExtraValue, AccountExtraInformation];
+import { AccountDepartment } from './basic-models/account-department.model';
+export const BASIC_MODELS = [Account, Role, Department, AccountDepartment,AccountExtraValue, AccountExtraInformation];
 export * from './basic-models/account.model';
 export * from './basic-models/role.model';
 export * from './basic-models/department.model';
 export * from './basic-models/account-extra-value.model';
 export * from './basic-models/account-extra-information.model';
+export * from './basic-models/account-department.model';
 
 //bpmn model export
 import { WF } from './bpmn-models/wf.model';

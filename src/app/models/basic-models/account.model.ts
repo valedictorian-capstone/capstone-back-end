@@ -1,4 +1,4 @@
-import { Department } from '@models';
+import { AccountDepartment } from '@models';
 import { hashSync } from 'bcrypt';
 import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
@@ -51,9 +51,8 @@ export class Account extends BaseEntity {
   @JoinTable()
   public roles: Role[];
 
-  @ManyToMany(() => Department, Department => Department.accounts)
-  @JoinTable()
-  public departments: Department[];
+  @OneToMany(() => AccountDepartment, accountDepartments => accountDepartments.account)
+  public accountDepartments: AccountDepartment[];
 
   @OneToMany(() => AccountExtraValue, accountExtraValues => accountExtraValues.account)
   public accountExtraValues: AccountExtraValue[];
