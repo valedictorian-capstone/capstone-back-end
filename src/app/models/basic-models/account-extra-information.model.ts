@@ -9,7 +9,7 @@ export class AccountExtraInformation extends BaseEntity {
     public id: string;
 
     @AutoMap()
-    @Column({ nullable: false, default: '' })
+    @Column({ nullable: false, default: '', unique: true })
     public name: string;
 
     @AutoMap()

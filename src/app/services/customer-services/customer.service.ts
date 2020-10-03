@@ -36,18 +36,18 @@ export class CustomerService {
     //insert normal col 
     this.cusomterRepository.useHTTP().save(body).then(async customer => {
       //insert extra col
-      const cusExtrDatas = []
+      const cusExtrDatas = [];
       for (let index = 0; index < body.customerExtrs.length; index++) {
         const customExtr = body.customerExtrs[index];
         await this.cusomterExtrInfoRepository.useHTTP().findOne({ name: customExtr.name })
           .then(cusExtInfo => {
             if (cusExtInfo === undefined) {
-              throw new InvalidException(`invalid`)
+              throw new InvalidException(`invalid`);
             }
             const cusExtData = new CustomerExtraInformationData();
-            cusExtData.customer = customer
-            cusExtData.customerExtraInformation = cusExtInfo
-            cusExtData.value = customExtr.value
+            cusExtData.customer = customer;
+            cusExtData.customerExtraInformation = cusExtInfo;
+            cusExtData.value = customExtr.value;
             cusExtrDatas.push(cusExtData);
           })
       }

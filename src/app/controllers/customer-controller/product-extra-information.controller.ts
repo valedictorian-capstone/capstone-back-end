@@ -1,11 +1,9 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
-  Put,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -16,7 +14,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { ProductExtraInformationCM, ProductExtraInformationUM, ProductExtraInformationVM } from '@view-models';
+import { ProductExtraInformationUM, ProductExtraInformationVM } from '@view-models';
 import { ProductExtraInformationService } from '@services';
 
 @ApiBearerAuth('JWT')
@@ -48,39 +46,7 @@ export class ProductExtraInformationController{
   @ApiOperation({ summary: 'Insert new ProductExtraInformation' })
   @ApiCreatedResponse({ description: 'Success create new ProductExtraInformation' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: ProductExtraInformationCM): Promise<ProductExtraInformationVM> {
+  public insert(@Body() body: ProductExtraInformationUM[]): Promise<any> {
     return this.service.insert(body);
-  }
-
-  @Put()
-  @ApiOperation({ summary: 'Update an ProductExtraInformation by Id' })
-  @ApiCreatedResponse({ description: 'Success update new ProductExtraInformation' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: ProductExtraInformationUM): Promise<ProductExtraInformationVM> {
-    return this.service.update(body);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete an ProductExtraInformation by Id' })
-  @ApiCreatedResponse({ description: 'Success delete new ProductExtraInformation' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public remove(@Param('id') id: string): Promise<ProductExtraInformationVM> {
-    return this.service.remove(id);
-  }
-
-  @Put('Active/:id')
-  @ApiOperation({ summary: 'Active an ProductExtraInformation by Id' })
-  @ApiCreatedResponse({ description: 'Success active new ProductExtraInformation' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<ProductExtraInformationVM> {
-    return this.service.active(id);
-  }
-
-  @Put('DeActive/:id')
-  @ApiOperation({ summary: 'Deative an ProductExtraInformation by Id' })
-  @ApiCreatedResponse({ description: 'Success deactive new ProductExtraInformation' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<ProductExtraInformationVM> {
-    return this.service.deactive(id);
   }
 }
