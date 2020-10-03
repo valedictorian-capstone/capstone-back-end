@@ -5,6 +5,7 @@ import { ProductExtraInformationRepository } from '@repositories';
 import { PRODUCT_EXTRA_INFORMATION_REPOSITORY } from '@types';
 import { ProductExtraInformationUM, ProductExtraInformationVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { In } from 'typeorm';
 
 @Injectable()
 export class ProductExtraInformationService {
@@ -13,8 +14,10 @@ export class ProductExtraInformationService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<ProductExtraInformationVM[]> => {
-    return await this.repository.useHTTP().find({ relations: ["productExtraValues"] })
+  public readonly findAll = async (ids?: string[]): Promise<ProductExtraInformationVM[]> => {
+    return await this.repository.useHTTP()
+    // .find({ ...(ids ? { id: In(ids) } : {}), relations: ["productExtraValues"] })
+    .find({where: (ids ? {id: In(ids)} : {}), relations: ["productExtraValues"]})
       .then((models) => this.mapper.mapArray(models, ProductExtraInformationVM, ProductExtraInformation))
   };
 
@@ -34,7 +37,9 @@ export class ProductExtraInformationService {
     return this.repository.useHTTP().save(body)
       .then(
         (models) => {
-          console.log(models)
+          console.log(models);
+          const ids = [];
+          models.map(model => ids.push(model.id));
           return this.findAll();
         }
       )

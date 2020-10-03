@@ -4,6 +4,7 @@ import { AccountExtraValueRepository } from '@repositories';
 import { ACCOUNT_EXTRA_VALUE_REPOSITORY } from '@types';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { AccountExtraValueCM, AccountExtraValueUM, AccountExtraValueVM } from 'src/app/view-models';
+import { In } from 'typeorm';
 @Injectable()
 export class AccountExtraValueService {
 
@@ -12,8 +13,8 @@ export class AccountExtraValueService {
     @Inject(ACCOUNT_EXTRA_VALUE_REPOSITORY) protected readonly repository: AccountExtraValueRepository
   ) { }
 
-  public readonly findAll = async (): Promise<AccountExtraValueVM[]> => {
-    return await this.repository.useHTTP().find()
+  public readonly findAll = async (ids?: string[]): Promise<AccountExtraValueVM[]> => {
+    return await this.repository.useHTTP().find(ids ? { id: In(ids)} : {})
       .then((models) => this.mapper.mapArray(models, AccountExtraValueVM, AccountExtraValue))
   };
 

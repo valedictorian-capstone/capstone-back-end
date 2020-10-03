@@ -5,6 +5,7 @@ import { CustomerExtraInformationRepository } from '@repositories';
 import { CUSTOMER_EXTRA_INFORMATION_REPOSITORY } from '@types';
 import { CustomerExtraInformationUM, CustomerExtraInformationVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { In } from 'typeorm';
 
 @Injectable()
 export class CustomerExtraInformationService {
@@ -13,8 +14,8 @@ export class CustomerExtraInformationService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<CustomerExtraInformationVM[]> => {
-    return await this.cusomterExtInfoRepository.useHTTP().find()
+  public readonly findAll = async (ids?: string[]): Promise<CustomerExtraInformationVM[]> => {
+    return await this.cusomterExtInfoRepository.useHTTP().find(ids ? { id: In(ids) } : {})
       .then((models) => this.mapper.mapArray(models, CustomerExtraInformationVM, CustomerExtraInformation))
   };
 
@@ -35,8 +36,10 @@ export class CustomerExtraInformationService {
       .then(
         (models) => {
           console.log(models)
-          return this.findAll();
+          const ids = [];
+          models.map(model => ids.push(model.id));
+          return this.findAll(ids);
         }
-        )
+      )
   };
 }
