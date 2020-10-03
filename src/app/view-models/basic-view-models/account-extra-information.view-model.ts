@@ -26,6 +26,9 @@ export class AccountExtraInformationVM {
   @AutoMap()
   public readonly tooltip: string;
 
+  @AutoMap()
+  public readonly label: string;
+
   public accountExtraValues: AccountExtraValueVM[];
 
   @AutoMap()
@@ -63,6 +66,9 @@ export class AccountExtraInformationCM {
   
   @ApiProperty({ required: true, format: 'string', minLength: 8 })
   public readonly tooltip: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly label: string;
   
 }
 
@@ -87,6 +93,9 @@ export class AccountExtraInformationUM {
   
   @ApiProperty({ required: true, format: 'string', minLength: 8 })
   public readonly tooltip: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 8 })
+  public readonly label: string;
 
   @ApiProperty({ required: true, format: 'boolean', default: true})
   public readonly isDelete: boolean;

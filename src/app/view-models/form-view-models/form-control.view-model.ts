@@ -49,6 +49,9 @@ export class FormControlVM {
 
   @AutoMap()
   public readonly position: number;
+
+  @AutoMap()
+  public readonly label: string;
   
   public readonly formGroup: FormGroupVM;
   
@@ -106,6 +109,9 @@ export class FormControlCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly color: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly label: string;
 }
 
 export class FormControlUM {
@@ -149,5 +155,6 @@ export class FormControlUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly color: string;
 
-
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly label: string;
 }
