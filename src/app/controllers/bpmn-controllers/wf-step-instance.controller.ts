@@ -48,7 +48,7 @@ export class WFStepInstanceController {
   @ApiOperation({ summary: 'Insert new wf step' })
   @ApiCreatedResponse({ description: 'Success create new wf step' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: WFStepInstanceCM): Promise<WFStepInstanceVM> {
+  public async insert(@Body() body: WFStepInstanceCM): Promise<WFStepInstanceVM[]> {
     return await this.wftepInstanceService.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class WFStepInstanceController {
   @ApiOperation({ summary: 'Update an wf step by Id' })
   @ApiCreatedResponse({ description: 'Success update new wf step' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: WFStepInstanceUM): Promise<WFStepInstanceVM> {
+  public async update(@Body() body: WFStepInstanceUM): Promise<WFStepInstanceVM[]> {
     return await this.wftepInstanceService.update(body);
   }
 

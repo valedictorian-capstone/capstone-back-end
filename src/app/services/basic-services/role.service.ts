@@ -4,6 +4,7 @@ import { RoleRepository } from '@repositories';
 import { ROLE_REPOSITORY } from '@types';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { RoleCM, RoleUM, RoleVM } from 'src/app/view-models';
+import { In } from 'typeorm';
 @Injectable()
 export class RoleService {
 
@@ -12,13 +13,13 @@ export class RoleService {
     @Inject(ROLE_REPOSITORY) protected readonly repository: RoleRepository
   ) { }
 
-  public readonly findAll = async (): Promise<RoleVM[]> => {
-    return await this.repository.useHTTP().find()
+  public readonly findAll = async (ids?: string[]): Promise<RoleVM[]> => {
+    return await this.repository.useHTTP().find(ids ? { id: In(ids) } : {})
       .then((models) => this.mapper.mapArray(models, RoleVM, Role))
   };
 
   public readonly findById = async (id: string): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne({id: id})
+    return await this.repository.useHTTP().findOne({ id: id })
       .then((model) => {
         if (model !== null) {
           return this.mapper.map(model, RoleVM, Role);
@@ -31,14 +32,18 @@ export class RoleService {
       })
   };
 
-  public readonly insert = (body: RoleCM): Promise<RoleVM> => {
+  public readonly insert = (body: RoleCM): Promise<RoleVM[]> => {
     return this.repository.useHTTP().save(body as any)
       .then((model) => {
-        return this.mapper.map(model, RoleVM, Role)}).catch()
+        const ids = [];
+        ids.push(model.id);
+        return this.findAll(ids);
+      })
+      .catch()
   };
 
-  public readonly update = async (body: RoleUM): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne({id: body.id})
+  public readonly update = async (body: RoleUM): Promise<RoleVM[]> => {
+    return await this.repository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -47,13 +52,17 @@ export class RoleService {
         }
         return await this.repository.useHTTP()
           .save(body as any)
-          .then((model) => (this.mapper.map(model, RoleVM, Role)))
+          .then((model) => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
+          })
           .catch()
       });
   };
 
   public readonly remove = async (id: string): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne({id: id})
+    return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -71,8 +80,8 @@ export class RoleService {
       });
   };
 
-  public readonly active = async (id: string): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne({id: id})
+  public readonly active = async (id: string): Promise<RoleVM[]> => {
+    return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -81,17 +90,16 @@ export class RoleService {
         }
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: false })
-          .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+          .then((model) => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };
 
-  public readonly deactive = async (id: string): Promise<RoleVM> => {
-    return await this.repository.useHTTP().findOne({id: id})
+  public readonly deactive = async (id: string): Promise<RoleVM[]> => {
+    return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -100,11 +108,10 @@ export class RoleService {
         }
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: true })
-          .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+          .then((model) => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };

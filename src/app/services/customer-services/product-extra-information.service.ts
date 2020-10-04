@@ -16,7 +16,6 @@ export class ProductExtraInformationService {
 
   public readonly findAll = async (ids?: string[]): Promise<ProductExtraInformationVM[]> => {
     return await this.repository.useHTTP()
-    // .find({ ...(ids ? { id: In(ids) } : {}), relations: ["productExtraValues"] })
     .find({where: (ids ? {id: In(ids)} : {}), relations: ["productExtraValues"]})
       .then((models) => this.mapper.mapArray(models, ProductExtraInformationVM, ProductExtraInformation))
   };
@@ -40,7 +39,7 @@ export class ProductExtraInformationService {
           console.log(models);
           const ids = [];
           models.map(model => ids.push(model.id));
-          return this.findAll();
+          return this.findAll(ids);
         }
       )
   };

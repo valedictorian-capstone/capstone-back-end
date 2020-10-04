@@ -5,6 +5,7 @@ import { FORM_CONTROL_REPOSITORY, FORM_GROUP_REPOSITORY } from '@types';
 import { FormGroupCM, FormGroupUM, FormGroupVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { NotFoundException } from '@exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FormGroupService {
@@ -20,8 +21,8 @@ export class FormGroupService {
     //         .then((models) => this.mapper.mapArray(models, FormGroupVM, FormGroup))
     // };
 
-    public readonly findAllContainFormControl = async (): Promise<FormGroupVM[]> => {
-        return await this.repository.useHTTP().find({ relations: ["formControls", "formDatas", "wfSteps"]})
+    public readonly findAllContainFormControl = async (ids?: string[]): Promise<FormGroupVM[]> => {
+        return await this.repository.useHTTP().find({where: (ids ? {id: In(ids)} : {}), relations: ["formControls", "formDatas", "wfSteps"]})
             .then( (models) => { 
                 return this.mapper.mapArray(models, FormGroupVM, FormGroup);
             })

@@ -15,8 +15,8 @@ export class AccountService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<AccountVM[]> => {
-    return await this.accountRepository.useHTTP().find({ relations: ["roles"] })
+  public readonly findAll = async (ids?: string[]): Promise<AccountVM[]> => {
+    return await this.accountRepository.useHTTP().find({where: (ids ? {id: In(ids)} : {}), relations: ["roles"] })
       .then((models) => this.mapper.mapArray(models, AccountVM, Account))
   };
 
@@ -44,14 +44,19 @@ export class AccountService {
       })
   };
 
-  public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
+  public readonly insert = async (body: AccountCM): Promise<AccountVM[]> => {
     const account = this.mapper.map(body, Account, AccountCM);
     account.roles = await this.roleRepository.useHTTP().find({ name: In(body.roleName) });
     return await this.accountRepository.useHTTP().save(account)
-      .then((model) => (this.mapper.map(model, AccountVM, Account as any)))
+      .then((model) => {
+        console.log(model);
+        const ids = [];
+        ids.push(model.id);
+        return this.findAll(ids);
+      })
   };
 
-  public readonly update = async (body: AccountUM): Promise<AccountVM> => {
+  public readonly update = async (body: AccountUM): Promise<AccountVM[]> => {
     return await this.accountRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -61,7 +66,12 @@ export class AccountService {
         }
         return await this.accountRepository.useHTTP()
           .save(body)
-          .then(() => (this.mapper.map(body, AccountVM, AccountUM)))
+          .then((model) => {
+            console.log(model);
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
+          })
       });
   };
 
@@ -87,7 +97,7 @@ export class AccountService {
       })
   };
 
-  public readonly active = async (id: string): Promise<AccountVM> => {
+  public readonly active = async (id: string): Promise<AccountVM[]> => {
     return await this.accountRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -97,11 +107,11 @@ export class AccountService {
         }
         return await this.accountRepository.useHTTP()
           .save({ ...model, IsDelete: false })
-          .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+          .then((model) => {
+            console.log(model);
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           }).catch(e => {
             Logger.error(e);
             return null;
@@ -109,7 +119,7 @@ export class AccountService {
       })
   };
 
-  public readonly deactive = async (id: string): Promise<AccountVM> => {
+  public readonly deactive = async (id: string): Promise<AccountVM[]> => {
     return await this.accountRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -119,11 +129,11 @@ export class AccountService {
         }
         return await this.accountRepository.useHTTP()
           .save({ ...model, IsDelete: true })
-          .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+          .then((model) => {
+            console.log(model);
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           }).catch(e => {
             Logger.error(e);
             return null;

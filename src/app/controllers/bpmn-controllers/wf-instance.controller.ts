@@ -48,7 +48,7 @@ export class WFInstanceController {
   @ApiOperation({ summary: 'Insert new work flow' })
   @ApiCreatedResponse({ description: 'Success create new work flow' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: WFInstanceCM): Promise<WFInstanceVM> {
+  public async insert(@Body() body: WFInstanceCM): Promise<WFInstanceVM[]> {
     return await this.wfService.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class WFInstanceController {
   @ApiOperation({ summary: 'Update an work flow by Id' })
   @ApiCreatedResponse({ description: 'Success update new work flow' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: WFInstanceUM): Promise<WFInstanceVM> {
+  public async update(@Body() body: WFInstanceUM): Promise<WFInstanceVM[]> {
     return await this.wfService.update(body);
   }
 
