@@ -21,7 +21,7 @@ import { WFInstanceService } from '@services';
 
 @ApiBearerAuth('JWT')
 @ApiTags('WorkFlowInstance')
-@Controller('/api/v1/wf-instance')
+@Controller('/api/v1/WorkFlowInstance')
 export class WFInstanceController {
   constructor(
     protected readonly wfService: WFInstanceService,

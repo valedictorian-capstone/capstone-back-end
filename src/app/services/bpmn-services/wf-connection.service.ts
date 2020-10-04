@@ -14,9 +14,9 @@ export class WFConnectionService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (ids?: string[]): Promise<WFConnectionVM[]> => {
+  public readonly findAll = async (ids?: string[]): Promise<any[]> => {
     return await this.wfConnectionRepository.useHTTP().find(ids ? { id: In(ids) } : {})
-      .then((models) => this.mapper.mapArray(models, WFConnectionVM, WFConnection))
+      .then((models) => models)
   }
 
   public readonly findById = async (id: string): Promise<WFConnectionVM> => {
@@ -32,28 +32,18 @@ export class WFConnectionService {
       })
   }
 
-  public readonly insert = async (body: WFConnectionCM): Promise<WFConnectionVM[]> => {
+  public readonly insert = async (body: WFConnectionCM[]): Promise<WFConnectionVM[]> => {
     return await this.wfConnectionRepository.useHTTP().save(body as any)
       .then((model) => {
-        const ids = [];
-        ids.push(model.id);
-        return this.findAll(ids);
+        return this.findAll(model.map((e) => e.id));
       })
   }
 
-  public readonly update = async (body: WFConnectionUM): Promise<WFConnectionVM[]> => {
-    return await this.wfConnectionRepository.useHTTP().findOne({ id: body.id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${body.id}`,
-          );
-        }
-        return await this.wfConnectionRepository.useHTTP()
-          .save(body)
-          .then((model) => {const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);})
+  public readonly update = async (body: WFConnectionUM[]): Promise<WFConnectionVM[]> => {
+    return await this.wfConnectionRepository.useHTTP()
+      .save(body)
+      .then(() => {
+        return this.findAll(body.map((e) => e.id));
       });
   }
 

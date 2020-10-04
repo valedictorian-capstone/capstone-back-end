@@ -21,7 +21,7 @@ import { WFService } from '@services';
 
 @ApiBearerAuth('JWT')
 @ApiTags('WorkFlow')
-@Controller('/api/v1/wf')
+@Controller('/api/v1/WorkFlow')
 export class WFController {
   constructor(
     protected readonly wfService: WFService,
@@ -48,7 +48,7 @@ export class WFController {
   @ApiOperation({ summary: 'Insert new work flow' })
   @ApiCreatedResponse({ description: 'Success create new work flow' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: WFCM): Promise<WFVM[]> {
+  public async insert(@Body() body: WFCM): Promise<WFVM> {
     return await this.wfService.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class WFController {
   @ApiOperation({ summary: 'Update an work flow by Id' })
   @ApiCreatedResponse({ description: 'Success update new work flow' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: WFUM): Promise<WFVM[]> {
+  public async update(@Body() body: WFUM): Promise<WFVM> {
     return await this.wfService.update(body);
   }
 

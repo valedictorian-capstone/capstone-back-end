@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from
 import { WFStepRepository } from "@repositories";
 import { WFStepCM, WFStepUM, WFStepVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
-import { WF_STEP_REPOSITORY } from "src/app/types/bpmn-types/work-step.type";
+import { WF_STEP_REPOSITORY } from "src/app/types/bpmn-types/work-flow-step.type";
 import { In } from "typeorm";
 
 @Injectable()
@@ -14,9 +14,9 @@ export class WFStepService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (ids?: string[]): Promise<WFStepVM[]> => {
+  public readonly findAll = async (ids?: string[]): Promise<any[]> => {
     return await this.wfConnectionRepository.useHTTP().find(ids ? { id: In(ids) } : {})
-      .then((models) => this.mapper.mapArray(models, WFStepVM, WFStep))
+      .then((models) => models)
   }
 
   public readonly findById = async (id: string): Promise<WFStepVM> => {
@@ -32,30 +32,19 @@ export class WFStepService {
       })
   }
 
-  public readonly insert = async (body: WFStepCM): Promise<WFStepVM[]> => {
+  public readonly insert = async (body: WFStepCM[]): Promise<WFStepVM[]> => {
     return await this.wfConnectionRepository.useHTTP().save(body as any)
       .then((model) => {
-        const ids = [];
-        ids.push(model.id);
-        return this.findAll(ids);
+        return this.findAll(model.map((e) => e.id));
       })
   }
 
-  public readonly update = async (body: WFStepUM): Promise<WFStepVM[]> => {
-    return await this.wfConnectionRepository.useHTTP().findOne({ id: body.id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${body.id}`,
-          );
-        }
-        return await this.wfConnectionRepository.useHTTP()
-          .save(body)
-          .then((model) => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);})
-      });
+  public readonly update = async (body: WFStepUM[]): Promise<WFStepVM[]> => {
+    return await this.wfConnectionRepository.useHTTP()
+      .save(body)
+      .then(() => {
+        return this.findAll(body.map((e) => e.id));
+      })
   }
 
   public readonly remove = async (id: string): Promise<any> => {

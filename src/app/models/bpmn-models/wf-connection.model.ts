@@ -21,7 +21,9 @@ export class WFConnection extends BaseEntity {
     @AutoMap()
     @Column({ default: null })
     public type: string;
-
+    
+    @Column("json")
+    public props: any
     // @AutoMap(() =>  WFStep, 1)
     @ManyToOne(() => WFStep, wFStep => wFStep.wfFromConnections)
     public fromWFStep: WFStep;

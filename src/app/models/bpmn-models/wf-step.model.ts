@@ -32,7 +32,7 @@ export class WFStep extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
-  public subType: string;
+  public shape: string;
 
   @AutoMap()
   @Column({ default: null })
@@ -51,7 +51,7 @@ export class WFStep extends BaseEntity {
   public wfToConnections: WFConnection[]
 
   @Column("json")
-  public style: any
+  public props: any
 
   @ManyToMany(() => FormGroup, formGroup => formGroup.wfSteps)
   public formGroups: FormGroup[];

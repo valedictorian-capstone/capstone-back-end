@@ -46,8 +46,8 @@ export class WF extends BaseEntity {
   public wfConnections: WFConnection[]
 
   // @AutoMap()
-  @Column("json",{default:null})
-  public style: any;
+  @Column("json", { default: null })
+  public props: any;
 
   @AutoMap()
   @Column({ default: null })

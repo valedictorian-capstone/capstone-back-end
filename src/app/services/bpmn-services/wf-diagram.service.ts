@@ -2,10 +2,10 @@ import { WF, WFConnection, WFStep } from "@models";
 import { Inject, Injectable } from "@nestjs/common";
 import { WFConnectionRepository, WFStepRepository } from "@repositories";
 import { WF_CONNECTION_REPOSITORY, WF_REPOSITORY } from "@types";
-import { WFUM, WFVM } from "@view-models";
+import { WFVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { WFRepository } from "src/app/repositories/bpmn-repositories/wf.repository";
-import { WF_STEP_REPOSITORY } from "src/app/types/bpmn-types/work-step.type";
+import { WF_STEP_REPOSITORY } from "src/app/types/bpmn-types/work-flow-step.type";
 import { WFDiagramCM } from "src/app/view-models/bpmn-view-models/wf-diagram.view-model";
 
 @Injectable()
@@ -18,16 +18,16 @@ export class WFDiagramService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findById = async (id: string): Promise<WFVM> => {
-    return null;
-  }
+  // public readonly findById = async (id: string): Promise<WFVM> => {
+  //   return null;
+  // }
 
   public readonly insert = async (body: WFDiagramCM): Promise<WFVM> => {
     const wf = new WF();
     wf.id = body.id
     wf.name = body.content
     wf.description = body.description;
-    wf.style = body as any;
+    wf.props = body as any;
     let wfSteps: WFStep[];
     const wfModel = await this.wfRepository.useHTTP().save(wf)
       .then(async model => {
@@ -37,8 +37,8 @@ export class WFDiagramService {
           wfStep.name = item.annotations[0]?.content;
           wfStep.description = item.description;
           wfStep.type = item.shape?.type;
-          wfStep.subType = item.shape?.shape;
-          wfStep.style = item as any;
+          wfStep.shape = item.shape?.shape;
+          wfStep.props = item as any;
           wfStep.wF = model;
           return wfStep;
         });
@@ -66,11 +66,11 @@ export class WFDiagramService {
     return this.mapper.map(wfModel, WFVM, WF);
   }
 
-  public readonly update = async (body: WFUM): Promise<WFVM> => {
-    return null;
-  }
+  // public readonly update = async (body: WFUM): Promise<WFVM> => {
+  //   return null;
+  // }
 
-  public readonly remove = async (id: string): Promise<any> => {
-    return null;
-  }
+  // public readonly remove = async (id: string): Promise<any> => {
+  //   return null;
+  // }
 }

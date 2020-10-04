@@ -48,7 +48,7 @@ export class WFConnectionController {
   @ApiOperation({ summary: 'Insert new wf connection' })
   @ApiCreatedResponse({ description: 'Success create new wf connection' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: WFConnectionCM): Promise<WFConnectionVM[]> {
+  public async insert(@Body() body: WFConnectionCM[]): Promise<WFConnectionVM[]> {
     return await this.wfConnectionService.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class WFConnectionController {
   @ApiOperation({ summary: 'Update an wf connection by Id' })
   @ApiCreatedResponse({ description: 'Success update new wf connection' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: WFConnectionUM): Promise<WFConnectionVM[]> {
+  public async update(@Body() body: WFConnectionUM[]): Promise<WFConnectionVM[]> {
     return await this.wfConnectionService.update(body);
   }
 
