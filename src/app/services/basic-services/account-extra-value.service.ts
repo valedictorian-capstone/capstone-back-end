@@ -32,13 +32,16 @@ export class AccountExtraValueService {
       })
   };
 
-  public readonly insert = (body: AccountExtraValueCM): Promise<AccountExtraValueVM> => {
+  public readonly insert = (body: AccountExtraValueCM): Promise<AccountExtraValueVM[]> => {
     return this.repository.useHTTP().save(body as any)
       .then((model) => {
-        return this.mapper.map(model, AccountExtraValueVM, AccountExtraValue)}).catch()
+        const ids = [];
+        ids.push(model.id);
+        return this.findAll(ids);
+      }).catch()
   };
 
-  public readonly update = async (body: AccountExtraValueUM): Promise<AccountExtraValueVM> => {
+  public readonly update = async (body: AccountExtraValueUM): Promise<AccountExtraValueVM[]> => {
     return await this.repository.useHTTP().findOne({id: body.id})
       .then(async (model) => {
         if (!model) {
@@ -48,7 +51,11 @@ export class AccountExtraValueService {
         }
         return await this.repository.useHTTP()
           .save(body as any)
-          .then((model) => (this.mapper.map(model, AccountExtraValueVM, AccountExtraValue)))
+          .then((model) => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
+          })
           .catch()
       });
   };
@@ -72,7 +79,7 @@ export class AccountExtraValueService {
       });
   };
 
-  public readonly active = async (id: string): Promise<AccountExtraValueVM> => {
+  public readonly active = async (id: string): Promise<AccountExtraValueVM[]> => {
     return await this.repository.useHTTP().findOne({id: id})
       .then(async (model) => {
         if (!model) {
@@ -82,16 +89,15 @@ export class AccountExtraValueService {
         }
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: false })
-          .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+          .then((model) => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };
 
-  public readonly deactive = async (id: string): Promise<AccountExtraValueVM> => {
+  public readonly deactive = async (id: string): Promise<AccountExtraValueVM[]> => {
     return await this.repository.useHTTP().findOne({id: id})
       .then(async (model) => {
         if (!model) {
@@ -101,11 +107,10 @@ export class AccountExtraValueService {
         }
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: true })
-          .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+          .then((model) => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };

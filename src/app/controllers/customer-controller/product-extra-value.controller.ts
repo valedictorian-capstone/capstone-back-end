@@ -48,7 +48,7 @@ export class ProductExtraValueController{
   @ApiOperation({ summary: 'Insert new ProductExtraValue' })
   @ApiCreatedResponse({ description: 'Success create new ProductExtraValue' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: ProductExtraValueCM): Promise<ProductExtraValueVM> {
+  public insert(@Body() body: ProductExtraValueCM): Promise<ProductExtraValueVM[]> {
     return this.service.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class ProductExtraValueController{
   @ApiOperation({ summary: 'Update an ProductExtraValue by Id' })
   @ApiCreatedResponse({ description: 'Success update new ProductExtraValue' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: ProductExtraValueUM): Promise<ProductExtraValueVM> {
+  public update(@Body() body: ProductExtraValueUM): Promise<ProductExtraValueVM[]> {
     return this.service.update(body);
   }
 
@@ -72,7 +72,7 @@ export class ProductExtraValueController{
   @ApiOperation({ summary: 'Active an ProductExtraValue by Id' })
   @ApiCreatedResponse({ description: 'Success active new ProductExtraValue' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<ProductExtraValueVM> {
+  public active(@Param('id') id: string): Promise<ProductExtraValueVM[]> {
     return this.service.active(id);
   }
 
@@ -80,7 +80,7 @@ export class ProductExtraValueController{
   @ApiOperation({ summary: 'Deative an ProductExtraValue by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new ProductExtraValue' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<ProductExtraValueVM> {
+  public deactive(@Param('id') id: string): Promise<ProductExtraValueVM[]> {
     return this.service.deactive(id);
   }
 }

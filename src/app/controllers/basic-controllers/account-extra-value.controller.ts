@@ -48,7 +48,7 @@ export class AccountExtraValueController {
   @ApiOperation({ summary: 'Insert new AccountExtraValue' })
   @ApiCreatedResponse({ description: 'Success create new AccountExtraValue' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: AccountExtraValueCM): Promise<AccountExtraValueVM> {
+  public async insert(@Body() body: AccountExtraValueCM): Promise<AccountExtraValueVM[]> {
     return await this.service.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class AccountExtraValueController {
   @ApiOperation({ summary: 'Update an AccountExtraValue by Id' })
   @ApiCreatedResponse({ description: 'Success update new AccountExtraValue' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: AccountExtraValueUM): Promise<AccountExtraValueVM> {
+  public async update(@Body() body: AccountExtraValueUM): Promise<AccountExtraValueVM[]> {
     return await this.service.update(body);
   }
 
@@ -72,7 +72,7 @@ export class AccountExtraValueController {
   @ApiOperation({ summary: 'Active an AccountExtraValue by Id' })
   @ApiCreatedResponse({ description: 'Success active new AccountExtraValue' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async active(@Param('id') id: string): Promise<AccountExtraValueVM> {
+  public async active(@Param('id') id: string): Promise<AccountExtraValueVM[]> {
     return await this.service.active(id);
   }
 
@@ -80,7 +80,7 @@ export class AccountExtraValueController {
   @ApiOperation({ summary: 'Deative an AccountExtraValue by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new AccountExtraValue' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async deactive(@Param('id') id: string): Promise<AccountExtraValueVM> {
+  public async deactive(@Param('id') id: string): Promise<AccountExtraValueVM[]> {
     return await this.service.deactive(id);
   }
 }

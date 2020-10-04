@@ -5,6 +5,7 @@ import { ProductExtraInformationRepository, ProductExtraValueRepository, Product
 import { PRODUCT_EXTRA_INFORMATION_REPOSITORY, PRODUCT_EXTRA_VALUE_REPOSITORY, PRODUCT_REPOSITORY } from '@types';
 import { ProductCM, ProductUM, ProductVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { In } from 'typeorm';
 
 @Injectable()
 export class ProductService {
@@ -15,8 +16,8 @@ export class ProductService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<ProductVM[]> => {
-    return await this.repository.useHTTP().find()
+  public readonly findAll = async (ids?: string[]): Promise<ProductVM[]> => {
+    return await this.repository.useHTTP().find(ids ? { id: In(ids) } : {})
       .then((models) => this.mapper.mapArray(models, ProductVM, Product))
   };
 
@@ -31,11 +32,6 @@ export class ProductService {
         );
       })
   };
-
-  // public readonly insert = (body: ProductCM): Promise<ProductVM> => {
-  //   return this.repository.useHTTP().insert(body)
-  //     .then((model) => (this.mapper.map(model.generatedMaps[0], ProductVM, Product as any)))
-  // };
 
   public readonly insert = async (body: ProductCM): Promise<any> => {
     this.repository.useHTTP().save(body).then(async product => {
@@ -58,7 +54,7 @@ export class ProductService {
     })
   }
 
-  public readonly update = async (body: ProductUM): Promise<ProductVM> => {
+  public readonly update = async (body: ProductUM): Promise<ProductVM[]> => {
     return await this.repository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -68,7 +64,11 @@ export class ProductService {
         }
         return await this.repository.useHTTP()
           .save(body)
-          .then(() => (this.mapper.map(body, ProductVM, ProductUM)))
+          .then(() => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
+          })
       });
   };
 
@@ -91,7 +91,7 @@ export class ProductService {
       });
   };
 
-  public readonly active = async (id: string): Promise<ProductVM> => {
+  public readonly active = async (id: string): Promise<ProductVM[]> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -102,15 +102,14 @@ export class ProductService {
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: false })
           .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };
 
-  public readonly deactive = async (id: string): Promise<ProductVM> => {
+  public readonly deactive = async (id: string): Promise<ProductVM[]> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -121,10 +120,9 @@ export class ProductService {
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: true })
           .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };

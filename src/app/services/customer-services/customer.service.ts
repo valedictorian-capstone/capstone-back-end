@@ -5,6 +5,7 @@ import { CustomerExtraInformationDataRepository, CustomerExtraInformationReposit
 import { CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY, CUSTOMER_EXTRA_INFORMATION_REPOSITORY, CUSTOMER_REPOSITORY } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { In } from 'typeorm';
 
 @Injectable()
 export class CustomerService {
@@ -15,8 +16,8 @@ export class CustomerService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<CustomerVM[]> => {
-    return await this.cusomterRepository.useHTTP().find()
+  public readonly findAll = async (ids?: string[]): Promise<CustomerVM[]> => {
+    return await this.cusomterRepository.useHTTP().find(ids ? { id: In(ids) } : {})
       .then((models) => this.mapper.mapArray(models, CustomerVM, Customer))
   };
 
@@ -55,7 +56,7 @@ export class CustomerService {
     })
   };
 
-  public readonly update = async (body: CustomerUM): Promise<CustomerVM> => {
+  public readonly update = async (body: CustomerUM): Promise<CustomerVM[]> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -65,7 +66,11 @@ export class CustomerService {
         }
         return await this.cusomterRepository.useHTTP()
           .save(body)
-          .then(() => (this.mapper.map(body, CustomerVM, CustomerUM)))
+          .then(() => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
+          })
       });
   };
 
@@ -88,7 +93,7 @@ export class CustomerService {
       });
   };
 
-  public readonly active = async (id: string): Promise<CustomerVM> => {
+  public readonly active = async (id: string): Promise<CustomerVM[]> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -99,15 +104,14 @@ export class CustomerService {
         return await this.cusomterRepository.useHTTP()
           .save({ ...model, IsDelete: false })
           .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };
 
-  public readonly deactive = async (id: string): Promise<CustomerVM> => {
+  public readonly deactive = async (id: string): Promise<CustomerVM[]> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -118,10 +122,9 @@ export class CustomerService {
         return await this.cusomterRepository.useHTTP()
           .save({ ...model, IsDelete: true })
           .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };

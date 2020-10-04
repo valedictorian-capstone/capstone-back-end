@@ -48,7 +48,7 @@ export class CustomerExtraInformationDataController{
   @ApiOperation({ summary: 'Insert new CustomerExtraInformationData' })
   @ApiCreatedResponse({ description: 'Success create new CustomerExtraInformationData' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: CustomerExtraInformationDataCM): Promise<CustomerExtraInformationDataVM> {
+  public insert(@Body() body: CustomerExtraInformationDataCM): Promise<CustomerExtraInformationDataVM[]> {
     return this.service.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class CustomerExtraInformationDataController{
   @ApiOperation({ summary: 'Update an CustomerExtraInformationData by Id' })
   @ApiCreatedResponse({ description: 'Success update new CustomerExtraInformationData' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: CustomerExtraInformationDataUM): Promise<CustomerExtraInformationDataVM> {
+  public update(@Body() body: CustomerExtraInformationDataUM): Promise<CustomerExtraInformationDataVM[]> {
     return this.service.update(body);
   }
 
@@ -72,7 +72,7 @@ export class CustomerExtraInformationDataController{
   @ApiOperation({ summary: 'Active an CustomerExtraInformationData by Id' })
   @ApiCreatedResponse({ description: 'Success active new CustomerExtraInformationData' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<CustomerExtraInformationDataVM> {
+  public active(@Param('id') id: string): Promise<CustomerExtraInformationDataVM[]> {
     return this.service.active(id);
   }
 
@@ -80,7 +80,7 @@ export class CustomerExtraInformationDataController{
   @ApiOperation({ summary: 'Deative an CustomerExtraInformationData by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new CustomerExtraInformationData' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<CustomerExtraInformationDataVM> {
+  public deactive(@Param('id') id: string): Promise<CustomerExtraInformationDataVM[]> {
     return this.service.deactive(id);
   }
 }

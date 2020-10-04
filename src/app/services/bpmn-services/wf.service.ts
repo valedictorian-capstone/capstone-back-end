@@ -4,6 +4,7 @@ import { WF_REPOSITORY } from "@types";
 import { WFCM, WFUM, WFVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { WFRepository } from "src/app/repositories/bpmn-repositories/wf.repository";
+import { In } from "typeorm";
 
 @Injectable()
 export class WFService {
@@ -13,9 +14,9 @@ export class WFService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<WFVM[]> => {
-    return await this.wfRepository.useHTTP().find({relations: ["wFSteps"]})
-      .then((models) => { return this.mapper.mapArray(models, WFVM, WF)});
+  public readonly findAll = async (ids?: string[]): Promise<WFVM[]> => {
+    return await this.wfRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["wFSteps"] })
+      .then((models) => { return this.mapper.mapArray(models, WFVM, WF) });
   }
 
   public readonly findById = async (id: string): Promise<WFVM> => {
@@ -31,12 +32,17 @@ export class WFService {
       })
   }
 
-  public readonly insert = async (body: WFCM): Promise<WFVM> => {
+  public readonly insert = async (body: WFCM): Promise<WFVM[]> => {
     return await this.wfRepository.useHTTP().save(body as any)
-      .then((model) => this.mapper.map(model.generatedMaps[0], WFVM, WF))
+      .then((model) => {
+        console.log(model);
+        const ids = [];
+        ids.push(model.id);
+        return this.findAll(ids);
+      })
   }
 
-  public readonly update = async (body: WFUM): Promise<WFVM> => {
+  public readonly update = async (body: WFUM): Promise<WFVM[]> => {
     return await this.wfRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -46,7 +52,12 @@ export class WFService {
         }
         return await this.wfRepository.useHTTP()
           .save(body)
-          .then((model) => (this.mapper.map(model, WFVM, WF)))
+          .then((model) => {
+            console.log(model);
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
+          })
       });
   }
 

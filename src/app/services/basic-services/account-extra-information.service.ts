@@ -38,7 +38,7 @@ export class AccountExtraInformationService {
         console.log(models)
         const ids = [];
         models.map(model => ids.push(model.id));
-        return this.findAll();
+        return this.findAll(ids);
       }
     )
   };

@@ -5,6 +5,7 @@ import { FORM_CONTROL_REPOSITORY } from '@types';
 import { FormControlCM, FormControlUM, FormControlVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { NotFoundException } from '@exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FormControlService {
@@ -14,8 +15,8 @@ export class FormControlService {
         @InjectMapper() protected readonly mapper: AutoMapper
     ) { }
 
-    public readonly findAll = async (): Promise<FormControlVM[]> => {
-        return await this.repository.useHTTP().find()
+    public readonly findAll = async (ids?: string[]): Promise<FormControlVM[]> => {
+        return await this.repository.useHTTP().find(ids ? { id: In(ids) } : {})
             .then((models) => this.mapper.mapArray(models, FormControlVM, FormControl))
     };
 
@@ -31,12 +32,16 @@ export class FormControlService {
             })
     };
 
-    public readonly insert = (body: FormControlCM): Promise<FormControlVM> => {
-        return this.repository.useHTTP().insert(body as any)
-            .then((model) => (this.mapper.map(model.generatedMaps[0], FormControlVM, FormControl as any)))
+    public readonly insert = (body: FormControlCM): Promise<FormControlVM[]> => {
+        return this.repository.useHTTP().save(body)
+            .then((model) => {
+                const ids = [];
+                ids.push(model.id);
+                return this.findAll(ids);
+            })
     };
 
-    public readonly update = async (body: FormControlUM): Promise<FormControlVM> => {
+    public readonly update = async (body: FormControlUM): Promise<FormControlVM[]> => {
         return await this.repository.useHTTP().findOne({ id: body.id })
             .then(async (model) => {
                 if (!model) {
@@ -46,7 +51,11 @@ export class FormControlService {
                 }
                 return await this.repository.useHTTP()
                     .save(body)
-                    .then(() => (this.mapper.map(body, FormControlVM, FormControlUM)))
+                    .then(() => {
+                        const ids = [];
+                        ids.push(model.id);
+                        return this.findAll(ids);
+                    })
             });
     };
 
@@ -69,7 +78,7 @@ export class FormControlService {
             });
     };
 
-    public readonly active = async (id: string): Promise<FormControlVM> => {
+    public readonly active = async (id: string): Promise<FormControlVM[]> => {
         return await this.repository.useHTTP().findOne({ id: id })
             .then(async (model) => {
                 if (!model) {
@@ -80,15 +89,14 @@ export class FormControlService {
                 return await this.repository.useHTTP()
                     .save({ ...model, isDelete: false })
                     .then(() => {
-                        throw new HttpException(
-                            `Update information of ${id} successfully !!!`,
-                            HttpStatus.CREATED,
-                        );
+                        const ids = [];
+                        ids.push(model.id);
+                        return this.findAll(ids);
                     })
             });
     };
 
-    public readonly deactive = async (id: string): Promise<FormControlVM> => {
+    public readonly deactive = async (id: string): Promise<FormControlVM[]> => {
         return await this.repository.useHTTP().findOne({ id: id })
             .then(async (model) => {
                 if (!model) {
@@ -99,10 +107,9 @@ export class FormControlService {
                 return await this.repository.useHTTP()
                     .save({ ...model, isDelete: true })
                     .then(() => {
-                        throw new HttpException(
-                            `Update information of ${id} successfully !!!`,
-                            HttpStatus.CREATED,
-                        );
+                        const ids = [];
+                        ids.push(model.id);
+                        return this.findAll(ids);
                     })
             });
     };
