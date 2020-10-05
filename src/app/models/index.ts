@@ -1,4 +1,4 @@
- //basic model export
+//basic model export
 import { Account } from './basic-models/account.model';
 import { Role } from './basic-models/role.model';
 import { Department } from './basic-models/department.model';
@@ -58,6 +58,11 @@ export * from './customer-models/product.model'
 // export * from './basic-models/customer.model';
 // export * from './basic-models/group.model';
 // export * from './basic-models/customer-group';
+
+//tasks model
+import { Task } from './task-models/task.model'
+export const TASK_MODELS = [Task]
+export * from './task-models/task.model'
 
 
 

@@ -2,6 +2,7 @@ import { Department } from '@models';
 import { hashSync } from 'bcrypt';
 import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Task } from '../task-models/task.model';
 import { AccountExtraValue } from './account-extra-value.model';
 import { Role } from './role.model';
 @Entity()
@@ -57,6 +58,9 @@ export class Account extends BaseEntity {
 
   @OneToMany(() => AccountExtraValue, accountExtraValues => accountExtraValues.account)
   public accountExtraValues: AccountExtraValue[];
+
+  @OneToMany(() => Task, task => task.assignee) 
+  public tasks: Task[]
 
   @AutoMap()
   @Column({ default: 'admin' })
