@@ -9,7 +9,7 @@ export class AccountExtraInformation extends BaseEntity {
     public id: string;
 
     @AutoMap()
-    @Column({ nullable: false, default: '' })
+    @Column({ nullable: false, default: '', unique: true })
     public name: string;
 
     @AutoMap()
@@ -31,6 +31,10 @@ export class AccountExtraInformation extends BaseEntity {
     @AutoMap()
     @Column({ nullable: false, default: '' })
     public tooltip: string;
+
+    @AutoMap()
+    @Column({ nullable: false, default: '' })
+    public label: string;
 
     @OneToMany(() => AccountExtraValue, accountExtraValues => accountExtraValues.accountExtraInformation)
     public accountExtraValues: AccountExtraValue[];

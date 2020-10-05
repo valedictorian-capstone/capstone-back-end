@@ -5,6 +5,7 @@ import { FORM_DATA_REPOSITORY } from '@types';
 import { FormDataCM, FormDataUM, FormDataVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { NotFoundException } from '@exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FormDataService {
@@ -14,8 +15,8 @@ export class FormDataService {
         @InjectMapper() protected readonly mapper: AutoMapper
     ) { }
 
-    public readonly findAll = async (): Promise<FormDataVM[]> => {
-        return await this.repository.useHTTP().find()
+    public readonly findAll = async (ids?: string[]): Promise<FormDataVM[]> => {
+        return await this.repository.useHTTP().find(ids ? { id: In(ids) } : {})
             .then((models) => this.mapper.mapArray(models, FormDataVM, FormData))
     };
 
@@ -31,12 +32,16 @@ export class FormDataService {
             })
     };
 
-    public readonly insert = (body: FormDataCM): Promise<FormDataVM> => {
+    public readonly insert = (body: FormDataCM): Promise<FormDataVM[]> => {
         return this.repository.useHTTP().save(body as any)
-            .then((model) => (this.mapper.map(model.generatedMaps[0], FormDataVM, FormData as any)))
+            .then((model) => {
+                const ids = [];
+                ids.push(model.id);
+                return this.findAll(ids);
+            })
     };
 
-    public readonly update = async (body: FormDataUM): Promise<FormDataVM> => {
+    public readonly update = async (body: FormDataUM): Promise<FormDataVM[]> => {
         return await this.repository.useHTTP().findOne({ id: body.id })
             .then(async (model) => {
                 if (!model) {
@@ -46,7 +51,11 @@ export class FormDataService {
                 }
                 return await this.repository.useHTTP()
                     .save(body)
-                    .then(() => (this.mapper.map(body, FormDataVM, FormDataUM)))
+                    .then(() => {
+                        const ids = [];
+                        ids.push(model.id);
+                        return this.findAll(ids);
+                    })
             });
     };
 
@@ -69,7 +78,7 @@ export class FormDataService {
             });
     };
 
-    public readonly active = async (id: string): Promise<FormDataVM> => {
+    public readonly active = async (id: string): Promise<FormDataVM[]> => {
         return await this.repository.useHTTP().findOne({ id: id })
             .then(async (model) => {
                 if (!model) {
@@ -80,15 +89,14 @@ export class FormDataService {
                 return await this.repository.useHTTP()
                     .save({ ...model, isDelete: false })
                     .then(() => {
-                        throw new HttpException(
-                            `Update information of ${id} successfully !!!`,
-                            HttpStatus.CREATED,
-                        );
+                        const ids = [];
+                        ids.push(model.id);
+                        return this.findAll(ids);
                     })
             });
     };
 
-    public readonly deactive = async (id: string): Promise<FormDataVM> => {
+    public readonly deactive = async (id: string): Promise<FormDataVM[]> => {
         return await this.repository.useHTTP().findOne({ id: id })
             .then(async (model) => {
                 if (!model) {
@@ -99,10 +107,9 @@ export class FormDataService {
                 return await this.repository.useHTTP()
                     .save({ ...model, isDelete: true })
                     .then(() => {
-                        throw new HttpException(
-                            `Update information of ${id} successfully !!!`,
-                            HttpStatus.CREATED,
-                        );
+                        const ids = [];
+                        ids.push(model.id);
+                        return this.findAll(ids);
                     })
             });
     };

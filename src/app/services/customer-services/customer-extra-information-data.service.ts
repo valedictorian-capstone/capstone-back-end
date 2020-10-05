@@ -5,6 +5,7 @@ import { CustomerExtraInformationDataRepository } from '@repositories';
 import { CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY } from '@types';
 import { CustomerExtraInformationDataCM, CustomerExtraInformationDataUM, CustomerExtraInformationDataVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { In } from 'typeorm';
 
 @Injectable()
 export class CustomerExtraInformationDataService {
@@ -13,8 +14,8 @@ export class CustomerExtraInformationDataService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<CustomerExtraInformationDataVM[]> => {
-    return await this.repository.useHTTP().find()
+  public readonly findAll = async (ids?: string[]): Promise<CustomerExtraInformationDataVM[]> => {
+    return await this.repository.useHTTP().find(ids ? { id: In(ids) } : {})
       .then((models) => this.mapper.mapArray(models, CustomerExtraInformationDataVM, CustomerExtraInformationData))
   };
 
@@ -30,12 +31,16 @@ export class CustomerExtraInformationDataService {
       })
   };
 
-  public readonly insert = (body: CustomerExtraInformationDataCM): Promise<CustomerExtraInformationDataVM> => {
-    return this.repository.useHTTP().insert(body)
-      .then((model) => (this.mapper.map(model.generatedMaps[0], CustomerExtraInformationDataVM, CustomerExtraInformationData as any)))
+  public readonly insert = (body: CustomerExtraInformationDataCM): Promise<CustomerExtraInformationDataVM[]> => {
+    return this.repository.useHTTP().save(body)
+      .then((model) => {
+        const ids = [];
+        ids.push(model.id);
+        return this.findAll(ids);
+      })
   };
 
-  public readonly update = async (body: CustomerExtraInformationDataUM): Promise<CustomerExtraInformationDataVM> => {
+  public readonly update = async (body: CustomerExtraInformationDataUM): Promise<CustomerExtraInformationDataVM[]> => {
     return await this.repository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -45,7 +50,11 @@ export class CustomerExtraInformationDataService {
         }
         return await this.repository.useHTTP()
           .save(body)
-          .then(() => (this.mapper.map(body, CustomerExtraInformationDataVM, CustomerExtraInformationDataUM)))
+          .then(() => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
+          })
       });
   };
 
@@ -68,7 +77,7 @@ export class CustomerExtraInformationDataService {
       });
   };
 
-  public readonly active = async (id: string): Promise<CustomerExtraInformationDataVM> => {
+  public readonly active = async (id: string): Promise<CustomerExtraInformationDataVM[]> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -79,15 +88,14 @@ export class CustomerExtraInformationDataService {
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: false })
           .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };
 
-  public readonly deactive = async (id: string): Promise<CustomerExtraInformationDataVM> => {
+  public readonly deactive = async (id: string): Promise<CustomerExtraInformationDataVM[]> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -98,10 +106,9 @@ export class CustomerExtraInformationDataService {
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: true })
           .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };

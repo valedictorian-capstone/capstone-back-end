@@ -74,6 +74,10 @@ export class FormControl extends BaseEntity {
   public toolTip: string;
 
   @AutoMap()
+  @Column({ nullable: false, default: '' })
+  public label: string;
+
+  @AutoMap()
   @Column({ default: null })
   public color: string;
 

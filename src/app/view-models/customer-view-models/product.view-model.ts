@@ -51,6 +51,9 @@ export class ProductCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly description: string;
+
+  @ApiProperty()
+  public readonly productExtrs: { name: string, value: string}[];
 }
 
 export class ProductUM {

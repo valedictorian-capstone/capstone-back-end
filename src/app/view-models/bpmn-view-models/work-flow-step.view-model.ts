@@ -4,6 +4,7 @@ import { FormGroupWFStepVM } from "./form-group-work-flow-step.view-model";
 import { PermissionWFStepVM } from "./permission-work-flow-step.view-model";
 import { WFConnectionVM } from "./work-flow-connection.view-model";
 import { WFStepInstanceVM } from "./work-flow-step-instance.view-model";
+import { WFVM } from './work-flow.view-model';
 
 export class WFStepVM {
   @AutoMap()
@@ -15,27 +16,29 @@ export class WFStepVM {
   @AutoMap()
   public readonly type: string;
   @AutoMap()
-  public readonly subType: string;
-  @AutoMap()
-  public readonly wFId: string;
+  public readonly shape: string;
+
+  public readonly props: any;
   // @AutoMap()
-  public readonly wFConnectionVMs: WFConnectionVM[];
-  // @AutoMap()
-  public readonly wFStepInstanceVMs: WFStepInstanceVM[];
-  // @AutoMap()
-  public readonly permissionWFStepVMs: PermissionWFStepVM[];
-  // @AutoMap()
-  public readonly formGroupWFStepVMs: FormGroupWFStepVM[];
+  // public readonly wFId: string;
+  // // @AutoMap()
+  // public readonly wFConnectionVMs: WFConnectionVM[];
+  // // @AutoMap()
+  // public readonly wFStepInstanceVMs: WFStepInstanceVM[];
+  // // @AutoMap()
+  // public readonly permissionWFStepVMs: PermissionWFStepVM[];
+  // // @AutoMap()
+  // public readonly formGroupWFStepVMs: FormGroupWFStepVM[];
   @AutoMap()
   public readonly isDelete: boolean;
-  @AutoMap()
-  public readonly createdBy: string;
-  @AutoMap()
-  public readonly updatedBy: string;
-  @AutoMap()
-  public readonly createdAt: Date;
-  @AutoMap()
-  public readonly updatedAt: Date;
+  // @AutoMap()
+  // public readonly createdBy: string;
+  // @AutoMap()
+  // public readonly updatedBy: string;
+  // @AutoMap()
+  // public readonly createdAt: Date;
+  // @AutoMap()
+  // public readonly updatedAt: Date;
 }
 
 export class WFStepCM {
@@ -50,17 +53,19 @@ export class WFStepCM {
   readonly type: string;
   @ApiProperty()
   @AutoMap()
-  readonly subType: string;
+  readonly shape: string;
   @ApiProperty()
   @AutoMap()
-  readonly wFId: string;
+  readonly props: any;
+  public wF: WFVM;
 }
 
 export class WFStepUM {
-  public readonly id: string;
-  public readonly name: string;
-  public readonly description: string;
-  public readonly type: string;
-  public readonly subType: string;
-  public readonly wFId: string;
+  public id: string;
+  public name: string;
+  public description: string;
+  public type: string;
+  public shape: string;
+  public props: any;
+  public wF: WFVM;
 }

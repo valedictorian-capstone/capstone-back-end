@@ -48,7 +48,7 @@ export class FormControlController {
     @ApiOperation({ summary: 'Insert new form-control' })
     @ApiCreatedResponse({ description: 'Success create new form-control' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Body() body: FormControlCM): Promise<FormControlVM> {
+    public insert(@Body() body: FormControlCM): Promise<FormControlVM[]> {
         return this.service.insert(body);
     }
 
@@ -56,7 +56,7 @@ export class FormControlController {
     @ApiOperation({ summary: 'Update an form-control by Id' })
     @ApiCreatedResponse({ description: 'Success update new form-control' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public update(@Body() body: FormControlUM): Promise<FormControlVM> {
+    public update(@Body() body: FormControlUM): Promise<FormControlVM[]> {
         return this.service.update(body);
     }
 
@@ -72,7 +72,7 @@ export class FormControlController {
     @ApiOperation({ summary: 'Active an form-control by Id' })
     @ApiCreatedResponse({ description: 'Success active new form-control' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public active(@Param('id')id: string): Promise<FormControlVM> {
+    public active(@Param('id')id: string): Promise<FormControlVM[]> {
         return this.service.active(id);
     }
 
@@ -80,7 +80,7 @@ export class FormControlController {
     @ApiOperation({ summary: 'Deative an form-control by Id' })
     @ApiCreatedResponse({ description: 'Success deactive new form-control' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public deactive(@Param('id') id: string): Promise<FormControlVM> {
+    public deactive(@Param('id') id: string): Promise<FormControlVM[]> {
         return this.service.deactive(id);
     }
 }

@@ -1,7 +1,7 @@
 import { inject } from "@extras/functions";
 import { WFStep } from "@models";
 import { Inject } from "@nestjs/common";
-import { WF_STEP_REPOSITORY } from "src/app/types/bpmn-types/work-step.type";
+import { WF_STEP_REPOSITORY } from "@types";
 import { Connection } from "typeorm";
 
 export class WFStepRepository {

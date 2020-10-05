@@ -10,6 +10,7 @@ export * from './basic-types/account-extra-information.type'
 //bpmn
 export * from './bpmn-types/work-flow-connection.type';
 export * from './bpmn-types/work-flow.type';
+export * from './bpmn-types/work-flow-step.type';
 export * from './bpmn-types/work-flow-instance.type';
 export * from './bpmn-types/work-step-instance.type'
 

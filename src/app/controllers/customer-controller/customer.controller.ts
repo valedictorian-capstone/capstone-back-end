@@ -56,7 +56,7 @@ export class CustomerController{
   @ApiOperation({ summary: 'Update an Customer by Id' })
   @ApiCreatedResponse({ description: 'Success update new Customer' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: CustomerUM): Promise<CustomerVM> {
+  public update(@Body() body: CustomerUM): Promise<CustomerVM[]> {
     return this.service.update(body);
   }
 
@@ -72,7 +72,7 @@ export class CustomerController{
   @ApiOperation({ summary: 'Active an Customer by Id' })
   @ApiCreatedResponse({ description: 'Success active new Customer' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<CustomerVM> {
+  public active(@Param('id') id: string): Promise<CustomerVM[]> {
     return this.service.active(id);
   }
 
@@ -80,7 +80,7 @@ export class CustomerController{
   @ApiOperation({ summary: 'Deative an Customer by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new Customer' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<CustomerVM> {
+  public deactive(@Param('id') id: string): Promise<CustomerVM[]> {
     return this.service.deactive(id);
   }
 }

@@ -48,7 +48,7 @@ export class AccountController {
   @ApiOperation({ summary: 'Insert new account' })
   @ApiCreatedResponse({ description: 'Success create new account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: AccountCM): Promise<AccountVM> {
+  public insert(@Body() body: AccountCM): Promise<AccountVM[]> {
     return this.service.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class AccountController {
   @ApiOperation({ summary: 'Update an account by Id' })
   @ApiCreatedResponse({ description: 'Success update new account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: AccountUM): Promise<AccountVM> {
+  public update(@Body() body: AccountUM): Promise<AccountVM[]> {
     return this.service.update(body);
   }
 
@@ -72,7 +72,7 @@ export class AccountController {
   @ApiOperation({ summary: 'Active an account by Id' })
   @ApiCreatedResponse({ description: 'Success active new account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<AccountVM> {
+  public active(@Param('id') id: string): Promise<AccountVM[]> {
     return this.service.active(id);
   }
 
@@ -80,7 +80,7 @@ export class AccountController {
   @ApiOperation({ summary: 'Deative an account by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<AccountVM> {
+  public deactive(@Param('id') id: string): Promise<AccountVM[]> {
     return this.service.deactive(id);
   }
 }

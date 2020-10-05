@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { CustomerExtraInformationDataVM } from "./customer-extra-information-data.view-model";
-import { CustomerVM } from "./customer.view-model";
 
 export class CustomerExtraInformationVM {
   
@@ -28,6 +27,9 @@ export class CustomerExtraInformationVM {
   
   @AutoMap()
   public readonly tooltip: string;
+
+  @AutoMap()
+  public readonly label: string;
   
   public readonly customerExtraInformationDatas: CustomerExtraInformationDataVM[];
     
@@ -48,27 +50,55 @@ export class CustomerExtraInformationVM {
 }
 
 export class CustomerExtraInformationCM {
+
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly name: string;
+
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly type: string;
+
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly subType: string;
+
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly options: string;
+
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly placeHolder: string;
+
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly tooltip: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly label: string;
 }
 
 export class CustomerExtraInformationUM {
+
+  @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly id: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly name: string;
-  public readonly customerId: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly type: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly subType: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly options: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly placeHolder: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly tooltip: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly label: string;
+
+  @ApiProperty({ required: true, format: 'boolean', default: true})
+  public readonly isDelete: boolean;
 }

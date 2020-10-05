@@ -9,7 +9,7 @@ export class DepartmentMapper extends ProfileBase {
     mapper.createMap(Department, DepartmentVM)
       .forMember(d => d.departmentChildrens, mapWith(DepartmentVM, s => s.departmentChildrens))
       .forMember(d => d.departmentParent, mapWith(DepartmentVM, s => s.departmentParent))
-      .forMember(d => d.accounts, mapWith(DepartmentVM, s => s.accounts));
+      .forMember(d => d.accountDepartments, mapWith(DepartmentVM, s => s.accountDepartments));
     mapper.createMap(DepartmentVM, DepartmentVM)
       .forMember(d => d.departmentChildrens, mapWith(DepartmentVM, s => s.departmentChildrens))
       .forMember(d => d.departmentParent, mapWith(DepartmentVM, s => s.departmentParent));

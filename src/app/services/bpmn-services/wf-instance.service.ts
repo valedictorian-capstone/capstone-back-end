@@ -4,6 +4,7 @@ import { WF_INSTANCE_REPOSITORY } from "@types";
 import { WFInstanceCM, WFInstanceUM, WFInstanceVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { WFInstanceRepository } from "@repositories";
+import { In } from "typeorm";
 
 @Injectable()
 export class WFInstanceService {
@@ -13,8 +14,8 @@ export class WFInstanceService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<WFInstanceVM[]> => {
-    return await this.wfRepository.useHTTP().find()
+  public readonly findAll = async (ids?: string[]): Promise<WFInstanceVM[]> => {
+    return await this.wfRepository.useHTTP().find(ids ? { id: In(ids) } : {})
       .then((models) => this.mapper.mapArray(models, WFInstanceVM, WFInstance))
   }
 
@@ -31,12 +32,16 @@ export class WFInstanceService {
       })
   }
 
-  public readonly insert = async (body: WFInstanceCM): Promise<WFInstanceVM> => {
-    return await this.wfRepository.useHTTP().insert(body as any)
-      .then((model) => this.mapper.map(model.generatedMaps[0], WFInstanceVM, WFInstance))
+  public readonly insert = async (body: WFInstanceCM): Promise<WFInstanceVM[]> => {
+    return await this.wfRepository.useHTTP().save(body as any)
+      .then((model) => {
+        const ids = [];
+        ids.push(model.id);
+        return this.findAll(ids);
+      })
   }
 
-  public readonly update = async (body: WFInstanceUM): Promise<WFInstanceVM> => {
+  public readonly update = async (body: WFInstanceUM): Promise<WFInstanceVM[]> => {
     return await this.wfRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -46,7 +51,11 @@ export class WFInstanceService {
         }
         return await this.wfRepository.useHTTP()
           .save(body)
-          .then((model) => (this.mapper.map(model, WFInstanceVM, WFInstance)))
+          .then((model) => {
+            const ids = [];
+        ids.push(model.id);
+        return this.findAll(ids);
+          })
       });
   }
 

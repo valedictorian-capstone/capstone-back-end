@@ -29,6 +29,10 @@ export class WF extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
+  @AutoMap()
+  @Column({ default: null })
+  public code: string;
+
   @OneToMany(() => WFInstance, wFInstance => wFInstance.wf)
   public wFInstances: WFInstance[];
 
@@ -42,8 +46,8 @@ export class WF extends BaseEntity {
   public wfConnections: WFConnection[]
 
   // @AutoMap()
-  @Column("json",{default:null})
-  public style: any;
+  @Column("json", { default: null })
+  public props: any;
 
   @AutoMap()
   @Column({ default: null })

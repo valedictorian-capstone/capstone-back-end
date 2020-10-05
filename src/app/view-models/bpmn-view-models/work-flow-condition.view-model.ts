@@ -6,7 +6,7 @@ export class WFConditionVM {
   @AutoMap()
   public readonly conditionId!: string;
   @AutoMap()
-  public readonly wFId!: string;
+  public readonly props!: any;
   @AutoMap()
   public readonly isDelete!: boolean;
   @AutoMap()
@@ -20,12 +20,12 @@ export class WFConditionVM {
 }
 
 export class WFConditionCM {
-  public readonly conditionId!: string;
-  public readonly wFId!: string;
+  public readonly description!: string;
+  public readonly props!: any;
 }
 
 export class WFConditionUM {
   public readonly id!: string;
-  public readonly conditionId!: string;
-  public readonly wFId!: string;
+  public readonly description!: string;
+  public readonly props!: any;
 }

@@ -4,6 +4,7 @@ import { WFStepInstanceRepository } from "@repositories";
 import { WF_STEP_INSTANCE_REPOSITORY } from "@types";
 import { WFStepInstanceCM, WFStepInstanceUM, WFStepInstanceVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
+import { In } from "typeorm";
 
 @Injectable()
 export class WFStepInstanceService {
@@ -13,8 +14,8 @@ export class WFStepInstanceService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<WFStepInstanceVM[]> => {
-    return await this.wFStepInstanceRepository.useHTTP().find()
+  public readonly findAll = async (ids?: string[]): Promise<WFStepInstanceVM[]> => {
+    return await this.wFStepInstanceRepository.useHTTP().find(ids ? { id: In(ids) } : {})
       .then((models) => this.mapper.mapArray(models, WFStepInstanceVM, WFStepInstance))
   }
 
@@ -31,12 +32,16 @@ export class WFStepInstanceService {
       })
   }
 
-  public readonly insert = async (body: WFStepInstanceCM): Promise<WFStepInstanceVM> => {
-    return await this.wFStepInstanceRepository.useHTTP().insert(body as any)
-      .then((model) => this.mapper.map(model.generatedMaps[0], WFStepInstanceVM, WFStepInstance))
+  public readonly insert = async (body: WFStepInstanceCM): Promise<WFStepInstanceVM[]> => {
+    return await this.wFStepInstanceRepository.useHTTP().save(body as any)
+      .then((model) => {
+        const ids = [];
+        ids.push(model.id);
+        return this.findAll(ids);
+      })
   }
 
-  public readonly update = async (body: WFStepInstanceUM): Promise<WFStepInstanceVM> => {
+  public readonly update = async (body: WFStepInstanceUM): Promise<WFStepInstanceVM[]> => {
     return await this.wFStepInstanceRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -46,7 +51,11 @@ export class WFStepInstanceService {
         }
         return await this.wFStepInstanceRepository.useHTTP()
           .save(body)
-          .then((model) => (this.mapper.map(model, WFStepInstanceVM, WFStepInstance)))
+          .then((model) => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
+          })
       });
   }
 

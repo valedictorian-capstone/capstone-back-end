@@ -5,6 +5,7 @@ import { GroupRepository } from '@repositories';
 import { GROUP_REPOSITORY } from '@types';
 import { GroupCM, GroupUM, GroupVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { In } from 'typeorm';
 
 @Injectable()
 export class GroupService {
@@ -13,8 +14,8 @@ export class GroupService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<GroupVM[]> => {
-    return await this.repository.useHTTP().find()
+  public readonly findAll = async (ids?: string[]): Promise<GroupVM[]> => {
+    return await this.repository.useHTTP().find(ids ? { id: In(ids) } : {})
       .then((models) => this.mapper.mapArray(models, GroupVM, Group))
   };
 
@@ -30,12 +31,16 @@ export class GroupService {
       })
   };
 
-  public readonly insert = (body: GroupCM): Promise<GroupVM> => {
-    return this.repository.useHTTP().insert(body)
-      .then((model) => (this.mapper.map(model.generatedMaps[0], GroupVM, Group as any)))
+  public readonly insert = (body: GroupCM): Promise<GroupVM[]> => {
+    return this.repository.useHTTP().save(body)
+      .then((model) => {
+        const ids = [];
+        ids.push(model.id);
+        return this.findAll(ids);
+      })
   };
 
-  public readonly update = async (body: GroupUM): Promise<GroupVM> => {
+  public readonly update = async (body: GroupUM): Promise<GroupVM[]> => {
     return await this.repository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -45,7 +50,11 @@ export class GroupService {
         }
         return await this.repository.useHTTP()
           .save(body)
-          .then(() => (this.mapper.map(body, GroupVM, GroupUM)))
+          .then(() => {
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
+          })
       });
   };
 
@@ -68,7 +77,7 @@ export class GroupService {
       });
   };
 
-  public readonly active = async (id: string): Promise<GroupVM> => {
+  public readonly active = async (id: string): Promise<GroupVM[]> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -79,15 +88,14 @@ export class GroupService {
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: false })
           .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };
 
-  public readonly deactive = async (id: string): Promise<GroupVM> => {
+  public readonly deactive = async (id: string): Promise<GroupVM[]> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -98,10 +106,9 @@ export class GroupService {
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: true })
           .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };

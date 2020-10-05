@@ -56,7 +56,7 @@ export class ProductController{
   @ApiOperation({ summary: 'Update an Product by Id' })
   @ApiCreatedResponse({ description: 'Success update new Product' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: ProductUM): Promise<ProductVM> {
+  public update(@Body() body: ProductUM): Promise<ProductVM[]> {
     return this.service.update(body);
   }
 
@@ -72,7 +72,7 @@ export class ProductController{
   @ApiOperation({ summary: 'Active an Product by Id' })
   @ApiCreatedResponse({ description: 'Success active new Product' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<ProductVM> {
+  public active(@Param('id') id: string): Promise<ProductVM[]> {
     return this.service.active(id);
   }
 
@@ -80,7 +80,7 @@ export class ProductController{
   @ApiOperation({ summary: 'Deative an Product by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new Product' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<ProductVM> {
+  public deactive(@Param('id') id: string): Promise<ProductVM[]> {
     return this.service.deactive(id);
   }
 }

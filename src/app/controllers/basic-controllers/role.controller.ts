@@ -1,4 +1,3 @@
-import { IRoleController } from '@interfaces';
 import {
   Body,
   Controller,
@@ -23,7 +22,7 @@ import { RoleCM, RoleUM, RoleVM } from '@view-models';
 @ApiBearerAuth('JWT')
 @ApiTags('Role')
 @Controller('/api/v1/Role')
-export class RoleController implements IRoleController {
+export class RoleController {
   constructor(
     protected readonly service: RoleService,
   ) { }
@@ -49,7 +48,7 @@ export class RoleController implements IRoleController {
   @ApiOperation({ summary: 'Insert new role' })
   @ApiCreatedResponse({ description: 'Success create new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: RoleCM): Promise<RoleVM> {
+  public async insert(@Body() body: RoleCM): Promise<RoleVM[]> {
     return await this.service.insert(body);
   }
 
@@ -57,7 +56,7 @@ export class RoleController implements IRoleController {
   @ApiOperation({ summary: 'Update an role by Id' })
   @ApiCreatedResponse({ description: 'Success update new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: RoleUM): Promise<RoleVM> {
+  public async update(@Body() body: RoleUM): Promise<RoleVM[]> {
     return await this.service.update(body);
   }
 
@@ -73,7 +72,7 @@ export class RoleController implements IRoleController {
   @ApiOperation({ summary: 'Active an role by Id' })
   @ApiCreatedResponse({ description: 'Success active new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async active(@Param('id') id: string): Promise<RoleVM> {
+  public async active(@Param('id') id: string): Promise<RoleVM[]> {
     return await this.service.active(id);
   }
 
@@ -81,7 +80,7 @@ export class RoleController implements IRoleController {
   @ApiOperation({ summary: 'Deative an role by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async deactive(@Param('id') id: string): Promise<RoleVM> {
+  public async deactive(@Param('id') id: string): Promise<RoleVM[]> {
     return await this.service.deactive(id);
   }
 }

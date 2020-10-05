@@ -1,42 +1,48 @@
 import { WF } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { WF_REPOSITORY } from "@types";
+import { WFConnectionRepository, WFStepRepository } from "@repositories";
+import { WF_CONNECTION_REPOSITORY, WF_REPOSITORY, WF_STEP_REPOSITORY } from "@types";
 import { WFCM, WFUM, WFVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { WFRepository } from "src/app/repositories/bpmn-repositories/wf.repository";
+import { In } from "typeorm";
 
 @Injectable()
 export class WFService {
 
   constructor(
     @Inject(WF_REPOSITORY) protected readonly wfRepository: WFRepository,
+    @Inject(WF_STEP_REPOSITORY) protected readonly wfStepRepository: WFStepRepository,
+    @Inject(WF_CONNECTION_REPOSITORY) protected readonly wfConnectionRepository: WFConnectionRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (): Promise<WFVM[]> => {
-    return await this.wfRepository.useHTTP().find({relations: ["wFSteps"]})
-      .then((models) => { return this.mapper.mapArray(models, WFVM, WF)});
+  public readonly findAll = async (ids?: string[]): Promise<any> => {
+    return await this.wfRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["wFSteps", "wfConnections"] })
+      .then((models) => models);
   }
 
-  public readonly findById = async (id: string): Promise<WFVM> => {
-    return await this.wfRepository.useHTTP().findOne({ id: id }, { relations: ["WFStep", "WFCondition"] })
+  public readonly findById = async (id: string): Promise<any> => {
+    return await this.wfRepository.useHTTP().findOne({ id: id }, { relations: ["wFSteps", "wfConnections"] })
       .then((model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         } else {
-          return this.mapper.map(model, WFVM, WF)
+          return model;
         }
       })
   }
 
   public readonly insert = async (body: WFCM): Promise<WFVM> => {
     return await this.wfRepository.useHTTP().save(body as any)
-      .then((model) => this.mapper.map(model.generatedMaps[0], WFVM, WF))
+      .then((model) => {
+        return this.findById(model.id);
+      })
   }
 
-  public readonly update = async (body: WFUM): Promise<WFVM> => {
+  public readonly update = async (body: WFUM): Promise<any> => {
     return await this.wfRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -44,9 +50,17 @@ export class WFService {
             `Can not find ${body.id}`,
           );
         }
-        return await this.wfRepository.useHTTP()
-          .save(body)
-          .then((model) => (this.mapper.map(model, WFVM, WF)))
+        const workFlow = { ...body };
+        const workFlowSteps = workFlow.workFlowSteps;
+        const workFlowConnections = workFlow.workFlowConnections;
+        delete workFlow.workFlowSteps;
+        delete workFlow.workFlowConnections;
+        await this.wfRepository.useHTTP().save(workFlow);
+        await this.wfStepRepository.useHTTP().insert(workFlowSteps.create);
+        await this.wfStepRepository.useHTTP().save(workFlowSteps.update);
+        await this.wfConnectionRepository.useHTTP().insert(workFlowConnections.create);
+        await this.wfConnectionRepository.useHTTP().save(workFlowConnections.update);
+        return await this.findById(workFlow.id);
       });
   }
 

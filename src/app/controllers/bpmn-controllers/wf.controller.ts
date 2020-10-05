@@ -21,7 +21,7 @@ import { WFService } from '@services';
 
 @ApiBearerAuth('JWT')
 @ApiTags('WorkFlow')
-@Controller('/api/v1/wf')
+@Controller('/api/v1/WorkFlow')
 export class WFController {
   constructor(
     protected readonly wfService: WFService,
