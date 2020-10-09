@@ -10,9 +10,9 @@ export * from './basic-controllers/department.controller';
 export * from './basic-controllers/account-extra-value.controller';
 export * from './basic-controllers/account-extra-information.controller';
 export const BASIC_CONTROLLERS = [
-  AccountController, 
-  RoleController, 
-  DepartmentController, 
+  AccountController,
+  RoleController,
+  DepartmentController,
   AccountExtraValueController,
   AccountExtraInformationController];
 
@@ -66,11 +66,15 @@ export * from './customer-controller/customer.controller';
 export * from './customer-controller/group.controller';
 export * from './customer-controller/customer-extra-information.controller';
 export * from './customer-controller/customer-extra-information-data.controller';
-export const CUSTOMER_CONTROLLERS = [CustomerController, 
-  GroupController, 
-  CustomerExtraInformationController, 
-  CustomerExtraInformationDataController, 
+export const CUSTOMER_CONTROLLERS = [CustomerController,
+  GroupController,
+  CustomerExtraInformationController,
+  CustomerExtraInformationDataController,
   ProductController,
   ProductExtraValueController,
   ProductExtraInformationController
 ];
+
+import { TaskController } from './task-controllers/task.controller'
+export * from './task-controllers/task.controller'
+export const TASK_CONTROLLERS = [TaskController]

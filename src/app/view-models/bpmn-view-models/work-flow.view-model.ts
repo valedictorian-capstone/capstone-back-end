@@ -23,7 +23,7 @@ export class WFVM {
 
   public readonly workFlowConnections!: WFStepVM[];
 
-  // public readonly wFInstances!: WFInstanceVM[];
+  // public readonly wfInstances!: WFInstanceVM[];
   // @AutoMap()
   // public readonly isDelete!: boolean;
   // @AutoMap()

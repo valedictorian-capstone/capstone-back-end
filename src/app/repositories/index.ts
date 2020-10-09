@@ -92,10 +92,12 @@ export * from './customer-repositories/product.repository';
 export * from './customer-repositories/product-extra-information.repository';
 export * from './customer-repositories/product-extra-value.repository';
 
-
-
-
-
+//task 
+import { TaskRepository } from './task-repositories/task.repository'
+export const TASK_REPOSITORY = [
+  TaskRepository.inject
+]
+export * from './task-repositories/task.repository'
 
 
 

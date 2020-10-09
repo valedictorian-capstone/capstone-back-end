@@ -8,11 +8,12 @@ import {
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
-import { Group } from './group.model';
 import { WFInstance } from '../bpmn-models/wf-instance.model';
+import { Task } from '../task-models/task.model';
 import { CustomerExtraInformationData } from './customer-extra-information-data.model';
+import { Group } from './group.model';
 
 @Entity()
 export class Customer extends BaseEntity {
@@ -36,11 +37,14 @@ export class Customer extends BaseEntity {
   @JoinTable()
   public groups: Group[];
 
-  @OneToMany(() => WFInstance, wFInstances=> wFInstances.customer )
-  public wFInstances: WFInstance[];
+  @OneToMany(() => WFInstance, wfInstances => wfInstances.customer)
+  public wfInstances: WFInstance[];
 
   @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.customer)
   public customerExtraInformationDatas: CustomerExtraInformationData[];
+
+  @ManyToMany(() => Task, task => task.customers)
+  public tasks: Task[]
 
   @AutoMap()
   @Column({ default: null })

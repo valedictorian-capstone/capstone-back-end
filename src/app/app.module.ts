@@ -2,7 +2,8 @@ import {
   BASIC_CONTROLLERS,
   BPMN_CONTROLLERS,
   CUSTOMER_CONTROLLERS, EXTRA_CONTROLLERS,
-  FORM_CONTROLLERS
+  FORM_CONTROLLERS,
+  TASK_CONTROLLERS
 } from '@controllers';
 import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
@@ -13,8 +14,9 @@ import { JwtModule } from '@nestjs/jwt';
 import {
   BASIC_REPOSITORY,
   BPMN_REPOSITORY,
-
-  CUSTOMER_REPOSITORY, FORM_REPOSITORY
+  CUSTOMER_REPOSITORY,
+  FORM_REPOSITORY,
+  TASK_REPOSITORY
 } from '@repositories';
 import {
   BASIC_SERVICES,
@@ -22,7 +24,8 @@ import {
 
 
   CUSTOMER_SERVICES, EXTRA_SERVICES,
-  FORM_SERVICE
+  FORM_SERVICE,
+  TASK_SERVICES
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
 import {
@@ -33,6 +36,7 @@ import {
 } from './mappers';
 import { WFConnectionMapper } from './mappers/bpmn-mappers/wf-connection.mapper';
 import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
+import { TaskMapper } from './mappers/task-mappers/task.mapper';
 
 
 @Module({
@@ -55,18 +59,21 @@ import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
     ...BPMN_CONTROLLERS,
     ...FORM_CONTROLLERS,
     ...CUSTOMER_CONTROLLERS,
+    ...TASK_CONTROLLERS,
   ],
   providers: [
     ...BASIC_SERVICES,
     ...EXTRA_SERVICES,
     ...BPMN_SERVICES,
     ...FORM_SERVICE,
+    ...TASK_SERVICES,
     ...CUSTOMER_SERVICES,
     ...BASIC_REPOSITORY,
     ...BPMN_REPOSITORY,
     ...FORM_REPOSITORY,
     ...CUSTOMER_REPOSITORY,
     ...FILTERS,
+    ...TASK_REPOSITORY,
     AppGateway,
     ...AppProvider.init()
   ],
@@ -93,6 +100,7 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(ProductMapper);
     this.mapper.addProfile(ProductExtraInformationMapper);
     this.mapper.addProfile(ProductExtraValueMapper);
+    this.mapper.addProfile(TaskMapper);
   }
 
 }

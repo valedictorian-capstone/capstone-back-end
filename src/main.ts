@@ -13,7 +13,6 @@ const open = require("open");
   app.useGlobalInterceptors(new LogRequestInterceptor());
   app.use(json({ limit: '500mb' }));
   app.use(urlencoded({ limit: '50mb', extended: false }));
-  console.log(process.env.GGCLOUD_SQL_HOST)
   const options = new DocumentBuilder()
     .setTitle('CRM BE')
     .setDescription('ALL API OF CRM')
@@ -27,7 +26,7 @@ const open = require("open");
   };
   SwaggerModule.setup('api/v1/swagger', app, document, styles);
 
-  await app.listen(4000);
+  await app.listen(3000);
 
   if (module.hot) {
     module.hot.accept();

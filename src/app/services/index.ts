@@ -88,3 +88,10 @@ export const CUSTOMER_SERVICES = [CustomerService,
   ProductExtraInformationService,
   ProductExtraValueService
 ];
+
+//task services
+import { TaskService } from './task-services/task.service'
+export * from './task-services/task.service'
+export const TASK_SERVICES = [
+  TaskService
+]

@@ -35,7 +35,7 @@ export class WFInstance extends BaseEntity {
   public wFStepInstances: WFStepInstance[];
 
   @AutoMap(() => Customer, 1)
-  @ManyToOne(() => Customer, customer => customer.wFInstances)
+  @ManyToOne(() => Customer, customer => customer.wfInstances)
   public customer: Customer;
 
   @AutoMap(() => WF, 1)

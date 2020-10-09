@@ -34,7 +34,7 @@ export class WF extends BaseEntity {
   public code: string;
 
   @OneToMany(() => WFInstance, wFInstance => wFInstance.wf)
-  public wFInstances: WFInstance[];
+  public wfInstances: WFInstance[];
 
   @OneToMany(() => WFStep, wFStep => wFStep.wF)
   public wFSteps: WFStep[];

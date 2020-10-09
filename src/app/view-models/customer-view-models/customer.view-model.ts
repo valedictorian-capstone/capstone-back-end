@@ -32,7 +32,7 @@ export class CustomerVM {
 
   public groups: GroupVM[];
 
-  public wFInstances: WFInstanceVM[];
+  public wfInstances: WFInstanceVM[];
 
   public customerExtraInformationDatas: CustomerExtraInformationDataVM[];
 

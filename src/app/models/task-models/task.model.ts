@@ -1,5 +1,5 @@
 import { AutoMap } from "nestjsx-automapper";
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Account } from "../basic-models/account.model";
 import { WFStepInstance } from "../bpmn-models/wf-step-instance.model";
 import { Customer } from "../customer-models/customer.model";
@@ -13,9 +13,11 @@ export class Task extends BaseEntity {
   @OneToOne(() => Account, account => account)
   public assignee: Account;
 
+  @ManyToOne(() => WFStepInstance, wfStepInstance => wfStepInstance.tasks)
   public wfStepInstance: WFStepInstance;
 
-  public customer: Customer;
+  @ManyToMany(() => Customer, customer => customer.tasks)
+  public customers: Customer[];
 
   @OneToOne(() => Account, account => account)
   public assignBy: Account;

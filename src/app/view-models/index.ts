@@ -3,5 +3,5 @@ export * from './bpmn-view-models';
 export * from './extra-view-models';
 export * from './form-view-models';
 export * from './customer-view-models';
-
+export * from './task-view-models'
 

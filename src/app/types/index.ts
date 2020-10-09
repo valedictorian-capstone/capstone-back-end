@@ -29,3 +29,6 @@ export * from './customer-types/customer-extra-information-data.types';
 export * from './customer-types/product.types';
 export * from './customer-types/product-extra-value.types';
 export * from './customer-types/product-extra-information.types';
+
+//task
+export * from './task-types/task.types'
