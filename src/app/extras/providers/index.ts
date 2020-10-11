@@ -1,5 +1,4 @@
 import { BASIC_MODELS, BPMN_MODELS, FORM_MODELS, CUSTOMER_MODELS } from '@models';
-import { ConfigService } from '@nestjs/config/dist/config.service';
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { createConnection } from 'typeorm';
@@ -17,7 +16,7 @@ export class AppProvider {
           await mysql.createConnection({
             host: process.env.GGCLOUD_SQL_HOST,
             user: process.env.GGCLOUD_SQL_USERNAME,
-            password: '123456cb',
+            password: '123456',
           }).then((conn => conn.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.GGCLOUD_SQL_DATABASE}`)));
           const connection = createConnection({
             name: uuid(),
@@ -25,7 +24,7 @@ export class AppProvider {
             host: process.env.GGCLOUD_SQL_HOST,
             port: parseInt(process.env.GGCLOUD_SQL_POST),
             username: process.env.GGCLOUD_SQL_USERNAME,
-            password: '123456cb',
+            password: '123456',
             database: process.env.GGCLOUD_SQL_DATABASE,
             entities: [...BASIC_MODELS, ...BPMN_MODELS, ...FORM_MODELS, ...CUSTOMER_MODELS],
             synchronize: true,
