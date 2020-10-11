@@ -42,7 +42,7 @@ import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
       skipUnmappedAssertion: true
     }),
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV ? process.env.NODE_ENV + '.env' : 'dev.env'
+      envFilePath: process.env.NODE_ENV ? process.env.NODE_ENV + '.env' : 'prod.env'
     }),
     JwtModule.register({
       secretOrPrivateKey: '10',
