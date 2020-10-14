@@ -26,18 +26,21 @@ export class WFConnectionVM {
 }
 
 export class WFConnectionCM {
+  public id: string;
   public readonly type!: string;
-  public readonly description!: string;
-  public readonly fromWFStep!: WFStepVM;
-  public readonly toWFStep!: WFStepVM;
+  public description!: string;
+  public fromWFStep!: WFStepVM;
+  public toWFStep!: WFStepVM;
   public wF: WFVM;
+  public props: any;
 }
 
 export class WFConnectionUM {
-  public readonly id!: string;
-  public readonly type!: string;
-  public readonly description!: string;
-  public readonly fromWFStep!: WFStepVM;
-  public readonly toWFStep!: WFStepVM;
+  public id!: string;
+  public type!: string;
+  public description!: string;
+  public fromWFStep!: WFStepVM;
+  public toWFStep!: WFStepVM;
   public wF: WFVM;
+  public props: any;
 }

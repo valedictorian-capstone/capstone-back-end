@@ -22,14 +22,14 @@ export class FormGroupService {
     // };
 
     public readonly findAllContainFormControl = async (ids?: string[]): Promise<FormGroupVM[]> => {
-        return await this.repository.useHTTP().find({where: (ids ? {id: In(ids)} : {}), relations: ["formControls", "formDatas", "wfSteps"]})
-            .then( (models) => { 
+        return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["formControls", "formDatas", "wfSteps"] })
+            .then((models) => {
                 return this.mapper.mapArray(models, FormGroupVM, FormGroup);
             })
     };
 
     public readonly findById = async (id: string): Promise<FormGroupVM> => {
-        return await this.repository.useHTTP().findOne({ id: id }, { relations: ["formControls", "formDatas", "wfSteps"]})
+        return await this.repository.useHTTP().findOne({ id: id }, { relations: ["formControls", "formDatas", "wfSteps"] })
             .then((model) => {
                 if (model) {
                     return this.mapper.map(model, FormGroupVM, FormGroup);
@@ -42,22 +42,28 @@ export class FormGroupService {
 
     public readonly insert = (body: FormGroupCM): Promise<FormGroupVM> => {
         return this.repository.useHTTP().insert(body)
-            .then((model) => {
-                this.controlRepository.useHTTP().insert(body.formControls.map(formControl => ({...formControl, formGroup: model.generatedMaps[0]})));
-                (this.mapper.map(model, FormGroupVM, FormGroup as any));
+            .then(async (model) => {
+                if (body.formControls.length > 0) {
+                    await this.controlRepository.useHTTP().insert(body.formControls.map(formControl => ({ ...formControl, formGroup: model.generatedMaps[0] })));
+                }
+                return await this.findById(model.generatedMaps[0].id);
             })
-            .catch((err) =>{console.log(err); return null});
+            .catch((err) => err);
     };
 
     public readonly update = async (body: FormGroupUM): Promise<FormGroupVM> => {
-        return this.repository.useHTTP().save(body)
-        .then((model) => {
-            // body.formControlRemove.map(id => this.controlRepository.useHTTP().delete({id: id}));
-            this.controlRepository.useHTTP().delete(body.formControlRemove);
-            this.controlRepository.useHTTP().save(body.formControls.map(formControl => ({...formControl, formGroup: model})));
-            (this.mapper.map(model, FormGroupVM, FormGroup as any));
-        })
-        .catch((err) =>{console.log(err); return null});
+        return await this.repository.useHTTP().save(body)
+            .then(async (model) => {
+                // body.formControlRemove.map(id => this.controlRepository.useHTTP().delete({id: id}));
+                if (body.formControlRemove.length > 0) {
+                    await this.controlRepository.useHTTP().delete(body.formControlRemove);
+                }
+                if (body.formControls.length > 0) {
+                    await this.controlRepository.useHTTP().save(body.formControls.map(formControl => ({ ...formControl, formGroup: model })));
+                }
+                return await this.findById(body.id);
+            })
+            .catch((err) => err);
     };
 
     public readonly remove = async (id: string): Promise<FormGroupVM> => {
@@ -88,7 +94,7 @@ export class FormGroupService {
                     );
                 }
                 return await this.repository.useHTTP()
-                    .save(model.map(formGroup => ({...formGroup, isDelete: false})))
+                    .save(model.map(formGroup => ({ ...formGroup, isDelete: false })))
                     .then(() => {
                         throw new HttpException(
                             `Update information successfully !!!`,
@@ -107,7 +113,7 @@ export class FormGroupService {
                     );
                 }
                 return await this.repository.useHTTP()
-                    .save(model.map(formGroup => ({...formGroup, isDelete: true})))
+                    .save(model.map(formGroup => ({ ...formGroup, isDelete: true })))
                     .then(() => {
                         throw new HttpException(
                             `Update information successfully !!!`,

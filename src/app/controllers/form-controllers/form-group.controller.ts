@@ -65,7 +65,7 @@ export class FormGroupController {
     @ApiOperation({ summary: 'Delete an form-group by Id' })
     @ApiCreatedResponse({ description: 'Success delete new form-group' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public remove(id: string): Promise<FormGroupVM> {
+    public remove(@Param('id') id: string): Promise<FormGroupVM> {
         return this.service.remove(id);
     }
 

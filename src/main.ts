@@ -11,8 +11,8 @@ const open = require("open");
   const app = await NestFactory.create(AppModule, { logger: true, cors: true, bodyParser: true });
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new LogRequestInterceptor());
-  app.use(json({ limit: '500mb' }));
-  app.use(urlencoded({ limit: '50mb', extended: false }));
+  // app.use(json({ limit: '500mb' }));
+  // app.use(urlencoded({ limit: '50mb', extended: false }));
   console.log(process.env.GGCLOUD_SQL_HOST)
   const options = new DocumentBuilder()
     .setTitle('CRM BE')

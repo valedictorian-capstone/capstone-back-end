@@ -50,7 +50,9 @@ export class WFUM {
   public readonly name!: string;
   public readonly description!: string;
   public readonly code: string;
-  public readonly workFlowSteps: { create: WFStepCM[], update: WFStepUM[] }
-  public readonly workFlowConnections: { create: WFConnectionUM[], update: WFConnectionCM[] };
+  public readonly workFlowSteps: (WFStepCM | WFStepUM)[];
+  public readonly workFlowStepIds: string[];
+  public readonly workFlowConnections: (WFConnectionUM | WFConnectionCM)[];
+  public readonly workFlowConnectionIds: string[];
   public readonly props: any;
 }

@@ -42,21 +42,22 @@ export class WFStepVM {
 }
 
 export class WFStepCM {
+  public id: string;
   @ApiProperty()
   @AutoMap()
-  readonly name: string;
+  public name: string;
   @ApiProperty()
   @AutoMap()
-  readonly description: string;
+  public description: string;
   @ApiProperty()
   @AutoMap()
-  readonly type: string;
+  public type: string;
   @ApiProperty()
   @AutoMap()
-  readonly shape: string;
+  public shape: string;
   @ApiProperty()
   @AutoMap()
-  readonly props: any;
+  public props: any;
   public wF: WFVM;
 }
 

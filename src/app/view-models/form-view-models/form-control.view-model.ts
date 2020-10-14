@@ -23,8 +23,7 @@ export class FormControlVM {
   @AutoMap()
   public readonly size: string;
   
-  @AutoMap()
-  public readonly options: string;
+  public readonly options: any;
   
   @AutoMap()
   public readonly type: string;
@@ -35,6 +34,24 @@ export class FormControlVM {
   @AutoMap()
   public readonly width: string;
   
+  @AutoMap()
+  public readonly xs: number;
+
+  @AutoMap()
+  public readonly sm: number;
+
+  @AutoMap()
+  public readonly md: number;
+
+  @AutoMap()
+  public readonly lg: number;
+
+  @AutoMap()
+  public readonly xl: number;
+
+  @AutoMap()
+  public readonly xxl: number;
+
   @AutoMap()
   public readonly height: string;
   
@@ -86,8 +103,8 @@ export class FormControlCM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly size: string;
 
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly options: string;
+  @ApiProperty({ required: true, isArray: true })
+  public readonly options: {value: any, label: string}[];
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly type: string;
@@ -97,6 +114,24 @@ export class FormControlCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly width: string;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly xs: number;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly sm: number;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly md: number;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly lg: number;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly xl: number;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly xxl: number;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly height: string;
@@ -131,8 +166,8 @@ export class FormControlUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly size: string;
 
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly options: string;
+  @ApiProperty({ required: true, isArray: true })
+  public readonly options: {value: any, label: string}[];
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly type: string;
@@ -142,6 +177,24 @@ export class FormControlUM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly width: string;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly xs: number;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly sm: number;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly md: number;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly lg: number;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly xl: number;
+
+  @ApiProperty({ required: true, format: 'number', minLength: 2 })
+  public readonly xxl: number;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly height: string;

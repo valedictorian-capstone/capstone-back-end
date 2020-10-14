@@ -53,13 +53,15 @@ export class WFService {
         const workFlow = { ...body };
         const workFlowSteps = workFlow.workFlowSteps;
         const workFlowConnections = workFlow.workFlowConnections;
+        const workFlowConnectionIds = workFlow.workFlowConnectionIds;
+        const workFlowStepIds = workFlow.workFlowStepIds;
         delete workFlow.workFlowSteps;
         delete workFlow.workFlowConnections;
         await this.wfRepository.useHTTP().save(workFlow);
-        await this.wfStepRepository.useHTTP().insert(workFlowSteps.create);
-        await this.wfStepRepository.useHTTP().save(workFlowSteps.update);
-        await this.wfConnectionRepository.useHTTP().insert(workFlowConnections.create);
-        await this.wfConnectionRepository.useHTTP().save(workFlowConnections.update);
+        await this.wfStepRepository.useHTTP().save(workFlowSteps);
+        await this.wfConnectionRepository.useHTTP().save(workFlowConnections);
+        await this.wfConnectionRepository.useHTTP().remove(workFlowConnectionIds.map((e) => ({ id: e } as any)));
+        await this.wfStepRepository.useHTTP().remove(workFlowStepIds.map((e) => ({ id: e } as any)));
         return await this.findById(workFlow.id);
       });
   }

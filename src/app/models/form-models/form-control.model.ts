@@ -45,9 +45,8 @@ export class FormControl extends BaseEntity {
   @Column({ default: null })
   public size: string;
 
-  @AutoMap()
-  @Column({ default: null })
-  public options: string;
+  @Column("json", { default: null })
+  public options: any;
 
   @AutoMap()
   @Column({ default: null })
@@ -62,6 +61,30 @@ export class FormControl extends BaseEntity {
   public width: string;
 
   @AutoMap()
+  @Column({ default: 24 })
+  public xs: number;
+
+  @AutoMap()
+  @Column({ default: 24 })
+  public sm: number;
+
+  @AutoMap()
+  @Column({ default: 24 })
+  public md: number;
+
+  @AutoMap()
+  @Column({ default: 24 })
+  public lg: number;
+
+  @AutoMap()
+  @Column({ default: 24 })
+  public xl: number;
+
+  @AutoMap()
+  @Column({ default: 24 })
+  public xxl: number;
+
+  @AutoMap()
   @Column({ default: null })
   public height: string;
 
@@ -74,7 +97,7 @@ export class FormControl extends BaseEntity {
   public toolTip: string;
 
   @AutoMap()
-  @Column({ nullable: false, default: '' })
+  @Column({ default: '' })
   public label: string;
 
   @AutoMap()
