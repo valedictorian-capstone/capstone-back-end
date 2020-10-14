@@ -4,9 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
-  - master
+  - thanhnv-azure2
   
-  variables:
+variables:
   
     # Azure Resource Manager connection created during pipeline creation
     azureSubscription: '057209bb-6e88-42c1-85cf-fd5d710fe15d'
@@ -20,7 +20,7 @@ trigger:
     # Agent VM image name
     vmImageName: 'ubuntu-latest'
   
-  stages:
+stages:
   - stage: Build
     displayName: Build stage
     jobs:  
