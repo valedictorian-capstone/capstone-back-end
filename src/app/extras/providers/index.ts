@@ -24,7 +24,7 @@ export class AppProvider {
             host: process.env.GGCLOUD_SQL_HOST,
             port: parseInt(process.env.GGCLOUD_SQL_POST),
             username: process.env.GGCLOUD_SQL_USERNAME,
-            password: '123456',
+            password: process.env.GGCLOUD_SQL_PASS,
             database: process.env.GGCLOUD_SQL_DATABASE,
             entities: [...BASIC_MODELS, ...BPMN_MODELS, ...FORM_MODELS, ...CUSTOMER_MODELS],
             synchronize: true,
