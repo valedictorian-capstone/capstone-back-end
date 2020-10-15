@@ -26,11 +26,27 @@ export class Customer extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: false, unique: true })
+  public code!: string;
+
+  @AutoMap()
+  @Column({ nullable: false, unique: true })
   public email!: string;
 
   @AutoMap()
   @Column({ nullable: false, unique: true })
   public phone: string;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  public address!: string;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  public avatar!: string;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  public gender!: boolean;
 
   @ManyToMany(() => Group, group => group.customers)
   @JoinTable()

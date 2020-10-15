@@ -19,7 +19,7 @@ export class CustomerExtraInformationData extends BaseEntity {
     public id: string;
 
     @AutoMap()
-    @Column({ nullable: false, unique: true })
+    @Column({ nullable: true })
     public value: string;
 
     @ManyToOne(() => CustomerExtraInformation, customerExtraInformation => customerExtraInformation.customerExtraInformationDatas)

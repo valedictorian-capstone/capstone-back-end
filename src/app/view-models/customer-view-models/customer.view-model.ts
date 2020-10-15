@@ -28,7 +28,7 @@ export class CustomerVM {
   public readonly address: string;
 
   @AutoMap()
-  public readonly gender: string;
+  public readonly gender: boolean;
 
   public groups: GroupVM[];
 
@@ -73,10 +73,10 @@ export class CustomerCM {
   public readonly address: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly gender: string;
+  public readonly gender: boolean;
 
   @ApiProperty()
-  public readonly customerExtrs: { name: string, value: string }[];
+  public readonly customerExtras: { customerExtraInformation: { id: string }, value: string }[];
 
 }
 
@@ -104,8 +104,8 @@ export class CustomerUM {
   public readonly address: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly gender: string;
+  public readonly gender: boolean;
 
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly passwordHash: string;
+  @ApiProperty()
+  public readonly customerExtras: { customerExtraInformation: { id: string }, value: string }[];
 }

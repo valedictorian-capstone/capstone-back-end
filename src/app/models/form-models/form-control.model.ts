@@ -27,12 +27,6 @@ export class FormControl extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
-  @ManyToOne(() => FormGroup, formGroup => formGroup.formControls)
-  public formGroup: FormGroup;
-
-  @OneToMany(() => FormValue, formValues => formValues.formControl)
-  public formValues: FormValue[];
-
   @AutoMap()
   @Column({ default: null })
   public placeHolder: string;
@@ -94,7 +88,7 @@ export class FormControl extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
-  public toolTip: string;
+  public tooltip: string;
 
   @AutoMap()
   @Column({ default: '' })
@@ -103,10 +97,16 @@ export class FormControl extends BaseEntity {
   @AutoMap()
   @Column({ default: null })
   public color: string;
-
+  
   @AutoMap()
   @Column({ default: null })
   public position: number;
+  
+  @ManyToOne(() => FormGroup, formGroup => formGroup.formControls)
+  public formGroup: FormGroup;
+
+  @OneToMany(() => FormValue, formValues => formValues.formControl)
+  public formValues: FormValue[];
 
   @AutoMap()
   @Column({ default: null })

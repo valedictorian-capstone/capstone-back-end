@@ -39,10 +39,11 @@ import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
   imports: [
     AutomapperModule.withMapper({
       throwError: true,
-      skipUnmappedAssertion: true
+      skipUnmappedAssertion: true,
+      useUndefined: true,
     }),
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV ? process.env.NODE_ENV + '.env' : 'prod.env'
+      envFilePath: process.env.NODE_ENV ? process.env.NODE_ENV + '.env' : 'dev.env'
     }),
     JwtModule.register({
       secretOrPrivateKey: '10',

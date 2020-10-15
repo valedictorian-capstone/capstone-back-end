@@ -18,31 +18,90 @@ export class CustomerExtraInformation extends BaseEntity {
     public id: string;
 
     @AutoMap()
-    @Column({ nullable: false, unique: true })
+    @Column({ default: null })
     public name: string;
 
     @AutoMap()
-    @Column({ nullable: false, default: '' })
+    @Column({ default: null })
+    public description: string;
+
+    @AutoMap()
+    @Column({ default: null })
+    public placeHolder: string;
+
+    @AutoMap()
+    @Column({ default: null })
+    public fontSize: string;
+
+    @AutoMap()
+    @Column({ default: null })
+    public size: string;
+
+    @Column("json", { default: null })
+    public options: any;
+
+    @AutoMap()
+    @Column({ default: null })
     public type: string;
 
     @AutoMap()
-    @Column({ nullable: false, default: '' })
+    @Column({ default: null })
     public subType: string;
 
     @AutoMap()
-    @Column({ nullable: false, default: '' })
-    public options: string;
-
-    @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.customerExtraInformation )
-    public customerExtraInformationDatas: CustomerExtraInformationData[];
+    @Column({ default: null })
+    public width: string;
 
     @AutoMap()
-    @Column({ nullable: false, default: '' })
+    @Column({ default: 24 })
+    public xs: number;
+
+    @AutoMap()
+    @Column({ default: 24 })
+    public sm: number;
+
+    @AutoMap()
+    @Column({ default: 24 })
+    public md: number;
+
+    @AutoMap()
+    @Column({ default: 24 })
+    public lg: number;
+
+    @AutoMap()
+    @Column({ default: 24 })
+    public xl: number;
+
+    @AutoMap()
+    @Column({ default: 24 })
+    public xxl: number;
+
+    @AutoMap()
+    @Column({ default: null })
+    public height: string;
+
+    @AutoMap()
+    @Column({ default: null })
+    public isCapitialize: boolean;
+
+    @AutoMap()
+    @Column({ default: null })
+    public tooltip: string;
+
+    @AutoMap()
+    @Column({ default: '' })
     public label: string;
 
     @AutoMap()
-    @Column({ nullable: false, default: '' })
-    public toolTip: string;
+    @Column({ default: null })
+    public color: string;
+
+    @AutoMap()
+    @Column({ default: null })
+    public position: number;
+
+    @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.customerExtraInformation)
+    public customerExtraInformationDatas: CustomerExtraInformationData[];
 
     @AutoMap()
     @Column({ default: null })

@@ -1,5 +1,5 @@
 import { InvalidException, NotFoundException } from '@exceptions';
-import { Customer, CustomerExtraInformationData } from '@models';
+import { Customer } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CustomerExtraInformationDataRepository, CustomerExtraInformationRepository, CustomerRepository } from '@repositories';
 import { CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY, CUSTOMER_EXTRA_INFORMATION_REPOSITORY, CUSTOMER_REPOSITORY } from '@types';
@@ -17,14 +17,23 @@ export class CustomerService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CustomerVM[]> => {
-    return await this.cusomterRepository.useHTTP().find(ids ? { id: In(ids) } : {})
-      .then((models) => this.mapper.mapArray(models, CustomerVM, Customer))
+    return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups", "wFInstances", "customerExtraInformationDatas"] })
+      .then(async (models) => {
+        for (const model of models) {
+          model.customerExtraInformationDatas = await this.cusomterExtrDataRepository.useHTTP().find({ where: { customer: model }, relations: ["customerExtraInformation", "customer"] });
+        }
+        return this.mapper.mapArray(models, CustomerVM, Customer)
+      }).catch((err) => {
+        console.log(err);
+        throw new InvalidException(err);
+      });
   };
 
   public readonly findById = async (id: string): Promise<CustomerVM> => {
-    return await this.cusomterRepository.useHTTP().findOne({ id: id })
-      .then((model) => {
+    return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "wFInstances", "customerExtraInformationDatas"] })
+      .then(async (model) => {
         if (model) {
+          model.customerExtraInformationDatas = await this.cusomterExtrDataRepository.useHTTP().find({ where: { customer: model }, relations: ["customerExtraInformation", "customer"] });
           return this.mapper.map(model, CustomerVM, Customer);
         }
         throw new NotFoundException(
@@ -34,26 +43,10 @@ export class CustomerService {
   };
 
   public readonly insert = async (body: CustomerCM): Promise<any> => {
-    //insert normal col 
-    this.cusomterRepository.useHTTP().save(body).then(async customer => {
-      //insert extra col
-      const cusExtrDatas = [];
-      for (let index = 0; index < body.customerExtrs.length; index++) {
-        const customExtr = body.customerExtrs[index];
-        await this.cusomterExtrInfoRepository.useHTTP().findOne({ name: customExtr.name })
-          .then(cusExtInfo => {
-            if (cusExtInfo === undefined) {
-              throw new InvalidException(`invalid`);
-            }
-            const cusExtData = new CustomerExtraInformationData();
-            cusExtData.customer = customer;
-            cusExtData.customerExtraInformation = cusExtInfo;
-            cusExtData.value = customExtr.value;
-            cusExtrDatas.push(cusExtData);
-          })
-      }
-      await this.cusomterExtrDataRepository.useHTTP().save(cusExtrDatas).then(e => console.log(e));
-    })
+    return await this.cusomterRepository.useHTTP().save(body).then(async (customer) => {
+      await this.cusomterExtrDataRepository.useHTTP().save(body.customerExtras.map((e) => ({ ...e, customer })));
+      return await this.findById(customer.id);
+    }).catch(err => err);
   };
 
   public readonly update = async (body: CustomerUM): Promise<CustomerVM[]> => {
