@@ -27,7 +27,7 @@ const open = require("open");
   };
   SwaggerModule.setup('api/v1/swagger', app, document, styles);
 
-  await app.listen(4000);
+  await app.listen(8080);
 
   if (module.hot) {
     module.hot.accept();
