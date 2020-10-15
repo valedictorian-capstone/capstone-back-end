@@ -25,7 +25,7 @@ export class ExtraInformationVM {
   public readonly size: string;
 
   @AutoMap()
-  public readonly for: string;
+  public readonly state: string;
   
   public readonly options: any;
   

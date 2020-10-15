@@ -19,6 +19,12 @@ export class ExtraInformationService {
             .then((models) => this.mapper.mapArray(models, ExtraInformationVM, ExtraInformation))
     };
 
+    public readonly findAllByState = async (state: string): Promise<ExtraInformationVM[]> => {
+        console.log(state);
+        return await this.repository.useHTTP().find({ where: { state : state }, relations: ["customerExtraInformationDatas", "accountExtraInformationDatas", "productExtraInformationDatas"] })
+            .then((models) => this.mapper.mapArray(models, ExtraInformationVM, ExtraInformation))
+    };
+
     public readonly findById = async (id: string): Promise<ExtraInformationVM> => {
         return await this.repository.useHTTP().findOne({ where: { id: id }, relations: ["customerExtraInformationDatas", "accountExtraInformationDatas", "productExtraInformationDatas"] })
             .then((model) => {
