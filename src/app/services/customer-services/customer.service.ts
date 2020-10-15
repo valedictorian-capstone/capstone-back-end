@@ -1,8 +1,8 @@
 import { InvalidException, NotFoundException } from '@exceptions';
-import { Customer } from '@models';
+import { Customer, CustomerExtraInformationData } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CustomerExtraInformationDataRepository, CustomerExtraInformationRepository, CustomerRepository } from '@repositories';
-import { CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY, CUSTOMER_EXTRA_INFORMATION_REPOSITORY, CUSTOMER_REPOSITORY } from '@types';
+import { CustomerExtraInformationDataRepository, ExtraInformationRepository, CustomerRepository } from '@repositories';
+import { CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY, EXTRA_INFORMATION_REPOSITORY, CUSTOMER_REPOSITORY } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
@@ -11,7 +11,7 @@ import { In } from 'typeorm';
 export class CustomerService {
   constructor(
     @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
-    @Inject(CUSTOMER_EXTRA_INFORMATION_REPOSITORY) protected readonly cusomterExtrInfoRepository: CustomerExtraInformationRepository,
+    @Inject(EXTRA_INFORMATION_REPOSITORY) protected readonly extraInformationRepository: ExtraInformationRepository,
     @Inject(CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY) protected readonly cusomterExtrDataRepository: CustomerExtraInformationDataRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
@@ -21,6 +21,7 @@ export class CustomerService {
       .then(async (models) => {
         for (const model of models) {
           model.customerExtraInformationDatas = await this.cusomterExtrDataRepository.useHTTP().find({ where: { customer: model }, relations: ["customerExtraInformation", "customer"] });
+          console.log(model.customerExtraInformationDatas[0] instanceof CustomerExtraInformationData);
         }
         return this.mapper.mapArray(models, CustomerVM, Customer)
       }).catch((err) => {

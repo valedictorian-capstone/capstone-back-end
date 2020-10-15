@@ -1,10 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { FormGroupWFStepVM } from "./form-group-work-flow-step.view-model";
-import { PermissionWFStepVM } from "./permission-work-flow-step.view-model";
-import { WFConnectionVM } from "./work-flow-connection.view-model";
-import { WFStepInstanceVM } from "./work-flow-step-instance.view-model";
-import { WFVM } from './work-flow.view-model';
+import { WFVM } from ".";
 
 export class WFStepVM {
   @AutoMap()

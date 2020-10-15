@@ -8,8 +8,8 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { CustomerExtraInformation } from './customer-extra-information.model';
-import { Customer } from './customer.model';
+import { Customer } from '.';
+import { ExtraInformation } from '../basic-models';
 
 @Entity()
 export class CustomerExtraInformationData extends BaseEntity {
@@ -22,8 +22,8 @@ export class CustomerExtraInformationData extends BaseEntity {
     @Column({ nullable: true })
     public value: string;
 
-    @ManyToOne(() => CustomerExtraInformation, customerExtraInformation => customerExtraInformation.customerExtraInformationDatas)
-    public customerExtraInformation: CustomerExtraInformation;
+    @ManyToOne(() => ExtraInformation, ExtraInformation => ExtraInformation.customerExtraInformationDatas)
+    public extraInformation: ExtraInformation;
 
     @ManyToOne(() => Customer, customer=> customer.customerExtraInformationDatas)
     public customer: Customer;

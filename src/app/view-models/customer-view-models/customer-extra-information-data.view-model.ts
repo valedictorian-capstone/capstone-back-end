@@ -1,14 +1,14 @@
 import { AutoMap } from "nestjsx-automapper";
-import { CustomerExtraInformationVM } from "./customer-extra-information.view-model";
 import { ApiProperty } from "@nestjs/swagger";
-import { CustomerVM } from "./customer.view-model";
+import { ExtraInformationVM } from "../basic-view-models";
+import { CustomerVM } from ".";
 
 export class CustomerExtraInformationDataVM {
 
   @AutoMap()
   public readonly id: string;
 
-  public readonly customerExtraInformation: CustomerExtraInformationVM;
+  public readonly extraInformation: ExtraInformationVM;
 
   public readonly customer: CustomerVM;
 

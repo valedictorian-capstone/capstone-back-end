@@ -1,9 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { WFConnectionCM, WFConnectionUM } from ".";
-import { WFConditionVM } from "./work-flow-condition.view-model";
-import { WFInstanceVM } from "./work-flow-instance.view-model";
-import { WFStepCM, WFStepVM, WFStepUM } from './work-flow-step.view-model';
+import { WFConnectionCM, WFConnectionUM, WFConnectionVM, WFStepCM, WFStepUM, WFStepVM } from ".";
 
 export class WFVM {
   @AutoMap()
@@ -21,7 +18,7 @@ export class WFVM {
 
   public readonly workFlowSteps!: WFStepVM[];
 
-  public readonly workFlowConnections!: WFStepVM[];
+  public readonly workFlowConnections!: WFConnectionVM[];
 
   // public readonly wFInstances!: WFInstanceVM[];
   // @AutoMap()

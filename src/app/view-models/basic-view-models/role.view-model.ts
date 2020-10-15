@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { AccountVM } from "./account.view-model";
+import { AccountVM } from "../account-view-models";
 
 export class RoleVM {
   @AutoMap()
@@ -10,7 +10,7 @@ export class RoleVM {
   public readonly name: string;
 
   @AutoMap()
-  public readonly Description: string;
+  public readonly description: string;
 
   public readonly accounts: AccountVM[];
 

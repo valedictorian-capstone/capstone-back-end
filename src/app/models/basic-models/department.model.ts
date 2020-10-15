@@ -1,6 +1,6 @@
-import { AccountDepartment } from '@models';
 import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { AccountDepartment } from '../account-models';
 
 @Entity()
 export class Department extends BaseEntity {

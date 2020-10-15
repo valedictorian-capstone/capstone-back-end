@@ -1,6 +1,6 @@
 import { AutoMap } from "nestjsx-automapper";
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Account } from "./account.model";
+import { Account } from "../account-models";
 @Entity()
 export class Role extends BaseEntity {
 

@@ -9,25 +9,25 @@ export class AuthService {
     private jwtService: JwtService
   ) { }
 
-  async validateUser(emailOrPhone: string, pass: string): Promise<any> {
-    const option = {};
-    if (!isNaN(+emailOrPhone)) {
-      option['phone'] = emailOrPhone;
-    } else{
-      option['email'] = emailOrPhone;
-    }
-    const user = await this.accountService.findOne(option);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
-  }
+  // async validateUser(emailOrPhone: string, pass: string): Promise<any> {
+  //   const option = {};
+  //   if (!isNaN(+emailOrPhone)) {
+  //     option['phone'] = emailOrPhone;
+  //   } else{
+  //     option['email'] = emailOrPhone;
+  //   }
+  //   const user = await this.accountService.findOne(option);
+  //   if (user && user.password === pass) {
+  //     const { password, ...result } = user;
+  //     return result;
+  //   }
+  //   return null;
+  // }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
-  }
+  // async login(user: any) {
+  //   const payload = { username: user.username, sub: user.userId };
+  //   return {
+  //     access_token: this.jwtService.sign(payload),
+  //   };
+  // }
 }

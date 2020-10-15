@@ -10,9 +10,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Group } from './group.model';
-import { WFInstance } from '../bpmn-models/wf-instance.model';
-import { CustomerExtraInformationData } from './customer-extra-information-data.model';
+import { CustomerExtraInformationData } from '.';
+import { Group } from '../basic-models';
+import { WFInstance } from '../bpmn-models';
 
 @Entity()
 export class Customer extends BaseEntity {

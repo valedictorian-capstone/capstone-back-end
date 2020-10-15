@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { FormGroup } from '../form-models/form-group.model';
+import { FormGroup } from '../form-models';
 import { WFConnection } from './wf-connection.model';
 
 

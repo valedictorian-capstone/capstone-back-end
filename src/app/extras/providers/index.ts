@@ -1,4 +1,4 @@
-import { BASIC_MODELS, BPMN_MODELS, FORM_MODELS, CUSTOMER_MODELS } from '@models';
+import { BASIC_MODELS, BPMN_MODELS, FORM_MODELS, CUSTOMER_MODELS, ACCOUNT_MODELS, PRODUCT_MODELS } from '@models';
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { createConnection } from 'typeorm';
@@ -10,13 +10,12 @@ export class AppProvider {
       {
         provide: 'DATABASE_CONNECTION',
         useFactory: async () => {
-          console.log(process.env);
           // eslint-disable-next-line @typescript-eslint/no-var-requires
           const mysql = require('mysql2/promise');
           await mysql.createConnection({
             host: process.env.GGCLOUD_SQL_HOST,
             user: process.env.GGCLOUD_SQL_USERNAME,
-            password: process.env.GGCLOUD_SQL_PASS,
+            password: '123456cb',
           }).then((conn => conn.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.GGCLOUD_SQL_DATABASE}`)));
           const connection = createConnection({
             name: uuid(),
@@ -24,13 +23,14 @@ export class AppProvider {
             host: process.env.GGCLOUD_SQL_HOST,
             port: parseInt(process.env.GGCLOUD_SQL_POST),
             username: process.env.GGCLOUD_SQL_USERNAME,
-            password: process.env.GGCLOUD_SQL_PASS,
+            password: '123456cb',
             database: process.env.GGCLOUD_SQL_DATABASE,
-            entities: [...BASIC_MODELS, ...BPMN_MODELS, ...FORM_MODELS, ...CUSTOMER_MODELS],
+            entities: [...BASIC_MODELS, ...BPMN_MODELS, ...FORM_MODELS, ...CUSTOMER_MODELS, ...ACCOUNT_MODELS, ...PRODUCT_MODELS],
             synchronize: true,
             logging: true,
 
           });
+
           return connection;
         }
       }

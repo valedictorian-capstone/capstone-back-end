@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { AccountDepartmentVM } from "./account-department.view-model";
+import { AccountDepartmentVM } from "../account-view-models";
 
 
 export class DepartmentVM {

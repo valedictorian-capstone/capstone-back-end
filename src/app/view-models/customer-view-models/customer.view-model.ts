@@ -1,8 +1,8 @@
 import { WFInstanceVM } from "../bpmn-view-models";
-import { GroupVM } from "./group.view-model";
 import { AutoMap } from "nestjsx-automapper";
 import { ApiProperty } from "@nestjs/swagger";
-import { CustomerExtraInformationDataVM } from "./customer-extra-information-data.view-model";
+import { GroupVM } from "../basic-view-models";
+import { CustomerExtraInformationDataVM } from ".";
 
 export class CustomerVM {
 
@@ -30,11 +30,11 @@ export class CustomerVM {
   @AutoMap()
   public readonly gender: boolean;
 
+  public customerExtraInformationDatas: CustomerExtraInformationDataVM[];
+
   public groups: GroupVM[];
 
   public wFInstances: WFInstanceVM[];
-
-  public customerExtraInformationDatas: CustomerExtraInformationDataVM[];
 
   @AutoMap()
   public readonly isDelete: boolean;

@@ -1,8 +1,11 @@
 import {
   BASIC_CONTROLLERS,
   BPMN_CONTROLLERS,
-  CUSTOMER_CONTROLLERS, EXTRA_CONTROLLERS,
-  FORM_CONTROLLERS
+  CUSTOMER_CONTROLLERS,
+  EXTRA_CONTROLLERS,
+  FORM_CONTROLLERS,
+  ACCOUNT_CONTROLLERS,
+  PRODUCT_CONTROLLERS
 } from '@controllers';
 import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
@@ -11,28 +14,42 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import {
-  BASIC_REPOSITORY,
-  BPMN_REPOSITORY,
-
-  CUSTOMER_REPOSITORY, FORM_REPOSITORY
+  ACCOUNT_REPOSITORIES,
+  BASIC_REPOSITORIES,
+  BPMN_REPOSITORIES,
+  CUSTOMER_REPOSITORIES,
+  FORM_REPOSITORIES,
+  PRODUCT_REPOSITORIES,
 } from '@repositories';
 import {
+  ACCOUNT_SERVICES,
   BASIC_SERVICES,
   BPMN_SERVICES,
-
-
-  CUSTOMER_SERVICES, EXTRA_SERVICES,
-  FORM_SERVICE
+  CUSTOMER_SERVICES,
+  FORM_SERVICES,
+  PRODUCT_SERVICES,
+  
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
 import {
-  AccountExtraInformationMapper, AccountExtraValueMapper, AccountMapper,
-  CustomerExtraInformationDataMapper, CustomerExtraInformationMapper, CustomerMapper, DepartmentMapper, FormControlMapper, FormDataMapper, FormGroupMapper, FormValueMapper,
+  AccountExtraInformationDataMapper,
+  AccountMapper,
+  CustomerExtraInformationDataMapper,
+  CustomerMapper,
+  DepartmentMapper,
+  ExtraInformationMapper,
+  FormControlMapper,
+  FormDataMapper,
+  FormGroupMapper,
+  FormValueMapper,
   GroupMapper,
-  ProductExtraInformationMapper, ProductExtraValueMapper, ProductMapper, RoleMapper, WFMapper
+  ProductExtraInformationDataMapper,
+  ProductMapper,
+  RoleMapper,
+  WFConnectionMapper,
+  WFMapper,
+  WFStepMapper,
 } from './mappers';
-import { WFConnectionMapper } from './mappers/bpmn-mappers/wf-connection.mapper';
-import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
 
 
 @Module({
@@ -51,22 +68,27 @@ import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
     }),
   ],
   controllers: [
-    ...BASIC_CONTROLLERS,
-    ...EXTRA_CONTROLLERS,
+    // ...BASIC_CONTROLLERS,
+    // ...EXTRA_CONTROLLERS,
     ...BPMN_CONTROLLERS,
-    ...FORM_CONTROLLERS,
-    ...CUSTOMER_CONTROLLERS,
+    // ...FORM_CONTROLLERS,
+    // ...CUSTOMER_CONTROLLERS,
+    // ...ACCOUNT_CONTROLLERS,
+    // ...PRODUCT_CONTROLLERS
   ],
   providers: [
     ...BASIC_SERVICES,
-    ...EXTRA_SERVICES,
+    ...ACCOUNT_SERVICES,
     ...BPMN_SERVICES,
-    ...FORM_SERVICE,
+    ...FORM_SERVICES,
     ...CUSTOMER_SERVICES,
-    ...BASIC_REPOSITORY,
-    ...BPMN_REPOSITORY,
-    ...FORM_REPOSITORY,
-    ...CUSTOMER_REPOSITORY,
+    ...PRODUCT_SERVICES,
+    ...ACCOUNT_REPOSITORIES,
+    ...BASIC_REPOSITORIES,
+    ...BPMN_REPOSITORIES,
+    ...CUSTOMER_REPOSITORIES,
+    ...FORM_REPOSITORIES,
+    ...PRODUCT_REPOSITORIES,
     ...FILTERS,
     AppGateway,
     ...AppProvider.init()
@@ -75,25 +97,23 @@ import { WFStepMapper } from './mappers/bpmn-mappers/wf-step.mapper';
 export class AppModule implements OnModuleInit {
   constructor(@InjectMapper() protected readonly mapper: AutoMapper) { }
   onModuleInit() {
-    this.mapper.addProfile(RoleMapper);
+    this.mapper.addProfile(AccountExtraInformationDataMapper);
     this.mapper.addProfile(AccountMapper);
+    this.mapper.addProfile(CustomerExtraInformationDataMapper);
+    this.mapper.addProfile(CustomerMapper);
+    this.mapper.addProfile(DepartmentMapper);
+    this.mapper.addProfile(ExtraInformationMapper);
     this.mapper.addProfile(FormControlMapper);
     this.mapper.addProfile(FormDataMapper);
     this.mapper.addProfile(FormGroupMapper);
     this.mapper.addProfile(FormValueMapper);
+    this.mapper.addProfile(GroupMapper);
+    this.mapper.addProfile(ProductExtraInformationDataMapper);
+    this.mapper.addProfile(ProductMapper);
+    this.mapper.addProfile(RoleMapper);
+    this.mapper.addProfile(WFConnectionMapper);
     this.mapper.addProfile(WFMapper);
     this.mapper.addProfile(WFStepMapper);
-    this.mapper.addProfile(WFConnectionMapper);
-    this.mapper.addProfile(CustomerExtraInformationDataMapper);
-    this.mapper.addProfile(CustomerExtraInformationMapper);
-    this.mapper.addProfile(CustomerMapper);
-    this.mapper.addProfile(GroupMapper);
-    this.mapper.addProfile(DepartmentMapper);
-    this.mapper.addProfile(AccountExtraInformationMapper);
-    this.mapper.addProfile(AccountExtraValueMapper);
-    this.mapper.addProfile(ProductMapper);
-    this.mapper.addProfile(ProductExtraInformationMapper);
-    this.mapper.addProfile(ProductExtraValueMapper);
   }
 
 }

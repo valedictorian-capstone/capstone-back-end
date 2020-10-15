@@ -1,0 +1,58 @@
+import { AutoMap } from "nestjsx-automapper";
+import { ApiProperty } from "@nestjs/swagger";
+import { ProductVM } from ".";
+import { ExtraInformationVM } from "../basic-view-models";
+
+export class ProductExtraInformationDataVM {
+
+  @AutoMap()
+  public readonly id: string;
+
+  public readonly extraInformation: ExtraInformationVM;
+
+  public readonly product: ProductVM;
+
+  @AutoMap()
+  public readonly value: string;
+
+  @AutoMap()
+  public readonly isDelete: boolean;
+
+  @AutoMap()
+  public readonly createdBy: string;
+
+  @AutoMap()
+  public readonly updatedBy: string;
+
+  @AutoMap()
+  public readonly createdAt: Date;
+
+  @AutoMap()
+  public readonly updatedAt: Date;
+
+}
+
+export class ProductExtraInformationDataCM {
+  @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
+  public readonly productExtraInformationId: string;
+  
+  @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
+  public readonly productExtraDataId: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly value: string;
+}
+
+export class ProductExtraInformationDataUM {
+  @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
+  public readonly id: string;
+
+  @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
+  public readonly productExtraInformationId: string;
+
+  @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
+  public readonly productExtraDataId: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly value: string;
+}
