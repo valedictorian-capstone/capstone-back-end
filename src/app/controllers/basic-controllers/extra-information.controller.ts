@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -31,8 +32,9 @@ export class ExtraInformationController {
   @ApiOperation({ summary: 'Get all ExtraInformations' })
   @ApiOkResponse({ description: 'Success return all ExtraInformations' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public findAll(): Promise<ExtraInformationVM[]> {
-    return this.service.findAll();
+  public findAll(@Query('state') state: string): Promise<ExtraInformationVM[]> {
+    console.log(state)
+    return this.service.findAllByState(state);
   }
 
   @Get(':id')

@@ -24,10 +24,6 @@ export class ExtraInformation extends BaseEntity {
     public name: string;
 
     @AutoMap()
-    @Column({ default: 'account', nullable: false })
-    public for: string;
-
-    @AutoMap()
     @Column({ default: null })
     public description: string;
 
@@ -105,6 +101,10 @@ export class ExtraInformation extends BaseEntity {
     @AutoMap()
     @Column({ default: null })
     public position: number;
+
+    @AutoMap()
+    @Column({ default: null})
+    public state: string;
 
     @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.extraInformation)
     public customerExtraInformationDatas: CustomerExtraInformationData[];
