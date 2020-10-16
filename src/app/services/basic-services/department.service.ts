@@ -14,34 +14,16 @@ export class DepartmentService {
   ) { }
 
   public readonly findAll = async (): Promise<DepartmentVM[]> => {
-    return await this.repository.useHTTP().find({ relations: [ "departmentParent"] })
+    return await this.repository.useHTTP().find({ relations: [ "accountDepartments"] })
       .then((models) => this.mapper.mapArray(models, DepartmentVM, Department))
   };
 
-  // public readonly findById = async (id: string): Promise<DepartmentVM> => {
-  //   return await this.repository.useHTTP().findOne({ id: id }, { relations: ["departmentChildrens", "departmentParent"] })
-  //     .then((model) => {
-  //       console.log(model);
-  //       if (model) {
-  //         return this.mapper.map(model, DepartmentVM, Department);
-  //       }
-  //       throw new NotFoundException(
-  //         `Can not find ${id}`,
-  //       );
-  //     })
-  // };
-
-  public readonly getDepartmentChild = async (id: string): Promise<DepartmentVM> => {
-    return await this.repository.useHTTP().findOne({ id: id }, { relations: ["departmentChildrens", "departmentParent"] })
-      .then(async (model) => {
-        if(model){
-          const childs = [];
-          for (let i = 0; i < model.departmentChildrens.length; i++) {
-            const department = model.departmentChildrens[i];
-            childs.push(await this.getDepartmentChild(department.id));
-          }
-          model.departmentChildrens = childs;
-          return await this.mapper.map(model, DepartmentVM, DepartmentVM as any);
+  public readonly findById = async (id: string): Promise<DepartmentVM> => {
+    return await this.repository.useHTTP().findOne({ id: id }, { relations: ["accountDepartments"] })
+      .then((model) => {
+        console.log(model);
+        if (model) {
+          return this.mapper.map(model, DepartmentVM, Department);
         }
         throw new NotFoundException(
           `Can not find ${id}`,
@@ -49,11 +31,10 @@ export class DepartmentService {
       })
   };
 
-
   public readonly insert = (body: DepartmentCM): Promise<DepartmentVM> => {
     return this.repository.useHTTP().save(body as any)
       .then((model) => {
-        return this.getDepartmentChild(model.id);
+        return this.findById(model.id);
       })
   };
 
@@ -68,7 +49,7 @@ export class DepartmentService {
         return await this.repository.useHTTP()
           .save(body as any)
           .then((model) => {
-            return this.getDepartmentChild(model.id);
+            return this.findById(model.id);
           })
       });
   };
@@ -103,7 +84,7 @@ export class DepartmentService {
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: false })
           .then((model) => {
-            return this.getDepartmentChild(model.id);
+            return this.findById(model.id);
           })
       });
   };
@@ -119,7 +100,7 @@ export class DepartmentService {
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: true })
           .then((model) => {
-            return this.getDepartmentChild(model.id);
+            return this.findById(model.id);
           });
       });
   };
