@@ -32,17 +32,15 @@ export class RoleService {
       })
   };
 
-  public readonly insert = (body: RoleCM): Promise<RoleVM[]> => {
-    return this.repository.useHTTP().save(body as any)
+  public readonly insert = (body: RoleCM): Promise<RoleVM> => {
+    return this.repository.useHTTP().insert(body)
       .then((model) => {
-        const ids = [];
-        ids.push(model.id);
-        return this.findAll(ids);
+        return this.findById(model.generatedMaps[0].id);
       })
-      .catch()
+      .catch(err => err);
   };
 
-  public readonly update = async (body: RoleUM): Promise<RoleVM[]> => {
+  public readonly update = async (body: RoleUM): Promise<RoleVM> => {
     return await this.repository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -51,11 +49,9 @@ export class RoleService {
           );
         }
         return await this.repository.useHTTP()
-          .save(body as any)
+          .save(body)
           .then((model) => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
+            return this.findById(model.id);
           })
           .catch()
       });

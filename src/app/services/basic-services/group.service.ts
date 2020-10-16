@@ -31,16 +31,14 @@ export class GroupService {
       })
   };
 
-  public readonly insert = (body: GroupCM): Promise<GroupVM[]> => {
-    return this.repository.useHTTP().save(body)
+  public readonly insert = (body: GroupCM): Promise<GroupVM> => {
+    return this.repository.useHTTP().insert(body)
       .then((model) => {
-        const ids = [];
-        ids.push(model.id);
-        return this.findAll(ids);
+        return this.findById(model.generatedMaps[0].id);
       })
   };
 
-  public readonly update = async (body: GroupUM): Promise<GroupVM[]> => {
+  public readonly update = async (body: GroupUM): Promise<GroupVM> => {
     return await this.repository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -51,9 +49,7 @@ export class GroupService {
         return await this.repository.useHTTP()
           .save(body)
           .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
+            return this.findById(model.id);
           })
       });
   };
