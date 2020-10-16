@@ -13,6 +13,7 @@ import {
 import { CustomerExtraInformationData } from '.';
 import { Group } from '../basic-models';
 import { WFInstance } from '../bpmn-models';
+import { Task } from '../bpmn-models/task.model';
 
 @Entity()
 export class Customer extends BaseEntity {
@@ -57,6 +58,9 @@ export class Customer extends BaseEntity {
 
   @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.customer)
   public customerExtraInformationDatas: CustomerExtraInformationData[];
+
+  @ManyToMany(() => Task, task => task.customers)
+  public tasks: Task[]
 
   @AutoMap()
   @Column({ default: null })
