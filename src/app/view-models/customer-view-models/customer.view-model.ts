@@ -76,7 +76,7 @@ export class CustomerCM {
   public readonly gender: boolean;
 
   @ApiProperty()
-  public readonly customerExtras: { customerExtraInformation: { id: string }, value: string }[];
+  public readonly customerExtras: { extraInformation: { id: string }, value: string }[];
 
 }
 
@@ -107,5 +107,5 @@ export class CustomerUM {
   public readonly gender: boolean;
 
   @ApiProperty()
-  public readonly customerExtras: { customerExtraInformation: { id: string }, value: string }[];
+  public readonly customerExtras: { extraInformation: { id: string }, value: string }[];
 }

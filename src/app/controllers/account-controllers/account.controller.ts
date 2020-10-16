@@ -56,7 +56,7 @@ export class AccountController{
   @ApiOperation({ summary: 'Update an Account by Id' })
   @ApiCreatedResponse({ description: 'Success update new Account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: AccountUM): Promise<AccountVM[]> {
+  public update(@Body() body: AccountUM): Promise<AccountVM> {
     return this.service.update(body);
   }
 

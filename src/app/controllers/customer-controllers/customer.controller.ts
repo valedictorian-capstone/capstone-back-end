@@ -56,7 +56,7 @@ export class CustomerController{
   @ApiOperation({ summary: 'Update an Customer by Id' })
   @ApiCreatedResponse({ description: 'Success update new Customer' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: CustomerUM): Promise<CustomerVM[]> {
+  public update(@Body() body: CustomerUM): Promise<CustomerVM> {
     return this.service.update(body);
   }
 

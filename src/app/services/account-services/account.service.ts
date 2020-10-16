@@ -49,7 +49,7 @@ export class AccountService {
     }).catch(err => err);
   };
 
-  public readonly update = async (body: AccountUM): Promise<AccountVM[]> => {
+  public readonly update = async (body: AccountUM): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -57,13 +57,8 @@ export class AccountService {
             `Can not find ${body.id}`,
           );
         }
-        return await this.accountRepository.useHTTP()
-          .save(body)
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
+        await this.accountExtrDataRepository.useHTTP().save(body.accountExtras.map((e) => ({ ...e, account: model })));
+        return await this.findById(model.id);
       });
   };
 

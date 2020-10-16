@@ -49,7 +49,7 @@ export class ProductService {
     }).catch(err => err);
   };
 
-  public readonly update = async (body: ProductUM): Promise<ProductVM[]> => {
+  public readonly update = async (body: ProductUM): Promise<ProductVM> => {
     return await this.productRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -57,13 +57,8 @@ export class ProductService {
             `Can not find ${body.id}`,
           );
         }
-        return await this.productRepository.useHTTP()
-          .save(body)
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
+        await this.productExtraInformationRepository.useHTTP().save(body.productExtras.map((e) => ({ ...e, product: model })));
+        return await this.findById(model.id);
       });
   };
 

@@ -56,7 +56,7 @@ export class ProductController{
   @ApiOperation({ summary: 'Update an Product by Id' })
   @ApiCreatedResponse({ description: 'Success update new Product' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: ProductUM): Promise<ProductVM[]> {
+  public update(@Body() body: ProductUM): Promise<ProductVM> {
     return this.service.update(body);
   }
 

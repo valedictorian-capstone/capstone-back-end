@@ -96,7 +96,7 @@ export class AccountCM {
   // public readonly accountDepartments: string[];
 
   @ApiProperty()
-  public readonly accountExtras: { accountExtraInformation: { id: string }, value: string }[];
+  public readonly accountExtras: { extraInformation: { id: string }, value: string }[];
 
   @ApiProperty()
   public readonly roles: { id: string }[];
@@ -129,7 +129,7 @@ export class AccountUM {
   public readonly gender: string;
 
   @ApiProperty()
-  public readonly accountExtras: { accountExtraInformation: { id: string }, value: string }[];
+  public readonly accountExtras: { extraInformation: { id: string }, value: string }[];
 
   @ApiProperty()
   public readonly roles: { id: string }[];

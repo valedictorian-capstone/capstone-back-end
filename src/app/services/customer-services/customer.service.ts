@@ -50,7 +50,7 @@ export class CustomerService {
     }).catch(err => err);
   };
 
-  public readonly update = async (body: CustomerUM): Promise<CustomerVM[]> => {
+  public readonly update = async (body: CustomerUM): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -58,13 +58,8 @@ export class CustomerService {
             `Can not find ${body.id}`,
           );
         }
-        return await this.cusomterRepository.useHTTP()
-          .save(body)
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
+        await this.cusomterExtrDataRepository.useHTTP().save(body.customerExtras.map((e) => ({ ...e, customer: model })));
+        return await this.findById(model.id);
       });
   };
 
