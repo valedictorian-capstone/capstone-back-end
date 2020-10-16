@@ -1,5 +1,5 @@
 import { InvalidException, NotFoundException } from '@exceptions';
-import { Product, ProductExtraInformationData } from '@models';
+import { Product } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ProductExtraInformationDataRepository, ExtraInformationRepository, ProductRepository } from '@repositories';
 import { PRODUCT_EXTRA_INFORMATION_DATA_REPOSITORY, EXTRA_INFORMATION_REPOSITORY, PRODUCT_REPOSITORY } from '@types';
@@ -44,7 +44,8 @@ export class ProductService {
 
   public readonly insert = async (body: ProductCM): Promise<any> => {
     return await this.productRepository.useHTTP().save(body).then(async (product) => {
-      await this.productExtraInformationRepository.useHTTP().save(body.productExtras.map((e) => ({ ...e, product })));
+
+      await this.productExtraInformationRepository.useHTTP().save(body.productExtras.map((e) => ({ ...e, product})));
       return await this.findById(product.id);
     }).catch(err => err);
   };

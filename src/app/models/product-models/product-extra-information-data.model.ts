@@ -18,6 +18,7 @@ export class ProductExtraInformationData extends BaseEntity {
   public id: string;
   
   @AutoMap()
+  @Column({ default: null })
   public value: string;
 
   @ManyToOne(() => Product, product => product.productExtraInformationDatas)

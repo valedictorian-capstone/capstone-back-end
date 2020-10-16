@@ -14,25 +14,25 @@ export class DepartmentService {
   ) { }
 
   public readonly findAll = async (): Promise<DepartmentVM[]> => {
-    return await this.repository.useHTTP().find()
+    return await this.repository.useHTTP().find({ relations: [ "departmentParent"] })
       .then((models) => this.mapper.mapArray(models, DepartmentVM, Department))
   };
 
-  public readonly findById = async (id: string): Promise<DepartmentVM> => {
-    return await this.repository.useHTTP().findOne({ id: id }, { relations: ["departmentChildrens", "departmentParent"] })
-      .then((model) => {
-        console.log(model);
-        if (model) {
-          return this.mapper.map(model, DepartmentVM, Department);
-        }
-        throw new NotFoundException(
-          `Can not find ${id}`,
-        );
-      })
-  };
+  // public readonly findById = async (id: string): Promise<DepartmentVM> => {
+  //   return await this.repository.useHTTP().findOne({ id: id }, { relations: ["departmentChildrens", "departmentParent"] })
+  //     .then((model) => {
+  //       console.log(model);
+  //       if (model) {
+  //         return this.mapper.map(model, DepartmentVM, Department);
+  //       }
+  //       throw new NotFoundException(
+  //         `Can not find ${id}`,
+  //       );
+  //     })
+  // };
 
   public readonly getDepartmentChild = async (id: string): Promise<DepartmentVM> => {
-    return await this.repository.useHTTP().findOne({ id: id }, { relations: ["departmentChildrens"] })
+    return await this.repository.useHTTP().findOne({ id: id }, { relations: ["departmentChildrens", "departmentParent"] })
       .then(async (model) => {
         if(model){
           const childs = [];
@@ -51,8 +51,10 @@ export class DepartmentService {
 
 
   public readonly insert = (body: DepartmentCM): Promise<DepartmentVM> => {
-    return this.repository.useHTTP().insert(body as any)
-      .then((model) => (this.mapper.map(model.generatedMaps[0], DepartmentVM, Department as any)))
+    return this.repository.useHTTP().save(body as any)
+      .then((model) => {
+        return this.getDepartmentChild(model.id);
+      })
   };
 
   public readonly update = async (body: DepartmentUM): Promise<DepartmentVM> => {
@@ -65,7 +67,9 @@ export class DepartmentService {
         }
         return await this.repository.useHTTP()
           .save(body as any)
-          .then(() => (this.mapper.map(body, DepartmentVM, DepartmentUM)))
+          .then((model) => {
+            return this.getDepartmentChild(model.id);
+          })
       });
   };
 
@@ -98,11 +102,8 @@ export class DepartmentService {
         }
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: false })
-          .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
+          .then((model) => {
+            return this.getDepartmentChild(model.id);
           })
       });
   };
@@ -117,12 +118,9 @@ export class DepartmentService {
         }
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: true })
-          .then(() => {
-            throw new HttpException(
-              `Update information of ${id} successfully !!!`,
-              HttpStatus.CREATED,
-            );
-          })
+          .then((model) => {
+            return this.getDepartmentChild(model.id);
+          });
       });
   };
 }
