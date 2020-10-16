@@ -53,7 +53,9 @@ export class ProductCM {
   public readonly description: string;
 
   @ApiProperty()
-  public readonly productExtras: { extraInformation: { id: string }, value: string }[];
+  public readonly productExtras: {
+    extraInformation: { id: string },
+    value: string }[];
 }
 
 export class ProductUM {
@@ -74,5 +76,7 @@ export class ProductUM {
   public readonly description: string;
 
   @ApiProperty()
-  public readonly productExtras: { extraInformation: { id: string }, value: string }[];
+  public readonly productExtras: {
+    extraInformation: { id: string },
+    value: string }[];
 }
