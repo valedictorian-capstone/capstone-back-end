@@ -34,7 +34,7 @@ export class CustomerService {
     return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "wFInstances", "customerExtraInformationDatas"] })
       .then(async (model) => {
         if (model) {
-          model.customerExtraInformationDatas = await this.cusomterExtrDataRepository.useHTTP().find({ where: { customer: model }, relations: ["customerExtraInformation", "customer"] });
+          model.customerExtraInformationDatas = await this.cusomterExtrDataRepository.useHTTP().find({ where: { customer: model }, relations: ["extraInformation", "customer"] });
           return this.mapper.map(model, CustomerVM, Customer);
         }
         throw new NotFoundException(
