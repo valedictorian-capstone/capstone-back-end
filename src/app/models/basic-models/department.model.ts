@@ -1,5 +1,5 @@
 import { AutoMap } from 'nestjsx-automapper';
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { AccountDepartment } from '../account-models';
 
 @Entity()
@@ -16,12 +16,6 @@ export class Department extends BaseEntity {
     @AutoMap()
     @Column({ nullable: false, default: '' })
     public description: string;
-
-    @OneToMany(() => Department, departmentChildrens => departmentChildrens.departmentParent)
-    public departmentChildrens: Department[];
-
-    @ManyToOne(() => Department, departmentParent => departmentParent.departmentChildrens)
-    public departmentParent: Department;
 
     @OneToMany(() => AccountDepartment, accountDepartments => accountDepartments.department)
     public accountDepartments: AccountDepartment[];

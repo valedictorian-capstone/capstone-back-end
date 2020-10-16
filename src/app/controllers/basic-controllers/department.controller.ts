@@ -41,17 +41,8 @@ export class DepartmentController{
   @ApiNotFoundResponse({ description: 'Fail to find Department by Id' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public findById(@Param('id') id: string): Promise<DepartmentVM> {
-    return this.service.getDepartmentChild(id);
+    return this.service.findById(id);
   }
-
-  // @Get('/tree/:id')
-  // @ApiOperation({ summary: 'Get an Department by Id' })
-  // @ApiOkResponse({ description: "Success return an Department's information" })
-  // @ApiNotFoundResponse({ description: 'Fail to find Department by Id' })
-  // @ApiBadRequestResponse({ description: 'Have error in run time' })
-  // public viewTree(@Param('id') id: string): Promise<DepartmentVM> {
-  //   return this.service.getDepartmentChild(id);
-  // }
 
   @Post()
   @ApiOperation({ summary: 'Insert new Department' })
