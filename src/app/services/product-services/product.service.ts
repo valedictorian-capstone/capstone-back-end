@@ -20,7 +20,7 @@ export class ProductService {
     return await this.productRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["productExtraInformationDatas"] })
       .then(async (models) => {
         for (const model of models) {
-          model.productExtraInformationDatas = await this.productExtraInformationRepository.useHTTP().find({ where: { product: model }, relations: ["productExtraInformation", "product"] });
+          model.productExtraInformationDatas = await this.productExtraInformationRepository.useHTTP().find({ where: { product: model }, relations: ["extraInformation", "product"] });
         }
         return this.mapper.mapArray(models, ProductVM, Product)
       }).catch((err) => {

@@ -15,7 +15,7 @@ export class AppProvider {
           await mysql.createConnection({
             host: process.env.GGCLOUD_SQL_HOST,
             user: process.env.GGCLOUD_SQL_USERNAME,
-            password: '123456cb',
+            password: process.env.GGCLOUD_SQL_PASS,
           }).then((conn => conn.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.GGCLOUD_SQL_DATABASE}`)));
           const connection = createConnection({
             name: uuid(),
@@ -23,7 +23,7 @@ export class AppProvider {
             host: process.env.GGCLOUD_SQL_HOST,
             port: parseInt(process.env.GGCLOUD_SQL_POST),
             username: process.env.GGCLOUD_SQL_USERNAME,
-            password: '123456cb',
+            password: process.env.GGCLOUD_SQL_PASS,
             database: process.env.GGCLOUD_SQL_DATABASE,
             entities: [...BASIC_MODELS, ...BPMN_MODELS, ...FORM_MODELS, ...CUSTOMER_MODELS, ...ACCOUNT_MODELS, ...PRODUCT_MODELS],
             synchronize: true,

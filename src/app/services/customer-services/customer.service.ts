@@ -20,7 +20,7 @@ export class CustomerService {
     return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups", "wFInstances", "customerExtraInformationDatas"] })
       .then(async (models) => {
         for (const model of models) {
-          model.customerExtraInformationDatas = await this.cusomterExtrDataRepository.useHTTP().find({ where: { customer: model }, relations: ["customerExtraInformation", "customer"] });
+          model.customerExtraInformationDatas = await this.cusomterExtrDataRepository.useHTTP().find({ where: { customer: model }, relations: ["extraInformation", "customer"] });
           console.log(model.customerExtraInformationDatas[0] instanceof CustomerExtraInformationData);
         }
         return this.mapper.mapArray(models, CustomerVM, Customer)

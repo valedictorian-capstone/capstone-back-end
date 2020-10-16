@@ -68,13 +68,13 @@ import {
     }),
   ],
   controllers: [
-    // ...BASIC_CONTROLLERS,
+    ...BASIC_CONTROLLERS,
     // ...EXTRA_CONTROLLERS,
     ...BPMN_CONTROLLERS,
-    // ...FORM_CONTROLLERS,
-    // ...CUSTOMER_CONTROLLERS,
-    // ...ACCOUNT_CONTROLLERS,
-    // ...PRODUCT_CONTROLLERS
+    ...FORM_CONTROLLERS,
+    ...CUSTOMER_CONTROLLERS,
+    ...ACCOUNT_CONTROLLERS,
+    ...PRODUCT_CONTROLLERS
   ],
   providers: [
     ...BASIC_SERVICES,

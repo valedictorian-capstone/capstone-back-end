@@ -20,7 +20,7 @@ export class AccountService {
     return await this.accountRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["roles", "accountDepartments", "accountExtraInformationDatas"] })
       .then(async (models) => {
         for (const model of models) {
-          model.accountExtraInformationDatas = await this.accountExtrDataRepository.useHTTP().find({ where: { account: model }, relations: ["accountExtraInformation", "account"] });
+          model.accountExtraInformationDatas = await this.accountExtrDataRepository.useHTTP().find({ where: { account: model }, relations: ["extraInformation", "account"] });
         }
         return this.mapper.mapArray(models, AccountVM, Account)
       }).catch((err) => {
