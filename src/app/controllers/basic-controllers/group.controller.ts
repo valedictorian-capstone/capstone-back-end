@@ -48,7 +48,7 @@ export class GroupController{
   @ApiOperation({ summary: 'Insert new Group' })
   @ApiCreatedResponse({ description: 'Success create new Group' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: GroupCM): Promise<GroupVM[]> {
+  public insert(@Body() body: GroupCM): Promise<GroupVM> {
     return this.service.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class GroupController{
   @ApiOperation({ summary: 'Update an Group by Id' })
   @ApiCreatedResponse({ description: 'Success update new Group' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: GroupUM): Promise<GroupVM[]> {
+  public update(@Body() body: GroupUM): Promise<GroupVM> {
     return this.service.update(body);
   }
 

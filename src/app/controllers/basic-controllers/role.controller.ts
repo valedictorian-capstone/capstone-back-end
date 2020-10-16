@@ -48,7 +48,7 @@ export class RoleController {
   @ApiOperation({ summary: 'Insert new role' })
   @ApiCreatedResponse({ description: 'Success create new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: RoleCM): Promise<RoleVM[]> {
+  public async insert(@Body() body: RoleCM): Promise<RoleVM> {
     return await this.service.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class RoleController {
   @ApiOperation({ summary: 'Update an role by Id' })
   @ApiCreatedResponse({ description: 'Success update new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: RoleUM): Promise<RoleVM[]> {
+  public async update(@Body() body: RoleUM): Promise<RoleVM> {
     return await this.service.update(body);
   }
 
