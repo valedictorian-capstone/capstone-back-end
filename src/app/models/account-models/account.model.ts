@@ -1,7 +1,7 @@
 import { hashSync } from 'bcrypt';
 import { AutoMap } from 'nestjsx-automapper';
-import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Role, Notification } from '../basic-models';
+import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Notification } from '../basic-models';
 import { AccountDepartment } from './account-department.model';
 import { AccountExtraInformationData } from './account-extra-information-data.model';
 @Entity()
@@ -46,10 +46,6 @@ export class Account extends BaseEntity {
   @AutoMap()
   @Column({ nullable: false, default: '' })
   public deviceId: string;
-
-  @ManyToMany(() => Role, role => role.accounts)
-  @JoinTable()
-  public roles: Role[];
 
   @OneToMany(() => AccountDepartment, accountDepartments => accountDepartments.account)
   public accountDepartments: AccountDepartment[];

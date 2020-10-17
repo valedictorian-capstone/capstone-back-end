@@ -46,7 +46,6 @@ import {
   GroupMapper,
   ProductExtraInformationDataMapper,
   ProductMapper,
-  RoleMapper,
   WFConnectionMapper,
   WFMapper,
   WFStepMapper,
@@ -114,7 +113,6 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(GroupMapper);
     this.mapper.addProfile(ProductExtraInformationDataMapper);
     this.mapper.addProfile(ProductMapper);
-    this.mapper.addProfile(RoleMapper);
     this.mapper.addProfile(WFConnectionMapper);
     this.mapper.addProfile(WFMapper);
     this.mapper.addProfile(WFStepMapper);

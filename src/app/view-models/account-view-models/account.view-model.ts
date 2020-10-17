@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AutoMap } from 'nestjsx-automapper';
 import { AccountDepartmentVM, AccountExtraInformationDataVM } from '.';
-import { RoleVM } from '../basic-view-models';
 import { WFStepInstanceVM } from '../bpmn-view-models';
 
 export class AccountVM {
@@ -38,8 +37,6 @@ export class AccountVM {
   public readonly currentValidateCode: string;
 
   public readonly accountDepartments: AccountDepartmentVM[];
-
-  public readonly roles: RoleVM[];
 
   public readonly wFStepInstanceVMs: WFStepInstanceVM[];
 
@@ -93,9 +90,6 @@ export class AccountCM {
   @ApiProperty({ required: true, format: 'string', minLength: 6 })
   public readonly password: string;
 
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly roleName: string[];
-
   // public readonly accountDepartments: string[];
   @ApiProperty()
   public readonly deviceId: string;
@@ -103,8 +97,6 @@ export class AccountCM {
   @ApiProperty()
   public readonly accountExtras: { extraInformation: { id: string }, value: string }[];
 
-  @ApiProperty()
-  public readonly roles: { id: string }[];
 }
 
 export class AccountUM {
@@ -139,8 +131,6 @@ export class AccountUM {
   @ApiProperty()
   public readonly accountExtras: { extraInformation: { id: string }, value: string }[];
 
-  @ApiProperty()
-  public readonly roles: { id: string }[];
 }
 
 export class AccountAuthVM {
@@ -156,8 +146,6 @@ export class AccountAuthVM {
 
   @AutoMap()
   public readonly code: string;
-
-  public readonly roles: RoleVM[];
 
   @AutoMap()
   public readonly password: string;
