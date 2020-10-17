@@ -10,6 +10,16 @@ export class AccountDepartmentVM {
   
   @AutoMap()
   public readonly isDelete: boolean;
+
+  @AutoMap()
+  public readonly isModerator: boolean;
+
+  @AutoMap()
+  public readonly isSystemAdmin: boolean;
+
+  @AutoMap()
+  public readonly isEmployee: boolean;
+
   
   public readonly account: AccountVM;
   
@@ -39,8 +49,14 @@ export class AccountDepartmentCM {
   @ApiProperty({ required: true, type: {$ref: getSchemaPath(DepartmentVM)} })
   public readonly department: DepartmentVM;
   
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly value: string;
+  @ApiProperty({ required: true, format: 'boolean' })
+  public readonly isModerator: boolean;
+
+  @ApiProperty({ required: true, format: 'boolean' })
+  public readonly isSystemAdmin: boolean;
+
+  @ApiProperty({ required: true, format: 'boolean' })
+  public readonly isEmployee: boolean;
 }
 
 export class AccountDepartmentUM {
@@ -54,7 +70,12 @@ export class AccountDepartmentUM {
   @ApiProperty({ required: true, type: {$ref: getSchemaPath(DepartmentVM)} })
   public readonly department: DepartmentVM;
   
-  @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly value: string;
+  @ApiProperty({ required: true, format: 'boolean' })
+  public readonly isModerator: boolean;
+
+  @ApiProperty({ required: true, format: 'boolean' })
+  public readonly isSystemAdmin: boolean;
+
+  @ApiProperty({ required: true, format: 'boolean' })
+  public readonly isEmployee: boolean;
 }

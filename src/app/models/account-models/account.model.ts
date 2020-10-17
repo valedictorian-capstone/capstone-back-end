@@ -1,7 +1,6 @@
-import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { hashSync } from 'bcrypt';
 import { AutoMap } from 'nestjsx-automapper';
-import { Role } from '../basic-models';
 import { AccountDepartment } from './account-department.model';
 import { AccountExtraInformationData } from './account-extra-information-data.model';
 @Entity()
@@ -42,10 +41,6 @@ export class Account extends BaseEntity {
   @AutoMap()
   @Column({ nullable: false, default: '1' })
   public password: string;
-
-  @ManyToMany(() => Role, role => role.accounts)
-  @JoinTable()
-  public roles: Role[];
 
   @OneToMany(() => AccountDepartment, accountDepartments => accountDepartments.account)
   public accountDepartments: AccountDepartment[];
