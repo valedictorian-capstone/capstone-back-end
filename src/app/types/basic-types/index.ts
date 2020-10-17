@@ -2,3 +2,4 @@ export * from './department.type';
 export * from './group.type';
 export * from './extra-information.type';
 export * from './pattern.type';
+export * from './notification.type'
