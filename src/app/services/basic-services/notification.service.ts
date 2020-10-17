@@ -10,16 +10,16 @@ export class NotificationService {
 
   constructor(
     @InjectMapper() protected readonly mapper: AutoMapper,
-    @Inject(NOTIFICATION_REPOSITORY) protected readonly repository: NotificationRepository
+    @Inject(NOTIFICATION_REPOSITORY) protected readonly notificationRepository: NotificationRepository
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<NotificationVM[]> => {
-    return await this.repository.useHTTP().find(ids ? { id: In(ids) } : {})
+    return await this.notificationRepository.useHTTP().find(ids ? { id: In(ids) } : {})
       .then((models) => this.mapper.mapArray(models, NotificationVM, Notification))
   };
 
   public readonly findById = async (id: string): Promise<NotificationVM> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.notificationRepository.useHTTP().findOne({ id: id })
       .then((model) => {
         if (model !== null) {
           return this.mapper.map(model, NotificationVM, Notification);
@@ -33,7 +33,7 @@ export class NotificationService {
   };
 
   public readonly insert = (body: NotificationCM): Promise<NotificationVM> => {
-    return this.repository.useHTTP().save(body)
+    return this.notificationRepository.useHTTP().save(body)
       .then((model) => {
         return this.findById(model.id);
       })
@@ -41,14 +41,14 @@ export class NotificationService {
   };
 
   public readonly update = async (body: NotificationUM): Promise<NotificationVM> => {
-    return await this.repository.useHTTP().findOne({ id: body.id })
+    return await this.notificationRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${body.id}`,
           );
         }
-        return await this.repository.useHTTP()
+        return await this.notificationRepository.useHTTP()
           .save(body)
           .then((model) => {
             return this.findById(model.id);
@@ -58,14 +58,14 @@ export class NotificationService {
   };
 
   public readonly remove = async (id: string): Promise<NotificationVM> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.notificationRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await this.repository.useHTTP()
+        return await this.notificationRepository.useHTTP()
           .remove(model)
           .then(() => {
             throw new HttpException(
@@ -77,14 +77,14 @@ export class NotificationService {
   };
 
   public readonly active = async (id: string): Promise<NotificationVM> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.notificationRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await this.repository.useHTTP()
+        return await this.notificationRepository.useHTTP()
           .save({ ...model, IsDelete: false })
           .then((model) => {
             return this.findById(model.id);
@@ -93,14 +93,14 @@ export class NotificationService {
   };
 
   public readonly deactive = async (id: string): Promise<NotificationVM> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.notificationRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await this.repository.useHTTP()
+        return await this.notificationRepository.useHTTP()
           .save({ ...model, IsDelete: true })
           .then((model) => {
             return this.findById(model.id);

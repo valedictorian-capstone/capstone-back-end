@@ -10,6 +10,10 @@ export class Task extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
+  @AutoMap()
+  @Column({ unique: true, default: ''})
+  public code: string;
+
   @OneToOne(() => Account, account => account)
   public assignee: Account;
 

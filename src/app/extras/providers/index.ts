@@ -1,8 +1,9 @@
 import { BASIC_MODELS, BPMN_MODELS, FORM_MODELS, CUSTOMER_MODELS, ACCOUNT_MODELS, PRODUCT_MODELS } from '@models';
-
+import * as admin from 'firebase-admin';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { createConnection } from 'typeorm';
 import { uuid } from 'uuidv4';
+import { FIREBASE_NOTIFICATION_SERVICE } from '@types';
 
 export class AppProvider {
   public static readonly init = () => {
@@ -32,6 +33,18 @@ export class AppProvider {
           });
 
           return connection;
+        }
+      },
+      {
+        provide: FIREBASE_NOTIFICATION_SERVICE,
+        useFactory: async () => {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          const firebaseAuth = require('../../../../capstone-crm-firebase-adminsdk-w3o3s-85b298087b.json');
+          admin.initializeApp({
+            credential: admin.credential.cert(firebaseAuth),
+            databaseURL: "https://capstone-crm.firebaseio.com"
+          });
+          return admin.messaging();
         }
       }
     ]
