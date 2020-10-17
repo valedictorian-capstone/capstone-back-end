@@ -30,6 +30,9 @@ export class AccountVM {
   @AutoMap()
   public readonly gender: boolean;
 
+  @AutoMap()
+  public readonly deviceId: string;
+
   public readonly accountExtraInformationDatas: AccountExtraInformationDataVM[];
 
   public readonly currentValidateCode: string;
@@ -94,6 +97,8 @@ export class AccountCM {
   public readonly roleName: string[];
 
   // public readonly accountDepartments: string[];
+  @ApiProperty()
+  public readonly deviceId: string;
 
   @ApiProperty()
   public readonly accountExtras: { extraInformation: { id: string }, value: string }[];
@@ -127,6 +132,9 @@ export class AccountUM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly gender: string;
+
+  @ApiProperty()
+  public readonly deviceId: string;
 
   @ApiProperty()
   public readonly accountExtras: { extraInformation: { id: string }, value: string }[];
@@ -168,4 +176,7 @@ export class AccountAuthVM {
 
   @AutoMap()
   public readonly updatedAt: Date;
+
+  @AutoMap()
+  public readonly deviceId: string;
 }
