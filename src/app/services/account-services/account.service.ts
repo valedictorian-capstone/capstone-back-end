@@ -1,12 +1,13 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { Account } from '@models';
 import { JwtService } from '@nestjs/jwt';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { AccountExtraInformationDataRepository, ExtraInformationRepository, AccountRepository } from '@repositories';
 import { ACCOUNT_EXTRA_INFORMATION_DATA_REPOSITORY, EXTRA_INFORMATION_REPOSITORY, ACCOUNT_REPOSITORY } from '@types';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
+import { async } from 'rxjs';
 
 @Injectable()
 export class AccountService {
@@ -47,6 +48,30 @@ export class AccountService {
   public readonly findByJWT = async (jwt: string): Promise<AccountVM> => {
     console.log(this.jwtService.decode(jwt));
     return this.mapper.map(this.jwtService.decode(jwt)['account'] as Account, AccountVM, Account);
+  }
+
+  public readonly checkUnique = async (label: string, value: string): Promise<string> => {
+    console.log(label)
+    console.log(value)
+    if(label == 'phone'){
+      return await this.accountRepository.useHTTP().findOne({ where: { phone: value }})
+      .then(async (model) => {
+        return model ? "The phone number is exist!!!" : "The phone number is ok"
+      }).catch(err => err);
+    }
+    if(label == 'email'){
+      return await this.accountRepository.useHTTP().findOne({ where: { email: value }})
+      .then(async (model) => {
+        return model ? "The email is exist!!!" : "The email is ok";
+      }).catch(err => err);
+    }
+    if(label == 'code'){
+      return await this.accountRepository.useHTTP().findOne({ where: { code: value }})
+      .then(async (model) => {
+        return model ? "The code number is exist!!!" : "The code number is ok";
+      }).catch(err => err);
+    }
+    return "Error!!!";
   }
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
