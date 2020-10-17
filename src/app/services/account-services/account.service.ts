@@ -1,13 +1,12 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { Account } from '@models';
 import { JwtService } from '@nestjs/jwt';
-import { BadRequestException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { AccountExtraInformationDataRepository, ExtraInformationRepository, AccountRepository } from '@repositories';
 import { ACCOUNT_EXTRA_INFORMATION_DATA_REPOSITORY, EXTRA_INFORMATION_REPOSITORY, ACCOUNT_REPOSITORY } from '@types';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
-import { async } from 'rxjs';
 
 @Injectable()
 export class AccountService {
@@ -20,7 +19,7 @@ export class AccountService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<AccountVM[]> => {
-    return await this.accountRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["roles", "accountDepartments", "accountExtraInformationDatas"] })
+    return await this.accountRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: [ "accountDepartments", "accountExtraInformationDatas"] })
       .then(async (models) => {
         for (const model of models) {
           model.accountExtraInformationDatas = await this.accountExtrDataRepository.useHTTP().find({ where: { account: model }, relations: ["extraInformation", "account"] });
@@ -33,7 +32,7 @@ export class AccountService {
   };
 
   public readonly findById = async (id: string): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["roles", "accountDepartments", "accountExtraInformationDatas"] })
+    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: [ "accountDepartments", "accountExtraInformationDatas"] })
       .then(async (model) => {
         if (model) {
           model.accountExtraInformationDatas = await this.accountExtrDataRepository.useHTTP().find({ where: { account: model }, relations: ["accountExtraInformation", "account"] });
