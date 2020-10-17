@@ -3,7 +3,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY } from '@types';
-import { compare, hashSync } from 'bcrypt';
+import { compare } from 'bcrypt';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -18,14 +18,17 @@ export class AuthService {
     return await this.validateAccount(emailOrPhone, password).then(
       account => {
         if (account) {
+          this.generateJWT(account).toPromise().then((jwtString) => {
+            console.log(this.jwtService.decode(jwtString));
+          })
           return this.generateJWT(account).toPromise();
         }
       }
-    ) 
+    )
   }
 
   private generateJWT(account: Account): Observable<string> {
-    return from(this.jwtService.signAsync({account}))
+    return from(this.jwtService.signAsync({ account }))
   }
 
   private comparePasswords(newPassword: string, passwordHash: string): Observable<any> {
@@ -35,16 +38,16 @@ export class AuthService {
   private validateAccount = async (emailOrPhone: string, password: string): Promise<Account> => {
     const option = isNaN(+emailOrPhone) ?
       { email: emailOrPhone }
-      : { phone: emailOrPhone}
-    return await this.accountRepository.useHTTP().findOne(option).then(
+      : { phone: emailOrPhone }
+    return await this.accountRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "accountDepartments", "accountExtraInformationDatas"] }).then(
       account => {
         if (!account) {
-          throw new UnauthorizedException("Invalid email or phone","Invalid email or phone");
+          throw new UnauthorizedException("Invalid email or phone", "Invalid email or phone");
         }
         this.comparePasswords(password, account?.password).pipe(
-          map((match:boolean) => {
-            if(!match) {
-              throw new UnauthorizedException("Invalid Password","Invalid Password");
+          map((match: boolean) => {
+            if (!match) {
+              throw new UnauthorizedException("Invalid Password", "Invalid Password");
             }
           })
         )

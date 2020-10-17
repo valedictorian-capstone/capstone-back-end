@@ -26,9 +26,10 @@ import {
   BASIC_SERVICES,
   BPMN_SERVICES,
   CUSTOMER_SERVICES,
+  EXTRA_SERVICES,
   FORM_SERVICES,
   PRODUCT_SERVICES,
-  
+
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
 import {
@@ -69,7 +70,7 @@ import {
   ],
   controllers: [
     ...BASIC_CONTROLLERS,
-    // ...EXTRA_CONTROLLERS,
+    ...EXTRA_CONTROLLERS,
     ...BPMN_CONTROLLERS,
     ...FORM_CONTROLLERS,
     ...CUSTOMER_CONTROLLERS,
@@ -83,6 +84,7 @@ import {
     ...FORM_SERVICES,
     ...CUSTOMER_SERVICES,
     ...PRODUCT_SERVICES,
+    ...EXTRA_SERVICES,
     ...ACCOUNT_REPOSITORIES,
     ...BASIC_REPOSITORIES,
     ...BPMN_REPOSITORIES,
