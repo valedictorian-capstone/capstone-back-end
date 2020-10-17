@@ -1,5 +1,7 @@
-import { AuthController } from './auth.controller';
-import { NotificationController } from './notification.controller';
+
+import { AuthController, EmailController, NotificationController } from '.';
 export * from './auth.controller';
+export * from './email.controller';
 export * from './notification.controller'
-export const EXTRA_CONTROLLERS = [AuthController, NotificationController];
+export const EXTRA_CONTROLLERS = [AuthController, EmailController, NotificationController];
+
