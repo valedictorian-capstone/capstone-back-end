@@ -1,5 +1,6 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { Account } from '@models';
+import { JwtService } from '@nestjs/jwt';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { AccountExtraInformationDataRepository, ExtraInformationRepository, AccountRepository } from '@repositories';
 import { ACCOUNT_EXTRA_INFORMATION_DATA_REPOSITORY, EXTRA_INFORMATION_REPOSITORY, ACCOUNT_REPOSITORY } from '@types';
@@ -13,7 +14,8 @@ export class AccountService {
     @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
     @Inject(EXTRA_INFORMATION_REPOSITORY) protected readonly extraInformationRepository: ExtraInformationRepository,
     @Inject(ACCOUNT_EXTRA_INFORMATION_DATA_REPOSITORY) protected readonly accountExtrDataRepository: AccountExtraInformationDataRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    private readonly jwtService: JwtService
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<AccountVM[]> => {
@@ -41,6 +43,11 @@ export class AccountService {
         );
       })
   };
+
+  public readonly findByJWT = async (jwt: string): Promise<AccountVM> => {
+    console.log(this.jwtService.decode(jwt));
+    return this.mapper.map(this.jwtService.decode(jwt)['account'] as Account, AccountVM, Account);
+  }
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().save(body).then(async (account) => {

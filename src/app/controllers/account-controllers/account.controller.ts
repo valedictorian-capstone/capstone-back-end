@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
+  Headers,
   Param,
   Post,
   Put,
@@ -22,10 +24,10 @@ import { AccountService } from '@services';
 @ApiBearerAuth('JWT')
 @ApiTags('Account')
 @Controller('/api/v1/Account')
-export class AccountController{
+export class AccountController {
   constructor(
     protected service: AccountService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all Accounts' })
@@ -33,6 +35,15 @@ export class AccountController{
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public findAll(): Promise<AccountVM[]> {
     return this.service.findAll();
+  }
+
+  @Get('/jwt/')
+  @ApiOperation({ summary: 'Get an Account by JWT' })
+  @ApiOkResponse({ description: "Success return an Account's information" })
+  @ApiNotFoundResponse({ description: 'Fail to find Account by JWT' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public findByJWT(@Headers('Authorization') jwt: string): Promise<AccountVM> {
+    return this.service.findByJWT(jwt);
   }
 
   @Get(':id')
