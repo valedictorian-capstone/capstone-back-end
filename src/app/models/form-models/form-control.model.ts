@@ -1,9 +1,11 @@
+import { Pattern } from '@models';
 import { AutoMap } from 'nestjsx-automapper';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -107,6 +109,9 @@ export class FormControl extends BaseEntity {
 
   @OneToMany(() => FormValue, formValues => formValues.formControl)
   public formValues: FormValue[];
+
+  @ManyToMany(() => Pattern, patterns => patterns.formControls)
+  public patterns: Pattern[]
 
   @AutoMap()
   @Column({ default: null })

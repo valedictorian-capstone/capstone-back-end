@@ -49,6 +49,7 @@ import {
   WFConnectionMapper,
   WFMapper,
   WFStepMapper,
+  PatternMapper
 } from './mappers';
 
 
@@ -114,6 +115,7 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(WFConnectionMapper);
     this.mapper.addProfile(WFMapper);
     this.mapper.addProfile(WFStepMapper);
+    this.mapper.addProfile(PatternMapper);
   }
 
 }

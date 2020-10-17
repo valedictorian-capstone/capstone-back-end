@@ -72,7 +72,7 @@ export class RoleController {
   @ApiOperation({ summary: 'Active an role by Id' })
   @ApiCreatedResponse({ description: 'Success active new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async active(@Param('id') id: string): Promise<RoleVM[]> {
+  public async active(@Param('id') id: string): Promise<RoleVM> {
     return await this.service.active(id);
   }
 
@@ -80,7 +80,7 @@ export class RoleController {
   @ApiOperation({ summary: 'Deative an role by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async deactive(@Param('id') id: string): Promise<RoleVM[]> {
+  public async deactive(@Param('id') id: string): Promise<RoleVM> {
     return await this.service.deactive(id);
   }
 }
