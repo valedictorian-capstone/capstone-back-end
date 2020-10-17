@@ -9,6 +9,8 @@ export class TaskVM {
   @AutoMap()
   public readonly id: string;
   @AutoMap()
+  public readonly code: string;
+  @AutoMap()
   public readonly status: string;
   @AutoMap()
   public readonly deadline: Date;

@@ -1,17 +1,20 @@
+import { NotFoundException } from '@exceptions';
 import { Task } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { TaskRepository } from '@repositories';
-import { TASK_REPOSITORY } from '@types';
+import { AccountRepository, ACCOUNT_REPOSITORIES, TaskRepository } from '@repositories';
+import { FirebaseService } from '@services';
+import { ACCOUNT_REPOSITORY, FIREBASE_SERVICE, TASK_REPOSITORY } from '@types';
 import { TaskCM, TaskUM, TaskVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { NotFoundException } from '@exceptions';
 import { FindManyOptions, In } from 'typeorm';
 
 @Injectable()
 export class TaskService {
 
   constructor(
-    @Inject(TASK_REPOSITORY) protected readonly repository: TaskRepository,
+    @Inject(TASK_REPOSITORY) protected readonly taskRepository: TaskRepository,
+    @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
+    @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
@@ -22,13 +25,13 @@ export class TaskService {
         status: status ? { status: status } : undefined,
       }
     }
-    return await this.repository.useHTTP()
+    return await this.taskRepository.useHTTP()
       .find(queryObj)
       .then((models) => this.mapper.mapArray(models, TaskVM, Task))
   };
 
   public readonly findById = async (id: string): Promise<TaskVM> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.taskRepository.useHTTP().findOne({ id: id })
       .then((model) => {
         if (model) {
           return this.mapper.map(model, TaskVM, Task);
@@ -40,8 +43,22 @@ export class TaskService {
   };
 
   public readonly insert = (body: TaskCM): Promise<TaskVM[]> => {
-    return this.repository.useHTTP().save(body as any)
+    return this.taskRepository.useHTTP().save(body)
       .then((model) => {
+        //send notification
+        this.accountRepository.useHTTP()
+          .findOne({ id: body.assigneeId }).then(
+            async employee => {
+              this.firebaseService.sendNotification({
+                data: {
+                  id: model.id,
+                  title: 'You have a new task',
+                  message: `New task code ${model.code} created for you`
+                },
+                token: employee.deviceId,
+              })
+            }
+          )
         const ids = [];
         ids.push(model.id);
         return this.findAll(ids);
@@ -49,14 +66,14 @@ export class TaskService {
   };
 
   public readonly update = async (body: TaskUM): Promise<TaskVM[]> => {
-    return await this.repository.useHTTP().findOne({ id: body.id })
+    return await this.taskRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${body.id}`,
           );
         }
-        return await this.repository.useHTTP()
+        return await this.taskRepository.useHTTP()
           .save(body)
           .then(() => {
             const ids = [];
@@ -67,14 +84,14 @@ export class TaskService {
   };
 
   public readonly remove = async (id: string): Promise<TaskVM> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.taskRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await this.repository.useHTTP()
+        return await this.taskRepository.useHTTP()
           .remove(model)
           .then(() => {
             throw new HttpException(
@@ -86,14 +103,14 @@ export class TaskService {
   };
 
   public readonly active = async (id: string): Promise<TaskVM[]> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.taskRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await this.repository.useHTTP()
+        return await this.taskRepository.useHTTP()
           .save({ ...model, isDelete: false })
           .then(() => {
             const ids = [];
@@ -104,14 +121,14 @@ export class TaskService {
   };
 
   public readonly deactive = async (id: string): Promise<TaskVM[]> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.taskRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await this.repository.useHTTP()
+        return await this.taskRepository.useHTTP()
           .save({ ...model, isDelete: true })
           .then(() => {
             const ids = [];
