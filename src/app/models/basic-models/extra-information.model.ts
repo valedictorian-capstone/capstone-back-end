@@ -4,10 +4,12 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    ManyToMany,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { Pattern } from '.';
 import { AccountExtraInformationData } from '../account-models';
 import { CustomerExtraInformationData } from '../customer-models';
 import { ProductExtraInformationData } from '../product-models';
@@ -105,6 +107,9 @@ export class ExtraInformation extends BaseEntity {
     @AutoMap()
     @Column({ default: null})
     public state: string;
+
+    @ManyToMany(() => Pattern, patterns => patterns.extraInformations)
+    public patterns: Pattern[];
 
     @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.extraInformation)
     public customerExtraInformationDatas: CustomerExtraInformationData[];
