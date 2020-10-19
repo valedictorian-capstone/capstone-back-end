@@ -42,6 +42,14 @@ export class ProductService {
       })
   };
 
+  public readonly checkUnique = async (label: string, value: string): Promise<string> => {
+    const query = { [label]: value };
+    return this.productRepository.useHTTP().findOne({ where: query })
+      .then((model) =>{
+        return model ? true : false;
+      }).catch(err => err);
+  }
+
   public readonly insert = async (body: ProductCM): Promise<any> => {
     return await this.productRepository.useHTTP().save(body).then(async (product) => {
 

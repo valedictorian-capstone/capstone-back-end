@@ -47,6 +47,9 @@ export class PatternVM {
     @AutoMap()
     public readonly validateTrigger: string;
 
+    @AutoMap()
+    public readonly isUnique: boolean
+
     public readonly extraInformations: ExtraInformationVM[];
 
     public readonly formControls: FormControlVM[];
@@ -84,6 +87,9 @@ export class PatternCM {
 
     @ApiProperty({ required: true, format: 'boolean' })
     public readonly required: boolean;
+
+    @ApiProperty({ required: true, format: 'boolean' })
+    public readonly isUnique: boolean;
 
     @ApiProperty({ required: true, format: 'string', minLength: 8 })
     public readonly type: string;
@@ -132,6 +138,9 @@ export class PatternUM {
 
     @ApiProperty({ required: true, format: 'boolean' })
     public readonly required: boolean;
+
+    @ApiProperty({ required: true, format: 'boolean' })
+    public readonly isUnique: boolean;
 
     @ApiProperty({ required: true, format: 'string', minLength: 8 })
     public readonly type: string;

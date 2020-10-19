@@ -1,11 +1,21 @@
-import { DepartmentController, ExtraInformationController, GroupController, PatternController } from '.'
+import { 
+  DepartmentController, 
+  ExtraInformationController, 
+  GroupController, 
+  PatternController,
+  CommentController
+} from '.'
+
 export * from './group.controller';
 export * from './extra-information.controller';
 export * from './department.controller';
 export * from './pattern.controller';
+export * from './comment.controller';
+
 export const BASIC_CONTROLLERS = [
   DepartmentController,
   GroupController,
   ExtraInformationController,
-  PatternController
+  PatternController,
+  CommentController
 ];

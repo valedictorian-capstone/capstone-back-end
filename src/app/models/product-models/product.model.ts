@@ -15,6 +15,10 @@ export class Product extends BaseEntity {
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
+
+  @Column({ default: null })
+  @AutoMap()
+  public code: string;
   
   @Column({ default: null })
   @AutoMap()

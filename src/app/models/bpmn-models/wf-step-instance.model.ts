@@ -16,6 +16,7 @@ import { WFStep } from './wf-step.model';
 import { FormData } from '../form-models/form-data.model';
 import { Customer } from '../customer-models/customer.model';
 import { Task } from './task.model';
+import { Comment } from '../basic-models';
 
 @Entity()
 export class WFStepInstance extends BaseEntity {
@@ -51,6 +52,9 @@ export class WFStepInstance extends BaseEntity {
 
   @OneToMany(() => Task, task => task.wfStepInstance)
   public tasks: Task[];
+
+  @OneToMany(() => Comment, comments => comments.wfStepInstance)
+  public comments: Comment[];
 
   @AutoMap()
   @Column({ default: null })

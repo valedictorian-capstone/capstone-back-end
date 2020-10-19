@@ -44,27 +44,11 @@ export class CustomerService {
   };
 
   public readonly checkUnique = async (label: string, value: string): Promise<string> => {
-    console.log(label)
-    console.log(value)
-    if(label == 'phone'){
-      return await this.cusomterRepository.useHTTP().findOne({ where: { phone: value }})
-      .then(async (model) => {
-        return model ? "The phone number is exist!!!" : "The phone number is ok"
+    const query = { [label]: value };
+    return this.cusomterRepository.useHTTP().findOne({ where: query })
+      .then((model) =>{
+        return model ? true : false;
       }).catch(err => err);
-    }
-    if(label == 'email'){
-      return await this.cusomterRepository.useHTTP().findOne({ where: { email: value }})
-      .then(async (model) => {
-        return model ? "The email is exist!!!" : "The email is ok";
-      }).catch(err => err);
-    }
-    if(label == 'code'){
-      return await this.cusomterRepository.useHTTP().findOne({ where: { code: value }})
-      .then(async (model) => {
-        return model ? "The code number is exist!!!" : "The code number is ok";
-      }).catch(err => err);
-    }
-    return "Error!!!";
   }
 
   public readonly insert = async (body: CustomerCM): Promise<any> => {

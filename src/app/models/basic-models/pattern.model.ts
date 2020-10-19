@@ -71,6 +71,10 @@ export class Pattern extends BaseEntity {
     @Column({ default: null })
     public validateTrigger: string;
 
+    @AutoMap()
+    @Column({ default: false })
+    public isUnique: boolean;
+
     @ManyToMany(() => ExtraInformation, extraInformations => extraInformations.patterns)
     @JoinTable()
     public extraInformations: ExtraInformation[];
