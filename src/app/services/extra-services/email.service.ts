@@ -14,7 +14,6 @@ export class EmailService {
         @Inject(EXTRA_INFORMATION_REPOSITORY) protected readonly extraInformationRepository: ExtraInformationRepository,
         @Inject(CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY) protected readonly cusomterExtrDataRepository: CustomerExtraInformationDataRepository,
         @InjectMapper() protected readonly mapper: AutoMapper,
-
     ) { }
 
     public readonly sendEmailCustomer = async (ids: string[]): Promise<string> => {
@@ -22,7 +21,7 @@ export class EmailService {
             service: 'Gmail',
             auth: {
                 user: 'crmdynamic123@gmail.com',
-                pass: '123456crm1'
+                pass: '123456crm'
             }
         });
         return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}) })

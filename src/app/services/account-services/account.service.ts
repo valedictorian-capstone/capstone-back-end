@@ -19,7 +19,7 @@ export class AccountService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<AccountVM[]> => {
-    return await this.accountRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: [ "accountDepartments", "accountExtraInformationDatas"] })
+    return await this.accountRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["accountDepartments", "accountExtraInformationDatas"] })
       .then(async (models) => {
         for (const model of models) {
           model.accountExtraInformationDatas = await this.accountExtrDataRepository.useHTTP().find({ where: { account: model }, relations: ["extraInformation", "account"] });
@@ -32,7 +32,7 @@ export class AccountService {
   };
 
   public readonly findById = async (id: string): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: [ "accountDepartments", "accountExtraInformationDatas"] })
+    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["accountDepartments", "accountExtraInformationDatas"] })
       .then(async (model) => {
         if (model) {
           model.accountExtraInformationDatas = await this.accountExtrDataRepository.useHTTP().find({ where: { account: model }, relations: ["accountExtraInformation", "account"] });
@@ -50,27 +50,11 @@ export class AccountService {
   }
 
   public readonly checkUnique = async (label: string, value: string): Promise<string> => {
-    console.log(label)
-    console.log(value)
-    if(label == 'phone'){
-      return await this.accountRepository.useHTTP().findOne({ where: { phone: value }})
-      .then(async (model) => {
-        return model ? "The phone number is exist!!!" : "The phone number is ok"
+    const query = { [label]: value };
+    return this.accountRepository.useHTTP().findOne({ where: query })
+      .then((model) =>{
+        return model ? true : false;
       }).catch(err => err);
-    }
-    if(label == 'email'){
-      return await this.accountRepository.useHTTP().findOne({ where: { email: value }})
-      .then(async (model) => {
-        return model ? "The email is exist!!!" : "The email is ok";
-      }).catch(err => err);
-    }
-    if(label == 'code'){
-      return await this.accountRepository.useHTTP().findOne({ where: { code: value }})
-      .then(async (model) => {
-        return model ? "The code number is exist!!!" : "The code number is ok";
-      }).catch(err => err);
-    }
-    return "Error!!!";
   }
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {

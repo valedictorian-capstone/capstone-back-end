@@ -7,6 +7,9 @@ export class ProductVM {
   
   @AutoMap()
   public readonly id: string;
+
+  @AutoMap()
+  public readonly code: string;
   
   @AutoMap()
   public readonly name: string;
@@ -41,6 +44,9 @@ export class ProductVM {
 export class ProductCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly code: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly name: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
@@ -62,6 +68,9 @@ export class ProductUM {
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly id: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly code: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly name: string;

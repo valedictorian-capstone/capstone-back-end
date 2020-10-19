@@ -51,6 +51,7 @@ import {
   WFStepMapper,
   PatternMapper,
   NotificationMapper,
+  CommentMapper
   WFStepInstanceMapper
 } from './mappers';
 
@@ -120,6 +121,7 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(WFStepMapper);
     this.mapper.addProfile(PatternMapper);
     this.mapper.addProfile(NotificationMapper);
+    this.mapper.addProfile(CommentMapper);
   }
 
 }
