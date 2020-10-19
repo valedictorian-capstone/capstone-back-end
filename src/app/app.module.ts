@@ -51,7 +51,7 @@ import {
   WFStepMapper,
   PatternMapper,
   NotificationMapper,
-  CommentMapper
+  CommentMapper,
   WFStepInstanceMapper
 } from './mappers';
 
