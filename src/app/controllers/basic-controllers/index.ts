@@ -1,13 +1,11 @@
 import { 
-  DepartmentController, 
-  ExtraInformationController, 
+  DepartmentController,  
   GroupController, 
   PatternController,
   CommentController
 } from '.'
 
 export * from './group.controller';
-export * from './extra-information.controller';
 export * from './department.controller';
 export * from './pattern.controller';
 export * from './comment.controller';
@@ -15,7 +13,6 @@ export * from './comment.controller';
 export const BASIC_CONTROLLERS = [
   DepartmentController,
   GroupController,
-  ExtraInformationController,
   PatternController,
   CommentController
 ];

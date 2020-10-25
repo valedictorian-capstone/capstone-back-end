@@ -1,8 +1,8 @@
 import { InvalidException, NotFoundException } from '@exceptions';
-import { Customer, CustomerExtraInformationData } from '@models';
+import { Customer } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CustomerExtraInformationDataRepository, ExtraInformationRepository, CustomerRepository } from '@repositories';
-import { CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY, EXTRA_INFORMATION_REPOSITORY, CUSTOMER_REPOSITORY } from '@types';
+import { CustomerRepository } from '@repositories';
+import { CUSTOMER_REPOSITORY } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
@@ -11,18 +11,12 @@ import { In } from 'typeorm';
 export class CustomerService {
   constructor(
     @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
-    @Inject(EXTRA_INFORMATION_REPOSITORY) protected readonly extraInformationRepository: ExtraInformationRepository,
-    @Inject(CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY) protected readonly cusomterExtrDataRepository: CustomerExtraInformationDataRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CustomerVM[]> => {
-    return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups", "wFInstances", "customerExtraInformationDatas"] })
+    return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups", "wFInstances"] })
       .then(async (models) => {
-        for (const model of models) {
-          model.customerExtraInformationDatas = await this.cusomterExtrDataRepository.useHTTP().find({ where: { customer: model }, relations: ["extraInformation", "customer"] });
-          console.log(model.customerExtraInformationDatas[0] instanceof CustomerExtraInformationData);
-        }
         return this.mapper.mapArray(models, CustomerVM, Customer)
       }).catch((err) => {
         console.log(err);
@@ -31,10 +25,9 @@ export class CustomerService {
   };
 
   public readonly findById = async (id: string): Promise<CustomerVM> => {
-    return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "wFInstances", "customerExtraInformationDatas"] })
+    return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "wFInstances"] })
       .then(async (model) => {
         if (model) {
-          model.customerExtraInformationDatas = await this.cusomterExtrDataRepository.useHTTP().find({ where: { customer: model }, relations: ["extraInformation", "customer"] });
           return this.mapper.map(model, CustomerVM, Customer);
         }
         throw new NotFoundException(
@@ -53,7 +46,6 @@ export class CustomerService {
 
   public readonly insert = async (body: CustomerCM): Promise<any> => {
     return await this.cusomterRepository.useHTTP().save(body).then(async (customer) => {
-      await this.cusomterExtrDataRepository.useHTTP().save(body.customerExtras.map((e) => ({ ...e, customer })));
       return await this.findById(customer.id);
     }).catch(err => err);
   };
@@ -65,9 +57,11 @@ export class CustomerService {
           throw new NotFoundException(
             `Can not find ${body.id}`,
           );
+        } else {
+          return await this.cusomterRepository.useHTTP().save(body).then(async (customer) => {
+            return await this.findById(customer.id);
+          }).catch(err => err);
         }
-        await this.cusomterExtrDataRepository.useHTTP().save(body.customerExtras.map((e) => ({ ...e, customer: model })));
-        return await this.findById(model.id);
       });
   };
 

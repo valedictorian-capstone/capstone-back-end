@@ -2,7 +2,6 @@ import { WFInstanceVM } from "../bpmn-view-models";
 import { AutoMap } from "nestjsx-automapper";
 import { ApiProperty } from "@nestjs/swagger";
 import { GroupVM } from "../basic-view-models";
-import { CustomerExtraInformationDataVM } from ".";
 
 export class CustomerVM {
 
@@ -22,6 +21,15 @@ export class CustomerVM {
   public readonly fullname: string;
 
   @AutoMap()
+  public readonly delegate: string;
+
+  @AutoMap()
+  public readonly birthDate: Date;
+
+  @AutoMap()
+  public readonly type: string;
+
+  @AutoMap()
   public readonly avatar: string;
 
   @AutoMap()
@@ -29,8 +37,6 @@ export class CustomerVM {
 
   @AutoMap()
   public readonly gender: boolean;
-
-  public customerExtraInformationDatas: CustomerExtraInformationDataVM[];
 
   public groups: GroupVM[];
 
@@ -75,9 +81,14 @@ export class CustomerCM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly gender: boolean;
 
-  @ApiProperty()
-  public readonly customerExtras: { extraInformation: { id: string }, value: string }[];
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly type: string;
 
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly delegate: string;
+
+  @ApiProperty({ required: true, format: 'Date' })
+  public readonly birthDate: Date;
 }
 
 export class CustomerUM {
@@ -106,6 +117,13 @@ export class CustomerUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly gender: boolean;
 
-  @ApiProperty()
-  public readonly customerExtras: { extraInformation: { id: string }, value: string }[];
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly type: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly delegate: string;
+
+  @ApiProperty({ required: true, format: 'Date'})
+  public readonly birthDate: Date;
+
 }

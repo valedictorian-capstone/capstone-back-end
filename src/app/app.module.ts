@@ -5,7 +5,7 @@ import {
   EXTRA_CONTROLLERS,
   FORM_CONTROLLERS,
   ACCOUNT_CONTROLLERS,
-  PRODUCT_CONTROLLERS
+  SERVICE_CONTROLLERS
 } from '@controllers';
 import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
@@ -19,7 +19,7 @@ import {
   BPMN_REPOSITORIES,
   CUSTOMER_REPOSITORIES,
   FORM_REPOSITORIES,
-  PRODUCT_REPOSITORIES,
+  SERVICE_REPOSITORIES,
 } from '@repositories';
 import {
   ACCOUNT_SERVICES,
@@ -28,31 +28,28 @@ import {
   CUSTOMER_SERVICES,
   EXTRA_SERVICES,
   FORM_SERVICES,
-  PRODUCT_SERVICES,
+  SERVICE_SERVICES,
 
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
 import {
-  AccountExtraInformationDataMapper,
   AccountMapper,
-  CustomerExtraInformationDataMapper,
   CustomerMapper,
   DepartmentMapper,
-  ExtraInformationMapper,
   FormControlMapper,
   FormDataMapper,
   FormGroupMapper,
   FormValueMapper,
   GroupMapper,
-  ProductExtraInformationDataMapper,
-  ProductMapper,
+  ServiceMapper,
   WFConnectionMapper,
   WFMapper,
   WFStepMapper,
   PatternMapper,
   NotificationMapper,
   CommentMapper,
-  WFStepInstanceMapper
+  WFStepInstanceMapper,
+  AccountDepartmentMapper,
 } from './mappers';
 
 
@@ -78,7 +75,7 @@ import {
     ...FORM_CONTROLLERS,
     ...CUSTOMER_CONTROLLERS,
     ...ACCOUNT_CONTROLLERS,
-    ...PRODUCT_CONTROLLERS
+    ...SERVICE_CONTROLLERS
   ],
   providers: [
     ...BASIC_SERVICES,
@@ -86,14 +83,14 @@ import {
     ...BPMN_SERVICES,
     ...FORM_SERVICES,
     ...CUSTOMER_SERVICES,
-    ...PRODUCT_SERVICES,
+    ...SERVICE_SERVICES,
     ...EXTRA_SERVICES,
     ...ACCOUNT_REPOSITORIES,
     ...BASIC_REPOSITORIES,
     ...BPMN_REPOSITORIES,
     ...CUSTOMER_REPOSITORIES,
     ...FORM_REPOSITORIES,
-    ...PRODUCT_REPOSITORIES,
+    ...SERVICE_REPOSITORIES,
     ...FILTERS,
     AppGateway,
     ...AppProvider.init()
@@ -102,19 +99,15 @@ import {
 export class AppModule implements OnModuleInit {
   constructor(@InjectMapper() protected readonly mapper: AutoMapper) { }
   onModuleInit() {
-    this.mapper.addProfile(AccountExtraInformationDataMapper);
     this.mapper.addProfile(AccountMapper);
-    this.mapper.addProfile(CustomerExtraInformationDataMapper);
     this.mapper.addProfile(CustomerMapper);
     this.mapper.addProfile(DepartmentMapper);
-    this.mapper.addProfile(ExtraInformationMapper);
     this.mapper.addProfile(FormControlMapper);
     this.mapper.addProfile(FormDataMapper);
     this.mapper.addProfile(FormGroupMapper);
     this.mapper.addProfile(FormValueMapper);
     this.mapper.addProfile(GroupMapper);
-    this.mapper.addProfile(ProductExtraInformationDataMapper);
-    this.mapper.addProfile(ProductMapper);
+    this.mapper.addProfile(ServiceMapper);
     this.mapper.addProfile(WFConnectionMapper);
     this.mapper.addProfile(WFMapper);
     this.mapper.addProfile(WFStepInstanceMapper)
@@ -122,6 +115,7 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(PatternMapper);
     this.mapper.addProfile(NotificationMapper);
     this.mapper.addProfile(CommentMapper);
+    this.mapper.addProfile(AccountDepartmentMapper);
   }
 
 }

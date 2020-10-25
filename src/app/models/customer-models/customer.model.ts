@@ -10,10 +10,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { CustomerExtraInformationData } from '.';
 import { Group } from '../basic-models';
 import { WFInstance } from '../bpmn-models';
 import { Task } from '../bpmn-models/task.model';
+import { FeedBack, Order } from '../service-models';
 
 @Entity()
 export class Customer extends BaseEntity {
@@ -23,15 +23,15 @@ export class Customer extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: false })
-  public fullname!: string;
+  public fullname: string;
 
   @AutoMap()
   @Column({ nullable: false, unique: true })
-  public code!: string;
+  public code: string;
 
   @AutoMap()
   @Column({ nullable: false, unique: true })
-  public email!: string;
+  public email: string;
 
   @AutoMap()
   @Column({ nullable: false, unique: true })
@@ -39,15 +39,27 @@ export class Customer extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: true })
-  public address!: string;
+  public delegate: string;
 
   @AutoMap()
   @Column({ nullable: true })
-  public avatar!: string;
+  public birthDate: Date;
 
   @AutoMap()
   @Column({ nullable: true })
-  public gender!: boolean;
+  public address: string;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  public avatar: string;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  public gender: boolean;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  public type: string;
 
   @ManyToMany(() => Group, group => group.customers)
   @JoinTable()
@@ -56,11 +68,14 @@ export class Customer extends BaseEntity {
   @OneToMany(() => WFInstance, wFInstances=> wFInstances.customer )
   public wFInstances: WFInstance[];
 
-  @OneToMany(() => CustomerExtraInformationData, customerExtraInformationDatas => customerExtraInformationDatas.customer)
-  public customerExtraInformationDatas: CustomerExtraInformationData[];
-
   @ManyToMany(() => Task, task => task.customers)
   public tasks: Task[]
+
+  @OneToMany(() => Order, orders => orders.customer)
+  public orders: Order[];
+
+  @OneToMany(() => FeedBack, feedBacks => feedBacks.customer)
+  public feedBacks: FeedBack[];
 
   @AutoMap()
   @Column({ default: null })

@@ -9,7 +9,6 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { ExtraInformation } from '.';
 import { FormControl } from '../form-models/form-control.model';
 
 @Entity()
@@ -74,10 +73,6 @@ export class Pattern extends BaseEntity {
     @AutoMap()
     @Column({ default: false })
     public isUnique: boolean;
-
-    @ManyToMany(() => ExtraInformation, extraInformations => extraInformations.patterns)
-    @JoinTable()
-    public extraInformations: ExtraInformation[];
 
     @ManyToMany(() => FormControl, formControls => formControls.patterns)
     @JoinTable()

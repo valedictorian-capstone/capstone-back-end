@@ -20,7 +20,6 @@ export class AccountDepartmentVM {
   @AutoMap()
   public readonly isEmployee: boolean;
 
-  
   public readonly account: AccountVM;
   
   public readonly department: DepartmentVM;

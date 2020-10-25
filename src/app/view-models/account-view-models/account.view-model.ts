@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AutoMap } from 'nestjsx-automapper';
-import { AccountDepartmentVM, AccountExtraInformationDataVM } from '.';
+import { AccountDepartmentVM } from '.';
 import { WFStepInstanceVM } from '../bpmn-view-models';
 
 export class AccountVM {
@@ -31,8 +31,6 @@ export class AccountVM {
 
   @AutoMap()
   public readonly deviceId: string;
-
-  public readonly accountExtraInformationDatas: AccountExtraInformationDataVM[];
 
   public readonly currentValidateCode: string;
 
@@ -94,9 +92,6 @@ export class AccountCM {
   @ApiProperty()
   public readonly deviceId: string;
 
-  @ApiProperty()
-  public readonly accountExtras: { extraInformation: { id: string }, value: string }[];
-
 }
 
 export class AccountUM {
@@ -127,10 +122,6 @@ export class AccountUM {
 
   @ApiProperty()
   public readonly deviceId: string;
-
-  @ApiProperty()
-  public readonly accountExtras: { extraInformation: { id: string }, value: string }[];
-
 }
 
 export class AccountAuthVM {
