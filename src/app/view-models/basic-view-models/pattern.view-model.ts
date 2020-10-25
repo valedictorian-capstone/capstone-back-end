@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { FormControlVM } from "../form-view-models";
-import { ExtraInformationVM } from "./extra-information.view-model";
 
 export class PatternVM {
 
@@ -49,8 +48,6 @@ export class PatternVM {
 
     @AutoMap()
     public readonly isUnique: boolean
-
-    public readonly extraInformations: ExtraInformationVM[];
 
     public readonly formControls: FormControlVM[];
 

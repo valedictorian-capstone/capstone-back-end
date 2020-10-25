@@ -4,6 +4,6 @@ export * from './extra-view-models';
 export * from './form-view-models';
 export * from './customer-view-models';
 export * from './account-view-models';
-export * from './product-view-models';
+export * from './service-view-models';
 
 

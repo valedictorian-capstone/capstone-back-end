@@ -2,8 +2,8 @@ import { InvalidException, NotFoundException } from '@exceptions';
 import { Account } from '@models';
 import { JwtService } from '@nestjs/jwt';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AccountExtraInformationDataRepository, ExtraInformationRepository, AccountRepository } from '@repositories';
-import { ACCOUNT_EXTRA_INFORMATION_DATA_REPOSITORY, EXTRA_INFORMATION_REPOSITORY, ACCOUNT_REPOSITORY } from '@types';
+import { AccountRepository } from '@repositories';
+import { ACCOUNT_REPOSITORY } from '@types';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
@@ -12,18 +12,13 @@ import { In } from 'typeorm';
 export class AccountService {
   constructor(
     @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
-    @Inject(EXTRA_INFORMATION_REPOSITORY) protected readonly extraInformationRepository: ExtraInformationRepository,
-    @Inject(ACCOUNT_EXTRA_INFORMATION_DATA_REPOSITORY) protected readonly accountExtrDataRepository: AccountExtraInformationDataRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
     private readonly jwtService: JwtService
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<AccountVM[]> => {
-    return await this.accountRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["accountDepartments", "accountExtraInformationDatas"] })
+    return await this.accountRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["accountDepartments"] })
       .then(async (models) => {
-        for (const model of models) {
-          model.accountExtraInformationDatas = await this.accountExtrDataRepository.useHTTP().find({ where: { account: model }, relations: ["extraInformation", "account"] });
-        }
         return this.mapper.mapArray(models, AccountVM, Account)
       }).catch((err) => {
         console.log(err);
@@ -32,10 +27,9 @@ export class AccountService {
   };
 
   public readonly findById = async (id: string): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["accountDepartments", "accountExtraInformationDatas"] })
+    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["accountDepartments"] })
       .then(async (model) => {
         if (model) {
-          model.accountExtraInformationDatas = await this.accountExtrDataRepository.useHTTP().find({ where: { account: model }, relations: ["accountExtraInformation", "account"] });
           return this.mapper.map(model, AccountVM, Account);
         }
         throw new NotFoundException(
@@ -59,7 +53,6 @@ export class AccountService {
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().save(body).then(async (account) => {
-      await this.accountExtrDataRepository.useHTTP().save(body.accountExtras.map((e) => ({ ...e, account })));
       return await this.findById(account.id);
     }).catch(err => err);
   };
@@ -71,9 +64,11 @@ export class AccountService {
           throw new NotFoundException(
             `Can not find ${body.id}`,
           );
-        }
-        await this.accountExtrDataRepository.useHTTP().save(body.accountExtras.map((e) => ({ ...e, account: model })));
-        return await this.findById(model.id);
+        }else{
+          return await this.accountRepository.useHTTP().save(body).then(async (account) => {
+            return await this.findById(account.id);
+          }).catch(err => err);
+        } 
       });
   };
 

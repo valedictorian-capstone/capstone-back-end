@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Customer } from '@models';
-import { CustomerExtraInformationDataRepository, ExtraInformationRepository, CustomerRepository } from '@repositories';
-import { CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY, EXTRA_INFORMATION_REPOSITORY, CUSTOMER_REPOSITORY } from '@types';
+import { CustomerRepository } from '@repositories';
+import { CUSTOMER_REPOSITORY } from '@types';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
 
@@ -9,8 +9,6 @@ import { In } from 'typeorm';
 export class SMSService {
     constructor(
         @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
-        @Inject(EXTRA_INFORMATION_REPOSITORY) protected readonly extraInformationRepository: ExtraInformationRepository,
-        @Inject(CUSTOMER_EXTRA_INFORMATION_DATA_REPOSITORY) protected readonly cusomterExtrDataRepository: CustomerExtraInformationDataRepository,
         @InjectMapper() protected readonly mapper: AutoMapper,
     ) { }
 

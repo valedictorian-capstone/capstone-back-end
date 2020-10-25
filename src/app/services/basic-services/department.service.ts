@@ -1,8 +1,8 @@
 import { NotFoundException } from '@exceptions';
 import { Department } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { DepartmentRepository } from '@repositories';
-import { DEPARTMENT_REPOSITORY } from '@types';
+import { AccountDepartmentRepository, DepartmentRepository } from '@repositories';
+import { ACCOUNT_DEPARTMENT_REPOSITORY, DEPARTMENT_REPOSITORY } from '@types';
 import { DepartmentCM, DepartmentUM, DepartmentVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 
@@ -10,19 +10,21 @@ import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 export class DepartmentService {
   constructor(
     @Inject(DEPARTMENT_REPOSITORY) protected readonly repository: DepartmentRepository,
+    @Inject(ACCOUNT_DEPARTMENT_REPOSITORY) protected readonly accountDepartmentRepository: AccountDepartmentRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
   public readonly findAll = async (): Promise<DepartmentVM[]> => {
-    return await this.repository.useHTTP().find({ relations: [ "accountDepartments"] })
+    return await this.repository.useHTTP().find({ relations: ["accountDepartments"] })
       .then((models) => this.mapper.mapArray(models, DepartmentVM, Department))
   };
 
   public readonly findById = async (id: string): Promise<DepartmentVM> => {
     return await this.repository.useHTTP().findOne({ id: id }, { relations: ["accountDepartments"] })
-      .then((model) => {
+      .then(async (model) => {
         console.log(model);
         if (model) {
+          model.accountDepartments = await this.accountDepartmentRepository.useHTTP().find({ where: { department: model }, relations: ["account"] })
           return this.mapper.map(model, DepartmentVM, Department);
         }
         throw new NotFoundException(

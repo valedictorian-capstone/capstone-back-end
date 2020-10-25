@@ -1,4 +1,3 @@
-import { AccountExtraInformationDataService, AccountService } from '.';
-export * from './account-extra-information-data.service';
+import {  AccountService } from '.';
 export * from './account.service';
-export const ACCOUNT_SERVICES = [AccountExtraInformationDataService, AccountService];
+export const ACCOUNT_SERVICES = [ AccountService];

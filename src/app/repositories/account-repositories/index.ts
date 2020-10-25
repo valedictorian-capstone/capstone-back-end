@@ -1,8 +1,11 @@
-import { AccountRepository, AccountExtraInformationDataRepository } from '.';
+import {
+  AccountRepository,
+  AccountDepartmentRepository
+} from '.';
 
-export * from './account-extra-information-data.repository';
 export * from './account.repository';
+export * from './account-department.repository';
 export const ACCOUNT_REPOSITORIES = [
   AccountRepository.inject,
-  AccountExtraInformationDataRepository.inject,
+  AccountDepartmentRepository.inject
 ];

@@ -1,4 +1,3 @@
-import { Customer, CustomerExtraInformationData } from '.';
-export * from './customer-extra-information-data.model';
+import { Customer } from '.';
 export * from './customer.model';
-export const CUSTOMER_MODELS = [Customer, CustomerExtraInformationData];
+export const CUSTOMER_MODELS = [Customer];

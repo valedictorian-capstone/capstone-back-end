@@ -1,6 +1,6 @@
 import { Account } from "@models";
 import { AutoMapper, mapWith, preCondition, ProfileBase } from '@nartc/automapper';
-import { AccountDepartmentVM, AccountExtraInformationDataVM, AccountUM, AccountVM } from "@view-models";
+import { AccountDepartmentVM, AccountUM, AccountVM } from "@view-models";
 
 export class AccountMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -10,10 +10,6 @@ export class AccountMapper extends ProfileBase {
         preCondition((s) => s.accountDepartments != null, []),
         mapWith(AccountDepartmentVM, s => s.accountDepartments)
       )
-      .forMember(d => d.accountExtraInformationDatas,
-        preCondition((s) => s.accountExtraInformationDatas != null, []),
-        mapWith(AccountExtraInformationDataVM, s => s.accountExtraInformationDatas)
-      );
     mapper.createMap(AccountUM, AccountVM);
   }
 }
