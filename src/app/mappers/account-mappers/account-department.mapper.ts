@@ -8,8 +8,8 @@ export class AccountDepartmentMapper extends ProfileBase {
         super();
         mapper.createMap(AccountDepartment, AccountDepartmentVM)
             .forMember(d => d.account, mapWith(AccountVM, s => s.account))
-            .forMember(d => d.department, mapWith(DepartmentVM, s  => s.department));
-            mapper.createMap(AccountDepartmentUM, AccountDepartmentVM);
+            .forMember(d => d.department, mapWith(DepartmentVM, s => s.department));
+        mapper.createMap(AccountDepartmentUM, AccountDepartmentVM);
     }
 
 }

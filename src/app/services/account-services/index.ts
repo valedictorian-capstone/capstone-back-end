@@ -1,3 +1,4 @@
-import {  AccountService } from '.';
+import {  AccountService, AccountDepartmentService } from '.';
 export * from './account.service';
-export const ACCOUNT_SERVICES = [ AccountService];
+export * from './account-department.service'
+export const ACCOUNT_SERVICES = [ AccountService, AccountDepartmentService];
