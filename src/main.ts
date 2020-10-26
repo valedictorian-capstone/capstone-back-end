@@ -2,6 +2,7 @@ import { AllExceptionsFilter } from '@extras/filters';
 import { LogRequestInterceptor } from '@extras/intercepters/log.intercepter';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { json, urlencoded } from 'express';
 import { AppModule } from 'src/app/app.module';
 declare const module: any;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -10,8 +11,8 @@ declare const module: any;
   const app = await NestFactory.create(AppModule, { logger: true, cors: true, bodyParser: true });
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new LogRequestInterceptor());
-  // app.use(json({ limit: '500mb' }));
-  // app.use(urlencoded({ limit: '50mb', extended: false }));
+  app.use(json({ limit: '500mb' }));
+  app.use(urlencoded({ limit: '50mb', extended: false }));
   const options = new DocumentBuilder()
     .setTitle('CRM BE')
     .setDescription('ALL API OF CRM')
