@@ -1,8 +1,9 @@
 import { hashSync } from 'bcrypt';
 import { AutoMap } from 'nestjsx-automapper';
-import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Comment, Notification } from '../basic-models';
 import { AccountDepartment } from './account-department.model';
+import { Role } from './role.model';
 @Entity()
 export class Account extends BaseEntity {
 
@@ -51,9 +52,13 @@ export class Account extends BaseEntity {
 
   @OneToMany(() => Notification, notification => notification.account)
   public notifications: Notification[];
-  
+
   @OneToMany(() => Comment, commments => commments.account)
   public comments: Comment[];
+
+  @JoinTable()
+  @ManyToMany(() => Role, role => role.accounts)
+  public roles: Role[]
 
   @AutoMap()
   @Column({ default: 'admin' })

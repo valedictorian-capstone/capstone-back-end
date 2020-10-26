@@ -1,23 +1,25 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { Account } from '@models';
-import { JwtService } from '@nestjs/jwt';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AccountRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY } from '@types';
+import { JwtService } from '@nestjs/jwt';
+import { AccountRepository, RoleRepository } from '@repositories';
+import { ACCOUNT_REPOSITORY, ROLE_REPOSITORY } from '@types';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { where } from 'sequelize';
 import { In } from 'typeorm';
 
 @Injectable()
 export class AccountService {
   constructor(
     @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
+    @Inject(ROLE_REPOSITORY) protected readonly roleRepository: RoleRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
     private readonly jwtService: JwtService
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<AccountVM[]> => {
-    return await this.accountRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["accountDepartments"] })
+    return await this.accountRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["accountDepartments", "roles"] })
       .then(async (models) => {
         return this.mapper.mapArray(models, AccountVM, Account)
       }).catch((err) => {
@@ -27,7 +29,7 @@ export class AccountService {
   };
 
   public readonly findById = async (id: string): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["accountDepartments"] })
+    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["accountDepartments", "roles"] })
       .then(async (model) => {
         if (model) {
           return this.mapper.map(model, AccountVM, Account);
@@ -46,15 +48,34 @@ export class AccountService {
   public readonly checkUnique = async (label: string, value: string): Promise<string> => {
     const query = { [label]: value };
     return this.accountRepository.useHTTP().findOne({ where: query })
-      .then((model) =>{
+      .then((model) => {
         return model ? true : false;
       }).catch(err => err);
   }
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
+    await this.roleRepository.useHTTP().find(
+      {
+        where: {
+          name: body.roleNames ? In(body.roleNames) : {}
+        },
+      }
+    ).then(
+      async roles => {
+        const account = Object.assign(body, new Account());
+        account.roles = roles;
+        await this.accountRepository.useHTTP().save(account)
+          .then(
+            async item => {
+              return await this.findById(item.id);
+            }
+          );
+      }
+    )
     return await this.accountRepository.useHTTP().save(body).then(async (account) => {
+      ;
       return await this.findById(account.id);
-    }).catch(err => err);
+    });
   };
 
   public readonly update = async (body: AccountUM): Promise<AccountVM> => {
@@ -64,11 +85,11 @@ export class AccountService {
           throw new NotFoundException(
             `Can not find ${body.id}`,
           );
-        }else{
+        } else {
           return await this.accountRepository.useHTTP().save(body).then(async (account) => {
             return await this.findById(account.id);
           }).catch(err => err);
-        } 
+        }
       });
   };
 
