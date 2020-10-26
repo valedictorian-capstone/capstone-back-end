@@ -18,15 +18,7 @@ export class AccountDepartment extends BaseEntity {
 
     @AutoMap()
     @Column({ default: false })
-    public isModerator: boolean;
-
-    @AutoMap()
-    @Column({ default: false })
-    public isSystemAdmin: boolean;
-
-    @AutoMap()
-    @Column({ default: true })
-    public isEmployee: boolean;
+    public isLeader: boolean;
 
     @AutoMap()
     @Column({ default: 'admin' })

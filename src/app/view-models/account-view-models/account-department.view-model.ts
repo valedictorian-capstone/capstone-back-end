@@ -1,4 +1,4 @@
-import { ApiProperty, getSchemaPath } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { AccountVM } from ".";
 import { DepartmentVM } from "../basic-view-models";
@@ -12,13 +12,7 @@ export class AccountDepartmentVM {
   public readonly isDelete: boolean;
 
   @AutoMap()
-  public readonly isModerator: boolean;
-
-  @AutoMap()
-  public readonly isSystemAdmin: boolean;
-
-  @AutoMap()
-  public readonly isEmployee: boolean;
+  public readonly isLeader: boolean;
 
   public readonly account: AccountVM;
   
@@ -42,20 +36,15 @@ export class AccountDepartmentVM {
 
 export class AccountDepartmentCM {
   
-  @ApiProperty({ required: true, type: {$ref: getSchemaPath(AccountVM)} })
-  public readonly account: AccountVM;
+  @ApiProperty({ required: true })
+  public readonly account: {id: string};
   
-  @ApiProperty({ required: true, type: {$ref: getSchemaPath(DepartmentVM)} })
-  public readonly department: DepartmentVM;
+  @ApiProperty({ required: true })
+  public readonly department: {id: string};
   
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly isModerator: boolean;
+  public readonly isLeader: boolean;
 
-  @ApiProperty({ required: true, format: 'boolean' })
-  public readonly isSystemAdmin: boolean;
-
-  @ApiProperty({ required: true, format: 'boolean' })
-  public readonly isEmployee: boolean;
 }
 
 export class AccountDepartmentUM {
@@ -63,18 +52,12 @@ export class AccountDepartmentUM {
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly id: string;
 
-  @ApiProperty({ required: true, type: {$ref: getSchemaPath(AccountVM)} })
-  public readonly account: AccountVM;
+  @ApiProperty({ required: true })
+  public readonly account: {id: string};
   
-  @ApiProperty({ required: true, type: {$ref: getSchemaPath(DepartmentVM)} })
-  public readonly department: DepartmentVM;
+  @ApiProperty({ required: true })
+  public readonly department: {id: string};
   
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly isModerator: boolean;
-
-  @ApiProperty({ required: true, format: 'boolean' })
-  public readonly isSystemAdmin: boolean;
-
-  @ApiProperty({ required: true, format: 'boolean' })
-  public readonly isEmployee: boolean;
+  public readonly isLeader: boolean;
 }
