@@ -1,6 +1,11 @@
-import { ServiceRepository } from '.';
+import { ServiceRepository, FeedBackRepository, OrderRepository } from '.';
 
 export * from './service.repository';
+export * from './feedback.repository';
+export * from './order.repository';
+
 export const SERVICE_REPOSITORIES = [
-  ServiceRepository.inject
+  ServiceRepository.inject,
+  FeedBackRepository.inject,
+  OrderRepository.inject
 ];
