@@ -50,6 +50,7 @@ import {
   CommentMapper,
   WFStepInstanceMapper,
   AccountDepartmentMapper,
+  RoleMapper,
 } from './mappers';
 
 
@@ -116,6 +117,7 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(NotificationMapper);
     this.mapper.addProfile(CommentMapper);
     this.mapper.addProfile(AccountDepartmentMapper);
+    this.mapper.addProfile(RoleMapper);
   }
 
 }
