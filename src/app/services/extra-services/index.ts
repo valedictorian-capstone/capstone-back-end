@@ -1,6 +1,6 @@
-import { 
-    AuthService, 
-    EmailService ,
+import {
+    AuthService,
+    EmailService,
     SMSService,
     FirebaseService
 } from '.'
@@ -11,7 +11,7 @@ export * from './email.service';
 export * from './sms.service';
 
 export const EXTRA_SERVICES = [
-    AuthService, 
+    AuthService,
     EmailService,
     SMSService,
     FirebaseService.inject,
