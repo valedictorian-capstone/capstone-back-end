@@ -44,9 +44,9 @@ export class ServiceService {
       }).catch(err => err);
   }
 
-  public readonly insert = async (body: ServiceCM): Promise<any> => {
-    return await this.serviceRepository.useHTTP().save(body).then(async (service) => {
-      return await this.findById(service.id);
+  public readonly insert = async (body: ServiceCM[]): Promise<any> => {
+    return await this.serviceRepository.useHTTP().save(body).then(async (services) => {
+      return  "Inserted " + services.length;
     }).catch(err => err);
   };
 

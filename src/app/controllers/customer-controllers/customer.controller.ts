@@ -65,7 +65,7 @@ export class CustomerController{
   @ApiOperation({ summary: 'Insert new Customer' })
   @ApiCreatedResponse({ description: 'Success create new Customer' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: CustomerCM): Promise<CustomerVM> {
+  public insert(@Body() body: CustomerCM[]): Promise<any> {
     return this.service.insert(body);
   }
 

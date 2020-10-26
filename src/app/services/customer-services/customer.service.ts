@@ -55,9 +55,9 @@ export class CustomerService {
       }).catch(err => err);
   }
 
-  public readonly insert = async (body: CustomerCM): Promise<any> => {
-    return await this.cusomterRepository.useHTTP().save(body).then(async (customer) => {
-      return await this.findById(customer.id);
+  public readonly insert = async (body: CustomerCM[]): Promise<any> => {
+    return await this.cusomterRepository.useHTTP().save(body).then(async (customers) => {
+      return  "Inserted " + customers.length;
     }).catch(err => err);
   };
 

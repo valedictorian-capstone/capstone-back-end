@@ -57,7 +57,7 @@ export class ServiceController{
   @ApiOperation({ summary: 'Insert new Service' })
   @ApiCreatedResponse({ description: 'Success create new Service' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: ServiceCM): Promise<ServiceVM> {
+  public insert(@Body() body: ServiceCM[]): Promise<any> {
     return this.service.insert(body);
   }
 
