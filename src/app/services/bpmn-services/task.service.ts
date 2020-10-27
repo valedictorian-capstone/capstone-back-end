@@ -1,7 +1,7 @@
 import { NotFoundException } from '@exceptions';
 import { Task } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AccountRepository, ACCOUNT_REPOSITORIES, TaskRepository } from '@repositories';
+import { AccountRepository, TaskRepository } from '@repositories';
 import { FirebaseService } from '@services';
 import { ACCOUNT_REPOSITORY, FIREBASE_SERVICE, TASK_REPOSITORY } from '@types';
 import { TaskCM, TaskUM, TaskVM } from '@view-models';
@@ -23,15 +23,27 @@ export class TaskService {
       where: {
         id: ids ? { id: In(ids) } : undefined,
         status: status ? { status: status } : undefined,
-      }
+      },
+      relations: [
+        "assignee",
+        "assignBy",
+        "customer"
+      ]
     }
     return await this.taskRepository.useHTTP()
       .find(queryObj)
-      .then((models) => this.mapper.mapArray(models, TaskVM, Task))
+      .then((models) =>
+        this.mapper.mapArray(models, TaskVM, Task)
+      )
   };
 
   public readonly findById = async (id: string): Promise<TaskVM> => {
-    return await this.taskRepository.useHTTP().findOne({ id: id })
+    return await this.taskRepository.useHTTP().findOne({
+      where: {
+        id: id
+      },
+      relations: ["assignee", "assignBy", "customer"],
+    })
       .then((model) => {
         if (model) {
           return this.mapper.map(model, TaskVM, Task);
@@ -65,22 +77,20 @@ export class TaskService {
       })
   };
 
-  public readonly update = async (body: TaskUM): Promise<TaskVM[]> => {
-    return await this.taskRepository.useHTTP().findOne({ id: body.id })
-      .then(async (model) => {
+  public readonly update = async (body: TaskUM): Promise<TaskVM> => {
+    await this.taskRepository.useHTTP().findOne({ id: body.id })
+      .then(model => {
         if (!model) {
-          throw new NotFoundException(
-            `Can not find ${body.id}`,
-          );
+          throw new NotFoundException(`task id ${body.id} not found`)
         }
-        return await this.taskRepository.useHTTP()
-          .save(body)
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
       });
+
+    await this.taskRepository.useHTTP().save(body);
+
+    return await this.taskRepository.useHTTP().findOne({ id: body.id })
+      .then(task => {
+        return this.mapper.map(task, TaskVM, Task);
+      })
   };
 
   public readonly remove = async (id: string): Promise<TaskVM> => {

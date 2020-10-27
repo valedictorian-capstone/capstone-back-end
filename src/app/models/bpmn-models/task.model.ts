@@ -1,8 +1,8 @@
 import { AutoMap } from "nestjsx-automapper";
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Account } from "../account-models";
-import { WFStepInstance } from "./wf-step-instance.model";
 import { Customer } from "../customer-models/customer.model";
+import { WFStepInstance } from "./wf-step-instance.model";
 
 @Entity()
 export class Task extends BaseEntity {
@@ -11,19 +11,19 @@ export class Task extends BaseEntity {
   public id: string;
 
   @AutoMap()
-  @Column({ unique: true, default: ''})
+  @Column({ unique: true, default: '' })
   public code: string;
 
-  @OneToOne(() => Account, account => account)
+  @ManyToOne(() => Account, account => account)
   public assignee: Account;
 
   @ManyToOne(() => WFStepInstance, wfStepInstance => wfStepInstance.tasks)
   public wfStepInstance: WFStepInstance;
 
-  @ManyToMany(() => Customer, customer => customer.tasks)
-  public customers: Customer[];
+  @ManyToOne(() => Customer, customer => customer.tasks)
+  public customer: Customer;
 
-  @OneToOne(() => Account, account => account)
+  @ManyToOne(() => Account, account => account)
   public assignBy: Account;
 
   @Column({ default: "OPEN" })

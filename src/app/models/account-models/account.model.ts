@@ -2,6 +2,7 @@ import { hashSync } from 'bcrypt';
 import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Comment, Notification } from '../basic-models';
+import { Task } from '../bpmn-models';
 import { AccountDepartment } from './account-department.model';
 import { Role } from './role.model';
 @Entity()
@@ -55,6 +56,12 @@ export class Account extends BaseEntity {
 
   @OneToMany(() => Comment, commments => commments.account)
   public comments: Comment[];
+
+  @OneToMany(() => Task, task => task.assignee)
+  public task: Task[];
+
+  @OneToMany(() => Task, task => task.assignBy)
+  public assignTasks: Task[];
 
   @JoinTable()
   @ManyToMany(() => Role, role => role.accounts)

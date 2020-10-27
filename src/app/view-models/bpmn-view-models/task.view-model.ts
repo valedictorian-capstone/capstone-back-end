@@ -22,8 +22,9 @@ export class TaskVM {
   public readonly createAt: Date;
   @AutoMap()
   public readonly updateAt: Date;
-  public readonly customers: CustomerVM[];
+  public readonly customer: CustomerVM;
   public readonly assignee: AccountVM;
+  public readonly assignBy: AccountVM;
   public readonly wfStepInstance: WFStepInstance;
 }
 
@@ -43,9 +44,11 @@ export class TaskCM {
   @ApiProperty()
   public readonly updateAt: Date;
   @ApiProperty()
-  public readonly customerId: string ;
+  public readonly customerId: string;
   @ApiProperty()
   public readonly assigneeId: string;
+  @ApiProperty()
+  public readonly assigneeBy: string;
   @ApiProperty()
   public readonly wfStepInstanceId: string;
 }
@@ -58,7 +61,7 @@ export class TaskUM {
   public readonly isDelete: boolean;
   public readonly createAt: Date;
   public readonly updateAt: Date;
-  public readonly customerId: string ;
+  public readonly customerId: string;
   public readonly assigneeId: string;
   public readonly wfStepInstanceId: string;
 }

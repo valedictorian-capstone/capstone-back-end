@@ -4,19 +4,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
+import { Comment } from '../basic-models';
+import { FormData } from '../form-models/form-data.model';
+import { Task } from './task.model';
 import { WFInstance } from './wf-instance.model';
 import { WFStep } from './wf-step.model';
-import { FormData } from '../form-models/form-data.model';
-import { Customer } from '../customer-models/customer.model';
-import { Task } from './task.model';
-import { Comment } from '../basic-models';
 
 @Entity()
 export class WFStepInstance extends BaseEntity {
