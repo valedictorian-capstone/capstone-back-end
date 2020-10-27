@@ -39,13 +39,11 @@ import {
   FormControlMapper,
   FormDataMapper,
   FormGroupMapper,
-  FormValueMapper,
   GroupMapper,
   ServiceMapper,
   WFConnectionMapper,
   WFMapper,
   WFStepMapper,
-  PatternMapper,
   NotificationMapper,
   CommentMapper,
   WFStepInstanceMapper,
@@ -106,14 +104,12 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(FormControlMapper);
     this.mapper.addProfile(FormDataMapper);
     this.mapper.addProfile(FormGroupMapper);
-    this.mapper.addProfile(FormValueMapper);
     this.mapper.addProfile(GroupMapper);
     this.mapper.addProfile(ServiceMapper);
     this.mapper.addProfile(WFConnectionMapper);
     this.mapper.addProfile(WFMapper);
     this.mapper.addProfile(WFStepInstanceMapper)
     this.mapper.addProfile(WFStepMapper);
-    this.mapper.addProfile(PatternMapper);
     this.mapper.addProfile(NotificationMapper);
     this.mapper.addProfile(CommentMapper);
     this.mapper.addProfile(AccountDepartmentMapper);

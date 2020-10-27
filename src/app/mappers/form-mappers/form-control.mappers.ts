@@ -6,8 +6,8 @@ export class FormControlMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
     super();
     mapper.createMap(FormControl, FormControlVM)
-      .forMember(d => d.options, mapFrom(s => s.options))
-      .forMember(d => d.formValues, mapWith(FormControlVM, s => s.formValues))
+      .forMember(d => d.options, mapFrom(s => s.options)) 
+      .forMember(d => d.validator, mapFrom(s => s.validator)) 
       .forMember(d => d.formGroup, mapWith(FormControlVM, s => s.formGroup));
     mapper.createMap(FormControlUM, FormControlVM);
   }

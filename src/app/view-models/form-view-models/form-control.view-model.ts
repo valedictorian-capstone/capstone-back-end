@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FormValueVM } from "./form-value.view-model";
 import { AutoMap } from 'nestjsx-automapper';
 import { FormGroupVM } from './form-group.view-model';
 
@@ -24,6 +23,8 @@ export class FormControlVM {
   public readonly size: string;
   
   public readonly options: any;
+
+  public readonly validator: any;
   
   @AutoMap()
   public readonly type: string;
@@ -72,8 +73,6 @@ export class FormControlVM {
   
   public readonly formGroup: FormGroupVM;
   
-  public readonly formValues: FormValueVM[];
-  
   @AutoMap()
   public readonly isDelete: boolean;
   
@@ -103,8 +102,11 @@ export class FormControlCM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly size: string;
 
-  @ApiProperty({ required: true, isArray: true })
+  @ApiProperty({ required: true })
   public readonly options: {value: any, label: string}[];
+
+  @ApiProperty({ required: true })
+  public readonly validator: {value: any, label: string}[];
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly type: string;
@@ -166,8 +168,11 @@ export class FormControlUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly size: string;
 
-  @ApiProperty({ required: true, isArray: true })
+  @ApiProperty({ required: true })
   public readonly options: {value: any, label: string}[];
+
+  @ApiProperty({ required: true })
+  public readonly validator: {value: any, label: string}[];
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly type: string;
