@@ -2,7 +2,6 @@ import { AllExceptionsFilter } from '@extras/filters';
 import { LogRequestInterceptor } from '@extras/intercepters/log.intercepter';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { FirebaseService } from '@services';
 import { json, urlencoded } from 'express';
 import { AppModule } from 'src/app/app.module';
 declare const module: any;
@@ -12,8 +11,8 @@ declare const module: any;
   const app = await NestFactory.create(AppModule, { logger: true, cors: true, bodyParser: true });
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new LogRequestInterceptor());
-  app.use(urlencoded({ limit: 1024 * 1024 * 500, extended: true, type: 'application/x-www-form-urlencoding' }));
-  app.use(json({ limit: 1024 * 1024 * 500, type: 'application/json' }));
+  app.use(json({ limit: '500mb' }));
+  app.use(urlencoded({ limit: '50mb', extended: false }));
   const options = new DocumentBuilder()
     .setTitle('CRM BE')
     .setDescription('ALL API OF CRM')
@@ -21,7 +20,6 @@ declare const module: any;
     .addBearerAuth({ type: 'apiKey', description: 'Copy valid JWT token into field', name: 'Authorization', in: 'header', bearerFormat: 'Bearer' }, 'JWT')
     .build();
 
-  // FirebaseService.init();
   const document = SwaggerModule.createDocument(app, options);
   const styles = {
     customCss: ".swagger-ui table tbody tr td:first-of-type {max-width : 30%} .swagger-ui .parameters-col_description {width:70%}",

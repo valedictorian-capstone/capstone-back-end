@@ -24,7 +24,6 @@
         "test:e2e": "jest --config ./test/jest-e2e.json"
     },
     "dependencies": {
-        "@aginix/nestjs-firebase-admin": "^2.0.1",
         "@nestjs/common": "^7.0.0",
         "@nestjs/config": "^0.5.0",
         "@nestjs/core": "^7.0.0",
@@ -38,7 +37,6 @@
         "@types/dotenv": "^8.2.0",
         "bcrypt": "^5.0.0",
         "dotenv": "^8.2.0",
-        "firebase": "^8.0.0",
         "firebase-admin": "^9.2.0",
         "fs": "0.0.1-security",
         "jsonwebtoken": "^8.5.1",

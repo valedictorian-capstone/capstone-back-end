@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import {
   BASIC_CONTROLLERS,
   BPMN_CONTROLLERS,
@@ -14,7 +13,6 @@ import { AppProvider } from '@extras/providers';
 import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { FirebaseAdminModule } from '@aginix/nestjs-firebase-admin'
 import {
   ACCOUNT_REPOSITORIES,
   BASIC_REPOSITORIES,
@@ -52,8 +50,6 @@ import {
   AccountDepartmentMapper,
   RoleMapper,
 } from './mappers';
-import { environment } from 'src/environments/environment';
-import admin from 'firebase-admin';
 
 
 @Module({
@@ -64,17 +60,11 @@ import admin from 'firebase-admin';
       useUndefined: true,
     }),
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV ? process.env.NODE_ENV + 'dev.env' : 'dev.env'
+      envFilePath: process.env.NODE_ENV ? process.env.NODE_ENV + '.env' : 'dev.env'
     }),
     JwtModule.register({
       secretOrPrivateKey: '10',
       signOptions: { expiresIn: '60s' },
-    }),
-    FirebaseAdminModule.forRootAsync({
-      useFactory: () => ({
-        credential: admin.credential.cert(require('service-account.json')),
-        databaseURL: environment.firebase.databaseURL,
-      })
     }),
   ],
   controllers: [
