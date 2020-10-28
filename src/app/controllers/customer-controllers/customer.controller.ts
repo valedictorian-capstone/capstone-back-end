@@ -61,14 +61,20 @@ export class CustomerController{
     return this.service.findById(id);
   }
 
+  @Post('/import')
+  @ApiOperation({ summary: 'Import List Customer' })
+  @ApiCreatedResponse({ description: 'Success insert list to database' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public import(@Body() body: CustomerCM[]): Promise<any> {
+    return this.service.import(body);
+  }
   @Post()
   @ApiOperation({ summary: 'Insert new Customer' })
-  @ApiCreatedResponse({ description: 'Success create new Customer' })
+  @ApiCreatedResponse({ description: 'Success insert new Customer' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: CustomerCM[]): Promise<any> {
+  public insert(@Body() body: CustomerCM): Promise<any> {
     return this.service.insert(body);
   }
-
   @Put()
   @ApiOperation({ summary: 'Update an Customer by Id' })
   @ApiCreatedResponse({ description: 'Success update new Customer' })
