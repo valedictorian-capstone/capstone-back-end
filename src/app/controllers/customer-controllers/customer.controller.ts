@@ -36,6 +36,14 @@ export class CustomerController{
     return this.service.findAll();
   }
 
+  @Get('/type')
+  @ApiOperation({ summary: 'Get all Customers by type' })
+  @ApiOkResponse({ description: 'Success return all Customers by type' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public findAllByType(@Query('type') type:string): Promise<CustomerVM[]> {
+    return this.service.findAllByType(type);
+  }
+
   @Get('/unique')
   @ApiOperation({ summary: 'Check duplicate data for phoneNumber, email, code' })
   @ApiOkResponse({ description: "Success return value is exist in database" })
@@ -57,7 +65,7 @@ export class CustomerController{
   @ApiOperation({ summary: 'Insert new Customer' })
   @ApiCreatedResponse({ description: 'Success create new Customer' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: CustomerCM): Promise<CustomerVM> {
+  public insert(@Body() body: CustomerCM[]): Promise<any> {
     return this.service.insert(body);
   }
 

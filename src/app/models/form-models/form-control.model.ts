@@ -1,4 +1,4 @@
-import { Pattern } from '@models';
+
 import { AutoMap } from 'nestjsx-automapper';
 import {
   BaseEntity,
@@ -12,7 +12,6 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { FormGroup } from './form-group.model';
-import { FormValue } from './form-value.model';
 
 @Entity()
 export class FormControl extends BaseEntity {
@@ -43,6 +42,9 @@ export class FormControl extends BaseEntity {
 
   @Column("json", { default: null })
   public options: any;
+
+  @Column("json", { default: null })
+  public validator: any;
 
   @AutoMap()
   @Column({ default: null })
@@ -106,12 +108,6 @@ export class FormControl extends BaseEntity {
   
   @ManyToOne(() => FormGroup, formGroup => formGroup.formControls)
   public formGroup: FormGroup;
-
-  @OneToMany(() => FormValue, formValues => formValues.formControl)
-  public formValues: FormValue[];
-
-  @ManyToMany(() => Pattern, patterns => patterns.formControls)
-  public patterns: Pattern[]
 
   @AutoMap()
   @Column({ default: null })

@@ -16,11 +16,6 @@ export class FormGroupService {
         @InjectMapper() protected readonly mapper: AutoMapper
     ) { }
 
-    // public readonly findAll = async (): Promise<FormGroupVM[]> => {
-    //     return await this.repository.useHTTP().find()
-    //         .then((models) => this.mapper.mapArray(models, FormGroupVM, FormGroup))
-    // };
-
     public readonly findAllContainFormControl = async (ids?: string[]): Promise<FormGroupVM[]> => {
         return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["formControls", "formDatas", "wfSteps"] })
             .then((models) => {

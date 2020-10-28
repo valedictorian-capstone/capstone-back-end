@@ -24,6 +24,17 @@ export class CustomerService {
       });
   };
 
+  public readonly findAllByType = async (type: string): Promise<CustomerVM[]> => {
+    return await this.cusomterRepository.useHTTP().find({ where: {type: type }, relations: ["groups", "wFInstances"] })
+      .then(async (models) => {
+        return this.mapper.mapArray(models, CustomerVM, Customer)
+      }).catch((err) => {
+        console.log(err);
+        throw new InvalidException(err);
+      });
+  };
+
+
   public readonly findById = async (id: string): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "wFInstances"] })
       .then(async (model) => {
@@ -44,9 +55,9 @@ export class CustomerService {
       }).catch(err => err);
   }
 
-  public readonly insert = async (body: CustomerCM): Promise<any> => {
-    return await this.cusomterRepository.useHTTP().save(body).then(async (customer) => {
-      return await this.findById(customer.id);
+  public readonly insert = async (body: CustomerCM[]): Promise<any> => {
+    return await this.cusomterRepository.useHTTP().save(body).then(async (customers) => {
+      return  "Inserted " + customers.length;
     }).catch(err => err);
   };
 

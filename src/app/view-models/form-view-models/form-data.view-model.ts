@@ -1,5 +1,4 @@
 import { AutoMap } from "nestjsx-automapper";
-import { FormValueVM } from "./form-value.view-model";
 import { WFStepInstanceVM } from "../bpmn-view-models/work-flow-step-instance.view-model";
 import { FormGroupVM } from "./form-group.view-model";
 import { ApiProperty } from "@nestjs/swagger";
@@ -13,7 +12,7 @@ export class FormDataVM {
   
   public readonly formGroup: FormGroupVM;
   
-  public readonly formValues: FormValueVM[];
+  public readonly value: string;
   
   @AutoMap()
   public readonly isDelete: boolean;
@@ -37,6 +36,9 @@ export class FormDataCM {
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly formGroupId: string;
+
+  @ApiProperty({ required: true })
+  public readonly value: {value: any, label: string}[];
 }
 
 export class FormDataUM {
@@ -48,4 +50,7 @@ export class FormDataUM {
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly formGroupId: string;
+
+  @ApiProperty({ required: true })
+  public readonly value: {value: any, label: string}[];
 }

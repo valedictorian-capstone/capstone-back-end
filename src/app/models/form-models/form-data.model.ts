@@ -5,14 +5,12 @@ import {
     CreateDateColumn,
     Entity,
     ManyToOne,
-    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm';
 
 import { WFStepInstance } from '../bpmn-models/wf-step-instance.model';
 import { FormGroup } from './form-group.model';
-import { FormValue } from './form-value.model';
 
 @Entity()
 export class FormData extends BaseEntity {
@@ -26,8 +24,8 @@ export class FormData extends BaseEntity {
     @ManyToOne(() => FormGroup, formGroup => formGroup.formDatas)
     public formGroup: FormGroup;
 
-    @OneToMany(() => FormValue, formValues => formValues.formData)
-    public formValues: FormValue[];
+    @Column("json", { default: null })
+    public value: any;
 
     @AutoMap()
     @Column({ default: null })
