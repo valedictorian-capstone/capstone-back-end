@@ -7,7 +7,7 @@ import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
 import { createTransport } from 'nodemailer';
 import { CustomerVM, EmailManual } from '@view-models';
- 
+
 @Injectable()
 export class EmailService {
     constructor(
@@ -39,23 +39,27 @@ export class EmailService {
             }).catch(err => err);
     }
 
-    public readonly sendManualEmailCustomer = async ( emailManual: EmailManual): Promise<string> => {
-        const transporter = createTransport({ // config mail server
-            service: 'Gmail',
-            auth: {
-                user: 'crmdynamic123@gmail.com',
-                pass: '123456crm'
-            }
-        });
-        console.log(emailManual);
-        console.log(transporter);
-        await transporter.sendMail(this.getManualMailTemplate(emailManual.info.email, emailManual.subject, emailManual.content), (err, info) => {
-            if (err) {
-                return console.log(err)
-            } else {
-                return console.log(info)
-            }
-        })
+    public readonly sendManualEmailCustomer = async (emailManual: EmailManual): Promise<string> => {
+        try {
+            const transporter = createTransport({ // config mail server
+                service: 'Gmail',
+                auth: {
+                    user: 'crmdynamic123@gmail.com',
+                    pass: '123456crm'
+                }
+            });
+            console.log(emailManual);
+            console.log(transporter);
+            await transporter.sendMail(this.getManualMailTemplate(emailManual.info.email, emailManual.subject, emailManual.content), (err, info) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(info);
+                }
+            })
+        } catch (err) {
+
+        }
         return "OK"
     }
 
@@ -71,7 +75,7 @@ export class EmailService {
         }
     };
 
-    private getManualMailTemplate(to: string, subject: string, content: string){
+    private getManualMailTemplate(to: string, subject: string, content: string) {
         return {
             from: 'CRM Capstone',
             to: to,
