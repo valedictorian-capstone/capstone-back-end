@@ -13,7 +13,7 @@ import {
 import { Group } from '../basic-models';
 import { WFInstance } from '../bpmn-models';
 import { Task } from '../bpmn-models/task.model';
-import { FeedBack, Order } from '../service-models';
+import { OrderRequest } from '../service-models';
 
 @Entity()
 export class Customer extends BaseEntity {
@@ -71,11 +71,8 @@ export class Customer extends BaseEntity {
   @ManyToMany(() => Task, task => task.customers)
   public tasks: Task[]
 
-  @OneToMany(() => Order, orders => orders.customer)
-  public orders: Order[];
-
-  @OneToMany(() => FeedBack, feedBacks => feedBacks.customer)
-  public feedBacks: FeedBack[];
+  @OneToMany(() => OrderRequest, orderRequests => orderRequests.customer)
+  public orderRequests: OrderRequest[]; 
 
   @AutoMap()
   @Column({ default: null })

@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
+import { OrderRequestVM } from "./order-request.view-model";
 
 
 export class ServiceVM {
@@ -21,6 +22,8 @@ export class ServiceVM {
   
   @AutoMap()
   public readonly description: string;
+
+  public readonly orderRequests: OrderRequestVM[];
   
   @AutoMap()
   public readonly isDelete: boolean;

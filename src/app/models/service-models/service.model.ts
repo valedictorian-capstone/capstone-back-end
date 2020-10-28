@@ -4,10 +4,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Order } from './order.model';
+import { OrderRequest } from './order-request.model';
 
 @Entity()
 export class Service extends BaseEntity {
@@ -35,7 +36,8 @@ export class Service extends BaseEntity {
   @AutoMap()
   public description: string;
 
-  public orders: Order[];
+  @OneToMany(() => OrderRequest, orderRequests => orderRequests.customer)
+  public orderRequests: OrderRequest[];
 
   @AutoMap()
   @Column({ default: null })

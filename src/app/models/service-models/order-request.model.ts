@@ -4,30 +4,30 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Customer } from '../customer-models';
-import { FeedBack } from './feedback.model';
 import { Service } from './service.model';
 
 @Entity()
-export class Order extends BaseEntity {
+export class OrderRequest extends BaseEntity {
 
     @AutoMap()
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
-    @ManyToOne(() => Customer, customer => customer.orders)
+    @AutoMap()
+    @Column({ default: null })
+    public feedBack: string;
+
+    @ManyToOne(() => Customer, customer => customer.orderRequests)
     public customer: Customer;
-
-    @ManyToOne(() => Service, service => service.orders)
+    
+    @ManyToOne(() => Service, service => service.orderRequests)
     public service: Service;
-
-    @OneToMany(() => FeedBack, feedBacks => feedBacks.order)
-    public feedBacks: FeedBack[];
 
     @AutoMap()
     @Column({ default: null })
@@ -48,5 +48,5 @@ export class Order extends BaseEntity {
     @AutoMap()
     @UpdateDateColumn()
     public updatedAt: Date;
-    
+
 }

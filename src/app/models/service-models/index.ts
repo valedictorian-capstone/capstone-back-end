@@ -1,5 +1,4 @@
-import { Service, Order, FeedBack } from '.';
+import { Service,  OrderRequest } from '.';
 export * from './service.model';
-export * from './order.model';
-export * from './feedback.model';
-export const SERVICE_MODELS = [Service, Order, FeedBack];
+export * from './order-request.model';
+export const SERVICE_MODELS = [Service, OrderRequest];
