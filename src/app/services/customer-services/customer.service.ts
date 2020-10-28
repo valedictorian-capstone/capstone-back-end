@@ -2,15 +2,18 @@ import { InvalidException, NotFoundException } from '@exceptions';
 import { Customer } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CustomerRepository } from '@repositories';
-import { CUSTOMER_REPOSITORY } from '@types';
+import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
+import { FirebaseService } from '../extra-services';
 
 @Injectable()
 export class CustomerService {
   constructor(
     @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
+    @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
@@ -25,7 +28,7 @@ export class CustomerService {
   };
 
   public readonly findAllByType = async (type: string): Promise<CustomerVM[]> => {
-    return await this.cusomterRepository.useHTTP().find({ where: {type: type }, relations: ["groups", "wFInstances"] })
+    return await this.cusomterRepository.useHTTP().find({ where: { type: type }, relations: ["groups", "wFInstances"] })
       .then(async (models) => {
         return this.mapper.mapArray(models, CustomerVM, Customer)
       }).catch((err) => {
@@ -50,14 +53,23 @@ export class CustomerService {
   public readonly checkUnique = async (label: string, value: string): Promise<string> => {
     const query = { [label]: value };
     return this.cusomterRepository.useHTTP().findOne({ where: query })
-      .then((model) =>{
+      .then((model) => {
         return model ? true : false;
       }).catch(err => err);
   }
 
-  public readonly insert = async (body: CustomerCM[]): Promise<any> => {
+  public readonly import = async (body: CustomerCM[]): Promise<any> => {
     return await this.cusomterRepository.useHTTP().save(body).then(async (customers) => {
-      return  "Inserted " + customers.length;
+      return customers;
+    }).catch(err => err);
+  };
+
+  public readonly insert = async (body: CustomerCM): Promise<any> => {
+    const customer = { ...body };
+    // await this.firebaseService.useUploadFileBase64("avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64")), customer.avatar, customer.avatar.substring(customer.avatar.indexOf("data:image/") + 5, customer.avatar.indexOf(";base64")));
+    // customer.avatar = environment.firebase.linkDownloadFile + "avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64"));
+    return await this.cusomterRepository.useHTTP().save({ ...customer }).then(async (data) => {
+      return data;
     }).catch(err => err);
   };
 
