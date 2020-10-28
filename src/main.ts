@@ -9,18 +9,10 @@ declare const module: any;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 // const open = require("open");
 (async () => {
-  const app = await NestFactory.create(AppModule, { logger: true, bodyParser: true });
-  const allowedOrigins = ["http://localhost:4200", "https://m-crm-admin.web.app", "https://m-crm-app.web.app"];
-  app.enableCors({
-    origin: (origin, callback) => {
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true)
-      } else {
-        callback(new Error('Not allowed by CORS'))
-      }
-    },
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
-  })
+  const origins = ["http://localhost:8080", "https://crm-capstione-be.azurewebsites.net", "http://localhost:4200", "https://m-crm-admin.web.app", "https://m-crm-app.web.app"]
+  const app = await NestFactory.create(AppModule, {
+    logger: true, cors: true, bodyParser: true
+  });
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new LogRequestInterceptor());
   app.use(urlencoded({ limit: 1024 * 1024 * 500, extended: true, type: 'application/x-www-form-urlencoding' }));
@@ -31,8 +23,6 @@ declare const module: any;
     .setVersion('1.0')
     .addBearerAuth({ type: 'apiKey', description: 'Copy valid JWT token into field', name: 'Authorization', in: 'header', bearerFormat: 'Bearer' }, 'JWT')
     .build();
-
-  // FirebaseService.init();
   const document = SwaggerModule.createDocument(app, options);
   const styles = {
     customCss: ".swagger-ui table tbody tr td:first-of-type {max-width : 30%} .swagger-ui .parameters-col_description {width:70%}",
