@@ -46,6 +46,7 @@
         "nestjsx-automapper": "^3.1.2",
         "nexmo": "^2.9.1",
         "nodemailer": "^6.4.14",
+        "nodemailer-smtp-transport": "^2.7.4",
         "nodemon": "^2.0.4",
         "open": "^7.2.1",
         "passport": "^0.4.1",
