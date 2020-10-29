@@ -48,7 +48,7 @@ export class TaskController {
     @ApiOperation({ summary: 'Insert new task' })
     @ApiCreatedResponse({ description: 'Success create new task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Body() body: TaskCM): Promise<TaskVM[]> {
+    public insert(@Body() body: TaskCM): Promise<TaskVM> {
         return this.service.insert(body);
     }
 
