@@ -6,7 +6,6 @@ import { AccountRepository, RoleRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, ROLE_REPOSITORY } from '@types';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { where } from 'sequelize';
 import { In } from 'typeorm';
 
 @Injectable()

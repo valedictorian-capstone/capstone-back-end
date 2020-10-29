@@ -51,6 +51,7 @@ import {
   WFStepInstanceMapper,
   AccountDepartmentMapper,
   RoleMapper,
+  TaskMapper
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import admin from 'firebase-admin';
@@ -124,6 +125,7 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(CommentMapper);
     this.mapper.addProfile(AccountDepartmentMapper);
     this.mapper.addProfile(RoleMapper);
+    this.mapper.addProfile(TaskMapper);
   }
 
 }
