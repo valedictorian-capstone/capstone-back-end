@@ -65,7 +65,7 @@ import admin from 'firebase-admin';
       useUndefined: true,
     }),
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV ? process.env.NODE_ENV + 'dev.env' : 'dev.env'
+      envFilePath: '.env'
     }),
     JwtModule.register({
       secretOrPrivateKey: '10',

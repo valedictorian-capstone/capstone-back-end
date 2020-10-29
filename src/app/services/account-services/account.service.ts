@@ -4,7 +4,7 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, RoleRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, ROLE_REPOSITORY } from '@types';
-import { AccountCM, AccountUM, AccountVM } from '@view-models';
+import { AccountCM, AccountFilter, AccountUM, AccountVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
 
@@ -17,15 +17,24 @@ export class AccountService {
     private readonly jwtService: JwtService
   ) { }
 
-  public readonly findAll = async (ids?: string[]): Promise<AccountVM[]> => {
-    return await this.accountRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["accountDepartments", "roles"] })
+  public readonly findAll = async (accountFilter: AccountFilter): Promise<AccountVM[]> => {
+    if (accountFilter?.roleName) {
+      return await this.findByRole(accountFilter.roleName);
+    } else {
+      return await this.mapper.mapArray(await this.accountRepository.useHTTP()
+        .find({ relations: ["accountDepartments", "roles"] }), AccountVM, Account);
+    }
+  };
+
+  public readonly findByRole = async (roleName: string): Promise<AccountVM[]> => {
+    return await this.accountRepository.useHTTP().createQueryBuilder('account')
+      .leftJoinAndSelect('account.roles', 'role')
+      .where('role.name= :name', { name: roleName })
+      .getMany()
       .then(async (models) => {
         return this.mapper.mapArray(models, AccountVM, Account)
-      }).catch((err) => {
-        console.log(err);
-        throw new InvalidException(err);
       });
-  };
+  }
 
   public readonly findById = async (id: string): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["accountDepartments", "roles"] })
@@ -44,37 +53,26 @@ export class AccountService {
     return this.mapper.map(this.jwtService.decode(jwt)['account'] as Account, AccountVM, Account);
   }
 
-  public readonly checkUnique = async (label: string, value: string): Promise<string> => {
+  public readonly checkUnique = async (label: string, value: string): Promise<boolean> => {
     const query = { [label]: value };
     return this.accountRepository.useHTTP().findOne({ where: query })
       .then((model) => {
         return model ? true : false;
-      }).catch(err => err);
+      })
   }
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
-    await this.roleRepository.useHTTP().find(
+    const role = await this.roleRepository.useHTTP().find(
       {
         where: {
           name: body.roleNames ? In(body.roleNames) : {}
         },
       }
-    ).then(
-      async roles => {
-        const account = Object.assign(body, new Account());
-        account.roles = roles;
-        await this.accountRepository.useHTTP().save(account)
-          .then(
-            async item => {
-              return await this.findById(item.id);
-            }
-          );
-      }
-    )
-    return await this.accountRepository.useHTTP().save(body).then(async (account) => {
-      ;
-      return await this.findById(account.id);
-    });
+    );
+    const account = await Object.assign(body, new Account());
+    account.roles = await role;
+    const result = await this.accountRepository.useHTTP().save(account)
+    return await this.findById(result.id);
   };
 
   public readonly update = async (body: AccountUM): Promise<AccountVM> => {
@@ -87,7 +85,7 @@ export class AccountService {
         } else {
           return await this.accountRepository.useHTTP().save(body).then(async (account) => {
             return await this.findById(account.id);
-          }).catch(err => err);
+          })
         }
       });
   };
@@ -111,7 +109,7 @@ export class AccountService {
       });
   };
 
-  public readonly active = async (id: string): Promise<AccountVM[]> => {
+  public readonly active = async (id: string): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -121,15 +119,13 @@ export class AccountService {
         }
         return await this.accountRepository.useHTTP()
           .save({ ...model, IsDelete: false })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
+          .then(async () => {
+            return this.mapper.map(await this.accountRepository.useHTTP().findOne({ id: id }), AccountVM, Account);
           })
       });
   };
 
-  public readonly deactive = async (id: string): Promise<AccountVM[]> => {
+  public readonly deactive = async (id: string): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -139,10 +135,8 @@ export class AccountService {
         }
         return await this.accountRepository.useHTTP()
           .save({ ...model, IsDelete: true })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
+          .then(async () => {
+            return this.mapper.map(await this.accountRepository.useHTTP().findOne({ id: id }), AccountVM, Account);
           })
       });
   };
