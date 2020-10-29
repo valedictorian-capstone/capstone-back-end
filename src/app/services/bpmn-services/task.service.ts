@@ -19,11 +19,11 @@ export class TaskService {
   ) { }
 
   public readonly findAll = async (ids?: string[], status?: string): Promise<TaskVM[]> => {
+    const whereOption = {};
+    if (ids) whereOption['id'] = In(ids);
+    if (status) whereOption['status'] = status;
     const queryObj: FindManyOptions = {
-      where: {
-        id: ids ? { id: In(ids) } : undefined,
-        status: status ? { status: status } : undefined,
-      },
+      where: whereOption,
       relations: [
         "assignee",
         "assignBy",
@@ -54,8 +54,16 @@ export class TaskService {
       })
   };
 
-  public readonly insert = (body: TaskCM): Promise<TaskVM[]> => {
-    return this.taskRepository.useHTTP().save(body)
+  public readonly insert = async (body: TaskCM): Promise<TaskVM> => {
+    const assignee = await body.assigneeId ? await this.accountRepository.useHTTP().findOne({ id: body.assigneeId }) : {};
+    const assignBy = await body.assigneeById ? await this.accountRepository.useHTTP().findOne({ id: body.assigneeById }) : {};
+    return await this.taskRepository.useHTTP().save(
+      {
+        ...body,
+        assignee: assignee,
+        assignBy: assignBy
+      }
+    )
       .then((model) => {
         //send notification
         this.accountRepository.useHTTP()
@@ -71,9 +79,7 @@ export class TaskService {
               })
             }
           )
-        const ids = [];
-        ids.push(model.id);
-        return this.findAll(ids);
+        return this.findById(model.id);
       })
   };
 
@@ -85,9 +91,31 @@ export class TaskService {
         }
       });
 
-    await this.taskRepository.useHTTP().save(body);
-
-    return await this.taskRepository.useHTTP().findOne({ id: body.id })
+    const assignee = await body.assigneeId ? await this.accountRepository.useHTTP().findOne({ id: body.assigneeId }) : {};
+    const assignBy = await body.assigneeById ? await this.accountRepository.useHTTP().findOne({ id: body.assigneeById }) : {};
+    await this.taskRepository.useHTTP().save(
+      {
+        ...body,
+        assignee: assignee,
+        assignBy: assignBy
+      }
+    ).then(result => {
+      //send notification
+      this.accountRepository.useHTTP()
+        .findOne({ id: body.assigneeId }).then(
+          async employee => {
+            this.firebaseService.sendNotification({
+              data: {
+                id: result.id,
+                title: 'You have a new task',
+                message: `New task code ${result.code} created for you`
+              },
+              token: employee.deviceId,
+            })
+          }
+        )
+    })
+    return await this.taskRepository.useHTTP().findOne({ where: { id: body.id }, relations: ["assignee", "assignBy", "customer"] })
       .then(task => {
         return this.mapper.map(task, TaskVM, Task);
       })

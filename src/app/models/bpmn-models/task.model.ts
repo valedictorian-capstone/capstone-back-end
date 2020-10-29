@@ -26,6 +26,7 @@ export class Task extends BaseEntity {
   @ManyToOne(() => Account, account => account)
   public assignBy: Account;
 
+  @AutoMap()
   @Column({ default: "OPEN" })
   public status: string;
 

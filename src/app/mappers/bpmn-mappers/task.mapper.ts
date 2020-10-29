@@ -1,5 +1,5 @@
 import { Task } from "@models";
-import { AutoMapper, mapWith, preCondition, ProfileBase } from "@nartc/automapper";
+import { AutoMapper, mapWith, ProfileBase } from "@nartc/automapper";
 import { AccountVM, CustomerVM, TaskUM, TaskVM, WFStepInstanceVM } from "@view-models";
 
 export class TaskMapper extends ProfileBase {
