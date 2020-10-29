@@ -5,8 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, RoleRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, ROLE_REPOSITORY } from '@types';
 import { AccountCM, AccountUM, AccountVM } from '@view-models';
+import { hashSync } from 'bcrypt';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { where } from 'sequelize';
 import { In } from 'typeorm';
 
 @Injectable()
@@ -54,26 +54,26 @@ export class AccountService {
   }
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
-    await this.roleRepository.useHTTP().find(
-      {
-        where: {
-          name: body.roleNames ? In(body.roleNames) : {}
-        },
-      }
-    ).then(
-      async roles => {
-        const account = Object.assign(body, new Account());
-        account.roles = roles;
-        await this.accountRepository.useHTTP().save(account)
-          .then(
-            async item => {
-              return await this.findById(item.id);
-            }
-          );
-      }
-    )
-    return await this.accountRepository.useHTTP().save(body).then(async (account) => {
-      ;
+    // await this.roleRepository.useHTTP().find(
+    //   {
+    //     where: {
+    //       name: body.roleNames ? In(body.roleNames) : {}
+    //     },
+    //   }
+    // ).then(
+    //   async roles => {
+    //     const account = Object.assign(body, new Account());
+    //     account.roles = roles;
+    //     await this.accountRepository.useHTTP().save(account)
+    //       .then(
+    //         async item => {
+    //           return await this.findById(item.id);
+    //         }
+    //       );
+    //   }
+    // )
+    
+    return await this.accountRepository.useHTTP().save({...body, password: hashSync(body.password, 10)}).then(async (account) => {
       return await this.findById(account.id);
     });
   };

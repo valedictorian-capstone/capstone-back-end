@@ -85,7 +85,7 @@ export class AccountCM {
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly gender: string;
+  public readonly gender: boolean;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 6 })
@@ -125,7 +125,7 @@ export class AccountUM {
   public readonly address: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly gender: string;
+  public readonly gender: boolean;
 
   @ApiProperty()
   public readonly deviceId: string;

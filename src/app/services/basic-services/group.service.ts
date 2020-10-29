@@ -15,7 +15,7 @@ export class GroupService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<GroupVM[]> => {
-    return await this.repository.useHTTP().find(ids ? { id: In(ids) } : {})
+    return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["customers"] })
       .then((models) => this.mapper.mapArray(models, GroupVM, Group))
   };
 

@@ -1,6 +1,5 @@
-import { hashSync } from 'bcrypt';
 import { AutoMap } from 'nestjsx-automapper';
-import { BaseEntity, BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Comment, Notification } from '../basic-models';
 import { AccountDepartment } from './account-department.model';
 import { Role } from './role.model';
@@ -28,23 +27,23 @@ export class Account extends BaseEntity {
   public code: string;
 
   @AutoMap()
-  @Column({ default: '' })
+  @Column({ nullable: true })
   public avatar: string;
 
   @AutoMap()
-  @Column({ default: '' })
+  @Column({ nullable: true })
   public address: string;
 
   @AutoMap()
-  @Column({ default: '' })
-  public gender: string;
+  @Column({ nullable: true, default: true })
+  public gender: boolean;
 
   @AutoMap()
   @Column({ nullable: false, default: '1' })
   public password: string;
 
   @AutoMap()
-  @Column({ nullable: false, default: '' })
+  @Column({ nullable: true })
   public deviceId: string;
 
   @OneToMany(() => AccountDepartment, accountDepartments => accountDepartments.account)
@@ -79,9 +78,4 @@ export class Account extends BaseEntity {
   @AutoMap()
   @UpdateDateColumn()
   public updatedAt: Date;
-
-  @BeforeInsert()
-  async hashPassword() {
-    this.password = await hashSync(this.password, 10);
-  }
 }
