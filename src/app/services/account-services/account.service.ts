@@ -53,6 +53,12 @@ export class AccountService {
       }).catch(err => err);
   }
 
+  public readonly import = async (body: AccountCM[]): Promise<any> => {
+    return await this.accountRepository.useHTTP().save(body).then(async (accounts) => {
+      return this.findAll(accounts.map((e) => e.id));
+    }).catch(err => err);
+  };
+
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
     // await this.roleRepository.useHTTP().find(
     //   {

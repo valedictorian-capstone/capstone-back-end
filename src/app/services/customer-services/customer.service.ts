@@ -60,7 +60,7 @@ export class CustomerService {
 
   public readonly import = async (body: CustomerCM[]): Promise<any> => {
     return await this.cusomterRepository.useHTTP().save(body).then(async (customers) => {
-      return customers;
+      return this.findAll(customers.map((e) => e.id));
     }).catch(err => err);
   };
 
