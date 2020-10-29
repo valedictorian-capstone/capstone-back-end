@@ -11,6 +11,7 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import { EmailService } from '@services';
+import { CustomerVM, EmailManual } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Email')
@@ -26,5 +27,13 @@ export class EmailController {
     @ApiBadRequestResponse({ description: 'Have error in run time' })
     public insert(@Body() ids: string[]): Promise<string> {
         return this.service.sendEmailCustomer(ids);
+    }
+
+    @Post('/sendManual')
+    @ApiOperation({ summary: 'Send email to Customer' })
+    @ApiCreatedResponse({ description: 'Success send email to Customer' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public sendManualEmail(@Body() emailManual: EmailManual): Promise<string> {
+        return this.service.sendManualEmailCustomer(emailManual);
     }
 }
