@@ -72,7 +72,7 @@ import admin from 'firebase-admin';
     }),
     FirebaseAdminModule.forRootAsync({
       useFactory: () => ({
-        credential: admin.credential.cert(require('service-account.json')),
+        credential: admin.credential.cert(require('../../service-account.json')),
         databaseURL: environment.firebase.databaseURL,
       })
     }),
