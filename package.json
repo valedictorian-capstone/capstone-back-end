@@ -8,9 +8,10 @@
     "scripts": {
         "prebuild": "rimraf dist",
         "build": "nest build",
+        "gcp-build": "npm run build",
         "prestart:prod": "rimraf dist && nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-        "start": "nest start",
+        "start": "npm run start:prod",
         "start:node": "nodemon --config nodemon.json",
         "start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js",
         "start:debug": "nest start --debug --watch",
