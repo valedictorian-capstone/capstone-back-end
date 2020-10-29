@@ -37,15 +37,11 @@ export class OrderRequestCM {
     @ApiProperty({ required: true, format: 'string', minLength: 2 })
     public readonly feedback: string;
 
-    @ApiProperty()
-    public readonly customer: {
-        customer: { id: string }
-    };
+    @ApiProperty({ required: true })
+    public readonly customer: { id: string };
 
-    @ApiProperty()
-    public readonly service: {
-        service: { id: string }
-    };
+    @ApiProperty({ required: true })
+    public readonly service: { id: string };
 
 }
 
@@ -57,15 +53,11 @@ export class OrderRequestUM {
     @ApiProperty({ required: true, format: 'string', minLength: 2 })
     public readonly feedback: string;
 
-    @ApiProperty()
-    public readonly customer: {
-        customer: { id: string }
-    };
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly customer: { id: string };
 
-    @ApiProperty()
-    public readonly service: {
-        service: { id: string }
-    };
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly service: { id: string };
 
 
 }

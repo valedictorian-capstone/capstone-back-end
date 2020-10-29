@@ -1,5 +1,5 @@
 import { OrderRequest } from "@models";
-import { AutoMapper, mapWith, preCondition, ProfileBase } from '@nartc/automapper';
+import { AutoMapper, mapWith, ProfileBase } from '@nartc/automapper';
 import { CustomerVM, OrderRequestUM, OrderRequestVM, ServiceVM } from "@view-models";
 
 export class OrderRequestMapper extends ProfileBase {
