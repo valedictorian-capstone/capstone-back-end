@@ -35,6 +35,14 @@ export class FormGroupService {
             })
     };
 
+    public readonly checkUnique = async (label: string, value: string): Promise<string> => {
+        const query = { [label]: value };
+        return this.repository.useHTTP().findOne({ where: query })
+          .then((model) => {
+            return model ? true : false;
+          }).catch(err => err);
+      }
+
     public readonly insert = (body: FormGroupCM): Promise<FormGroupVM> => {
         return this.repository.useHTTP().insert(body)
             .then(async (model) => {

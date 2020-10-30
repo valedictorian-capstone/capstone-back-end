@@ -11,7 +11,7 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import { EmailService } from '@services';
-import { CustomerVM, EmailManual } from '@view-models';
+import { EmailManual } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Email')
