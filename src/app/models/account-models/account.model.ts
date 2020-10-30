@@ -13,7 +13,7 @@ export class Account extends BaseEntity {
   public id: string;
 
   @AutoMap()
-  @Column({ nullable: false, default: '' })
+  @Column({ nullable: true, default: '' })
   public fullname: string;
 
   @AutoMap()
@@ -21,23 +21,23 @@ export class Account extends BaseEntity {
   public email: string;
 
   @AutoMap()
-  @Column({ default: '' })
+  @Column({ nullable: false, default: '' })
   public phone: string;
 
   @AutoMap()
-  @Column({ default: '' })
+  @Column({ nullable: true, default: '' })
   public code: string;
 
   @AutoMap()
-  @Column({ default: '' })
+  @Column({ nullable: true, default: '' })
   public avatar: string;
 
   @AutoMap()
-  @Column({ default: '' })
+  @Column({ nullable: true, default: '' })
   public address: string;
 
   @AutoMap()
-  @Column({ default: '' })
+  @Column({ nullable: true, default: '' })
   public gender: string;
 
   @AutoMap()
@@ -45,7 +45,7 @@ export class Account extends BaseEntity {
   public password: string;
 
   @AutoMap()
-  @Column({ nullable: false, default: '' })
+  @Column({ nullable: true, default: '' })
   public deviceId: string;
 
   @OneToMany(() => AccountDepartment, accountDepartments => accountDepartments.account)
