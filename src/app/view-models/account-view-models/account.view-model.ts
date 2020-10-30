@@ -166,3 +166,8 @@ export class AccountAuthVM {
   @AutoMap()
   public readonly deviceId: string;
 }
+
+export class AccountFilter {
+  public readonly roleName?: string;
+  public readonly ids?: string[];
+}

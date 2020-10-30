@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import {
   BASIC_CONTROLLERS,
   BPMN_CONTROLLERS,
@@ -13,6 +14,7 @@ import { AppProvider } from '@extras/providers';
 import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { FirebaseAdminModule } from '@aginix/nestjs-firebase-admin'
 import {
   ACCOUNT_REPOSITORIES,
   BASIC_REPOSITORIES,
@@ -49,8 +51,11 @@ import {
   WFStepInstanceMapper,
   AccountDepartmentMapper,
   RoleMapper,
-  OrderRequestMapper
+  OrderRequestMapper,
+  TaskMapper,
 } from './mappers';
+import { environment } from 'src/environments/environment';
+import admin from 'firebase-admin';
 
 
 @Module({
@@ -61,11 +66,17 @@ import {
       useUndefined: true,
     }),
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV ? process.env.NODE_ENV + '.env' : 'dev.env'
+      envFilePath: '.env'
     }),
     JwtModule.register({
       secretOrPrivateKey: '10',
       signOptions: { expiresIn: '60s' },
+    }),
+    FirebaseAdminModule.forRootAsync({
+      useFactory: () => ({
+        credential: admin.credential.cert(require('../../service-account.json')),
+        databaseURL: environment.firebase.databaseURL,
+      })
     }),
   ],
   controllers: [
@@ -116,6 +127,7 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(AccountDepartmentMapper);
     this.mapper.addProfile(RoleMapper);
     this.mapper.addProfile(OrderRequestMapper);
+    this.mapper.addProfile(TaskMapper);
   }
 
 }

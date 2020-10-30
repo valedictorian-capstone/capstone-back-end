@@ -65,11 +65,11 @@ export class Customer extends BaseEntity {
   @JoinTable()
   public groups: Group[];
 
-  @OneToMany(() => WFInstance, wFInstances=> wFInstances.customer )
+  @OneToMany(() => WFInstance, wFInstances => wFInstances.customer)
   public wFInstances: WFInstance[];
 
-  @ManyToMany(() => Task, task => task.customers)
-  public tasks: Task[]
+  @OneToMany(() => Task, task => task.customer)
+  public tasks: Task[];
 
   @OneToMany(() => OrderRequest, orderRequests => orderRequests.customer)
   public orderRequests: OrderRequest[]; 
