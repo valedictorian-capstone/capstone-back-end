@@ -6,7 +6,7 @@ import {
   EXTRA_CONTROLLERS,
   FORM_CONTROLLERS,
   ACCOUNT_CONTROLLERS,
-  SERVICE_CONTROLLERS
+  SERVICE_CONTROLLERS,
 } from '@controllers';
 import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
@@ -51,7 +51,8 @@ import {
   WFStepInstanceMapper,
   AccountDepartmentMapper,
   RoleMapper,
-  TaskMapper
+  OrderRequestMapper,
+  TaskMapper,
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import admin from 'firebase-admin';
@@ -125,6 +126,7 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(CommentMapper);
     this.mapper.addProfile(AccountDepartmentMapper);
     this.mapper.addProfile(RoleMapper);
+    this.mapper.addProfile(OrderRequestMapper);
     this.mapper.addProfile(TaskMapper);
   }
 
