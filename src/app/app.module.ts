@@ -6,7 +6,7 @@ import {
   EXTRA_CONTROLLERS,
   FORM_CONTROLLERS,
   ACCOUNT_CONTROLLERS,
-  SERVICE_CONTROLLERS
+  SERVICE_CONTROLLERS,
 } from '@controllers';
 import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';

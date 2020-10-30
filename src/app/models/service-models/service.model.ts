@@ -26,7 +26,7 @@ export class Service extends BaseEntity {
 
   @Column({ default: null })
   @AutoMap()
-  public brand: string;
+  public type: string;
 
   @Column({ default: null })
   @AutoMap()
@@ -35,6 +35,9 @@ export class Service extends BaseEntity {
   @Column({ default: null })
   @AutoMap()
   public description: string;
+
+  @Column("json", { default: null })
+  public parameter: any;
 
   @OneToMany(() => OrderRequest, orderRequests => orderRequests.customer)
   public orderRequests: OrderRequest[];

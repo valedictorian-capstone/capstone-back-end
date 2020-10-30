@@ -4,7 +4,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -21,7 +20,7 @@ export class OrderRequest extends BaseEntity {
 
     @AutoMap()
     @Column({ default: null })
-    public feedBack: string;
+    public feedback: string;
 
     @ManyToOne(() => Customer, customer => customer.orderRequests)
     public customer: Customer;

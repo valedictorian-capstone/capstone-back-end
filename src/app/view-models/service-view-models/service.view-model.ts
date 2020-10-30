@@ -15,7 +15,7 @@ export class ServiceVM {
   public readonly name: string;
 
   @AutoMap()
-  public readonly brand: string;
+  public readonly type: string;
 
   @AutoMap()
   public readonly price: string;
@@ -24,6 +24,8 @@ export class ServiceVM {
   public readonly description: string;
 
   public readonly orderRequests: OrderRequestVM[];
+
+  public readonly parameter: any;
   
   @AutoMap()
   public readonly isDelete: boolean;

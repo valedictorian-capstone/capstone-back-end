@@ -1,8 +1,8 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { OrderRequest } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CustomerRepository, OrderRequestRepository } from '@repositories';
-import { CUSTOMER_SERVICE, ORDER_REQUEST_REPOSITORY, SERVICE_SERVICE } from '@types';
+import { CustomerRepository, OrderRequestRepository, ServiceRepository } from '@repositories';
+import { CUSTOMER_REPOSITORY, ORDER_REQUEST_REPOSITORY, SERVICE_REPOSITORY } from '@types';
 import { OrderRequestCM, OrderRequestUM, OrderRequestVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
@@ -11,8 +11,8 @@ import { In } from 'typeorm';
 export class OrderRequestService {
   constructor(
     @Inject(ORDER_REQUEST_REPOSITORY) protected readonly orderRequestRepository: OrderRequestRepository,
-    @Inject(CUSTOMER_SERVICE) protected readonly customerRepository: CustomerRepository,
-    @Inject(SERVICE_SERVICE) protected readonly serviceRepository: CustomerRepository,
+    @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
+    @Inject(SERVICE_REPOSITORY) protected readonly serviceRepository: ServiceRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
