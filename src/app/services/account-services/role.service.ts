@@ -20,9 +20,6 @@ export class RoleService {
     return await this.roleRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}) })
       .then(async (models) => {
         return this.mapper.mapArray(models, RoleVM, Role)
-      }).catch((err) => {
-        console.log(err);
-        throw new InvalidException(err);
       });
   };
 
@@ -38,18 +35,18 @@ export class RoleService {
       })
   };
 
-  public readonly checkUnique = async (label: string, value: string): Promise<string> => {
+  public readonly checkUnique = async (label: string, value: string): Promise<boolean> => {
     const query = { [label]: value };
     return this.roleRepository.useHTTP().findOne({ where: query })
       .then((model) => {
         return model ? true : false;
-      }).catch(err => err);
+      })
   }
 
   public readonly insert = async (body: RoleCM): Promise<RoleVM> => {
     return await this.roleRepository.useHTTP().save(body).then(async (role) => {
       return await this.findById(role.id);
-    }).catch(err => err);
+    });
   };
 
   public readonly update = async (body: RoleUM): Promise<RoleVM> => {
@@ -62,7 +59,7 @@ export class RoleService {
         } else {
           return await this.roleRepository.useHTTP().save(body).then(async (role) => {
             return await this.findById(role.id);
-          }).catch(err => err);
+          });
         }
       });
   };
