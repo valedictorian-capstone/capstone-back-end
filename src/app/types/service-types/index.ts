@@ -1,4 +1,3 @@
 
 export * from './service.types';
-export * from './feedback.types';
-export * from './order.types';
+export * from './order-request.types';

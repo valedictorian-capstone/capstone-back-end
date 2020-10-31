@@ -8,18 +8,22 @@ import {
   Post,
   Put,
   Query,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { AccountCM, AccountUM, AccountVM } from '@view-models';
+import { AccountCM, AccountFilter, AccountUM, AccountVM } from '@view-models';
 import { AccountService } from '@services';
+import { isDate } from 'util';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Account')
@@ -33,8 +37,9 @@ export class AccountController {
   @ApiOperation({ summary: 'Get all Accounts' })
   @ApiOkResponse({ description: 'Success return all Accounts' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public findAll(): Promise<AccountVM[]> {
-    return this.service.findAll();
+  @ApiQuery({ name: 'roleName', allowEmptyValue: true })
+  public findAll(@Query() accountFilter: AccountFilter): Promise<AccountVM[]> {
+    return this.service.findAll(accountFilter);
   }
 
   @Get('/jwt/')
@@ -50,7 +55,7 @@ export class AccountController {
   @ApiOperation({ summary: 'Check duplicate data for phoneNumber, email, code' })
   @ApiOkResponse({ description: "Success return value is exist in database" })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public checkEnique(@Query('label') label: string, @Query('value') value: string): Promise<string> {
+  public checkEnique(@Query('label') label: string, @Query('value') value: string): Promise<boolean> {
     return this.service.checkUnique(label, value);
   }
 
@@ -99,7 +104,7 @@ export class AccountController {
   @ApiOperation({ summary: 'Active an Account by Id' })
   @ApiCreatedResponse({ description: 'Success active new Account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<AccountVM[]> {
+  public active(@Param('id') id: string): Promise<AccountVM> {
     return this.service.active(id);
   }
 
@@ -107,7 +112,7 @@ export class AccountController {
   @ApiOperation({ summary: 'Deative an Account by Id' })
   @ApiCreatedResponse({ description: 'Success deactive new Account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<AccountVM[]> {
+  public deactive(@Param('id') id: string): Promise<AccountVM> {
     return this.service.deactive(id);
   }
 }

@@ -2,6 +2,7 @@ import { WFInstanceVM } from "../bpmn-view-models";
 import { AutoMap } from "nestjsx-automapper";
 import { ApiProperty } from "@nestjs/swagger";
 import { GroupVM } from "../basic-view-models";
+import { OrderRequestVM } from "../service-view-models";
 
 export class CustomerVM {
 
@@ -41,6 +42,8 @@ export class CustomerVM {
   public groups: GroupVM[];
 
   public wFInstances: WFInstanceVM[];
+
+  public orderRequests: OrderRequestVM[];
 
   @AutoMap()
   public readonly isDelete: boolean;

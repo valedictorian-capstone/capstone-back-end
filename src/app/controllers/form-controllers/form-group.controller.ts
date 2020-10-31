@@ -6,6 +6,7 @@ import {
     Param,
     Post,
     Put,
+    Query,
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
@@ -59,6 +60,14 @@ export class FormGroupController {
     @ApiBadRequestResponse({ description: 'Have error in run time' })
     public update(@Body() body: FormGroupUM): Promise<FormGroupVM> {
         return this.service.update(body);
+    }
+
+    @Get('/unique')
+    @ApiOperation({ summary: 'Check duplicate data for phoneNumber, email, code' })
+    @ApiOkResponse({ description: "Success return value is exist in database" })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public checkEnique(@Query('label') label: string, @Query('value') value: string): Promise<string> {
+      return this.service.checkUnique(label, value);
     }
 
     @Delete(':id')

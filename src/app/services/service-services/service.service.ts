@@ -60,7 +60,7 @@ export class ServiceService {
         }else{
           return await this.serviceRepository.useHTTP().save(body).then(async (Service) => {
             return await this.findById(Service.id);
-          }).catch(err => err);
+          });
         }
       });
   };

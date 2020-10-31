@@ -1,4 +1,4 @@
-import { ServiceService } from '.';
+import { ServiceService, OrderRequestService } from '.';
 export * from './service.service';
-export * from './order.service';
-export const SERVICE_SERVICES = [ServiceService];
+export * from './order-request.service'
+export const SERVICE_SERVICES = [ServiceService, OrderRequestService];

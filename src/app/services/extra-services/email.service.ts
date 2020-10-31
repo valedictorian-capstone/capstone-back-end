@@ -6,7 +6,7 @@ import { CUSTOMER_REPOSITORY } from '@types';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
 import { createTransport } from 'nodemailer';
-import { CustomerVM, EmailManual } from '@view-models';
+import { EmailManual } from '@view-models';
 
 @Injectable()
 export class EmailService {
@@ -39,28 +39,23 @@ export class EmailService {
             }).catch(err => err);
     }
 
-    public readonly sendManualEmailCustomer = async (emailManual: EmailManual): Promise<string> => {
-        try {
-            const transporter = createTransport({ // config mail server
-                service: 'Gmail',
-                auth: {
-                    user: 'crmdynamic123@gmail.com',
-                    pass: '123456crm'
-                }
-            });
-            console.log(emailManual);
-            console.log(transporter);
-            await transporter.sendMail(this.getManualMailTemplate(emailManual.info.email, emailManual.subject, emailManual.content), (err, info) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log(info);
-                }
-            })
-        } catch (err) {
-
-        }
-        return "OK"
+    public readonly sendManualEmailCustomer = async (emailManual: EmailManual): Promise<any> => {
+        const transporter = createTransport({ // config mail server
+            service: 'Gmail',
+            auth: {
+                user: 'crmdynamic123@gmail.com',
+                pass: '123456crm'
+            }
+        });
+        await transporter.sendMail(this.getManualMailTemplate(emailManual.info.email, emailManual.subject, emailManual.content), (err, info) => {
+            if (err) {
+                console.log(err);
+                return err;
+            } else {
+                console.log(info);
+                return "OK";
+            }
+        })
     }
 
 

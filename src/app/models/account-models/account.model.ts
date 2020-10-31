@@ -1,6 +1,7 @@
 import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Comment, Notification } from '../basic-models';
+import { Task } from '../bpmn-models';
 import { AccountDepartment } from './account-department.model';
 import { Role } from './role.model';
 @Entity()
@@ -11,7 +12,7 @@ export class Account extends BaseEntity {
   public id: string;
 
   @AutoMap()
-  @Column({ nullable: false, default: '' })
+  @Column({ nullable: true, default: '' })
   public fullname: string;
 
   @AutoMap()
@@ -19,11 +20,11 @@ export class Account extends BaseEntity {
   public email: string;
 
   @AutoMap()
-  @Column({ default: '' })
+  @Column({ nullable: false, unique: true, default: '' })
   public phone: string;
 
   @AutoMap()
-  @Column({ default: '' })
+  @Column({ nullable: true, unique: true, default: '' })
   public code: string;
 
   @AutoMap()
@@ -32,6 +33,13 @@ export class Account extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: true })
+  public address: string;
+
+  @Column({ nullable: true, default: '' })
+  public avatar: string;
+
+  @AutoMap()
+  @Column({ nullable: true, default: '' })
   public address: string;
 
   @AutoMap()
@@ -54,6 +62,12 @@ export class Account extends BaseEntity {
 
   @OneToMany(() => Comment, commments => commments.account)
   public comments: Comment[];
+
+  @OneToMany(() => Task, task => task.assignee)
+  public task: Task[];
+
+  @OneToMany(() => Task, task => task.assignBy)
+  public assignTasks: Task[];
 
   @JoinTable()
   @ManyToMany(() => Role, role => role.accounts)
