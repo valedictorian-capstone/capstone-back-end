@@ -35,13 +35,6 @@ export class Account extends BaseEntity {
   @Column({ nullable: true })
   public address: string;
 
-  @Column({ nullable: true, default: '' })
-  public avatar: string;
-
-  @AutoMap()
-  @Column({ nullable: true, default: '' })
-  public address: string;
-
   @AutoMap()
   @Column({ nullable: true, default: true })
   public gender: boolean;
