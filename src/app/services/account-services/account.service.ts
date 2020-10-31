@@ -4,7 +4,8 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, RoleRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, ROLE_REPOSITORY } from '@types';
-import { AccountCM, AccountFilter, AccountUM, AccountVM } from '@view-models';
+import { AccountCM, AccountUM, AccountVM, AccountFilter } from '@view-models';
+import { hashSync } from 'bcrypt';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
 
@@ -61,18 +62,35 @@ export class AccountService {
       })
   }
 
+  public readonly import = async (body: AccountCM[]): Promise<any> => {
+    return await this.accountRepository.useHTTP().save(body).then(async (accounts) => {
+      return this.findAll(accounts.map((e) => e.id));
+    }).catch(err => err);
+  };
+
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
-    const role = await this.roleRepository.useHTTP().find(
-      {
-        where: {
-          name: body.roleNames ? In(body.roleNames) : {}
-        },
-      }
-    );
-    const account = await Object.assign(body, new Account());
-    account.roles = await role;
-    const result = await this.accountRepository.useHTTP().save(account)
-    return await this.findById(result.id);
+    // await this.roleRepository.useHTTP().find(
+    //   {
+    //     where: {
+    //       name: body.roleNames ? In(body.roleNames) : {}
+    //     },
+    //   }
+    // ).then(
+    //   async roles => {
+    //     const account = Object.assign(body, new Account());
+    //     account.roles = roles;
+    //     await this.accountRepository.useHTTP().save(account)
+    //       .then(
+    //         async item => {
+    //           return await this.findById(item.id);
+    //         }
+    //       );
+    //   }
+    // )
+    
+    return await this.accountRepository.useHTTP().save({...body, password: hashSync(body.password, 10)}).then(async (account) => {
+      return await this.findById(account.id);
+    });
   };
 
   public readonly update = async (body: AccountUM): Promise<AccountVM> => {

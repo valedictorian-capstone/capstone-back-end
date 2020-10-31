@@ -76,6 +76,14 @@ export class AccountController {
     return this.service.insert(body);
   }
 
+  @Post('/import')
+  @ApiOperation({ summary: 'Import List Account' })
+  @ApiCreatedResponse({ description: 'Success insert list to database' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public import(@Body() body: AccountCM[]): Promise<any> {
+    return this.service.import(body);
+  }
+
   @Put()
   @ApiOperation({ summary: 'Update an Account by Id' })
   @ApiCreatedResponse({ description: 'Success update new Account' })
