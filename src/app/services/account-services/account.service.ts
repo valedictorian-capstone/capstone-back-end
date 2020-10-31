@@ -1,13 +1,12 @@
-import { InvalidException, NotFoundException } from '@exceptions';
+import { NotFoundException } from '@exceptions';
 import { Account } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, RoleRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, ROLE_REPOSITORY } from '@types';
-import { AccountCM, AccountUM, AccountVM, AccountFilter } from '@view-models';
+import { AccountCM, AccountFilter, AccountUM, AccountVM } from '@view-models';
 import { hashSync } from 'bcrypt';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { In } from 'typeorm';
 
 @Injectable()
 export class AccountService {
@@ -64,7 +63,7 @@ export class AccountService {
 
   public readonly import = async (body: AccountCM[]): Promise<any> => {
     return await this.accountRepository.useHTTP().save(body).then(async (accounts) => {
-      return this.findAll(accounts.map((e) => e.id));
+      return this.findAll({ ids: accounts.map((e) => e.id) });
     }).catch(err => err);
   };
 
@@ -87,8 +86,8 @@ export class AccountService {
     //       );
     //   }
     // )
-    
-    return await this.accountRepository.useHTTP().save({...body, password: hashSync(body.password, 10)}).then(async (account) => {
+
+    return await this.accountRepository.useHTTP().save({ ...body, password: hashSync(body.password, 10) }).then(async (account) => {
       return await this.findById(account.id);
     });
   };
