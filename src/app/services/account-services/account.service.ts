@@ -68,25 +68,6 @@ export class AccountService {
   };
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
-    // await this.roleRepository.useHTTP().find(
-    //   {
-    //     where: {
-    //       name: body.roleNames ? In(body.roleNames) : {}
-    //     },
-    //   }
-    // ).then(
-    //   async roles => {
-    //     const account = Object.assign(body, new Account());
-    //     account.roles = roles;
-    //     await this.accountRepository.useHTTP().save(account)
-    //       .then(
-    //         async item => {
-    //           return await this.findById(item.id);
-    //         }
-    //       );
-    //   }
-    // )
-
     return await this.accountRepository.useHTTP().save({ ...body, password: hashSync(body.password, 10) }).then(async (account) => {
       return await this.findById(account.id);
     });
