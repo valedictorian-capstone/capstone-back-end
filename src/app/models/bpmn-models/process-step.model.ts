@@ -43,8 +43,8 @@ export class ProcessStep extends BaseEntity {
   @ManyToOne(() => Process, process => process.processSteps)
   public process: Process;
 
-  @OneToMany(() => ProcessStep, processStep => processStep.processStepsInstances)
-  public processStepsInstances: ProcessStepInstance[];
+  @OneToMany(() => ProcessStepInstance, processStepInstances => processStepInstances.processStep)
+  public processStepInstances: ProcessStepInstance[];
 
   @OneToMany(() => ProcessConnection, processConnection => processConnection.fromProcessStep)
   public processFromConnections: ProcessConnection[];
