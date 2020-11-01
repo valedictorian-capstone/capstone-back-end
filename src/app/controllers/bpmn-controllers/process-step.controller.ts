@@ -5,7 +5,8 @@ import {
   Get,
   Param,
   Post,
-  Put
+  Put,
+  Query
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -24,7 +25,7 @@ import { ProcessStepCM, ProcessStepUM, ProcessStepVM } from '@view-models';
 @Controller('/api/v1/process-step')
 export class ProcessStepController {
   constructor(
-    protected readonly processConnectionService: ProcessStepService,
+    protected readonly processStepService: ProcessStepService,
   ) { }
 
   @Get()
@@ -32,7 +33,15 @@ export class ProcessStepController {
   @ApiOkResponse({ description: 'Success return all process' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findAll(): Promise<ProcessStepVM[]> {
-    return await this.processConnectionService.findAll();
+    return await this.processStepService.findAll();
+  }
+
+  @Get('/unique')
+  @ApiOperation({ summary: 'Check duplicate data ' })
+  @ApiOkResponse({ description: "Success return value is exist in database" })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public checkEnique(@Query('label') label: string, @Query('value') value: string): Promise<boolean> {
+    return this.processStepService.checkUnique(label, value);
   }
 
   @Get(':id')
@@ -41,7 +50,7 @@ export class ProcessStepController {
   @ApiNotFoundResponse({ description: 'Fail to find process step by Id' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findById(@Param('id') id: string): Promise<ProcessStepVM> {
-    return await this.processConnectionService.findById(id);
+    return await this.processStepService.findById(id);
   }
 
   @Post()
@@ -49,7 +58,7 @@ export class ProcessStepController {
   @ApiCreatedResponse({ description: 'Success create new process step' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async insert(@Body() body: ProcessStepCM[]): Promise<ProcessStepVM[]> {
-    return await this.processConnectionService.insert(body);
+    return await this.processStepService.insert(body);
   }
 
   @Put()
@@ -57,7 +66,7 @@ export class ProcessStepController {
   @ApiCreatedResponse({ description: 'Success update new process step' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async update(@Body() body: ProcessStepUM[]): Promise<ProcessStepVM[]> {
-    return await this.processConnectionService.update(body);
+    return await this.processStepService.update(body);
   }
 
   @Delete(':id')
@@ -65,6 +74,6 @@ export class ProcessStepController {
   @ApiCreatedResponse({ description: 'Success delete new process step' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async remove(@Param('id') id: string): Promise<ProcessStepVM> {
-    return await this.processConnectionService.remove(id);
+    return await this.processStepService.remove(id);
   }
 }

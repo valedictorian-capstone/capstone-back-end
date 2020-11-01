@@ -10,12 +10,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Department } from '../basic-models';
 import { FormGroup } from '../form-models';
 import { ProcessConnection } from './process-connection.model';
 
 
 import { ProcessStepInstance } from './process-step-instance.model';
 import { Process } from './process.model';
+import { Task } from './task.model';
 
 @Entity()
 export class ProcessStep extends BaseEntity {
@@ -41,14 +43,20 @@ export class ProcessStep extends BaseEntity {
   @ManyToOne(() => Process, process => process.processSteps)
   public process: Process;
 
-  @OneToMany(() => ProcessStep, processStep => processStep.processStepsInstances)
-  public processStepsInstances: ProcessStepInstance[];
+  @OneToMany(() => ProcessStepInstance, processStepInstances => processStepInstances.processStep)
+  public processStepInstances: ProcessStepInstance[];
 
   @OneToMany(() => ProcessConnection, processConnection => processConnection.fromProcessStep)
-  public processFromConnections: ProcessConnection[]
+  public processFromConnections: ProcessConnection[];
 
   @OneToMany(() => ProcessConnection, processConnection => processConnection.toProcessStep)
-  public processToConnections: ProcessConnection[]
+  public processToConnections: ProcessConnection[];
+
+  @OneToMany(() => Task, task => task.processStep)
+  public tasks: Task[];
+
+  @ManyToOne(() => Department, department => department.processSteps)
+  public department: Department;
 
   @Column("json")
   public props: any
