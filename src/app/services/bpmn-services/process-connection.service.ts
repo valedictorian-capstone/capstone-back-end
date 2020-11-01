@@ -41,7 +41,7 @@ export class ProcessConnectionService {
 
   public readonly update = async (body: ProcessConnectionUM[]): Promise<ProcessConnectionVM[]> => {
     return await this.processConnectionRepository.useHTTP()
-      .save(body)
+      .save(body as any)
       .then(() => {
         return this.findAll(body.map((e) => e.id));
       });
