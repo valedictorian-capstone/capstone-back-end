@@ -1,4 +1,4 @@
-import { WFInstanceVM } from "../bpmn-view-models";
+import { ProcessInstanceVM } from "../bpmn-view-models";
 import { AutoMap } from "nestjsx-automapper";
 import { ApiProperty } from "@nestjs/swagger";
 import { GroupVM } from "../basic-view-models";
@@ -41,7 +41,7 @@ export class CustomerVM {
 
   public groups: GroupVM[];
 
-  public wFInstances: WFInstanceVM[];
+  public processInstances: ProcessInstanceVM[];
 
   public orderRequests: OrderRequestVM[];
 

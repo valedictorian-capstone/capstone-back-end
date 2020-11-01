@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { AccountVM } from "../account-view-models";
-import { WFStepInstanceVM } from "../bpmn-view-models";
+import { ProcessStepInstanceVM } from "../bpmn-view-models";
 
 export class CommentVM {
 
@@ -13,7 +13,7 @@ export class CommentVM {
 
     public readonly account: AccountVM;
 
-    public readonly wfStepInstance: WFStepInstanceVM;
+    public readonly processStepInstance: ProcessStepInstanceVM;
 
     @AutoMap()
     public readonly isDelete: boolean;
@@ -41,7 +41,7 @@ export class CommentCM {
     public readonly account: { account: { id: string }};
 
     @ApiProperty()
-    public readonly wfStepInstance: { wfStepInstance: { id: string }};
+    public readonly processStepInstance: { processStepInstance: { id: string }};
 
 }
 

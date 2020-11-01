@@ -35,8 +35,8 @@ export class FirebaseService {
     const bufferStream = new stream.PassThrough();
     bufferStream.end(Buffer.from(body.file, 'base64'));
     const bucket = this.storageService.bucket(body.folder);
-    const newFile = bucket.file(body.fileName);
-    bufferStream.pipe(newFile.createWriteStream({
+    const neprocessile = bucket.file(body.fileName);
+    bufferStream.pipe(neprocessile.createWriteStream({
       metadata: {
         contentType: body.fileType,
       },

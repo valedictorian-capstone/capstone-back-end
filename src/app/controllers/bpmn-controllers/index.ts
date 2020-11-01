@@ -1,16 +1,16 @@
-import { WFConnectionController, WFController, WFInstanceController, WFStepInstanceController, WFStepController } from '.';
+import { ProcessConnectionController, ProcessController, ProcessInstanceController, ProcessStepInstanceController, ProcessStepController } from '.';
 import { TaskController } from './task.controller';
-export * from './wf-step.controller';
-export * from './wf-instance.controller';
-export * from './wf-step-instance.controller';
-export * from './wf.controller';
-export * from './wf-connection.controller';
+export * from './process-step.controller';
+export * from './process-instance.controller';
+export * from './process-step-instance.controller';
+export * from './process.controller';
+export * from './process-connection.controller';
 export * from './task.controller'
 export const BPMN_CONTROLLERS = [
-  WFController,
-  WFConnectionController,
-  WFStepController,
-  WFInstanceController,
-  WFStepInstanceController,
+  ProcessController,
+  ProcessConnectionController,
+  ProcessStepController,
+  ProcessInstanceController,
+  ProcessStepInstanceController,
   TaskController,
 ];

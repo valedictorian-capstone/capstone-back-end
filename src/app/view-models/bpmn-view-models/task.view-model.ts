@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { AccountVM } from "@view-models";
 import { AutoMap } from "nestjsx-automapper";
 import { CustomerVM } from "../customer-view-models";
-import { WFStepInstanceVM } from "./work-flow-step-instance.view-model";
+import { ProcessStepInstanceVM } from "./process-step-instance.view-model";
 
 
 export class TaskVM {
@@ -14,7 +14,7 @@ export class TaskVM {
 
   public readonly assignee: AccountVM;
 
-  public readonly wfStepInstance: WFStepInstanceVM;
+  public readonly processStepInstance: ProcessStepInstanceVM;
 
   public readonly customer: CustomerVM;
 
@@ -66,7 +66,7 @@ export class TaskCM {
   @ApiProperty()
   public readonly assigneeById: string;
   @ApiProperty()
-  public readonly wfStepInstanceId: string;
+  public readonly processStepInstanceId: string;
 }
 
 export class TaskUM {
@@ -93,5 +93,5 @@ export class TaskUM {
   @ApiProperty()
   public readonly assigneeById: string;
   @ApiProperty()
-  public readonly wfStepInstanceId: string;
+  public readonly processStepInstanceId: string;
 }

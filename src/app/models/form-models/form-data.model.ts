@@ -9,7 +9,7 @@ import {
     UpdateDateColumn
 } from 'typeorm';
 
-import { WFStepInstance } from '../bpmn-models/wf-step-instance.model';
+import { ProcessStepInstance } from '../bpmn-models/process-step-instance.model';
 import { FormGroup } from './form-group.model';
 
 @Entity()
@@ -18,8 +18,8 @@ export class FormData extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
-    @ManyToOne(() => WFStepInstance, wFStepInstance => wFStepInstance.formDatas)
-    public wFStepInstance: WFStepInstance;
+    @ManyToOne(() => ProcessStepInstance, processStepInstance => processStepInstance.formDatas)
+    public processStepInstance: ProcessStepInstance;
 
     @ManyToOne(() => FormGroup, formGroup => formGroup.formDatas)
     public formGroup: FormGroup;

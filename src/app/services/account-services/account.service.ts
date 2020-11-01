@@ -1,12 +1,13 @@
 import { NotFoundException } from '@exceptions';
 import { Account } from '@models';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, RoleRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, ROLE_REPOSITORY } from '@types';
 import { AccountCM, AccountFilter, AccountUM, AccountVM } from '@view-models';
 import { hashSync } from 'bcrypt';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { In } from 'typeorm';
 
 @Injectable()
 export class AccountService {
@@ -20,11 +21,23 @@ export class AccountService {
   public readonly findAll = async (accountFilter: AccountFilter): Promise<AccountVM[]> => {
     if (accountFilter?.roleName) {
       return await this.findByRole(accountFilter.roleName);
+    } else if (accountFilter?.departmentId) {
+      return await this.findByDepartment(accountFilter?.departmentId)
     } else {
       return await this.mapper.mapArray(await this.accountRepository.useHTTP()
         .find({ relations: ["accountDepartments", "roles"] }), AccountVM, Account);
     }
   };
+
+  private readonly findByDepartment = async (departmentId: string): Promise<AccountVM[]> => {
+    return await this.accountRepository.useHTTP().createQueryBuilder('account')
+      .leftJoinAndSelect('account.accountDepartment', 'accountDepartment')
+      .where('accountDepartment.id: id', { id: departmentId })
+      .getMany()
+      .then(async (models) => {
+        return this.mapper.mapArray(models, AccountVM, Account)
+      });
+  }
 
   public readonly findByRole = async (roleName: string): Promise<AccountVM[]> => {
     return await this.accountRepository.useHTTP().createQueryBuilder('account')
@@ -35,6 +48,7 @@ export class AccountService {
         return this.mapper.mapArray(models, AccountVM, Account)
       });
   }
+
 
   public readonly findById = async (id: string): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["accountDepartments", "roles"] })
@@ -63,8 +77,9 @@ export class AccountService {
 
   public readonly import = async (body: AccountCM[]): Promise<any> => {
     return await this.accountRepository.useHTTP().save(body).then(async (accounts) => {
-      return this.findAll({ ids: accounts.map((e) => e.id) });
-    }).catch(err => err);
+      return await this.mapper.mapArray(
+        await this.accountRepository.useHTTP().find({ id: In(accounts.map(e => e.id)) }), AccountVM, Account);
+    });
   };
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
@@ -74,6 +89,11 @@ export class AccountService {
   };
 
   public readonly update = async (body: AccountUM): Promise<AccountVM> => {
+    if (!body?.id) {
+      throw new BadRequestException(
+        `Id param is missing`,
+      );
+    }
     return await this.accountRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -81,6 +101,7 @@ export class AccountService {
             `Can not find ${body.id}`,
           );
         } else {
+          await this.accountRepository.useHTTP().remove({ ...body } as any);
           return await this.accountRepository.useHTTP().save(body).then(async (account) => {
             return await this.findById(account.id);
           })

@@ -1,8 +1,8 @@
 import { NotFoundException } from '@exceptions';
 import { Comment } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AccountRepository, CommentRepository, WFStepInstanceRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY, COMMENT_REPOSITORY, WF_STEP_REPOSITORY } from '@types';
+import { AccountRepository, CommentRepository, ProcessStepInstanceRepository } from '@repositories';
+import { ACCOUNT_REPOSITORY, COMMENT_REPOSITORY, PROCESS_STEP_REPOSITORY } from '@types';
 import { CommentCM, CommentUM, CommentVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
@@ -12,7 +12,7 @@ export class CommentService {
   constructor(
     @Inject(COMMENT_REPOSITORY) protected readonly repository: CommentRepository,
     @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
-    @Inject(WF_STEP_REPOSITORY) protected readonly wfStepInstanceRepository: WFStepInstanceRepository,
+    @Inject(PROCESS_STEP_REPOSITORY) protected readonly processStepInstanceRepository: ProcessStepInstanceRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
@@ -36,14 +36,14 @@ export class CommentService {
   public readonly insert = (body: CommentCM): Promise<CommentVM> => {
     const account = this.accountRepository.useHTTP().findOne(body.account.account.id);
 
-    const wfStepInstance = this.wfStepInstanceRepository.useHTTP().findOne(body.wfStepInstance.wfStepInstance.id);
+    const processStepInstance = this.processStepInstanceRepository.useHTTP().findOne(body.processStepInstance.processStepInstance.id);
 
     return this.repository.useHTTP().save(body as any)
       .then((model) => {
         model.account = account;
-        model.wfStepInstance = wfStepInstance;
+        model.processStepInstance = processStepInstance;
         console.log(account);
-        console.log(wfStepInstance);
+        console.log(processStepInstance);
         this.repository.useHTTP().save(model).then((model) => {
           return this.findById(model.id);
         }).catch(err => err)

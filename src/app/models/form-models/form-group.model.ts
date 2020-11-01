@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { WFStep } from '../bpmn-models/wf-step.model';
+import { ProcessStep } from '../bpmn-models/process-step.model';
 import { FormControl } from './form-control.model';
 import { FormData } from './form-data.model';
 
@@ -33,9 +33,9 @@ export class FormGroup extends BaseEntity {
   @Column({ default: null })
   public description: string;
 
-  @ManyToMany(() => WFStep, wFStep => wFStep.formGroups)
+  @ManyToMany(() => ProcessStep, processStep => processStep.formGroups)
   @JoinTable()
-  public wfSteps: WFStep[];
+  public processSteps: ProcessStep[];
 
   @OneToMany(() => FormControl, formControls => formControls.formGroup)
   public formControls: FormControl[]
