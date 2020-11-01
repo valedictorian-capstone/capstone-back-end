@@ -37,7 +37,7 @@ export class Service extends BaseEntity {
   public description: string;
 
   @Column("json", { default: null })
-  public parameter: any;
+  public parameters: any;
 
   @OneToMany(() => OrderRequest, orderRequests => orderRequests.customer)
   public orderRequests: OrderRequest[];

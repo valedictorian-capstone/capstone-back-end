@@ -16,9 +16,9 @@ export class DepartmentService {
 
   public readonly findAll = async (): Promise<DepartmentVM[]> => {
     return await this.repository.useHTTP().find({ relations: ["accountDepartments"] })
-      .then((models) => {
+      .then(async (models) => {
         models.forEach(async model => model.accountDepartments = await this.accountDepartmentRepository.useHTTP().find({ where: { department: model }, relations: ["account"] }))
-        return this.mapper.mapArray(models, DepartmentVM, Department)
+        return await this.mapper.mapArray(models, DepartmentVM, Department)
       })
   };
 
