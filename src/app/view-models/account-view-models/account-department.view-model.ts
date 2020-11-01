@@ -14,6 +14,9 @@ export class AccountDepartmentVM {
   @AutoMap()
   public readonly isLeader: boolean;
 
+  @AutoMap()
+  public readonly description: string;
+
   public readonly account: AccountVM;
   
   public readonly department: DepartmentVM;
@@ -45,6 +48,9 @@ export class AccountDepartmentCM {
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly isLeader: boolean;
 
+  @ApiProperty({ required: true, format: 'string' })
+  public readonly description: string;
+
 }
 
 export class AccountDepartmentUM {
@@ -60,4 +66,8 @@ export class AccountDepartmentUM {
   
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly isLeader: boolean;
+  
+  @ApiProperty({ required: true, format: 'string' })
+  public readonly description: string;
+
 }

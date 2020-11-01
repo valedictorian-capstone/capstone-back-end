@@ -1,8 +1,9 @@
 import { ProcessInstanceVM } from "../bpmn-view-models";
 import { AutoMap } from "nestjsx-automapper";
 import { ApiProperty } from "@nestjs/swagger";
-import { GroupVM } from "../basic-view-models";
+
 import { OrderRequestVM } from "../service-view-models";
+import { GroupVM } from "../basic-view-models";
 
 export class CustomerVM {
 
@@ -34,10 +35,16 @@ export class CustomerVM {
   public readonly avatar: string;
 
   @AutoMap()
-  public readonly address: string;
+  public readonly gender: boolean;
 
   @AutoMap()
-  public readonly gender: boolean;
+  public readonly shortName: string;
+
+  @AutoMap()
+  public readonly province: string;
+
+  @AutoMap()
+  public readonly district: string;
 
   public groups: GroupVM[];
 
@@ -92,6 +99,15 @@ export class CustomerCM {
 
   @ApiProperty({ required: true, format: 'Date' })
   public readonly birthDate: Date;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly shortName: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly province: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly district: string;
 }
 
 export class CustomerUM {
@@ -128,5 +144,14 @@ export class CustomerUM {
 
   @ApiProperty({ required: true, format: 'Date'})
   public readonly birthDate: Date;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly shortName: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly province: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly district: string;
 
 }

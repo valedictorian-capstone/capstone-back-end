@@ -47,10 +47,6 @@ export class Customer extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: true })
-  public address: string;
-
-  @AutoMap()
-  @Column({ nullable: true })
   public avatar: string;
 
   @AutoMap()
@@ -60,6 +56,18 @@ export class Customer extends BaseEntity {
   @AutoMap()
   @Column({ nullable: true })
   public type: string;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  public shortName: string;
+  
+  @AutoMap()
+  @Column({ nullable: true })
+  public province: string;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  public district: string;
 
   @ManyToMany(() => Group, group => group.customers)
   @JoinTable()

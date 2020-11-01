@@ -4,11 +4,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Customer } from '../customer-models';
+import { Event } from './event.model';
+import { Trigger } from './trigger.model';
 
 @Entity()
 export class Group extends BaseEntity {
@@ -18,14 +21,30 @@ export class Group extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: false })
-  public name!: string;
+  public name: string;
 
   @AutoMap()
   @Column({ default: null })
-  public description!: string;
+  public description: string;
+
+  @AutoMap()
+  @Column({ default: null })
+  public type: string;
+  
+  @AutoMap()
+  @Column({ default: null })
+  public condition: string;
 
   @ManyToMany(() => Customer, Customer => Customer.groups)
   public customers: Customer[];
+
+  @ManyToMany(() => Event, events => events.groups)
+  @JoinTable()
+  public events: Event[];
+
+  @ManyToMany(() => Trigger, triggers => triggers.groups)
+  @JoinTable()
+  public triggers: Trigger[];
 
   @AutoMap()
   @Column({ default: null })
