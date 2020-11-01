@@ -21,6 +21,7 @@ import { Task } from './task.model';
 
 @Entity()
 export class ProcessStep extends BaseEntity {
+  @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 

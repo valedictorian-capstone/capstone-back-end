@@ -57,7 +57,7 @@ export class ProcessService {
             `Can not find ${body.id}`,
           );
         }
-        await this.processRepository.useHTTP().save({ ...model, ...body });
+        await this.processRepository.useHTTP().save({ ...model, ...body } as any);
         return await this.findById(body.id);
       });
   }

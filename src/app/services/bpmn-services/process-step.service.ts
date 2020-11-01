@@ -14,13 +14,15 @@ export class ProcessStepService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (ids?: string[]): Promise<any[]> => {
-    return await this.processStepRepository.useHTTP().find(ids ? { id: In(ids) } : {})
-      .then((models) => models)
+  public readonly findAll = async (ids?: string[]): Promise<ProcessStepVM[]> => {
+    return await this.processStepRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ["department", "processFromConnections", "processToConnections", "process"] })
+      .then((models) => {
+        return this.mapper.mapArray(models, ProcessStepVM, ProcessStep)
+      });
   }
 
   public readonly findById = async (id: string): Promise<ProcessStepVM> => {
-    return await this.processStepRepository.useHTTP().findOne({ id: id })
+    return await this.processStepRepository.useHTTP().findOne({ where: { id: id }, relations: ["department", "processFromConnections", "processToConnections", "process"] })
       .then((model) => {
         if (!model) {
           throw new NotFoundException(
@@ -49,7 +51,7 @@ export class ProcessStepService {
 
   public readonly update = async (body: ProcessStepUM[]): Promise<ProcessStepVM[]> => {
     return await this.processStepRepository.useHTTP()
-      .save(body)
+      .save(body as any)
       .then(() => {
         return this.findAll(body.map((e) => e.id));
       })

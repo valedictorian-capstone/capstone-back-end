@@ -37,7 +37,7 @@ export class ProcessStepController {
   }
 
   @Get('/unique')
-  @ApiOperation({ summary: 'Check duplicate data ' })
+  @ApiOperation({ summary: 'Check duplicate data for phoneNumber, email, code' })
   @ApiOkResponse({ description: "Success return value is exist in database" })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public checkEnique(@Query('label') label: string, @Query('value') value: string): Promise<boolean> {

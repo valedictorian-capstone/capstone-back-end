@@ -2,8 +2,10 @@ import { Department } from "@models";
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { ProcessVM } from ".";
+import { DepartmentVM } from "../basic-view-models";
+import { FormGroupVM } from "../form-view-models";
 import { ProcessConnectionVM } from "./process-connection.view-model";
-import { TaskVM } from "./task.view-model";
+import { ProcessStepInstanceVM } from "./process-step-instance.view-model";
 
 export class ProcessStepVM {
   @AutoMap()
@@ -14,20 +16,19 @@ export class ProcessStepVM {
   public readonly description: string;
   @AutoMap()
   public readonly type: string;
-  @AutoMap()
-  public readonly shape: string;
 
-  public readonly props: any;
-  // @AutoMap()
-  // public readonly processId: string;
-  // // @AutoMap()
-  // public readonly processConnectionVMs: ProcessConnectionVM[];
-  // // @AutoMap()
-  // public readonly processStepInstanceVMs: ProcessStepInstanceVM[];
-  // // @AutoMap()
-  // public readonly permissionProcessStepVMs: PermissionProcessStepVM[];
-  // // @AutoMap()
-  // public readonly formGroupProcessStepVMs: FormGroupProcessStepVM[];
+  public process: ProcessVM;
+
+  public processStepInstances: ProcessStepInstanceVM[];
+
+  public processFromConnections: ProcessConnectionVM[];
+
+  public processToConnections: ProcessConnectionVM[];
+
+  public department: DepartmentVM;
+
+  public formGroups: FormGroupVM[];
+
   @AutoMap()
   public readonly isDelete: boolean;
   @AutoMap()
@@ -41,36 +42,37 @@ export class ProcessStepVM {
 }
 
 export class ProcessStepCM {
+  @ApiProperty()
   public id: string;
   @ApiProperty()
-  @AutoMap()
   public name: string;
   @ApiProperty()
-  @AutoMap()
   public description: string;
   @ApiProperty()
-  @AutoMap()
   public type: string;
   @ApiProperty()
-  @AutoMap()
-  public shape: string;
-  @ApiProperty()
-  @AutoMap()
-  public props: any;
   public processFromConnections: ProcessConnectionVM[];
+  @ApiProperty()
   public processToConnections: ProcessConnectionVM[];
-  public department: Department;
+  @ApiProperty()
+  public department: DepartmentVM;
 }
 
 export class ProcessStepUM {
+  @ApiProperty()
   public id: string;
+  @ApiProperty()
   public name: string;
+  @ApiProperty()
   public description: string;
+  @ApiProperty()
   public type: string;
-  public shape: string;
-  public props: any;
+  @ApiProperty()
   public process: ProcessVM;
+  @ApiProperty()
   public processFromConnections: ProcessConnectionVM[];
+  @ApiProperty()
   public processToConnections: ProcessConnectionVM[];
+  @ApiProperty()
   public department: Department;
 }
