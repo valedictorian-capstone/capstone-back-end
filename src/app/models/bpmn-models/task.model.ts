@@ -2,7 +2,7 @@ import { AutoMap } from "nestjsx-automapper";
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Account } from "../account-models";
 import { Customer } from "../customer-models/customer.model";
-import { WFStepInstance } from "./wf-step-instance.model";
+import { ProcessStepInstance } from "./process-step-instance.model";
 
 @Entity()
 export class Task extends BaseEntity {
@@ -17,8 +17,8 @@ export class Task extends BaseEntity {
   @ManyToOne(() => Account, account => account)
   public assignee: Account;
 
-  @ManyToOne(() => WFStepInstance, wfStepInstance => wfStepInstance.tasks)
-  public wfStepInstance: WFStepInstance;
+  @ManyToOne(() => ProcessStepInstance, processStepInstance => processStepInstance.tasks)
+  public processStepInstance: ProcessStepInstance;
 
   @ManyToOne(() => Customer, customer => customer.tasks)
   public customer: Customer;

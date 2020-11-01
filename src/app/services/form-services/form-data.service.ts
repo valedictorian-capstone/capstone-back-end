@@ -1,7 +1,7 @@
 import { FormData } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { FormDataRepository, FormGroupRepository, WFStepInstanceRepository } from '@repositories';
-import { FORM_DATA_REPOSITORY, FORM_GROUP_REPOSITORY, WF_STEP_INSTANCE_REPOSITORY, WF_STEP_REPOSITORY } from '@types';
+import { FormDataRepository, FormGroupRepository, ProcessStepInstanceRepository } from '@repositories';
+import { FORM_DATA_REPOSITORY, FORM_GROUP_REPOSITORY, PROCESS_STEP_INSTANCE_REPOSITORY, PROCESS_STEP_REPOSITORY } from '@types';
 import { FormDataCM, FormDataUM, FormDataVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { NotFoundException } from '@exceptions';
@@ -13,12 +13,12 @@ export class FormDataService {
     constructor(
         @Inject(FORM_DATA_REPOSITORY) protected readonly repository: FormDataRepository,
         @Inject(FORM_GROUP_REPOSITORY) protected readonly formGroupRepository: FormGroupRepository,
-        @Inject(WF_STEP_INSTANCE_REPOSITORY) protected readonly processStepInstanceRepository: WFStepInstanceRepository,
+        @Inject(PROCESS_STEP_INSTANCE_REPOSITORY) protected readonly processStepInstanceRepository: ProcessStepInstanceRepository,
         @InjectMapper() protected readonly mapper: AutoMapper
     ) { }
 
     public readonly findAll = async (ids?: string[]): Promise<FormDataVM[]> => {
-        return await this.repository.useHTTP().find({where: (ids ? { id: In(ids) } : {}), relations: ["formGroup", "wFStepInstance"] })
+        return await this.repository.useHTTP().find({where: (ids ? { id: In(ids) } : {}), relations: ["formGroup", "processStepInstance"] })
             .then((models) => this.mapper.mapArray(models, FormDataVM, FormData))
     };
 
@@ -38,8 +38,8 @@ export class FormDataService {
         return this.repository.useHTTP().save(body as any)
             .then(async (model) => {
                 const formGroup = await this.formGroupRepository.useHTTP().findOne(body.formGroupId);
-                const processStepInstance = await this.processStepInstanceRepository.useHTTP().findOne(body.wFStepInstanceId);
-                await this.repository.useHTTP().save({...model, formGroup: formGroup, wFStepInstance: processStepInstance})
+                const processStepInstance = await this.processStepInstanceRepository.useHTTP().findOne(body.processStepInstanceId);
+                await this.repository.useHTTP().save({...model, formGroup: formGroup, processStepInstance: processStepInstance})
                 return await this.findById(model.id);
             })
     };

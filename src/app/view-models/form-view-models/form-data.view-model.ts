@@ -1,5 +1,5 @@
 import { AutoMap } from "nestjsx-automapper";
-import { WFStepInstanceVM } from "../bpmn-view-models/work-flow-step-instance.view-model";
+import { ProcessStepInstanceVM } from "../bpmn-view-models/process-step-instance.view-model";
 import { FormGroupVM } from "./form-group.view-model";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -8,7 +8,7 @@ export class FormDataVM {
   @AutoMap()
   public readonly id: string;
   
-  public readonly wFStepInstance: WFStepInstanceVM;
+  public readonly processStepInstance: ProcessStepInstanceVM;
   
   public readonly formGroup: FormGroupVM;
   
@@ -32,7 +32,7 @@ export class FormDataVM {
 
 export class FormDataCM {
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
-  public readonly wFStepInstanceId: string;
+  public readonly processStepInstanceId: string;
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly formGroupId: string;
@@ -46,7 +46,7 @@ export class FormDataUM {
   public readonly id: string;
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
-  public readonly wFStepInstanceId: string;
+  public readonly processStepInstanceId: string;
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly formGroupId: string;

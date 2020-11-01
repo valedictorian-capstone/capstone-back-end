@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Group } from '../basic-models';
-import { WFInstance } from '../bpmn-models';
+import { ProcessInstance } from '../bpmn-models';
 import { Task } from '../bpmn-models/task.model';
 import { OrderRequest } from '../service-models';
 
@@ -65,8 +65,8 @@ export class Customer extends BaseEntity {
   @JoinTable()
   public groups: Group[];
 
-  @OneToMany(() => WFInstance, wFInstances => wFInstances.customer)
-  public wFInstances: WFInstance[];
+  @OneToMany(() => ProcessInstance, processInstances => processInstances.customer)
+  public processInstances: ProcessInstance[];
 
   @OneToMany(() => Task, task => task.customer)
   public tasks: Task[];

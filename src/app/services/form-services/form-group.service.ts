@@ -17,14 +17,14 @@ export class FormGroupService {
     ) { }
 
     public readonly findAllContainFormControl = async (ids?: string[]): Promise<FormGroupVM[]> => {
-        return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["formControls", "formDatas", "wfSteps"] })
+        return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["formControls", "formDatas", "processSteps"] })
             .then((models) => {
                 return this.mapper.mapArray(models, FormGroupVM, FormGroup);
             })
     };
 
     public readonly findById = async (id: string): Promise<FormGroupVM> => {
-        return await this.repository.useHTTP().findOne({ id: id }, { relations: ["formControls", "formDatas", "wfSteps"] })
+        return await this.repository.useHTTP().findOne({ id: id }, { relations: ["formControls", "formDatas", "processSteps"] })
             .then((model) => {
                 if (model) {
                     return this.mapper.map(model, FormGroupVM, FormGroup);

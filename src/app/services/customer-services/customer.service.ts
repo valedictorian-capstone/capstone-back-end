@@ -18,7 +18,7 @@ export class CustomerService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CustomerVM[]> => {
-    return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups", "wFInstances"] })
+    return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups", "processInstances"] })
       .then(async (models) => {
         return this.mapper.mapArray(models, CustomerVM, Customer)
       }).catch((err) => {
@@ -28,7 +28,7 @@ export class CustomerService {
   };
 
   public readonly findAllByType = async (type: string): Promise<CustomerVM[]> => {
-    return await this.cusomterRepository.useHTTP().find({ where: { type: type }, relations: ["groups", "wFInstances"] })
+    return await this.cusomterRepository.useHTTP().find({ where: { type: type }, relations: ["groups", "processInstances"] })
       .then(async (models) => {
         return this.mapper.mapArray(models, CustomerVM, Customer)
       }).catch((err) => {
@@ -39,7 +39,7 @@ export class CustomerService {
 
 
   public readonly findById = async (id: string): Promise<CustomerVM> => {
-    return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "wFInstances"] })
+    return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "processInstances"] })
       .then(async (model) => {
         if (model) {
           return this.mapper.map(model, CustomerVM, Customer);

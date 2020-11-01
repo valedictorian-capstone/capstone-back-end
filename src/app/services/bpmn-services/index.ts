@@ -1,16 +1,16 @@
-import { WFService, WFConnectionService, WFInstanceService, WFStepInstanceService, WFStepService } from '.';
+import { ProcessService, ProcessConnectionService, ProcessInstanceService, ProcessStepInstanceService, ProcessStepService } from '.';
 import { TaskService } from './task.service';
-export * from './wf-connection.service';
-export * from './wf-instance.service';
-export * from './wf-step-instance.service';
-export * from './wf-step.service';
-export * from './wf.service';
+export * from './process-connection.service';
+export * from './process-instance.service';
+export * from './process-step-instance.service';
+export * from './process-step.service';
+export * from './process.service';
 export * from './task.service'
 export const BPMN_SERVICES = [
-  WFService,
-  WFConnectionService,
-  WFStepService,
-  WFInstanceService,
-  WFStepInstanceService,
+  ProcessService,
+  ProcessConnectionService,
+  ProcessStepService,
+  ProcessInstanceService,
+  ProcessStepInstanceService,
   TaskService,
 ];

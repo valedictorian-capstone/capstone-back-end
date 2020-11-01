@@ -1,6 +1,6 @@
 import { FormControlVM, FormControlCM, FormControlUM } from "./form-control.view-model";
 import { FormDataVM } from "./form-data.view-model";
-import { WFStepVM } from "../bpmn-view-models/work-flow-step.view-model";
+import { ProcessStepVM } from "../bpmn-view-models/process-step.view-model";
 import { AutoMap } from "nestjsx-automapper";
 import { ApiProperty, getSchemaPath } from "@nestjs/swagger";
 
@@ -22,7 +22,7 @@ export class FormGroupVM {
 
   public readonly formDatas:  FormDataVM[];
 
-  public readonly wFSteps:  WFStepVM[];
+  public readonly processSteps:  ProcessStepVM[];
 
   @AutoMap()
   public readonly isDelete:  boolean;

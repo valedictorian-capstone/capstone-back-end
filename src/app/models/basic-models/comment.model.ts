@@ -1,7 +1,7 @@
 import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Account } from '../account-models';
-import { WFStepInstance } from '../bpmn-models';
+import { ProcessStepInstance } from '../bpmn-models';
 
 @Entity()
 export class Comment extends BaseEntity {
@@ -17,8 +17,8 @@ export class Comment extends BaseEntity {
     @ManyToOne(() => Account, account => account.comments)
     public account: Account;
 
-    @ManyToOne(() => WFStepInstance, wfStepInstance => wfStepInstance.comments)
-    public wfStepInstance: WFStepInstance;
+    @ManyToOne(() => ProcessStepInstance, processStepInstance => processStepInstance.comments)
+    public processStepInstance: ProcessStepInstance;
 
     @AutoMap()
     @Column({ default: null })
