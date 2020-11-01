@@ -16,7 +16,10 @@ export class DepartmentService {
 
   public readonly findAll = async (): Promise<DepartmentVM[]> => {
     return await this.repository.useHTTP().find({ relations: ["accountDepartments"] })
-      .then((models) => this.mapper.mapArray(models, DepartmentVM, Department))
+      .then((models) => {
+        models.forEach(async model => model.accountDepartments = await this.accountDepartmentRepository.useHTTP().find({ where: { department: model }, relations: ["account"] }))
+        return this.mapper.mapArray(models, DepartmentVM, Department)
+      })
   };
 
   public readonly findById = async (id: string): Promise<DepartmentVM> => {
@@ -41,9 +44,9 @@ export class DepartmentService {
   };
 
   public readonly update = async (body: DepartmentUM): Promise<DepartmentVM> => {
-    return await this.repository.useHTTP().findOne({ id: body.id })
-      .then(async (model) => {
-        if (!model) {
+    return await this.repository.useHTTP().findOne({ id: body.id }, { relations: ["accountDepartments"] })
+      .then(async (department) => {
+        if (!department) {
           throw new NotFoundException(
             `Can not find ${body.id}`,
           );
@@ -51,9 +54,8 @@ export class DepartmentService {
         return await this.repository.useHTTP()
           .save(body as any)
           .then(async (model) => {
-            const accountDepartmentsOld = await this.accountDepartmentRepository.useHTTP().find({ department: model });
-            console.log(accountDepartmentsOld)
-            await this.accountDepartmentRepository.useHTTP().remove(accountDepartmentsOld);
+            // const accountDepartmentsOld = await this.accountDepartmentRepository.useHTTP().find({ department: model });
+            await this.accountDepartmentRepository.useHTTP().remove(department.accountDepartments);
             await this.accountDepartmentRepository.useHTTP().save(body.accountDepartments);
             return this.findById(model.id);
           })
