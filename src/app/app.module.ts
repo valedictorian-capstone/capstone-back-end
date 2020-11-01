@@ -53,6 +53,8 @@ import {
   RoleMapper,
   OrderRequestMapper,
   TaskMapper,
+  EventMapper,
+  TriggerMapper
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import admin from 'firebase-admin';
@@ -128,6 +130,8 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(RoleMapper);
     this.mapper.addProfile(OrderRequestMapper);
     this.mapper.addProfile(TaskMapper);
+    this.mapper.addProfile(EventMapper);
+    this.mapper.addProfile(TriggerMapper);
   }
 
 }

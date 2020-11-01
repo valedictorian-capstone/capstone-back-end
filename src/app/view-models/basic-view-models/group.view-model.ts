@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { CustomerVM } from "../customer-view-models";
+import { EventVM } from "./event.view-model";
+import { TriggerVM } from "./trigger.view-model";
 
 export class GroupVM {
   
@@ -12,8 +14,18 @@ export class GroupVM {
   
   @AutoMap()
   public readonly description: string;
+
+  @AutoMap()
+  public readonly type: string;
+
+  @AutoMap()
+  public readonly condition: string;
   
   public readonly customers: CustomerVM[];
+
+  public readonly events: EventVM[];
+
+  public readonly triggers: TriggerVM[];
   
   @AutoMap()
   public readonly isDelete: boolean;

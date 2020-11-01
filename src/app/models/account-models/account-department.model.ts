@@ -21,6 +21,10 @@ export class AccountDepartment extends BaseEntity {
     public isLeader: boolean;
 
     @AutoMap()
+    @Column({ nullable: true })
+    public description: string;  
+
+    @AutoMap()
     @Column({ default: 'admin' })
     public createdBy: string;
 

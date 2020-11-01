@@ -7,6 +7,8 @@ export class GroupMapper extends ProfileBase {
     super();
     mapper.createMap(Group, GroupVM)
       .forMember(d => d.customers, mapWith(CustomerVM, s => s.customers))
+      .forMember(d => d.events, mapWith(CustomerVM, s => s.events))
+      .forMember(d => d.triggers, mapWith(CustomerVM, s => s.triggers))
     mapper.createMap(GroupUM, GroupVM);
   }
 }
