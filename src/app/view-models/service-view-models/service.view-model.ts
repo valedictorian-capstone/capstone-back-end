@@ -25,7 +25,7 @@ export class ServiceVM {
 
   public readonly orderRequests: OrderRequestVM[];
 
-  public readonly parameter: any;
+  public readonly parameters: any;
   
   @AutoMap()
   public readonly isDelete: boolean;
