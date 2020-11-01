@@ -1,5 +1,4 @@
-import { Process } from "@models";
-import { HttpException, HttpStatus, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ProcessConnectionRepository, ProcessStepRepository } from "@repositories";
 import { PROCESS_CONNECTION_REPOSITORY, PROCESS_REPOSITORY, PROCESS_STEP_REPOSITORY } from "@types";
 import { ProcessCM, ProcessUM, ProcessVM } from "@view-models";
@@ -50,19 +49,8 @@ export class ProcessService {
             `Can not find ${body.id}`,
           );
         }
-        const process = { ...body };
-        const processSteps = process.processSteps;
-        const processConnections = process.processConnections;
-        const processConnectionIds = process.processConnectionIds;
-        const processStepIds = process.processStepIds;
-        delete process.processSteps;
-        delete process.processConnections;
-        await this.processRepository.useHTTP().save(process);
-        await this.processStepRepository.useHTTP().save(processSteps);
-        await this.processConnectionRepository.useHTTP().save(processConnections);
-        await this.processConnectionRepository.useHTTP().remove(processConnectionIds.map((e) => ({ id: e } as any)));
-        await this.processStepRepository.useHTTP().remove(processStepIds.map((e) => ({ id: e } as any)));
-        return await this.findById(process.id);
+        await this.processRepository.useHTTP().save({ ...model, ...body });
+        return await this.findById(body.id);
       });
   }
 

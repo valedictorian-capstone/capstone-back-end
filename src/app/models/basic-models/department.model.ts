@@ -1,6 +1,7 @@
 import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { AccountDepartment } from '../account-models';
+import { ProcessStep } from '../bpmn-models';
 
 @Entity()
 export class Department extends BaseEntity {
@@ -19,6 +20,9 @@ export class Department extends BaseEntity {
 
     @OneToMany(() => AccountDepartment, accountDepartments => accountDepartments.department)
     public accountDepartments: AccountDepartment[];
+
+    @OneToMany(() => ProcessStep, processSteps => processSteps.department)
+    public processSteps: ProcessStep[];
 
     @AutoMap()
     @Column({ default: 'admin' })
