@@ -34,10 +34,6 @@ export class ProcessStep extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
-  public shape: string;
-
-  @AutoMap()
-  @Column({ default: null })
   public description: string;
 
   @ManyToOne(() => Process, process => process.processSteps)
@@ -57,9 +53,6 @@ export class ProcessStep extends BaseEntity {
 
   @ManyToOne(() => Department, department => department.processSteps)
   public department: Department;
-
-  @Column("json")
-  public props: any
 
   @ManyToMany(() => FormGroup, formGroup => formGroup.processSteps)
   public formGroups: FormGroup[];
