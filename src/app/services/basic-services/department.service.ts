@@ -50,7 +50,11 @@ export class DepartmentService {
         }
         return await this.repository.useHTTP()
           .save(body as any)
-          .then((model) => {
+          .then(async (model) => {
+            const accountDepartmentsOld = await this.accountDepartmentRepository.useHTTP().find({ department: model });
+            console.log(accountDepartmentsOld)
+            await this.accountDepartmentRepository.useHTTP().remove(accountDepartmentsOld);
+            await this.accountDepartmentRepository.useHTTP().save(body.accountDepartments);
             return this.findById(model.id);
           })
       });

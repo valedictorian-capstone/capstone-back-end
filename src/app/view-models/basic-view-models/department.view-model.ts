@@ -1,6 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, getSchemaPath } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { AccountDepartmentVM } from "../account-view-models";
+import { AccountDepartmentCM, AccountDepartmentVM } from "../account-view-models";
 
 
 export class DepartmentVM {
@@ -38,5 +38,8 @@ export class DepartmentUM {
   
   @ApiProperty({ required: true, format: 'string', minLength: 8 })
   public readonly description: string;
+
+  @ApiProperty({ required: true, type: 'array', items:{$ref: getSchemaPath(AccountDepartmentCM)} })
+  public readonly accountDepartments: AccountDepartmentCM[];
   
 }
