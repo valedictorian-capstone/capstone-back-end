@@ -34,6 +34,14 @@ export class ProcessService {
       })
   }
 
+  public readonly checkUnique = async (label: string, value: string): Promise<boolean> => {
+    const query = { [label]: value };
+    return this.processStepRepository.useHTTP().findOne({ where: query })
+      .then((model) => {
+        return model ? true : false;
+      })
+  }
+
   public readonly insert = async (body: ProcessCM): Promise<ProcessVM> => {
     return await this.processRepository.useHTTP().save(body as any)
       .then((model) => {

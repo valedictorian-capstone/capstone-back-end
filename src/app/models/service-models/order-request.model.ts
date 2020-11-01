@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Customer } from '../customer-models';
+import { Customer } from '../customer-models/customer.model';
 import { Service } from './service.model';
 
 @Entity()
