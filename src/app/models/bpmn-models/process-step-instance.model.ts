@@ -32,7 +32,7 @@ export class ProcessStepInstance extends BaseEntity {
   @AutoMap(() => ProcessStep, 1)
   @ManyToOne(
     () => ProcessStep,
-    processStep => processStep.processStepsInstances,
+    processStep => processStep.processStepInstances,
   )
   public processStep: ProcessStep;
 
