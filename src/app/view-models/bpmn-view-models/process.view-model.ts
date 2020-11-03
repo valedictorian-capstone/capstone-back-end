@@ -9,8 +9,6 @@ export class ProcessVM {
   public readonly name!: string;
   @AutoMap()
   public readonly description!: string;
-  // @AutoMap()
-  public readonly props: any;
   @AutoMap()
   public readonly code: string;
 

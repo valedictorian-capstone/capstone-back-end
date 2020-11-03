@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { ProcessVM } from ".";
 import { ProcessStepVM } from './process-step.view-model';
@@ -26,21 +27,29 @@ export class ProcessConnectionVM {
 }
 
 export class ProcessConnectionCM {
+  @ApiProperty()
   public id: string;
+  @ApiProperty()
   public readonly type!: string;
+  @ApiProperty()
   public description!: string;
+  @ApiProperty()
   public fromProcessStep!: ProcessStepVM;
+  @ApiProperty()
   public toProcessStep!: ProcessStepVM;
   public process: ProcessVM;
-  public props: any;
 }
 
 export class ProcessConnectionUM {
+  @ApiProperty()
   public id!: string;
+  @ApiProperty()
   public type!: string;
+  @ApiProperty()
   public description!: string;
+  @ApiProperty()
   public fromProcessStep!: ProcessStepVM;
+  @ApiProperty()
   public toProcessStep!: ProcessStepVM;
   public process: ProcessVM;
-  public props: any;
 }

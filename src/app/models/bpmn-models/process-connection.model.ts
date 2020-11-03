@@ -22,13 +22,9 @@ export class ProcessConnection extends BaseEntity {
     @Column({ default: null })
     public type: string;
     
-    @Column("json")
-    public props: any
-    // @AutoMap(() =>  ProcessStep, 1)
     @ManyToOne(() => ProcessStep, processStep => processStep.processFromConnections)
     public fromProcessStep: ProcessStep;
 
-    // @AutoMap(()=> ProcessStep, 1)
     @ManyToOne(() => ProcessStep, processStep => processStep.processToConnections)
     public toProcessStep: ProcessStep;
 

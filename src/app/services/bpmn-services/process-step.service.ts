@@ -1,6 +1,7 @@
 import { ProcessStep } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { ProcessStepRepository } from "@repositories";
+import { ProcessConnectionRepository, ProcessStepRepository } from "@repositories";
+import { PROCESS_CONNECTION_REPOSITORY } from "@types";
 import { ProcessStepCM, ProcessStepUM, ProcessStepVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { PROCESS_STEP_REPOSITORY } from "src/app/types/bpmn-types/process-step.type";
@@ -11,6 +12,7 @@ export class ProcessStepService {
 
   constructor(
     @Inject(PROCESS_STEP_REPOSITORY) protected readonly processStepRepository: ProcessStepRepository,
+    @Inject(PROCESS_CONNECTION_REPOSITORY) protected readonly processConnectionRepository: ProcessConnectionRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
@@ -42,19 +44,32 @@ export class ProcessStepService {
       })
   }
 
-  public readonly insert = async (body: ProcessStepCM[]): Promise<ProcessStepVM[]> => {
+  public readonly insert = async (body: ProcessStepCM): Promise<ProcessStepVM> => {
     return await this.processStepRepository.useHTTP().save(body as any)
       .then((model) => {
-        return this.findAll(model.map((e) => e.id));
+        return this.findById(model.id);
       })
   }
 
-  public readonly update = async (body: ProcessStepUM[]): Promise<ProcessStepVM[]> => {
-    return await this.processStepRepository.useHTTP()
-      .save(body as any)
-      .then(() => {
-        return this.findAll(body.map((e) => e.id));
-      })
+  public readonly update = async (body: ProcessStepUM): Promise<ProcessStepVM> => {
+    if (body.processFromConnections || body.processToConnections) {
+      const processFromConnections = await this.processConnectionRepository.useHTTP().save(body.processFromConnections);
+      const processToConnections = await this.processConnectionRepository.useHTTP().save(body.processToConnections);
+      return await this.processStepRepository.useHTTP()
+        .save({
+          ...body,
+          processFromConnections: processFromConnections,
+          processToConnections: processToConnections
+        } as any)
+        .then((model) => {
+          return this.findById(model.id);
+        })
+    } else
+      return await this.processStepRepository.useHTTP()
+        .save(body as any)
+        .then((model) => {
+          return this.findById(model.id);
+        })
   }
 
   public readonly remove = async (id: string): Promise<any> => {

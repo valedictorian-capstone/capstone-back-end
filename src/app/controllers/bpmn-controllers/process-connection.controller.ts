@@ -48,7 +48,7 @@ export class ProcessConnectionController {
   @ApiOperation({ summary: 'Insert new process connection' })
   @ApiCreatedResponse({ description: 'Success create new process connection' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: ProcessConnectionCM[]): Promise<ProcessConnectionVM[]> {
+  public async insert(@Body() body: ProcessConnectionCM): Promise<ProcessConnectionVM> {
     return await this.processConnectionService.insert(body);
   }
 
@@ -56,7 +56,7 @@ export class ProcessConnectionController {
   @ApiOperation({ summary: 'Update an process connection by Id' })
   @ApiCreatedResponse({ description: 'Success update new process connection' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: ProcessConnectionUM[]): Promise<ProcessConnectionVM[]> {
+  public async update(@Body() body: ProcessConnectionUM): Promise<ProcessConnectionVM> {
     return await this.processConnectionService.update(body);
   }
 

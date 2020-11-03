@@ -32,18 +32,18 @@ export class ProcessConnectionService {
       })
   }
 
-  public readonly insert = async (body: ProcessConnectionCM[]): Promise<ProcessConnectionVM[]> => {
+  public readonly insert = async (body: ProcessConnectionCM): Promise<ProcessConnectionVM> => {
     return await this.processConnectionRepository.useHTTP().save(body as any)
       .then((model) => {
-        return this.findAll(model.map((e) => e.id));
+        return this.findById(model.id);
       })
   }
 
-  public readonly update = async (body: ProcessConnectionUM[]): Promise<ProcessConnectionVM[]> => {
+  public readonly update = async (body: ProcessConnectionUM): Promise<ProcessConnectionVM> => {
     return await this.processConnectionRepository.useHTTP()
       .save(body as any)
       .then(() => {
-        return this.findAll(body.map((e) => e.id));
+        return this.findById(body.id);
       });
   }
 

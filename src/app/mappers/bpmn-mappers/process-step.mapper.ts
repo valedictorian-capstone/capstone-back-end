@@ -7,7 +7,7 @@ export class ProcessStepMapper extends ProfileBase {
     super();
     mapper.createMap(ProcessStep, ProcessStepVM)
       .forMember(d => d.process,
-        preCondition((s) => s.process != null, {}),
+        preCondition((s) => s.process != null),
         mapWith(ProcessVM, s => s.process)
       )
       .forMember(d => d.processFromConnections,
@@ -19,7 +19,7 @@ export class ProcessStepMapper extends ProfileBase {
         mapWith(ProcessConnectionVM, s => s.processToConnections)
       )
       .forMember(d => d.department,
-        preCondition((s) => s.department != null, []),
+        preCondition((s) => s.department != null),
         mapWith(DepartmentVM, s => s.department)
       );
     mapper.createMap(ProcessStepUM, ProcessStepVM);

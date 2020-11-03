@@ -67,7 +67,6 @@ export class ProcessStepUM {
   public description: string;
   @ApiProperty()
   public type: string;
-  @ApiProperty()
   public process: ProcessVM;
   @ApiProperty()
   public processFromConnections: ProcessConnectionVM[];
