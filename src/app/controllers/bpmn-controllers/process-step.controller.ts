@@ -57,7 +57,7 @@ export class ProcessStepController {
   @ApiOperation({ summary: 'Insert new process step' })
   @ApiCreatedResponse({ description: 'Success create new process step' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: ProcessStepCM[]): Promise<ProcessStepVM[]> {
+  public async insert(@Body() body: ProcessStepCM): Promise<ProcessStepVM> {
     return await this.processStepService.insert(body);
   }
 
@@ -65,7 +65,7 @@ export class ProcessStepController {
   @ApiOperation({ summary: 'Update an process step by Id' })
   @ApiCreatedResponse({ description: 'Success update new process step' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: ProcessStepUM[]): Promise<ProcessStepVM[]> {
+  public async update(@Body() body: ProcessStepUM): Promise<ProcessStepVM> {
     return await this.processStepService.update(body);
   }
 
