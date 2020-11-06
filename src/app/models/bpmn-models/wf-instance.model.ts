@@ -21,13 +21,18 @@ export class WFInstance extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
-  public Code: string;
+  public code: string;
 
   @AutoMap()
   @Column({ default: null })
+<<<<<<< Updated upstream:src/app/models/bpmn-models/wf-instance.model.ts
   public note: string;
 
   // @AutoMap(() => WFStepInstance, 1)
+=======
+  public description: string;
+  // @AutoMap(() => ProcessStepInstance, 1)
+>>>>>>> Stashed changes:src/app/models/bpmn-models/process-instance.model.ts
   @OneToMany(
     () => WFStepInstance,
     wFStepInstances => wFStepInstances.wFInstance,
@@ -38,8 +43,14 @@ export class WFInstance extends BaseEntity {
   @ManyToOne(() => Customer, customer => customer.wFInstances)
   public customer: Customer;
 
+<<<<<<< Updated upstream:src/app/models/bpmn-models/wf-instance.model.ts
   @AutoMap(() => WF, 1)
   public wf: WF;
+=======
+  @AutoMap(() => Process, 1)
+  @ManyToOne(() => Process, process => process.processInstances)
+  public process: Process;
+>>>>>>> Stashed changes:src/app/models/bpmn-models/process-instance.model.ts
 
   @AutoMap()
   @Column({ default: null })

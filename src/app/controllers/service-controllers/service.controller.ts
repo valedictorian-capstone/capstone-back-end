@@ -36,6 +36,13 @@ export class ServiceController{
     return this.service.findAll();
   }
 
+  @Get('/unique')
+  @ApiOperation({ summary: 'Check duplicate data' })
+  @ApiOkResponse({ description: "Success return value is exist in database" })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public checkEnique(@Query('label') label: string, @Query('value') value: string): Promise<string> {
+    return this.service.checkUnique(label, value);
+  }
   @Get(':id')
   @ApiOperation({ summary: 'Get an Service by Id' })
   @ApiOkResponse({ description: "Success return an Service's information" })
@@ -45,13 +52,6 @@ export class ServiceController{
     return this.service.findById(id);
   }
 
-  @Get('/unique')
-  @ApiOperation({ summary: 'Check duplicate data' })
-  @ApiOkResponse({ description: "Success return value is exist in database" })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public checkEnique(@Query('label') label: string, @Query('value') value: string): Promise<string> {
-    return this.service.checkUnique(label, value);
-  }
 
   @Post()
   @ApiOperation({ summary: 'Insert new Service' })

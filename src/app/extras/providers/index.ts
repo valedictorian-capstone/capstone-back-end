@@ -21,19 +21,24 @@ export class AppProvider {
         useFactory: async () => {
           // eslint-disable-next-line @typescript-eslint/no-var-requires
           console.log(process.env);
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
           const mysql = require('mysql2/promise');
           await mysql.createConnection({
-            host: process.env.GGCLOUD_SQL_HOST,
+            host: '35.185.182.104',
+            // host: process.env.GGCLOUD_SQL_HOST,
             user: process.env.GGCLOUD_SQL_USERNAME,
-            password: process.env.GGCLOUD_SQL_PASS,
+            password: '22d614a4-03c5',
+            // password: process.env.GGCLOUD_SQL_PASS,
           }).then((conn => conn.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.GGCLOUD_SQL_DATABASE}`)));
           const connection = createConnection({
             name: uuid(),
             type: 'mysql',
-            host: process.env.GGCLOUD_SQL_HOST,
+            host: '35.185.182.104',
+            // host: process.env.GGCLOUD_SQL_HOST,
             port: parseInt(process.env.GGCLOUD_SQL_POST),
             username: process.env.GGCLOUD_SQL_USERNAME,
-            password: process.env.GGCLOUD_SQL_PASS,
+            password: '22d614a4-03c5',
+            // password: process.env.GGCLOUD_SQL_PASS,
             database: process.env.GGCLOUD_SQL_DATABASE,
             entities: [...BASIC_MODELS, ...BPMN_MODELS, ...FORM_MODELS, ...CUSTOMER_MODELS, ...ACCOUNT_MODELS, ...SERVICE_MODELS],
             synchronize: true,
