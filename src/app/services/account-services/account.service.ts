@@ -31,8 +31,9 @@ export class AccountService {
 
   private readonly findByDepartment = async (departmentId: string): Promise<AccountVM[]> => {
     return await this.accountRepository.useHTTP().createQueryBuilder('account')
-      .leftJoinAndSelect('account.accountDepartment', 'accountDepartment')
-      .where('accountDepartment.id: id', { id: departmentId })
+      .leftJoinAndSelect('account.accountDepartments', 'accountDepartment')
+      .leftJoinAndSelect('account.roles', 'role')
+      .where('accountDepartment.id = :id', { id: departmentId })
       .getMany()
       .then(async (models) => {
         return this.mapper.mapArray(models, AccountVM, Account)
@@ -42,6 +43,7 @@ export class AccountService {
   public readonly findByRole = async (roleName: string): Promise<AccountVM[]> => {
     return await this.accountRepository.useHTTP().createQueryBuilder('account')
       .leftJoinAndSelect('account.roles', 'role')
+      .leftJoinAndSelect('account.accountDepartments', 'accountDepartment')
       .where('role.name= :name', { name: roleName })
       .getMany()
       .then(async (models) => {
