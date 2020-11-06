@@ -50,7 +50,7 @@ export class ProcessInstanceService {
           );
         }
         return await this.processRepository.useHTTP()
-          .save(body)
+          .save(body as any)
           .then((model) => {
             const ids = [];
         ids.push(model.id);

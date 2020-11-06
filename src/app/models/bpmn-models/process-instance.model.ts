@@ -21,13 +21,12 @@ export class ProcessInstance extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
-  public Code: string;
+  public code: string;
 
   @AutoMap()
   @Column({ default: null })
-  public note: string;
+  public description: string;
 
-  // @AutoMap(() => ProcessStepInstance, 1)
   @OneToMany(
     () => ProcessStepInstance,
     processStepInstances => processStepInstances.processInstance,
@@ -39,6 +38,7 @@ export class ProcessInstance extends BaseEntity {
   public customer: Customer;
 
   @AutoMap(() => Process, 1)
+  @ManyToOne(() => Process, process => process.processInstances)
   public process: Process;
 
   @AutoMap()

@@ -13,7 +13,7 @@ declare const module: any;
   server.use(urlencoded({ limit: 1024 * 1024 * 500, extended: true, type: 'application/x-www-form-urlencoding' }));
   server.use(json({ limit: 1024 * 1024 * 500, type: 'application/json' }));
   server.use((req: Request, res: Response, next: NextFunction) => {
-    const origins = ["http://localhost:8080", "https://m-crm-company.ts.r.appspot.com/", "https://crm-capstione-be.azurewebsites.net", "http://localhost:4200", "https://m-crm-admin.web.app", "https://m-crm-app.web.app"]
+    const origins = ["http://localhost:8080", "https://m-crm-company.ts.r.appspot.com/", "https://crm-capstione-be.azurewebsites.net", "http://localhost:4200", "http://localhost:4300", "https://m-crm-admin.web.app", "https://m-crm-app.web.app"]
     const origin = req.headers.origin as any;
     if (origins.indexOf(origin) > -1) {
       res.setHeader("Access-Control-Allow-Origin", origin);

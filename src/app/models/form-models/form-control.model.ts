@@ -5,9 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
@@ -36,10 +34,6 @@ export class FormControl extends BaseEntity {
   @Column({ default: null })
   public fontSize: string;
 
-  @AutoMap()
-  @Column({ default: null })
-  public size: string;
-
   @Column("json", { default: null })
   public options: any;
 
@@ -53,10 +47,6 @@ export class FormControl extends BaseEntity {
   @AutoMap()
   @Column({ default: null })
   public subType: string;
-
-  @AutoMap()
-  @Column({ default: null })
-  public width: string;
 
   @AutoMap()
   @Column({ default: 24 })
@@ -81,14 +71,6 @@ export class FormControl extends BaseEntity {
   @AutoMap()
   @Column({ default: 24 })
   public xxl: number;
-
-  @AutoMap()
-  @Column({ default: null })
-  public height: string;
-
-  @AutoMap()
-  @Column({ default: null })
-  public isCapitialize: boolean;
 
   @AutoMap()
   @Column({ default: null })

@@ -21,6 +21,7 @@ export class AppProvider {
         useFactory: async () => {
           // eslint-disable-next-line @typescript-eslint/no-var-requires
           console.log(process.env);
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
           const mysql = require('mysql2/promise');
           await mysql.createConnection({
             host: process.env.GGCLOUD_SQL_HOST,

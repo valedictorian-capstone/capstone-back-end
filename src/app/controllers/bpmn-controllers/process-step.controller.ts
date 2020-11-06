@@ -22,7 +22,7 @@ import { ProcessStepCM, ProcessStepUM, ProcessStepVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('ProcessStep')
-@Controller('/api/v1/process-step')
+@Controller('/api/v1/ProcessStep')
 export class ProcessStepController {
   constructor(
     protected readonly processStepService: ProcessStepService,

@@ -21,7 +21,7 @@ import { ProcessStepInstanceCM, ProcessStepInstanceUM, ProcessStepInstanceVM } f
 
 @ApiBearerAuth('JWT')
 @ApiTags('ProcessStepInstance')
-@Controller('/api/v1/process-step-instance')
+@Controller('/api/v1/ProcessStepInstance')
 export class ProcessStepInstanceController {
   constructor(
     protected readonly processtepInstanceService: ProcessStepInstanceService,

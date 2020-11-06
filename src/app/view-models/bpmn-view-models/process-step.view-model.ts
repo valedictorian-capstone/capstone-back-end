@@ -16,6 +16,8 @@ export class ProcessStepVM {
   public readonly description: string;
   @AutoMap()
   public readonly type: string;
+  @AutoMap()
+  public readonly subType: string;
 
   public process: ProcessVM;
 
@@ -50,6 +52,8 @@ export class ProcessStepCM {
   public description: string;
   @ApiProperty()
   public type: string;
+  @AutoMap()
+  public readonly subType: string;
   @ApiProperty()
   public processFromConnections: ProcessConnectionVM[];
   @ApiProperty()
@@ -67,6 +71,8 @@ export class ProcessStepUM {
   public description: string;
   @ApiProperty()
   public type: string;
+  @AutoMap()
+  public readonly subType: string;
   public process: ProcessVM;
   @ApiProperty()
   public processFromConnections: ProcessConnectionVM[];

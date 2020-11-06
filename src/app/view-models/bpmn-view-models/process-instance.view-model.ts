@@ -1,31 +1,46 @@
 import { ProcessStepInstanceVM } from "./process-step-instance.view-model";
+import { AutoMap } from 'nestjsx-automapper';
+import { ProcessVM } from ".";
+import { Customer } from "@models";
 
 export class ProcessInstanceVM {
-  public readonly id!: string;
-  public readonly code!: string;
-  public readonly processId!: string;
-  public readonly note!: string;
-  public readonly processStepInstanceVMs!: ProcessStepInstanceVM[];
-  public readonly isDelete!: boolean;
-  public readonly createdBy!: string;
-  public readonly updatedBy!: string;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-
-  constructor(props: Partial<ProcessInstanceVM>) {
-    Object.assign(this, props);
-  }
+  @AutoMap()
+  public readonly id: string;
+  @AutoMap()
+  public readonly code: string;
+  public readonly process: ProcessVM;
+  public readonly customer: Customer;
+  @AutoMap()
+  public readonly description: string;
+  public readonly processStepInstances: ProcessStepInstanceVM[];
+  @AutoMap()
+  public readonly isDelete: boolean;
+  @AutoMap()
+  public readonly createdBy: string;
+  @AutoMap()
+  public readonly updatedBy: string;
+  @AutoMap()
+  public readonly createdAt: Date;
+  @AutoMap()
+  public readonly updatedAt: Date;
 }
 
 export class ProcessInstanceCM {
-  public readonly code!: string;
-  public readonly processId!: string;
-  public readonly note!: string;
+  @AutoMap()
+  public readonly code: string;
+  public readonly process: ProcessVM;
+  public readonly customer: Customer;
+  @AutoMap()
+  public readonly description: string;
 }
 
 export class ProcessInstanceUM {
-  public readonly id!: string;
-  public readonly code!: string;
-  public readonly processId!: string;
-  public readonly note!: string;
+  @AutoMap()
+  public readonly id: string;
+  @AutoMap()
+  public readonly code: string;
+  public readonly process: ProcessVM;
+  public readonly customer: Customer;
+  @AutoMap()
+  public readonly description: string;
 }

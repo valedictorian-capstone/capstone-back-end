@@ -21,7 +21,7 @@ import { ProcessConnectionCM, ProcessConnectionUM, ProcessConnectionVM } from '@
 
 @ApiBearerAuth('JWT')
 @ApiTags('ProcessConnection')
-@Controller('/api/v1/process-connection')
+@Controller('/api/v1/ProcessConnection')
 export class ProcessConnectionController {
   constructor(
     protected readonly processConnectionService: ProcessConnectionService,
