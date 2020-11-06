@@ -18,10 +18,7 @@ export class FormControlVM {
   
   @AutoMap()
   public readonly fontSize: string;
-  
-  @AutoMap()
-  public readonly size: string;
-  
+
   public readonly options: any;
 
   public readonly validator: any;
@@ -31,9 +28,6 @@ export class FormControlVM {
   
   @AutoMap()
   public readonly subType: string;
-  
-  @AutoMap()
-  public readonly width: string;
   
   @AutoMap()
   public readonly xs: number;
@@ -52,12 +46,6 @@ export class FormControlVM {
 
   @AutoMap()
   public readonly xxl: number;
-
-  @AutoMap()
-  public readonly height: string;
-  
-  @AutoMap()
-  public readonly isCapitialize: boolean;
   
   @AutoMap()
   public readonly tooltip: string;
@@ -99,9 +87,6 @@ export class FormControlCM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly fontSize: string;
 
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly size: string;
-
   @ApiProperty({ required: true })
   public readonly options: {value: any, label: string}[];
 
@@ -113,9 +98,6 @@ export class FormControlCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly subType: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly width: string;
 
   @ApiProperty({ required: true, format: 'number', minLength: 2 })
   public readonly xs: number;
@@ -134,12 +116,6 @@ export class FormControlCM {
 
   @ApiProperty({ required: true, format: 'number', minLength: 2 })
   public readonly xxl: number;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly height: string;
-
-  @ApiProperty({ required: true, format: 'boolean', minLength: 2 })
-  public readonly isCapitialize: boolean;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly tooltip: string;
@@ -165,9 +141,6 @@ export class FormControlUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly fontSize: string;
 
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly size: string;
-
   @ApiProperty({ required: true })
   public readonly options: {value: any, label: string}[];
 
@@ -179,9 +152,6 @@ export class FormControlUM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly subType: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly width: string;
 
   @ApiProperty({ required: true, format: 'number', minLength: 2 })
   public readonly xs: number;
@@ -200,12 +170,6 @@ export class FormControlUM {
 
   @ApiProperty({ required: true, format: 'number', minLength: 2 })
   public readonly xxl: number;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly height: string;
-
-  @ApiProperty({ required: true, format: 'boolean', minLength: 2 })
-  public readonly isCapitialize: boolean;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly tooltip: string;

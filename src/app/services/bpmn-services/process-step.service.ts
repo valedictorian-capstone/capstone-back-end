@@ -17,20 +17,24 @@ export class ProcessStepService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<ProcessStepVM[]> => {
-    return await this.processStepRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ["department", "processFromConnections", "processToConnections", "process"] })
+    return await this.processStepRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ["department", "processFromConnections", "processToConnections", "process", "formGroups"] })
       .then((models) => {
         return this.mapper.mapArray(models, ProcessStepVM, ProcessStep)
       });
   }
 
   public readonly findById = async (id: string): Promise<ProcessStepVM> => {
-    return await this.processStepRepository.useHTTP().findOne({ where: { id: id }, relations: ["department", "processFromConnections", "processToConnections", "process"] })
-      .then((model) => {
+    return await this.processStepRepository.useHTTP().findOne({ where: { id: id }, relations: ["department", "processFromConnections", "processToConnections", "process", "formGroups"] })
+      .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         } else {
+          model.processFromConnections = await this.processConnectionRepository.useHTTP()
+            .find({ where: { id: In(model.processFromConnections.map((e) => e.id)) }, relations: ['toProcessStep', 'fromProcessStep'] });
+          model.processToConnections = await this.processConnectionRepository.useHTTP()
+            .find({ where: { id: In(model.processToConnections.map((e) => e.id)) }, relations: ['toProcessStep', 'fromProcessStep'] });
           return this.mapper.map(model, ProcessStepVM, ProcessStep)
         }
       })
@@ -53,8 +57,8 @@ export class ProcessStepService {
 
   public readonly update = async (body: ProcessStepUM): Promise<ProcessStepVM> => {
     if (body.processFromConnections || body.processToConnections) {
-      const processFromConnections = await this.processConnectionRepository.useHTTP().save(body.processFromConnections);
-      const processToConnections = await this.processConnectionRepository.useHTTP().save(body.processToConnections);
+      const processFromConnections = await this.processConnectionRepository.useHTTP().save(body.processFromConnections as any);
+      const processToConnections = await this.processConnectionRepository.useHTTP().save(body.processToConnections as any);
       return await this.processStepRepository.useHTTP()
         .save({
           ...body,

@@ -32,7 +32,9 @@ export class ProcessStep extends BaseEntity {
   @AutoMap()
   @Column({ default: null })
   public type: string;
-
+  @AutoMap()
+  @Column({ default: null })
+  public subType: string;
   @AutoMap()
   @Column({ default: null })
   public description: string;

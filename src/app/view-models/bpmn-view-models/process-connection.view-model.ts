@@ -5,21 +5,21 @@ import { ProcessStepVM } from './process-step.view-model';
 
 export class ProcessConnectionVM {
   @AutoMap()
-  public readonly id!: string;
+  public readonly id: string;
+  public readonly fromProcessStep!: ProcessStepVM;
+  public readonly toProcessStep!: ProcessStepVM;
   @AutoMap()
-  public readonly props!: any;
+  public readonly description: string;
   @AutoMap()
-  public readonly description!: string;
+  public readonly isDelete: boolean;
   @AutoMap()
-  public readonly isDelete!: boolean;
-  // @AutoMap()
-  // public readonly createdBy!: string;
-  // @AutoMap()
-  // public readonly updatedBy!: string;
-  // @AutoMap()
-  // public readonly createdAt!: Date;
-  // @AutoMap()
-  // public readonly updatedAt!: Date;
+  public readonly createdBy: string;
+  @AutoMap()
+  public readonly updatedBy: string;
+  @AutoMap()
+  public readonly createdAt: Date;
+  @AutoMap()
+  public readonly updatedAt: Date;
 
   constructor(props: Partial<ProcessConnectionVM>) {
     Object.assign(this, props);
@@ -30,26 +30,22 @@ export class ProcessConnectionCM {
   @ApiProperty()
   public id: string;
   @ApiProperty()
-  public readonly type!: string;
+  public readonly type: string;
   @ApiProperty()
-  public description!: string;
-  @ApiProperty()
-  public fromProcessStep!: ProcessStepVM;
-  @ApiProperty()
-  public toProcessStep!: ProcessStepVM;
+  public description: string;
+  public fromProcessStep: ProcessStepVM;
+  public toProcessStep: ProcessStepVM;
   public process: ProcessVM;
 }
 
 export class ProcessConnectionUM {
   @ApiProperty()
-  public id!: string;
+  public id: string;
   @ApiProperty()
-  public type!: string;
+  public type: string;
   @ApiProperty()
-  public description!: string;
-  @ApiProperty()
-  public fromProcessStep!: ProcessStepVM;
-  @ApiProperty()
-  public toProcessStep!: ProcessStepVM;
+  public description: string;
+  public fromProcessStep: ProcessStepVM;
+  public toProcessStep: ProcessStepVM;
   public process: ProcessVM;
 }
