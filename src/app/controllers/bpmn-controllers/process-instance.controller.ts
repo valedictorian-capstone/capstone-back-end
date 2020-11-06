@@ -5,7 +5,8 @@ import {
   Get,
   Param,
   Post,
-  Put
+  Put,
+  Query
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -16,7 +17,7 @@ import {
   ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
-import { ProcessInstanceCM, ProcessInstanceUM, ProcessInstanceVM } from '@view-models';
+import { ProcessInstanceCM, ProcessInstanceFilter, ProcessInstanceUM, ProcessInstanceVM } from '@view-models';
 import { ProcessInstanceService } from '@services';
 
 @ApiBearerAuth('JWT')
@@ -31,8 +32,8 @@ export class ProcessInstanceController {
   @ApiOperation({ summary: 'Get all process' })
   @ApiOkResponse({ description: 'Success return all process' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async findAll(): Promise<ProcessInstanceVM[]> {
-    return await this.processService.findAll();
+  public async findAll(@Query() processInstanceFilter: ProcessInstanceFilter): Promise<ProcessInstanceVM[]> {
+    return await this.processService.findAll(processInstanceFilter);
   }
 
   @Get(':id')
@@ -48,7 +49,7 @@ export class ProcessInstanceController {
   @ApiOperation({ summary: 'Insert new process' })
   @ApiCreatedResponse({ description: 'Success create new process' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: ProcessInstanceCM): Promise<ProcessInstanceVM[]> {
+  public async insert(@Body() body: ProcessInstanceCM): Promise<ProcessInstanceVM> {
     return await this.processService.insert(body);
   }
 
@@ -56,7 +57,7 @@ export class ProcessInstanceController {
   @ApiOperation({ summary: 'Update an process by Id' })
   @ApiCreatedResponse({ description: 'Success update new process' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: ProcessInstanceUM): Promise<ProcessInstanceVM[]> {
+  public async update(@Body() body: ProcessInstanceUM): Promise<ProcessInstanceVM> {
     return await this.processService.update(body);
   }
 

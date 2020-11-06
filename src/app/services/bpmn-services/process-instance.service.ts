@@ -1,10 +1,9 @@
 import { ProcessInstance } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { PROCESS_INSTANCE_REPOSITORY } from "@types";
-import { ProcessInstanceCM, ProcessInstanceUM, ProcessInstanceVM } from "@view-models";
-import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { ProcessInstanceRepository } from "@repositories";
-import { In } from "typeorm";
+import { PROCESS_INSTANCE_REPOSITORY } from "@types";
+import { ProcessInstanceCM, ProcessInstanceFilter, ProcessInstanceUM, ProcessInstanceVM } from "@view-models";
+import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 
 @Injectable()
 export class ProcessInstanceService {
@@ -14,13 +13,39 @@ export class ProcessInstanceService {
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (ids?: string[]): Promise<ProcessInstanceVM[]> => {
-    return await this.processRepository.useHTTP().find(ids ? { id: In(ids) } : {})
-      .then((models) => this.mapper.mapArray(models, ProcessInstanceVM, ProcessInstance))
+  public readonly findAll = async (processInstanceFilter: ProcessInstanceFilter): Promise<ProcessInstanceVM[]> => {
+    if (processInstanceFilter.processId) {
+      return await this.findByProcess(processInstanceFilter.processId);
+    } else if (processInstanceFilter.customerId) {
+      return await this.findByCustomer(processInstanceFilter.customerId);
+    } else {
+      return await this.processRepository.useHTTP().find({ relations: ['process', 'customer'] })
+        .then((models) => this.mapper.mapArray(models, ProcessInstanceVM, ProcessInstance))
+    }
+  }
+
+  public readonly findByProcess = async (id: string): Promise<ProcessInstanceVM[]> => {
+    return await this.processRepository.useHTTP()
+      .createQueryBuilder('processInstsance')
+      .leftJoinAndSelect('processInstsance.process', 'process')
+      .leftJoinAndSelect('processInstsance.customer', 'customer')
+      .where('process.id= :id', { id: id })
+      .getMany()
+      .then((models) => this.mapper.mapArray(models, ProcessInstanceVM, ProcessInstance));
+  }
+
+  public readonly findByCustomer = async (id: string): Promise<ProcessInstanceVM[]> => {
+    return await this.processRepository.useHTTP()
+      .createQueryBuilder('processInstsance')
+      .leftJoinAndSelect('processInstsance.customer', 'customer')
+      .leftJoinAndSelect('processInstsance.process', 'process')
+      .where('process.id= :id', { id: id })
+      .getMany()
+      .then((models) => this.mapper.mapArray(models, ProcessInstanceVM, ProcessInstance));
   }
 
   public readonly findById = async (id: string): Promise<ProcessInstanceVM> => {
-    return await this.processRepository.useHTTP().findOne({id: id})
+    return await this.processRepository.useHTTP().findOne({ id: id })
       .then((model) => {
         if (!model) {
           throw new NotFoundException(
@@ -32,16 +57,16 @@ export class ProcessInstanceService {
       })
   }
 
-  public readonly insert = async (body: ProcessInstanceCM): Promise<ProcessInstanceVM[]> => {
-    return await this.processRepository.useHTTP().save(body as any)
+  public readonly insert = async (body: ProcessInstanceCM): Promise<ProcessInstanceVM> => {
+    const newId = await `${body.process.code}-${body.customer.code}-${Array(10).fill('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
+      .map((x) => x[Math.floor(Math.random() * x.length)]).join('')}`;
+    return await this.processRepository.useHTTP().save({ ...body, ...{ id: newId } } as any)
       .then((model) => {
-        const ids = [];
-        ids.push(model.id);
-        return this.findAll(ids);
+        return this.findById(model.id);
       })
   }
 
-  public readonly update = async (body: ProcessInstanceUM): Promise<ProcessInstanceVM[]> => {
+  public readonly update = async (body: ProcessInstanceUM): Promise<ProcessInstanceVM> => {
     return await this.processRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -52,15 +77,13 @@ export class ProcessInstanceService {
         return await this.processRepository.useHTTP()
           .save(body as any)
           .then((model) => {
-            const ids = [];
-        ids.push(model.id);
-        return this.findAll(ids);
+            return this.findById(model.id);
           })
       });
   }
 
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.processRepository.useHTTP().findOne({id: id})
+    return await this.processRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
