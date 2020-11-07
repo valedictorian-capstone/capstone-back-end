@@ -46,6 +46,15 @@ export class CustomerVM {
   @AutoMap()
   public readonly district: string;
 
+  @AutoMap()
+  public readonly totalOrder: number;
+
+  @AutoMap()
+  public readonly totalSpending: number;
+
+  @AutoMap()
+  public readonly frequency: number;
+
   public groups: GroupVM[];
 
   public processInstances: ProcessInstanceVM[];
@@ -108,6 +117,15 @@ export class CustomerCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly district: string;
+
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly totalOrder: number;
+
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly totalSpending: number;
+
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly frequency: number;
 }
 
 export class CustomerUM {
@@ -153,5 +171,14 @@ export class CustomerUM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly district: string;
+
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly totalOrder: number;
+
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly totalSpending: number;
+
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly frequency: number;
 
 }

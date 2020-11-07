@@ -5,7 +5,6 @@ import { CustomerRepository } from '@repositories';
 import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
 import { FirebaseService } from '../extra-services';
 
@@ -20,6 +19,9 @@ export class CustomerService {
   public readonly findAll = async (ids?: string[]): Promise<CustomerVM[]> => {
     return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups", "processInstances"] })
       .then(async (models) => {
+        // const cus = [[1, 1, 1]]
+        // const out = await this.callClassification(cus);
+        // console.log(out);
         return this.mapper.mapArray(models, CustomerVM, Customer)
       }).catch((err) => {
         console.log(err);
@@ -60,9 +62,23 @@ export class CustomerService {
 
   public readonly import = async (body: CustomerCM[]): Promise<any> => {
     return await this.cusomterRepository.useHTTP().save(body).then(async (customers) => {
+      // this.callClassification();
       return this.findAll(customers.map((e) => e.id));
     }).catch(err => err);
   };
+
+  // private readonly callClassification = async (cus: any): Promise<any> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     // eslint-disable-next-line @typescript-eslint/no-var-requires
+  //     const { spawn } = require('child_process');
+  //     const python = spawn('python', ['src/app/kmeans/classification.py', cus]);
+  //     python.stderr.pipe(process.stderr);
+  //     await python.stdout.on('data', (data) => {
+  //       console.log('Pipe data from python script ...  ' +data.toString());
+  //       resolve(data);
+  //     });
+  //   });
+  // };
 
   public readonly insert = async (body: CustomerCM): Promise<any> => {
     const customer = { ...body };
