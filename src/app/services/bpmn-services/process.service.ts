@@ -1,6 +1,7 @@
+import { Process } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { ProcessConnectionRepository, ProcessStepRepository } from "@repositories";
-import { PROCESS_CONNECTION_REPOSITORY, PROCESS_REPOSITORY, PROCESS_STEP_REPOSITORY } from "@types";
+import { ProcessConnectionRepository, ProcessInstanceRepository, ProcessStepRepository } from "@repositories";
+import { PROCESS_CONNECTION_REPOSITORY, PROCESS_INSTANCE_REPOSITORY, PROCESS_REPOSITORY, PROCESS_STEP_REPOSITORY } from "@types";
 import { ProcessCM, ProcessUM, ProcessVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { ProcessRepository } from "src/app/repositories/bpmn-repositories/process.repository";
@@ -12,24 +13,27 @@ export class ProcessService {
   constructor(
     @Inject(PROCESS_REPOSITORY) protected readonly processRepository: ProcessRepository,
     @Inject(PROCESS_STEP_REPOSITORY) protected readonly processStepRepository: ProcessStepRepository,
+    @Inject(PROCESS_INSTANCE_REPOSITORY) protected readonly processInstanceRepository: ProcessInstanceRepository,
     @Inject(PROCESS_CONNECTION_REPOSITORY) protected readonly processConnectionRepository: ProcessConnectionRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<any> => {
-    return await this.processRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["processSteps", "processConnections"] })
-      .then((models) => models);
+    return await this.processRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["processSteps", "processConnections", "processInstances"] })
+      .then((models) => this.mapper.mapArray(models, ProcessVM, Process));
   }
 
   public readonly findById = async (id: string): Promise<any> => {
-    return await this.processRepository.useHTTP().findOne({ id: id }, { relations: ["processSteps", "processConnections"] })
-      .then((model) => {
+    return await this.processRepository.useHTTP().findOne({ id: id }, { relations: ["processSteps", "processConnections", "processInstances"] })
+      .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         } else {
-          return model;
+          model.processInstances = await this.processInstanceRepository.useHTTP()
+            .find({ where: { id: In(model.processInstances.map((e) => e.id)) }, relations: ['process', 'customer', 'processStepInstances'] });
+          return this.mapper.map(model, ProcessVM, Process);
         }
       })
   }

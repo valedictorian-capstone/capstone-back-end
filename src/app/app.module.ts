@@ -54,7 +54,8 @@ import {
   OrderRequestMapper,
   TaskMapper,
   EventMapper,
-  TriggerMapper
+  TriggerMapper,
+  ProcessInstanceMapper
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import admin from 'firebase-admin';
@@ -124,6 +125,7 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(ProcessMapper);
     this.mapper.addProfile(ProcessStepInstanceMapper)
     this.mapper.addProfile(ProcessStepMapper);
+    this.mapper.addProfile(ProcessInstanceMapper);
     this.mapper.addProfile(NotificationMapper);
     this.mapper.addProfile(CommentMapper);
     this.mapper.addProfile(AccountDepartmentMapper);
