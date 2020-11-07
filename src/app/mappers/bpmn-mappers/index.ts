@@ -1,5 +1,6 @@
 export * from './process.mapper'
 export * from './process-step.mapper'
 export * from './process-connection.mapper'
+export * from './process-instance.mapper'
 export * from './process-step-instance.mapper'
 export * from './task.mapper'

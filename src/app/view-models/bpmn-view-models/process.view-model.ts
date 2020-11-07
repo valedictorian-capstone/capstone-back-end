@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { ProcessConnectionCM, ProcessConnectionUM, ProcessConnectionVM, ProcessStepCM, ProcessStepUM, ProcessStepVM } from ".";
+import { ProcessConnectionCM, ProcessConnectionUM, ProcessConnectionVM, ProcessInstanceVM, ProcessStepCM, ProcessStepUM, ProcessStepVM } from ".";
 
 export class ProcessVM {
   @AutoMap()
@@ -18,7 +18,7 @@ export class ProcessVM {
 
   public readonly processConnections!: ProcessConnectionVM[];
 
-  // public readonly processInstances!: ProcessInstanceVM[];
+  public readonly processInstances!: ProcessInstanceVM[];
   // @AutoMap()
   // public readonly isDelete!: boolean;
   // @AutoMap()

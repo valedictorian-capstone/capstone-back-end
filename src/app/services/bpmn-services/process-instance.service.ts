@@ -58,9 +58,10 @@ export class ProcessInstanceService {
   }
 
   public readonly insert = async (body: ProcessInstanceCM): Promise<ProcessInstanceVM> => {
-    const newId = await `${body.process.code}-${body.customer.code}-${Array(10).fill('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
-      .map((x) => x[Math.floor(Math.random() * x.length)]).join('')}`;
-    return await this.processRepository.useHTTP().save({ ...body, ...{ id: newId } } as any)
+    return await this.processRepository.useHTTP().save({
+      ...body, code: `${body.process.code}-${body.customer.code}-${Array(10).fill('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
+        .map((x) => x[Math.floor(Math.random() * x.length)]).join('')}`
+    } as any)
       .then((model) => {
         return this.findById(model.id);
       })
