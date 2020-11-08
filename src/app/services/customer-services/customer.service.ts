@@ -1,8 +1,8 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { Customer } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CustomerRepository } from '@repositories';
-import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE } from '@types';
+import { CustomerRepository, GroupRepository } from '@repositories';
+import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
@@ -12,6 +12,7 @@ import { FirebaseService } from '../extra-services';
 export class CustomerService {
   constructor(
     @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
+    @Inject(GROUP_REPOSITORY) protected readonly groupRepository: GroupRepository,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
@@ -19,9 +20,6 @@ export class CustomerService {
   public readonly findAll = async (ids?: string[]): Promise<CustomerVM[]> => {
     return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups", "processInstances"] })
       .then(async (models) => {
-        // const cus = [[1, 1, 1]]
-        // const out = await this.callClassification(cus);
-        // console.log(out);
         return this.mapper.mapArray(models, CustomerVM, Customer)
       }).catch((err) => {
         console.log(err);
@@ -62,31 +60,81 @@ export class CustomerService {
 
   public readonly import = async (body: CustomerCM[]): Promise<any> => {
     return await this.cusomterRepository.useHTTP().save(body).then(async (customers) => {
-      // this.callClassification();
-      return this.findAll(customers.map((e) => e.id));
-    }).catch(err => err);
+      const leadGroup = await this.groupRepository.useHTTP().findOne({ where: { id: 3 } });
+      const group1 = await this.groupRepository.useHTTP().findOne({ where: { id: 0 } });
+      const group2 = await this.groupRepository.useHTTP().findOne({ where: { id: 1 } });
+      const group3 = await this.groupRepository.useHTTP().findOne({ where: { id: 2 } });
+      const notOfLead = [];
+
+      for (let i = 0; i < customers.length; i++) {
+        if (customers[i].totalOrder == 0 && customers[i].totalSpending == 0 && customers[i].frequency == 0) {
+          await this.cusomterRepository.useHTTP().save({ ...customers[i], groups: [leadGroup] })
+        } else {
+          notOfLead.push(customers[i]);
+        }
+      }
+
+      const paramArray = [];
+      for (let i = 0; i < notOfLead.length; i++) {
+        paramArray.push([notOfLead[i].totalOrder, notOfLead[i].totalSpending, notOfLead[i].frequency])
+      }
+
+      let classificationGroups = await this.callClassification(paramArray);
+      classificationGroups = JSON.parse(classificationGroups.replace(' ', ','));
+      for (let i = 0; i < classificationGroups.length; i++) {
+        console.log(classificationGroups[i]);
+        if (classificationGroups[i] == '0') {
+          await this.cusomterRepository.useHTTP().save({ ...notOfLead[i], groups: [group1] });
+        } else if (classificationGroups[i] == '1') {
+          await this.cusomterRepository.useHTTP().save({ ...notOfLead[i], groups: [group2] });
+        } else {
+          await this.cusomterRepository.useHTTP().save({ ...notOfLead[i], groups: [group3] });
+        }
+      }
+
+      return await this.findAll(customers.map((e) => e.id));
+    });
   };
 
-  // private readonly callClassification = async (cus: any): Promise<any> => {
-  //   return new Promise(async (resolve, reject) => {
-  //     // eslint-disable-next-line @typescript-eslint/no-var-requires
-  //     const { spawn } = require('child_process');
-  //     const python = spawn('python', ['src/app/kmeans/classification.py', cus]);
-  //     python.stderr.pipe(process.stderr);
-  //     await python.stdout.on('data', (data) => {
-  //       console.log('Pipe data from python script ...  ' +data.toString());
-  //       resolve(data);
-  //     });
-  //   });
-  // };
+  private readonly callClassification = async (customerParam: [][]): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { spawn } = require('child_process');
+      const python = spawn('python', ['src/app/kmeans/classification.py', JSON.stringify(customerParam)]);
+      python.stderr.pipe(process.stderr);
+      await python.stdout.on('data', (data) => {
+        resolve("" + data);
+      });
+    });
+  };
 
   public readonly insert = async (body: CustomerCM): Promise<any> => {
     const customer = { ...body };
     // await this.firebaseService.useUploadFileBase64("avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64")), customer.avatar, customer.avatar.substring(customer.avatar.indexOf("data:image/") + 5, customer.avatar.indexOf(";base64")));
     // customer.avatar = environment.firebase.linkDownloadFile + "avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64"));
     return await this.cusomterRepository.useHTTP().save({ ...customer }).then(async (data) => {
+      if (customer.totalOrder == 0 && customer.totalSpending == 0 && customer.frequency == 0) {
+        const leadGroup = await this.groupRepository.useHTTP().findOne({ where: { id: 3 } });
+        await this.cusomterRepository.useHTTP().save({ ...data, groups: [leadGroup] })
+      } else {
+        const paramArray = [];
+        paramArray.push([customer.totalOrder, customer.totalSpending, customer.frequency])
+        let classificationGroups = await this.callClassification(paramArray);
+        classificationGroups = JSON.parse(classificationGroups.replace(' ', ','));
+        if (classificationGroups == '0') {
+          const group1 = await this.groupRepository.useHTTP().findOne({ where: { id: 0 } });
+          await this.cusomterRepository.useHTTP().save({ ...data, groups: [group1] });
+        } else if (classificationGroups == '1') {
+          const group2 = await this.groupRepository.useHTTP().findOne({ where: { id: 1 } });
+          await this.cusomterRepository.useHTTP().save({ ...data, groups: [group2] });
+        } else {
+          const group3 = await this.groupRepository.useHTTP().findOne({ where: { id: 2 } });
+          await this.cusomterRepository.useHTTP().save({ ...data, groups: [group3] });
+        }
+      }
+
       return data;
-    }).catch(err => err);
+    });
   };
 
   public readonly update = async (body: CustomerUM): Promise<CustomerVM> => {
