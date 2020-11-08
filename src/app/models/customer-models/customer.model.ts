@@ -69,6 +69,18 @@ export class Customer extends BaseEntity {
   @Column({ nullable: true })
   public district: string;
 
+  @AutoMap()
+  @Column({ nullable: false, default: 0})
+  public totalOrder: number;
+  
+  @AutoMap()
+  @Column({ nullable: false, default: 0})
+  public totalSpending: number;
+
+  @AutoMap()
+  @Column({ nullable: false, default: 0})
+  public frequency: number;
+
   @ManyToMany(() => Group, group => group.customers)
   @JoinTable()
   public groups: Group[];
