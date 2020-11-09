@@ -40,6 +40,8 @@ declare const module: any;
 
   await app.listen(8080);
 
+  console.log("=========================Test Docker CICD=======================================")
+
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());
