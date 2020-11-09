@@ -88,7 +88,23 @@ export class ProcessInstanceService {
               }
               return models;
             });
-          model.processStepInstances = model.processStepInstances.sort((a, b) => b.createdAt > a.createdAt ? 1 : -1);
+          model.processStepInstances = model.processStepInstances.sort((a, b) => {
+            if (a.processStep.type === 'event') {
+              if (a.processStep.subType === 'start') {
+                return -1;
+              } else {
+                return 1;
+              }
+            }
+            if (b.processStep.type === 'event') {
+              if (b.processStep.subType === 'start') {
+                return -1;
+              } else {
+                return 1;
+              }
+            }
+            return b.createdAt > a.createdAt ? 1 : -1;
+          });
           return this.mapper.map(model, ProcessInstanceVM, ProcessInstance)
         }
       })
