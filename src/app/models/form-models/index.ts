@@ -1,7 +1,5 @@
-import { FormControl } from './form-control.model';
-import { FormData } from './form-data.model';
-import { FormGroup } from './form-group.model';
+import { FormControl, FormData, FormGroup } from '.';
 export * from './form-control.model';
 export * from './form-group.model';
 export * from './form-data.model';
-export const FORM_MODELS = [FormControl, FormData, FormGroup];
+export const FORM_MODELS = [FormGroup, FormControl, FormData];

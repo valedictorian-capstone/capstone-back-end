@@ -38,7 +38,7 @@ export class FormGroup extends BaseEntity {
   public processSteps: ProcessStep[];
 
   @OneToMany(() => FormControl, formControls => formControls.formGroup)
-  public formControls: FormControl[]
+  public formControls: FormControl[];
 
   @OneToMany(() => FormData, formDatas => formDatas.formGroup)
   public formDatas: FormData[];

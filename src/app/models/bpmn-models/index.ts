@@ -8,4 +8,4 @@ export * from './process-step-instance.model';
 export * from './process-step.model';
 export * from './task.model'
 
-export const BPMN_MODELS = [Process, ProcessCondition, ProcessConnection, ProcessInstance, ProcessStep, ProcessStepInstance, Task];
+export const BPMN_MODELS = [Process, ProcessCondition, ProcessInstance, ProcessStep, ProcessStepInstance, ProcessConnection, Task];
