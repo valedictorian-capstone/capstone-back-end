@@ -142,6 +142,9 @@ export class AppModule implements OnModuleInit, NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes({ path: '/api/v1/Account', method: RequestMethod.GET });
+      .forRoutes(
+        { path: '/api/v1/Auth', method: RequestMethod.GET },
+        // { path: '/api/v1/Account', method: RequestMethod.GET }
+      );
   }
 }
