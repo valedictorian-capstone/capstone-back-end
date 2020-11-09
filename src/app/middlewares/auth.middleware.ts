@@ -20,6 +20,7 @@ export class AuthMiddleware implements NestMiddleware {
       const account = Object.assign(decoded.valueOf()).account;
       if (account) {
         next();
+        return;
       }
       throw new UnauthorizedException("Your email does not existed");
 
