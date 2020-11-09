@@ -1,5 +1,4 @@
 import { AutoMap } from 'nestjsx-automapper';
-import { json } from 'sequelize';
 import {
   BaseEntity,
   Column,
@@ -44,10 +43,6 @@ export class Process extends BaseEntity {
 
   @OneToMany(() => ProcessConnection, processConnetion => processConnetion.process)
   public processConnections: ProcessConnection[]
-
-  // @AutoMap()
-  @Column("json", { default: null })
-  public props: any;
 
   @AutoMap()
   @Column({ default: null })

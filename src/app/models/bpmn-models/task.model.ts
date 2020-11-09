@@ -12,9 +12,13 @@ export class Task extends BaseEntity {
   public id: string;
 
   @AutoMap()
-  @Column({ unique: true, default: '' })
-  public code: string;
+  @Column({ nullable: false })
+  public name: string;
 
+  @AutoMap()
+  @Column({ default: null })
+  public description: string;
+  
   @ManyToOne(() => Account, account => account)
   public assignee: Account;
 

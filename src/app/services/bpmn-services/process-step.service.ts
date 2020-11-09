@@ -57,13 +57,11 @@ export class ProcessStepService {
 
   public readonly update = async (body: ProcessStepUM): Promise<ProcessStepVM> => {
     if (body.processFromConnections || body.processToConnections) {
-      const processFromConnections = await this.processConnectionRepository.useHTTP().save(body.processFromConnections as any);
-      const processToConnections = await this.processConnectionRepository.useHTTP().save(body.processToConnections as any);
+      await this.processConnectionRepository.useHTTP().save(body.processFromConnections as any);
+      await this.processConnectionRepository.useHTTP().save(body.processToConnections as any);
       return await this.processStepRepository.useHTTP()
         .save({
           ...body,
-          processFromConnections: processFromConnections,
-          processToConnections: processToConnections
         } as any)
         .then((model) => {
           return this.findById(model.id);

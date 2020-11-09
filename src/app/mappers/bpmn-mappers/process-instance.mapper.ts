@@ -13,6 +13,10 @@ export class ProcessInstanceMapper extends ProfileBase {
       .forMember(d => d.customer,
         preCondition(s => s.customer != null),
         mapWith(CustomerVM, s => s.customer)
+      )
+      .forMember(d => d.processStepInstances,
+        preCondition((s) => s.processStepInstances != null, []),
+        mapWith(ProcessStepInstanceVM, s => s.processStepInstances)
       );
     mapper.createMap(ProcessInstanceUM, ProcessInstanceVM);
     mapper.createMap(ProcessInstanceCM, ProcessInstance);

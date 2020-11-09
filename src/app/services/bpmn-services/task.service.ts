@@ -42,7 +42,7 @@ export class TaskService {
       where: {
         id: id
       },
-      relations: ["assignee", "assignBy", "customer"],
+      relations: ["assignee", "assignBy", "processStepInstance"],
     })
       .then((model) => {
         if (model) {
@@ -55,25 +55,17 @@ export class TaskService {
   };
 
   public readonly insert = async (body: TaskCM): Promise<TaskVM> => {
-    const assignee = await body.assigneeId ? await this.accountRepository.useHTTP().findOne({ id: body.assigneeId }) : {};
-    const assignBy = await body.assigneeById ? await this.accountRepository.useHTTP().findOne({ id: body.assigneeById }) : {};
-    return await this.taskRepository.useHTTP().save(
-      {
-        ...body,
-        assignee: assignee,
-        assignBy: assignBy
-      }
-    )
+    return await this.taskRepository.useHTTP().save(body)
       .then((model) => {
         //send notification
         this.accountRepository.useHTTP()
-          .findOne({ id: body.assigneeId }).then(
+          .findOne({ id: body.assignee.id }).then(
             async employee => {
               this.firebaseService.sendNotification({
                 data: {
                   id: model.id,
                   title: 'You have a new task',
-                  message: `New task code ${model.code} created for you`
+                  message: `New task code ${model.name} created for you`
                 },
                 token: employee.deviceId,
               })
@@ -91,24 +83,16 @@ export class TaskService {
         }
       });
 
-    const assignee = await body.assigneeId ? await this.accountRepository.useHTTP().findOne({ id: body.assigneeId }) : {};
-    const assignBy = await body.assigneeById ? await this.accountRepository.useHTTP().findOne({ id: body.assigneeById }) : {};
-    await this.taskRepository.useHTTP().save(
-      {
-        ...body,
-        assignee: assignee,
-        assignBy: assignBy
-      }
-    ).then(result => {
+    await this.taskRepository.useHTTP().save(body).then(result => {
       //send notification
       this.accountRepository.useHTTP()
-        .findOne({ id: body.assigneeId }).then(
+        .findOne({ id: body.assignee.id }).then(
           async employee => {
             this.firebaseService.sendNotification({
               data: {
                 id: result.id,
                 title: 'You have a new task',
-                message: `New task code ${result.code} created for you`
+                message: `New task code ${result.name} created for you`
               },
               token: employee.deviceId,
             })

@@ -12,7 +12,7 @@ export class Comment extends BaseEntity {
 
     @AutoMap()
     @Column({ nullable: false, default: '' })
-    public value: string;
+    public message: string;
 
     @ManyToOne(() => Account, account => account.comments)
     public account: Account;
