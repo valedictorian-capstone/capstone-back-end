@@ -1,0 +1,30 @@
+FROM centos/nodejs-12-centos7
+
+USER root
+
+ENV WEBSITE_SKU=hi
+
+WORKDIR /usr/src/app
+
+RUN yum -y groupinstall "Development Tools"
+RUN yum -y install openssl-devel bzip2-devel libffi-devel
+
+RUN yum -y install wget tar
+RUN cd /opt
+RUN wget https://www.python.org/ftp/python/3.8.2/Python-3.8.2.tgz
+
+RUN tar xvf Python-3.8.2.tgz
+RUN cd ./
+RUN gcc --version
+
+RUN cd Python-3.8.2 && ./configure --enable-optimizations
+RUN cd Python-3.8.2 && make altinstall
+
+RUN update-alternatives --install /usr/bin/python python /usr/local/bin/python3.8 1
+
+RUN update-alternatives --list
+
+RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" && python get-pip.py
+RUN pip install -U scikit-learn
+
+RUN echo BUILD SUCCESS
