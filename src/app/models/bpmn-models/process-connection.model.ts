@@ -1,6 +1,6 @@
 import { Process } from "@models";
 import { AutoMap } from "nestjsx-automapper";
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ProcessStep } from "./process-step.model";
 
 @Entity()

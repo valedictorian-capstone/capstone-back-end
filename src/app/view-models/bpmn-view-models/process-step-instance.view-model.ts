@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { AccountVM } from "../account-view-models";
-import { CustomerVM } from "../customer-view-models";
+import { ProcessInstanceVM, ProcessStepVM, TaskVM } from ".";
+import { CommentVM } from "../basic-view-models";
 import { FormDataVM } from "../form-view-models";
 
 export class ProcessStepInstanceVM {
@@ -15,15 +15,13 @@ export class ProcessStepInstanceVM {
   @AutoMap()
   public readonly note: string;
 
-  @AutoMap()
-  public readonly processStep: string;
+  public readonly processStep: ProcessStepVM;
 
-  @AutoMap()
-  public readonly processInstance: string;
+  public readonly processInstance: ProcessInstanceVM;
 
-  public readonly customers: CustomerVM[];
+  public readonly tasks: TaskVM[];
 
-  public readonly accounts: AccountVM[];
+  public readonly comments: CommentVM[];
 
   public readonly formDatas: FormDataVM[];
 
@@ -48,10 +46,9 @@ export class ProcessStepInstanceCM {
   public readonly status: string;
   @ApiProperty()
   public readonly note: string;
-  @ApiProperty()
-  public readonly processStepId: string;
-  @ApiProperty()
-  public readonly processInstanceId: string;
+  public readonly processStep: ProcessStepVM;
+
+  public readonly processInstance: ProcessInstanceVM;
 }
 
 export class ProcessStepInstanceUM {
@@ -61,8 +58,7 @@ export class ProcessStepInstanceUM {
   public readonly status: string;
   @ApiProperty()
   public readonly note: string;
-  @ApiProperty()
-  public readonly processStepId: string;
-  @ApiProperty()
-  public readonly processInstanceId: string;
+  public readonly processStep: ProcessStepVM;
+
+  public readonly processInstance: ProcessInstanceVM;
 }

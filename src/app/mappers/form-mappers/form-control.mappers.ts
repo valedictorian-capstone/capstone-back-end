@@ -1,6 +1,6 @@
 import { ProfileBase, AutoMapper, mapWith, mapFrom } from '@nartc/automapper';
 import { FormControl } from "@models";
-import { FormControlUM, FormControlVM } from "@view-models";
+import { FormControlUM, FormControlVM, FormGroupVM } from "@view-models";
 
 export class FormControlMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -8,7 +8,7 @@ export class FormControlMapper extends ProfileBase {
     mapper.createMap(FormControl, FormControlVM)
       .forMember(d => d.options, mapFrom(s => s.options)) 
       .forMember(d => d.validator, mapFrom(s => s.validator)) 
-      .forMember(d => d.formGroup, mapWith(FormControlVM, s => s.formGroup));
+      .forMember(d => d.formGroup, mapWith(FormGroupVM, s => s.formGroup));
     mapper.createMap(FormControlUM, FormControlVM);
   }
 }

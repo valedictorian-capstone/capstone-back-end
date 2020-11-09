@@ -9,7 +9,7 @@ export class CommentVM {
     public readonly id: string;
 
     @AutoMap()
-    public readonly value: string;
+    public readonly message: string;
 
     public readonly account: AccountVM;
 
@@ -35,7 +35,7 @@ export class CommentVM {
 export class CommentCM {
 
     @ApiProperty({ required: true, format: 'string', minLength: 2 })
-    public readonly value: string;
+    public readonly message: string;
 
     @ApiProperty()
     public readonly account: { account: { id: string }};
@@ -51,6 +51,6 @@ export class CommentUM {
     public readonly id: string;
 
     @ApiProperty({ required: true, format: 'string', minLength: 2 })
-    public readonly value: string;
+    public readonly message: string;
 
 }

@@ -1,5 +1,5 @@
 import { AutoMap } from "nestjsx-automapper";
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Process } from "./process.model";
 
 @Entity()
@@ -9,7 +9,6 @@ export class ProcessCondition extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @AutoMap(() => Process,1)
   @ManyToOne(() => Process, process => process.processConditions)
   public process: Process;
 

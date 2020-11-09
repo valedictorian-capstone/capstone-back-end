@@ -10,7 +10,9 @@ export class TaskVM {
   public readonly id: string;
 
   @AutoMap()
-  public readonly code: string;
+  public readonly name: string;
+  @AutoMap()
+  public readonly description: string;
 
   public readonly assignee: AccountVM;
 
@@ -46,36 +48,32 @@ export class TaskCM {
   @ApiProperty()
   public readonly id: string;
   @ApiProperty()
-  public readonly code: string;
+  public readonly name: string;
   @ApiProperty()
   public readonly status: string;
   @ApiProperty()
+  public readonly description: string;
+  @ApiProperty()
   public readonly deadline: Date;
-  @ApiProperty()
-  public readonly createBy: string;
-  @ApiProperty()
-  public readonly isDelete: boolean;
-  @ApiProperty()
-  public readonly createAt: Date;
-  @ApiProperty()
-  public readonly updateAt: Date;
-  @ApiProperty()
-  public readonly customerId: string;
-  @ApiProperty()
-  public readonly assigneeId: string;
-  @ApiProperty()
-  public readonly assigneeById: string;
-  @ApiProperty()
-  public readonly processStepInstanceId: string;
+
+  public readonly assignee: AccountVM;
+
+  public readonly processStepInstance: ProcessStepInstanceVM;
+
+  public readonly customer: CustomerVM;
+
+  public readonly assignBy: AccountVM;
 }
 
 export class TaskUM {
   @ApiProperty()
   public readonly id: string;
   @ApiProperty()
-  public readonly code: string;
+  public readonly name: string;
   @ApiProperty()
   public readonly status: string;
+  @ApiProperty()
+  public readonly description: string;
   @ApiProperty()
   public readonly deadline: Date;
   @ApiProperty()
@@ -86,12 +84,11 @@ export class TaskUM {
   public readonly createAt: Date;
   @ApiProperty()
   public readonly updateAt: Date;
-  @ApiProperty()
-  public readonly customerId: string;
-  @ApiProperty()
-  public readonly assigneeId: string;
-  @ApiProperty()
-  public readonly assigneeById: string;
-  @ApiProperty()
-  public readonly processStepInstanceId: string;
+  public readonly assignee: AccountVM;
+
+  public readonly processStepInstance: ProcessStepInstanceVM;
+
+  public readonly customer: CustomerVM;
+
+  public readonly assignBy: AccountVM;
 }

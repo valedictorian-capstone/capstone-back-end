@@ -22,7 +22,7 @@ export class CommentService {
   };
 
   public readonly findById = async (id: string): Promise<CommentVM> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.repository.useHTTP().findOne({ id: id }, { relations: ['account', 'processStepInstance'] })
       .then((model) => {
         if (model) {
           return this.mapper.map(model, CommentVM, Comment);
@@ -33,25 +33,14 @@ export class CommentService {
       })
   };
 
-  public readonly insert = (body: CommentCM): Promise<CommentVM> => {
-    const account = this.accountRepository.useHTTP().findOne(body.account.account.id);
-
-    const processStepInstance = this.processStepInstanceRepository.useHTTP().findOne(body.processStepInstance.processStepInstance.id);
-
-    return this.repository.useHTTP().save(body as any)
+  public readonly insert = async (body: CommentCM): Promise<CommentVM> => {
+    return await this.repository.useHTTP().save(body as any)
       .then((model) => {
-        model.account = account;
-        model.processStepInstance = processStepInstance;
-        console.log(account);
-        console.log(processStepInstance);
-        this.repository.useHTTP().save(model).then((model) => {
-          return this.findById(model.id);
-        }).catch(err => err)
-      }).catch(err => err);
-  };
-
+        return this.findById(model.id);
+      })
+  }
   public readonly update = async (body: CommentUM): Promise<CommentVM> => {
-    return await this.repository.useHTTP().findOne({ id: body.id })
+    return await this.repository.useHTTP().findOne({ id: body.id }, {relations: ['account', 'processStepInstance']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
