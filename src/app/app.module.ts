@@ -11,7 +11,7 @@ import {
 import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
 import { AppProvider } from '@extras/providers';
-import { Module, OnModuleInit } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, OnModuleInit, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { FirebaseAdminModule } from '@aginix/nestjs-firebase-admin'
@@ -58,6 +58,9 @@ import {
   ProcessInstanceMapper
 } from './mappers';
 import { environment } from 'src/environments/environment';
+import {
+  AuthMiddleware
+} from './middlewares';
 import admin from 'firebase-admin';
 
 
@@ -107,10 +110,11 @@ import admin from 'firebase-admin';
     ...SERVICE_REPOSITORIES,
     ...FILTERS,
     AppGateway,
-    ...AppProvider.init()
+    ...AppProvider.init(),
+    AuthMiddleware
   ],
 })
-export class AppModule implements OnModuleInit {
+export class AppModule implements OnModuleInit, NestModule {
   constructor(@InjectMapper() protected readonly mapper: AutoMapper) { }
   onModuleInit() {
     this.mapper.addProfile(AccountMapper);
@@ -135,5 +139,9 @@ export class AppModule implements OnModuleInit {
     this.mapper.addProfile(EventMapper);
     this.mapper.addProfile(TriggerMapper);
   }
-
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes({ path: '/api/v1/Account', method: RequestMethod.GET });
+  }
 }

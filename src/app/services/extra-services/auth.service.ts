@@ -4,7 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { AccountRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY } from '@types';
 import { compare } from 'bcrypt';
-import { from, Observable, of } from 'rxjs';
+import { sign } from 'jsonwebtoken';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable()
@@ -14,21 +15,27 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) { }
 
-  public readonly login = async (emailOrPhone: string, password: string): Promise<string> => {
+  public readonly login = async (emailOrPhone: string, password: string): Promise<any> => {
     return await this.validateAccount(emailOrPhone, password).then(
-      account => {
+      async (account) => {
         if (account) {
-          this.generateJWT(account).toPromise().then((jwtString) => {
-            console.log(this.jwtService.decode(jwtString));
-          })
-          return this.generateJWT(account).toPromise();
+          return {
+            expiresIn: '24h',
+            accessToken: this.generateJWT(account),
+            roles: account.roles.map((e) => e.name)
+          };
         }
       }
     )
   }
 
-  private generateJWT(account: Account): Observable<string> {
-    return from(this.jwtService.signAsync({ account }))
+  private generateJWT(account: Account): string {
+    return sign({ account }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
+      expiresIn: '24h',
+      audience: account.email,
+      issuer: 'crm',
+      subject: 'se20fa27'
+    });
   }
 
   private comparePasswords(newPassword: string, passwordHash: string): Observable<any> {
@@ -39,7 +46,7 @@ export class AuthService {
     const option = isNaN(+emailOrPhone) ?
       { email: emailOrPhone }
       : { phone: emailOrPhone }
-    return await this.accountRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "accountDepartments", "accountExtraInformationDatas"] }).then(
+    return await this.accountRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "accountDepartments", "tasks"] }).then(
       account => {
         if (!account) {
           throw new UnauthorizedException("Invalid email or phone", "Invalid email or phone");
