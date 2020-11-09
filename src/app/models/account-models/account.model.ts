@@ -56,8 +56,8 @@ export class Account extends BaseEntity {
   @OneToMany(() => Comment, commments => commments.account)
   public comments: Comment[];
 
-  @OneToMany(() => Task, task => task.assignee)
-  public task: Task[];
+  @OneToMany(() => Task, tasks => tasks.assignee)
+  public tasks: Task[];
 
   @OneToMany(() => Task, task => task.assignBy)
   public assignTasks: Task[];
