@@ -15,5 +15,4 @@ export const EXTRA_SERVICES = [
     EmailService,
     SMSService,
     FirebaseService.inject,
-    EmailService
 ]

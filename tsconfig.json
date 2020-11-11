@@ -15,6 +15,7 @@
 		"paths": {
 			"@extras/*": ["src/app/extras/*"],
 			"@interfaces": ["src/app/interfaces"],
+			"@middlewares": ["src/app/middlewares"],
 			"@models": ["src/app/models"],
 			"@environments": ["src/environments"],
 			"@repositories": ["src/app/repositories"],

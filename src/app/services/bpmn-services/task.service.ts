@@ -1,10 +1,11 @@
 import { NotFoundException } from '@exceptions';
 import { Task } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AccountRepository, TaskRepository } from '@repositories';
+import { AccountRepository, NotificationRepository, TaskRepository } from '@repositories';
 import { FirebaseService } from '@services';
-import { ACCOUNT_REPOSITORY, FIREBASE_SERVICE, TASK_REPOSITORY } from '@types';
+import { ACCOUNT_REPOSITORY, FIREBASE_SERVICE, NOTIFICATION_REPOSITORY, TASK_REPOSITORY } from '@types';
 import { TaskCM, TaskUM, TaskVM } from '@view-models';
+import { verify } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { FindManyOptions, In } from 'typeorm';
 
@@ -14,6 +15,7 @@ export class TaskService {
   constructor(
     @Inject(TASK_REPOSITORY) protected readonly taskRepository: TaskRepository,
     @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
+    @Inject(NOTIFICATION_REPOSITORY) protected readonly notificationRepository: NotificationRepository,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
@@ -54,20 +56,35 @@ export class TaskService {
       })
   };
 
-  public readonly insert = async (body: TaskCM): Promise<TaskVM> => {
+  public readonly insert = async (body: TaskCM, token: string): Promise<TaskVM> => {
     return await this.taskRepository.useHTTP().save(body)
-      .then((model) => {
+      .then(async (model) => {
         //send notification
-        this.accountRepository.useHTTP()
+        await this.accountRepository.useHTTP()
           .findOne({ id: body.assignee.id }).then(
             async employee => {
-              this.firebaseService.sendNotification({
+              const noti = {
+                notification: {
+                  body: `New task code ${model.name} created for you`,
+                  title: "You have a new task",
+                },
                 data: {
                   id: model.id,
-                  title: 'You have a new task',
-                  message: `New task code ${model.name} created for you`
+                  url: `core/instance/${body.processStepInstance.processInstance.id}`,
                 },
-                token: employee.deviceId,
+                account: employee,
+                type: 'task',
+                isSeen: false
+              }
+              await this.notificationRepository.useHTTP().save(noti).then(async (notifi) => {
+                const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
+                const account = Object.assign(decoded.valueOf()).account;
+                await this.firebaseService.useSendToDevice(employee.deviceId, {
+                  notification: notifi.notification,
+                  data: {
+                    noti: JSON.stringify({ ...notifi, account: employee }),
+                  },
+                });
               })
             }
           )
@@ -84,25 +101,24 @@ export class TaskService {
       });
 
     await this.taskRepository.useHTTP().save(body).then(result => {
-      //send notification
       this.accountRepository.useHTTP()
         .findOne({ id: body.assignee.id }).then(
           async employee => {
-            this.firebaseService.sendNotification({
+            this.firebaseService.useSendToDevice(employee.deviceId, {
+              notification: {
+                body: "`New task code ${result.name} created for you",
+                title: "You have a new task",
+              },
               data: {
                 id: result.id,
                 title: 'You have a new task',
                 message: `New task code ${result.name} created for you`
               },
-              token: employee.deviceId,
-            })
+            });
           }
         )
     })
-    return await this.taskRepository.useHTTP().findOne({ where: { id: body.id }, relations: ["assignee", "assignBy", "customer"] })
-      .then(task => {
-        return this.mapper.map(task, TaskVM, Task);
-      })
+    return this.findById(body.id);
   };
 
   public readonly remove = async (id: string): Promise<TaskVM> => {

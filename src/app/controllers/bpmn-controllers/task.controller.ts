@@ -6,6 +6,7 @@ import {
     Param,
     Post,
     Put,
+    Request
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
@@ -48,8 +49,8 @@ export class TaskController {
     @ApiOperation({ summary: 'Insert new task' })
     @ApiCreatedResponse({ description: 'Success create new task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Body() body: TaskCM): Promise<TaskVM> {
-        return this.service.insert(body);
+    public insert(@Body() body: TaskCM, @Request() req: any): Promise<TaskVM> {
+        return this.service.insert(body, req.headers.authorization);
     }
 
     @Put()

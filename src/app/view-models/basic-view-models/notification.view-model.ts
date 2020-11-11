@@ -1,19 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { AccountVM } from "@view-models";
 import { AutoMap } from "nestjsx-automapper";
 
 export class NotificationVM {
 
   @AutoMap()
   public readonly id: string;
-
-  @AutoMap()
-  public readonly title: string;
-
-  @AutoMap()
-  public readonly message: string;
-
-  @AutoMap()
+  public readonly notification: any;
   public readonly data: any;
+  public readonly account: AccountVM;
+  @AutoMap()
+  public readonly type: string;
 
   @AutoMap()
   public readonly isSeen: boolean;
@@ -34,11 +31,10 @@ export class NotificationCM {
   @ApiProperty()
   public readonly id: string;
   @ApiProperty()
-  public readonly title: string;
+  public readonly notification: any;
   @ApiProperty()
-  public readonly message: string;
-  @ApiProperty()
-  public readonly account: { id: string };
+  public readonly type: string;
+  public readonly account: AccountVM;
   @ApiProperty()
   public readonly data: any;
   @ApiProperty()
@@ -50,11 +46,10 @@ export class NotificationUM {
   @ApiProperty()
   public readonly id: string;
   @ApiProperty()
-  public readonly title: string;
+  public readonly notification: any;
   @ApiProperty()
-  public readonly message: string;
-  @ApiProperty()
-  public readonly account: { id: string };
+  public readonly type: string;
+  public readonly account: AccountVM;
   @ApiProperty()
   public readonly data: any;
   @ApiProperty()
