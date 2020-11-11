@@ -1,11 +1,12 @@
 import {
   Body,
   Controller,
-  Delete,
+
   Get,
   Param,
   Post,
   Put,
+  Request
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -14,10 +15,10 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
-import { NotificationCM, NotificationUM, NotificationVM } from '@view-models';
 import { NotificationService } from '@services';
+import { NotificationCM, NotificationUM, NotificationVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Notification')
@@ -31,8 +32,8 @@ export class NotificationController {
   @ApiOperation({ summary: 'Get all Notifications' })
   @ApiOkResponse({ description: 'Success return all Notifications' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public findAll(): Promise<NotificationVM[]> {
-    return this.service.findAll();
+  public findAll(@Request() req: any): Promise<NotificationVM[]> {
+    return this.service.findAll(req.headers.authorization);
   }
 
   @Get(':id')
@@ -59,12 +60,19 @@ export class NotificationController {
   public update(@Body() body: NotificationUM): Promise<NotificationVM> {
     return this.service.update(body);
   }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete an Notification by Id' })
-  @ApiCreatedResponse({ description: 'Success delete new Notification' })
+  @Put('/Seen')
+  @ApiOperation({ summary: 'Seen one' })
+  @ApiCreatedResponse({ description: 'Success seen ntification' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public remove(@Param('id') id: string): Promise<NotificationVM> {
-    return this.service.remove(id);
+  public seenAll(@Body() ids: string[], @Request() req: any): Promise<NotificationVM[]> {
+    return this.service.seenAll(ids, req.headers.authorization);
   }
+  @Put('/Seen/:id')
+  @ApiOperation({ summary: 'Seen one' })
+  @ApiCreatedResponse({ description: 'Success seen ntification' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public seen(@Param('id') id: string): Promise<NotificationVM> {
+    return this.service.seen(id);
+  }
+
 }

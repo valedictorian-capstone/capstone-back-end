@@ -3,7 +3,7 @@ import { LogRequestInterceptor } from '@extras/intercepters/log.intercepter';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import express, { urlencoded, json, Request, Response, NextFunction } from 'express';
+import express, { json, urlencoded } from 'express';
 import { AppModule } from 'src/app/app.module';
 declare const module: any;
 // eslint-disable-next-line @typescript-eslint/no-var-requires

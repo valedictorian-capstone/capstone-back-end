@@ -10,12 +10,12 @@ export class Notification extends BaseEntity {
   public id: string;
 
   @AutoMap()
-  @Column({ default: '' })
-  public title: string;
+  @Column("json", { default: null })
+  public notification: any;
 
   @AutoMap()
   @Column({ default: '' })
-  public message: string;
+  public type: string;
 
   @AutoMap()
   @Column("json", { default: null })

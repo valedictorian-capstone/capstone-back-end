@@ -2,9 +2,9 @@ import { Notification } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { NotificationRepository } from '@repositories';
 import { NOTIFICATION_REPOSITORY } from '@types';
+import { verify } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { NotificationCM, NotificationUM, NotificationVM } from 'src/app/view-models';
-import { In } from 'typeorm';
 @Injectable()
 export class NotificationService {
 
@@ -13,8 +13,10 @@ export class NotificationService {
     @Inject(NOTIFICATION_REPOSITORY) protected readonly notificationRepository: NotificationRepository
   ) { }
 
-  public readonly findAll = async (ids?: string[]): Promise<NotificationVM[]> => {
-    return await this.notificationRepository.useHTTP().find(ids ? { id: In(ids) } : {})
+  public readonly findAll = async (token: string): Promise<NotificationVM[]> => {
+    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
+    const account = Object.assign(decoded.valueOf()).account;
+    return await this.notificationRepository.useHTTP().find({ where: { account }, relations: ['account'] })
       .then((models) => this.mapper.mapArray(models, NotificationVM, Notification))
   };
 
@@ -76,7 +78,7 @@ export class NotificationService {
       });
   };
 
-  public readonly active = async (id: string): Promise<NotificationVM> => {
+  public readonly seen = async (id: string): Promise<NotificationVM> => {
     return await this.notificationRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -85,26 +87,17 @@ export class NotificationService {
           );
         }
         return await this.notificationRepository.useHTTP()
-          .save({ ...model, IsDelete: false })
+          .save({ ...model, isSeen: true })
           .then((model) => {
             return this.findById(model.id);
           })
       });
   };
-
-  public readonly deactive = async (id: string): Promise<NotificationVM> => {
-    return await this.notificationRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.notificationRepository.useHTTP()
-          .save({ ...model, IsDelete: true })
-          .then((model) => {
-            return this.findById(model.id);
-          })
+  public readonly seenAll = async (ids: string[], token: string): Promise<NotificationVM[]> => {
+    return await this.notificationRepository.useHTTP()
+      .save(ids.map((id) => ({ id, isSeen: true })))
+      .then(() => {
+        return this.findAll(token);
       });
   };
 }

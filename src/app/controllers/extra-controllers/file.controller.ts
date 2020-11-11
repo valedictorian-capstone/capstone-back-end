@@ -28,6 +28,6 @@ export class FileController {
   @ApiCreatedResponse({ description: 'Success create File' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public insert(@Body() body: FileCM): Promise<string> {
-    return this.firebaseService.uploadFile(body);
+    return this.firebaseService.useUploadFileBase64('', '', '');
   }
 }

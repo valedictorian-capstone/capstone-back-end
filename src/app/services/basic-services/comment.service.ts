@@ -1,4 +1,5 @@
 import { NotFoundException } from '@exceptions';
+import { AppGateway } from '@extras/gateways';
 import { Comment } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { AccountRepository, CommentRepository, ProcessStepInstanceRepository } from '@repositories';
@@ -13,7 +14,8 @@ export class CommentService {
     @Inject(COMMENT_REPOSITORY) protected readonly repository: CommentRepository,
     @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
     @Inject(PROCESS_STEP_REPOSITORY) protected readonly processStepInstanceRepository: ProcessStepInstanceRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    protected readonly gateway: AppGateway,
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CommentVM[]> => {
@@ -35,7 +37,8 @@ export class CommentService {
 
   public readonly insert = async (body: CommentCM): Promise<CommentVM> => {
     return await this.repository.useHTTP().save(body as any)
-      .then((model) => {
+      .then(async (model) => {
+        this.gateway.server.emit('comments', await this.findById(model.id));
         return this.findById(model.id);
       })
   }

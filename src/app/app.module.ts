@@ -79,10 +79,13 @@ import admin from 'firebase-admin';
       signOptions: { expiresIn: '60s' },
     }),
     FirebaseAdminModule.forRootAsync({
-      useFactory: () => ({
-        credential: admin.credential.cert(require('../../service-account.json')),
-        databaseURL: environment.firebase.databaseURL,
-      })
+      useFactory: () => {
+        const ad = {
+          credential: admin.credential.cert(require('../../service-account.json')),
+          databaseURL: environment.firebase.databaseURL,
+        }
+        return ad;
+      }
     }),
   ],
   controllers: [

@@ -5,7 +5,7 @@ import { AccountRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY } from '@types';
 import { AccountVM } from '@view-models';
 import { compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,7 +18,7 @@ export class AuthService {
     @InjectMapper() protected readonly mapper: AutoMapper,
   ) { }
 
-  public readonly login = async (emailOrPhone: string, password: string): Promise<any> => {
+  public readonly login = async (emailOrPhone: string, password: string,): Promise<any> => {
     return await this.validateAccount(emailOrPhone, password).then(
       async (account) => {
         if (account) {
@@ -34,8 +34,14 @@ export class AuthService {
       }
     )
   }
-
-  private generateJWT(account: AccountVM): string {
+  public readonly refresh = async (token: string, fcmToken: string) => {
+    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
+    const account = Object.assign(decoded.valueOf()).account;
+    return await this.accountRepository.useHTTP().save({ id: account.id, deviceId: fcmToken }).then((res) => {
+      return { ...res, ...account };
+    });
+  }
+  protected readonly generateJWT = (account: AccountVM): string => {
     return sign({ account }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
       expiresIn: '24h',
       audience: account.email,
@@ -44,16 +50,16 @@ export class AuthService {
     });
   }
 
-  private comparePasswords(newPassword: string, passwordHash: string): Observable<any> {
+  protected readonly comparePasswords = (newPassword: string, passwordHash: string): Observable<any> => {
     return of<any | boolean>(compare(newPassword, passwordHash));
   }
 
-  private validateAccount = async (emailOrPhone: string, password: string): Promise<AccountVM> => {
+  protected readonly validateAccount = async (emailOrPhone: string, password: string): Promise<AccountVM> => {
     const option = isNaN(+emailOrPhone) ?
       { email: emailOrPhone }
       : { phone: emailOrPhone }
     return await this.accountRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "accountDepartments", "tasks"] }).then(
-      account => {
+      async account => {
         if (!account) {
           throw new UnauthorizedException("Invalid email or phone", "Invalid email or phone");
         }
