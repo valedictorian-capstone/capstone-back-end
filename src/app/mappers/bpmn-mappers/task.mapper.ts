@@ -1,6 +1,6 @@
 import { Task } from "@models";
 import { AutoMapper, mapWith, ProfileBase } from "@nartc/automapper";
-import { AccountVM, CustomerVM, TaskUM, TaskVM, ProcessStepInstanceVM } from "@view-models";
+import { AccountVM, CustomerVM, TaskUM, TaskVM } from "@view-models";
 
 export class TaskMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -17,11 +17,7 @@ export class TaskMapper extends ProfileBase {
       .forMember(
         d => d.assignBy,
         mapWith(AccountVM, s => s.assignBy)
-      ).forMember(
-        d => d.processStepInstance,
-        mapWith(ProcessStepInstanceVM, s => s.processStepInstance)
-      )
-      ;
+      );
     mapper.createMap(TaskUM, TaskVM);
   }
 }

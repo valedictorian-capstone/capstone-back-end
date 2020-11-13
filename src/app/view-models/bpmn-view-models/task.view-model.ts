@@ -2,7 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { AccountVM } from "@view-models";
 import { AutoMap } from "nestjsx-automapper";
 import { CustomerVM } from "../customer-view-models";
-import { ProcessStepInstanceVM } from "./process-step-instance.view-model";
 
 
 export class TaskVM {
@@ -15,8 +14,6 @@ export class TaskVM {
   public readonly description: string;
 
   public readonly assignee: AccountVM;
-
-  public readonly processStepInstance: ProcessStepInstanceVM;
 
   public readonly customer: CustomerVM;
 
@@ -58,8 +55,6 @@ export class TaskCM {
 
   public readonly assignee: AccountVM;
 
-  public readonly processStepInstance: ProcessStepInstanceVM;
-
   public readonly customer: CustomerVM;
 
   public readonly assignBy: AccountVM;
@@ -85,8 +80,6 @@ export class TaskUM {
   @ApiProperty()
   public readonly updateAt: Date;
   public readonly assignee: AccountVM;
-
-  public readonly processStepInstance: ProcessStepInstanceVM;
 
   public readonly customer: CustomerVM;
 

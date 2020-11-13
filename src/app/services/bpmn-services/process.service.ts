@@ -1,7 +1,7 @@
 import { Process } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { ProcessConnectionRepository, ProcessInstanceRepository, ProcessStepInstanceRepository, ProcessStepRepository } from "@repositories";
-import { PROCESS_CONNECTION_REPOSITORY, PROCESS_INSTANCE_REPOSITORY, PROCESS_REPOSITORY, PROCESS_STEP_INSTANCE_REPOSITORY, PROCESS_STEP_REPOSITORY } from "@types";
+import { ProcessConnectionRepository, ProcessInstanceRepository, ProcessStepRepository } from "@repositories";
+import { PROCESS_CONNECTION_REPOSITORY, PROCESS_INSTANCE_REPOSITORY, PROCESS_REPOSITORY, PROCESS_STEP_REPOSITORY } from "@types";
 import { ProcessCM, ProcessUM, ProcessVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { ProcessRepository } from "src/app/repositories/bpmn-repositories/process.repository";
@@ -14,7 +14,6 @@ export class ProcessService {
     @Inject(PROCESS_REPOSITORY) protected readonly processRepository: ProcessRepository,
     @Inject(PROCESS_STEP_REPOSITORY) protected readonly processStepRepository: ProcessStepRepository,
     @Inject(PROCESS_INSTANCE_REPOSITORY) protected readonly processInstanceRepository: ProcessInstanceRepository,
-    @Inject(PROCESS_STEP_INSTANCE_REPOSITORY) protected readonly processStepInstanceRepository: ProcessStepInstanceRepository,
     @Inject(PROCESS_CONNECTION_REPOSITORY) protected readonly processConnectionRepository: ProcessConnectionRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
@@ -33,12 +32,7 @@ export class ProcessService {
           );
         } else {
           model.processInstances = await this.processInstanceRepository.useHTTP()
-            .find({ where: { id: In(model.processInstances.map((e) => e.id)) }, relations: ['process', 'customer', 'processStepInstances'] });
-          for (let i = 0; i < model.processInstances.length; i++) {
-            const instance = model.processInstances[i];
-            instance.processStepInstances = await this.processStepInstanceRepository.useHTTP()
-              .find({ where: { id: In(instance.processStepInstances.map((e) => e.id)) }, relations: ['processInstance', 'processStep', 'tasks', 'comments', 'formDatas'] });
-          }
+            .find({ where: { id: In(model.processInstances.map((e) => e.id)) }, relations: ['process', 'customer'] });
           model.processSteps = await this.processStepRepository.useHTTP()
             .find({ where: { id: In(model.processSteps.map((e) => e.id)) }, relations: ["department", "processFromConnections", "processToConnections", "process", "formGroups"] });
           for (let i = 0; i < model.processSteps.length; i++) {

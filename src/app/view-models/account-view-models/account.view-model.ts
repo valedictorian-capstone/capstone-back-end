@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AutoMap } from 'nestjsx-automapper';
 import { AccountDepartmentVM } from '.';
-import { ProcessStepInstanceVM } from '../bpmn-view-models';
 import { RoleVM } from './role.view-model';
 
 export class AccountVM {
@@ -36,8 +35,6 @@ export class AccountVM {
   public readonly currentValidateCode: string;
 
   public readonly accountDepartments: AccountDepartmentVM[];
-
-  public readonly processStepInstanceVMs: ProcessStepInstanceVM[];
 
   public readonly roles: RoleVM[];
 

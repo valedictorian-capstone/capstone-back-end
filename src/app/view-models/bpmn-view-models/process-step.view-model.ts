@@ -5,7 +5,6 @@ import { ProcessVM } from ".";
 import { DepartmentVM } from "../basic-view-models";
 import { FormGroupVM } from "../form-view-models";
 import { ProcessConnectionVM } from "./process-connection.view-model";
-import { ProcessStepInstanceVM } from "./process-step-instance.view-model";
 
 export class ProcessStepVM {
   @AutoMap()
@@ -20,8 +19,6 @@ export class ProcessStepVM {
   public readonly subType: string;
 
   public process: ProcessVM;
-
-  public processStepInstances: ProcessStepInstanceVM[];
 
   public processFromConnections: ProcessConnectionVM[];
 

@@ -2,8 +2,8 @@ import { NotFoundException } from '@exceptions';
 import { AppGateway } from '@extras/gateways';
 import { Comment } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AccountRepository, CommentRepository, ProcessStepInstanceRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY, COMMENT_REPOSITORY, PROCESS_STEP_REPOSITORY } from '@types';
+import { AccountRepository, CommentRepository } from '@repositories';
+import { ACCOUNT_REPOSITORY, COMMENT_REPOSITORY } from '@types';
 import { CommentCM, CommentUM, CommentVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
@@ -13,7 +13,6 @@ export class CommentService {
   constructor(
     @Inject(COMMENT_REPOSITORY) protected readonly repository: CommentRepository,
     @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
-    @Inject(PROCESS_STEP_REPOSITORY) protected readonly processStepInstanceRepository: ProcessStepInstanceRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
     protected readonly gateway: AppGateway,
   ) { }

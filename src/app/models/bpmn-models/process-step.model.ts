@@ -15,7 +15,6 @@ import { FormGroup } from '../form-models';
 import { ProcessConnection } from './process-connection.model';
 
 
-import { ProcessStepInstance } from './process-step-instance.model';
 import { Process } from './process.model';
 import { Task } from './task.model';
 
@@ -41,9 +40,6 @@ export class ProcessStep extends BaseEntity {
 
   @ManyToOne(() => Process, process => process.processSteps)
   public process: Process;
-
-  @OneToMany(() => ProcessStepInstance, processStepInstances => processStepInstances.processStep)
-  public processStepInstances: ProcessStepInstance[];
 
   @OneToMany(() => ProcessConnection, processConnection => processConnection.fromProcessStep)
   public processFromConnections: ProcessConnection[];

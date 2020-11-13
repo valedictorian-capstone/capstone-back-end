@@ -1,5 +1,4 @@
 import { AutoMap } from "nestjsx-automapper";
-import { ProcessStepInstanceVM } from "../bpmn-view-models/process-step-instance.view-model";
 import { FormGroupVM } from "./form-group.view-model";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -7,8 +6,6 @@ export class FormDataVM {
   
   @AutoMap()
   public readonly id: string;
-  
-  public readonly processStepInstance: ProcessStepInstanceVM;
   
   public readonly formGroup: FormGroupVM;
   

@@ -2,7 +2,6 @@ import { Customer } from "@models";
 import { AutoMap } from 'nestjsx-automapper';
 import { ProcessVM } from ".";
 import { CustomerVM } from "../customer-view-models";
-import { ProcessStepInstanceVM } from "./process-step-instance.view-model";
 
 export class ProcessInstanceVM {
   @AutoMap()
@@ -13,7 +12,7 @@ export class ProcessInstanceVM {
   public readonly customer: CustomerVM;
   @AutoMap()
   public readonly description: string;
-  public readonly processStepInstances: ProcessStepInstanceVM[];
+
   @AutoMap()
   public readonly isDelete: boolean;
   @AutoMap()

@@ -10,7 +10,6 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { Customer } from '../customer-models/customer.model';
-import { ProcessStepInstance } from './process-step-instance.model';
 import { Process } from './process.model';
 
 @Entity()
@@ -26,12 +25,6 @@ export class ProcessInstance extends BaseEntity {
   @AutoMap()
   @Column({ default: null })
   public description: string;
-
-  @OneToMany(
-    () => ProcessStepInstance,
-    processStepInstances => processStepInstances.processInstance,
-  )
-  public processStepInstances: ProcessStepInstance[];
 
   @AutoMap(() => Customer, 1)
   @ManyToOne(() => Customer, customer => customer.processInstances)

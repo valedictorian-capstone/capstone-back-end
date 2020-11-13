@@ -1,6 +1,6 @@
 import { Customer, ProcessInstance } from '@models';
 import { AutoMapper, mapWith, preCondition, ProfileBase } from "@nartc/automapper";
-import { CustomerVM, ProcessInstanceCM, ProcessInstanceUM, ProcessInstanceVM, ProcessStepInstanceVM, ProcessVM } from "@view-models";
+import { CustomerVM, ProcessInstanceCM, ProcessInstanceUM, ProcessInstanceVM, ProcessVM } from "@view-models";
 
 export class ProcessInstanceMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -13,10 +13,6 @@ export class ProcessInstanceMapper extends ProfileBase {
       .forMember(d => d.customer,
         preCondition(s => s.customer != null),
         mapWith(CustomerVM, s => s.customer)
-      )
-      .forMember(d => d.processStepInstances,
-        preCondition((s) => s.processStepInstances != null, []),
-        mapWith(ProcessStepInstanceVM, s => s.processStepInstances)
       );
     mapper.createMap(ProcessInstanceUM, ProcessInstanceVM);
     mapper.createMap(ProcessInstanceCM, ProcessInstance);

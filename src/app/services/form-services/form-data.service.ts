@@ -1,7 +1,7 @@
 import { FormData } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { FormDataRepository, FormGroupRepository, ProcessStepInstanceRepository } from '@repositories';
-import { FORM_DATA_REPOSITORY, FORM_GROUP_REPOSITORY, PROCESS_STEP_INSTANCE_REPOSITORY, PROCESS_STEP_REPOSITORY } from '@types';
+import { FormDataRepository, FormGroupRepository } from '@repositories';
+import { FORM_DATA_REPOSITORY, FORM_GROUP_REPOSITORY } from '@types';
 import { FormDataCM, FormDataUM, FormDataVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { NotFoundException } from '@exceptions';
@@ -13,7 +13,6 @@ export class FormDataService {
     constructor(
         @Inject(FORM_DATA_REPOSITORY) protected readonly repository: FormDataRepository,
         @Inject(FORM_GROUP_REPOSITORY) protected readonly formGroupRepository: FormGroupRepository,
-        @Inject(PROCESS_STEP_INSTANCE_REPOSITORY) protected readonly processStepInstanceRepository: ProcessStepInstanceRepository,
         @InjectMapper() protected readonly mapper: AutoMapper
     ) { }
 
@@ -38,8 +37,7 @@ export class FormDataService {
         return this.repository.useHTTP().save(body as any)
             .then(async (model) => {
                 const formGroup = await this.formGroupRepository.useHTTP().findOne(body.formGroupId);
-                const processStepInstance = await this.processStepInstanceRepository.useHTTP().findOne(body.processStepInstanceId);
-                await this.repository.useHTTP().save({...model, formGroup: formGroup, processStepInstance: processStepInstance})
+                await this.repository.useHTTP().save({...model, formGroup: formGroup})
                 return await this.findById(model.id);
             })
     };

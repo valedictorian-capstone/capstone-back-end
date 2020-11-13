@@ -9,7 +9,6 @@ import {
     UpdateDateColumn
 } from 'typeorm';
 
-import { ProcessStepInstance } from '../bpmn-models/process-step-instance.model';
 import { FormGroup } from './form-group.model';
 
 @Entity()
@@ -17,9 +16,6 @@ export class FormData extends BaseEntity {
     @AutoMap()
     @PrimaryGeneratedColumn('uuid')
     public id: string;
-
-    @ManyToOne(() => ProcessStepInstance, processStepInstance => processStepInstance.formDatas)
-    public processStepInstance: ProcessStepInstance;
 
     @ManyToOne(() => FormGroup, formGroup => formGroup.formDatas)
     public formGroup: FormGroup;

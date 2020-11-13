@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { AccountVM } from "../account-view-models";
-import { ProcessStepInstanceVM } from "../bpmn-view-models";
 
 export class CommentVM {
 
@@ -12,8 +11,6 @@ export class CommentVM {
     public readonly message: string;
 
     public readonly account: AccountVM;
-
-    public readonly processStepInstance: ProcessStepInstanceVM;
 
     @AutoMap()
     public readonly isDelete: boolean;

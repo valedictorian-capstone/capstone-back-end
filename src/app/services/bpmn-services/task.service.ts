@@ -70,7 +70,7 @@ export class TaskService {
                 },
                 data: {
                   id: model.id,
-                  url: `core/instance/${body.processStepInstance.processInstance.id}`,
+                  // url: `core/instance/${body.processStepInstance.processInstance.id}`,
                 },
                 account: employee,
                 type: 'task',

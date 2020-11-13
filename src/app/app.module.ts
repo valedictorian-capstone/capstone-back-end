@@ -48,7 +48,6 @@ import {
   ProcessStepMapper,
   NotificationMapper,
   CommentMapper,
-  ProcessStepInstanceMapper,
   AccountDepartmentMapper,
   RoleMapper,
   OrderRequestMapper,
@@ -132,7 +131,6 @@ export class AppModule implements OnModuleInit, NestModule {
     this.mapper.addProfile(ServiceMapper);
     this.mapper.addProfile(ProcessConnectionMapper);
     this.mapper.addProfile(ProcessMapper);
-    this.mapper.addProfile(ProcessStepInstanceMapper)
     this.mapper.addProfile(ProcessStepMapper);
     this.mapper.addProfile(ProcessInstanceMapper);
     this.mapper.addProfile(NotificationMapper);
