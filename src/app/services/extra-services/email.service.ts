@@ -58,7 +58,27 @@ export class EmailService {
         })
     }
 
-
+    public readonly sendHappyBirtdayEmailCustomer = async (customers: []): Promise<string> => {
+        const transporter = createTransport({ // config mail server
+            service: 'Gmail',
+            auth: {
+                user: 'crmdynamic123@gmail.com',
+                pass: '123456crm'
+            }
+        });
+        let countSuccess = 0;
+        for (let i = 0; i < customers.length; i++) {
+            await transporter.sendMail(this.getHappyBirthdayTemplate(customers[i])), (err, info) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(info);
+                    countSuccess++;
+                }
+            }
+        }
+        return "Send happy birthday mail"  +countSuccess;
+    }
 
     private getDemoTemplate(customer: Customer) {
         return {
@@ -78,5 +98,15 @@ export class EmailService {
             text: 'You recieved message from ',
             html: content
         }
-    }
+    };
+
+    private getHappyBirthdayTemplate(customer: Customer) {
+        return {
+            from: 'CRM Capstone',
+            to: customer.email,
+            subject: 'Chúc mừng sinh nhật',
+            text: 'You recieved message from ',
+            html: '<p>Kính gửi ' +customer.fullname + '</p><p><br></p><p>Cám ơn bạn đã đồng hành với công ty. </p><p>Chúc bạn có một sinh nhật thật vui vẻ với những người thân thương</p><p><br></p><p>Trân trọng</p>'
+        }
+    };
 }
