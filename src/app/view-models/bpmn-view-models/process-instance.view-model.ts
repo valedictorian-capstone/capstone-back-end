@@ -12,7 +12,6 @@ export class ProcessInstanceVM {
   public readonly customer: CustomerVM;
   @AutoMap()
   public readonly description: string;
-
   @AutoMap()
   public readonly isDelete: boolean;
   @AutoMap()

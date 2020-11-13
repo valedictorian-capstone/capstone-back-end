@@ -1,32 +1,29 @@
 import { NotFoundException } from '@exceptions';
-import { AppGateway } from '@extras/gateways';
-import { Comment } from '@models';
+import { Device } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AccountRepository, CommentRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY, COMMENT_REPOSITORY } from '@types';
-import { CommentCM, CommentUM, CommentVM } from '@view-models';
+import { DeviceRepository } from '@repositories';
+import { DEVICE_REPOSITORY } from '@types';
+import { DeviceCM, DeviceUM, DeviceVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
 
 @Injectable()
-export class CommentService {
+export class DeviceService {
   constructor(
-    @Inject(COMMENT_REPOSITORY) protected readonly repository: CommentRepository,
-    @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper,
-    protected readonly gateway: AppGateway,
+    @Inject(DEVICE_REPOSITORY) protected readonly repository: DeviceRepository,
+    @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
-  public readonly findAll = async (ids?: string[]): Promise<CommentVM[]> => {
-    return await this.repository.useHTTP().find(ids ? { id: In(ids) } : {})
-      .then((models) => this.mapper.mapArray(models, CommentVM, Comment))
+  public readonly findAll = async (ids?: string[]): Promise<DeviceVM[]> => {
+    return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ['account'] })
+      .then((models) => this.mapper.mapArray(models, DeviceVM, Device))
   };
 
-  public readonly findById = async (id: string): Promise<CommentVM> => {
-    return await this.repository.useHTTP().findOne({ id: id }, { relations: ['account', 'processStepInstance'] })
+  public readonly findById = async (id: string): Promise<DeviceVM> => {
+    return await this.repository.useHTTP().findOne({ id: id }, { relations: ['account'] })
       .then((model) => {
         if (model) {
-          return this.mapper.map(model, CommentVM, Comment);
+          return this.mapper.map(model, DeviceVM, Device);
         }
         throw new NotFoundException(
           `Can not find ${id}`,
@@ -34,15 +31,15 @@ export class CommentService {
       })
   };
 
-  public readonly insert = async (body: CommentCM): Promise<CommentVM> => {
-    return await this.repository.useHTTP().save(body as any)
-      .then(async (model) => {
-        this.gateway.server.emit('comments', await this.findById(model.id));
+  public readonly insert = (body: DeviceCM): Promise<DeviceVM> => {
+    return this.repository.useHTTP().save(body)
+      .then((model) => {
         return this.findById(model.id);
       })
-  }
-  public readonly update = async (body: CommentUM): Promise<CommentVM> => {
-    return await this.repository.useHTTP().findOne({ id: body.id }, {relations: ['account', 'processStepInstance']})
+  };
+
+  public readonly update = async (body: DeviceUM): Promise<DeviceVM> => {
+    return await this.repository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -57,7 +54,7 @@ export class CommentService {
       });
   };
 
-  public readonly remove = async (id: string): Promise<CommentVM> => {
+  public readonly remove = async (id: string): Promise<DeviceVM> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -76,7 +73,7 @@ export class CommentService {
       });
   };
 
-  public readonly active = async (id: string): Promise<CommentVM> => {
+  public readonly active = async (id: string): Promise<DeviceVM[]> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -87,12 +84,14 @@ export class CommentService {
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: false })
           .then(() => {
-            return this.findById(model.id);
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };
 
-  public readonly deactive = async (id: string): Promise<CommentVM> => {
+  public readonly deactive = async (id: string): Promise<DeviceVM[]> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -103,7 +102,9 @@ export class CommentService {
         return await this.repository.useHTTP()
           .save({ ...model, IsDelete: true })
           .then(() => {
-            return this.findById(model.id);
+            const ids = [];
+            ids.push(model.id);
+            return this.findAll(ids);
           })
       });
   };

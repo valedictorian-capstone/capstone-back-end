@@ -1,8 +1,7 @@
 import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Comment, Notification } from '../basic-models';
-import { Task } from '../bpmn-models';
-import { AccountDepartment } from './account-department.model';
+import { Device, Notification } from '../basic-models';
+import { Activity } from '../bpmn-models';
 import { Role } from './role.model';
 @Entity()
 export class Account extends BaseEntity {
@@ -43,24 +42,14 @@ export class Account extends BaseEntity {
   @Column({ nullable: false, default: '1' })
   public password: string;
 
-  @AutoMap()
-  @Column({ nullable: true })
-  public deviceId: string;
-
-  @OneToMany(() => AccountDepartment, accountDepartments => accountDepartments.account)
-  public accountDepartments: AccountDepartment[];
+  @OneToMany(() => Device, devices => devices.account)
+  public devices: Device[];
 
   @OneToMany(() => Notification, notification => notification.account)
   public notifications: Notification[];
 
-  @OneToMany(() => Comment, commments => commments.account)
-  public comments: Comment[];
-
-  @OneToMany(() => Task, tasks => tasks.assignee)
-  public tasks: Task[];
-
-  @OneToMany(() => Task, task => task.assignBy)
-  public assignTasks: Task[];
+  @OneToMany(() => Activity, activitys => activitys.assignee)
+  public activitys: Activity[];
 
   @JoinTable()
   @ManyToMany(() => Role, role => role.accounts)

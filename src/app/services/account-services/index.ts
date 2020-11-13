@@ -1,6 +1,4 @@
-import { AccountService, AccountDepartmentService } from '.';
-import { RoleService } from './role.service';
+import { AccountService, RoleService } from '.';
 export * from './account.service';
-export * from './account-department.service'
 export * from './role.service'
-export const ACCOUNT_SERVICES = [AccountService, AccountDepartmentService, RoleService];
+export const ACCOUNT_SERVICES = [AccountService, RoleService];

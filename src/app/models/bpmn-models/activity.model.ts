@@ -1,11 +1,10 @@
 import { AutoMap } from "nestjsx-automapper";
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Account } from "../account-models";
-import { Customer } from "../customer-models/customer.model";
-import { ProcessStep } from "./process-step.model";
+import { ProcessInstance } from "./process-instance.model";
 
 @Entity()
-export class Task extends BaseEntity {
+export class Activity extends BaseEntity {
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
@@ -21,17 +20,14 @@ export class Task extends BaseEntity {
   @ManyToOne(() => Account, account => account)
   public assignee: Account;
 
-  @ManyToOne(() => Customer, customer => customer.tasks)
-  public customer: Customer;
-
   @ManyToOne(() => Account, account => account)
   public assignBy: Account;
 
-  @ManyToOne(() => ProcessStep, processStep => processStep.tasks)
-  public processStep: ProcessStep;
+  @ManyToOne(() => ProcessInstance, processInstance => processInstance.activitys)
+  public processInstance: ProcessInstance;
 
   @AutoMap()
-  @Column({ default: "OPEN" })
+  @Column({ default: "processing" })
   public status: string;
 
   @AutoMap()

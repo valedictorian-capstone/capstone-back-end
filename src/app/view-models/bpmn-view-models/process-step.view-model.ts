@@ -1,9 +1,6 @@
-import { Department } from "@models";
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { ProcessVM } from ".";
-import { DepartmentVM } from "../basic-view-models";
-import { FormGroupVM } from "../form-view-models";
 import { ProcessConnectionVM } from "./process-connection.view-model";
 
 export class ProcessStepVM {
@@ -23,10 +20,6 @@ export class ProcessStepVM {
   public processFromConnections: ProcessConnectionVM[];
 
   public processToConnections: ProcessConnectionVM[];
-
-  public department: DepartmentVM;
-
-  public formGroups: FormGroupVM[];
 
   @AutoMap()
   public readonly isDelete: boolean;
@@ -55,8 +48,6 @@ export class ProcessStepCM {
   public processFromConnections: ProcessConnectionVM[];
   @ApiProperty()
   public processToConnections: ProcessConnectionVM[];
-  @ApiProperty()
-  public department: DepartmentVM;
 }
 
 export class ProcessStepUM {
@@ -75,6 +66,4 @@ export class ProcessStepUM {
   public processFromConnections: ProcessConnectionVM[];
   @ApiProperty()
   public processToConnections: ProcessConnectionVM[];
-  @ApiProperty()
-  public department: Department;
 }

@@ -1,9 +1,9 @@
 import { Account } from '@models';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AccountRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY } from '@types';
-import { AccountVM } from '@view-models';
+import { AccountRepository, DeviceRepository } from '@repositories';
+import { ACCOUNT_REPOSITORY, DEVICE_REPOSITORY } from '@types';
+import { AccountVM, DeviceCM } from '@view-models';
 import { compare } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
@@ -14,6 +14,7 @@ import { map } from 'rxjs/operators';
 export class AuthService {
   constructor(
     @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
+    @Inject(DEVICE_REPOSITORY) protected readonly deviceRepository: DeviceRepository,
     private readonly jwtService: JwtService,
     @InjectMapper() protected readonly mapper: AutoMapper,
   ) { }
@@ -34,12 +35,15 @@ export class AuthService {
       }
     )
   }
-  public readonly refresh = async (token: string, fcmToken: string) => {
+  public readonly refresh = async (token: string, device: DeviceCM) => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
     const account = Object.assign(decoded.valueOf()).account;
-    return await this.accountRepository.useHTTP().save({ id: account.id, deviceId: fcmToken }).then((res) => {
-      return { ...res, ...account };
-    });
+    const exist = await this.deviceRepository.useHTTP().findOne({ id: device?.id, account: account });
+    if (device.id && !exist) {
+      await this.deviceRepository.useHTTP().insert({ ...device, account: account, customer: undefined });
+      return { ...account, devices: [...account.devices, device] };
+    }
+    return account;
   }
   protected readonly generateJWT = (account: AccountVM): string => {
     return sign({ account }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
@@ -58,7 +62,7 @@ export class AuthService {
     const option = isNaN(+emailOrPhone) ?
       { email: emailOrPhone }
       : { phone: emailOrPhone }
-    return await this.accountRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "accountDepartments", "tasks"] }).then(
+    return await this.accountRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "tasks", "devices"] }).then(
       async account => {
         if (!account) {
           throw new UnauthorizedException("Invalid email or phone", "Invalid email or phone");

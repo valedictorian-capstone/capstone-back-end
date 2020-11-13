@@ -17,22 +17,22 @@ import {
     ApiOperation,
     ApiTags,
 } from '@nestjs/swagger';
-import { TaskCM, TaskUM, TaskVM } from '@view-models';
-import { TaskService } from '@services';
+import { ActivityCM, ActivityUM, ActivityVM } from '@view-models';
+import { ActivityService } from '@services';
 
 @ApiBearerAuth('JWT')
-@ApiTags('Task')
-@Controller('/api/v1/Task')
-export class TaskController {
+@ApiTags('Activity')
+@Controller('/api/v1/Activity')
+export class ActivityController {
     constructor(
-        protected service: TaskService,
+        protected service: ActivityService,
     ) { }
 
     @Get()
     @ApiOperation({ summary: 'Get all task' })
     @ApiOkResponse({ description: 'Success return all task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public findAll(): Promise<TaskVM[]> {
+    public findAll(): Promise<ActivityVM[]> {
         return this.service.findAll();
     }
 
@@ -41,7 +41,7 @@ export class TaskController {
     @ApiOkResponse({ description: "Success return an task's information" })
     @ApiNotFoundResponse({ description: 'Fail to find task by Id' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public findById(@Param('id') id: string): Promise<TaskVM> {
+    public findById(@Param('id') id: string): Promise<ActivityVM> {
         return this.service.findById(id);
     }
 
@@ -49,7 +49,7 @@ export class TaskController {
     @ApiOperation({ summary: 'Insert new task' })
     @ApiCreatedResponse({ description: 'Success create new task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Body() body: TaskCM, @Request() req: any): Promise<TaskVM> {
+    public insert(@Body() body: ActivityCM, @Request() req: any): Promise<ActivityVM> {
         return this.service.insert(body, req.headers.authorization);
     }
 
@@ -57,7 +57,7 @@ export class TaskController {
     @ApiOperation({ summary: 'Update an task by Id' })
     @ApiCreatedResponse({ description: 'Success update new task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public update(@Body() body: TaskUM): Promise<TaskVM> {
+    public update(@Body() body: ActivityUM): Promise<ActivityVM> {
         return this.service.update(body);
     }
 
@@ -65,7 +65,7 @@ export class TaskController {
     @ApiOperation({ summary: 'Delete an task by Id' })
     @ApiCreatedResponse({ description: 'Success delete new task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public remove(id: string): Promise<TaskVM> {
+    public remove(id: string): Promise<ActivityVM> {
         return this.service.remove(id);
     }
 
@@ -73,7 +73,7 @@ export class TaskController {
     @ApiOperation({ summary: 'Active an task by Id' })
     @ApiCreatedResponse({ description: 'Success active new task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public active(@Param('id') id: string): Promise<TaskVM[]> {
+    public active(@Param('id') id: string): Promise<ActivityVM[]> {
         return this.service.active(id);
     }
 
@@ -81,7 +81,7 @@ export class TaskController {
     @ApiOperation({ summary: 'Deative an task by Id' })
     @ApiCreatedResponse({ description: 'Success deactive new task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public deactive(@Param('id') id: string): Promise<TaskVM[]> {
+    public deactive(@Param('id') id: string): Promise<ActivityVM[]> {
         return this.service.deactive(id);
     }
 }

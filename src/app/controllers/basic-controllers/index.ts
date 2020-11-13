@@ -1,25 +1,22 @@
-import { 
-  DepartmentController,  
-  GroupController, 
-  CommentController,
+import {
+  GroupController,
   EventController,
   TriggerController,
-  NotificationController
+  NotificationController,
+  DeviceController,
 } from '.'
 
 export * from './group.controller';
-export * from './department.controller';
-export * from './comment.controller';
 export * from './trigger.controller';
 export * from './event.controller';
+export * from './device.controller';
 export * from './notification.controller';
 
 
 export const BASIC_CONTROLLERS = [
-  DepartmentController,
   GroupController,
-  CommentController,
   EventController,
   TriggerController,
-  NotificationController
+  NotificationController,
+  DeviceController,
 ];

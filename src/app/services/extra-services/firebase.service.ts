@@ -1,20 +1,16 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+import { inject } from '@extras/functions';
 import { GetSignedUrlResponse } from "@google-cloud/storage";
 import { Injectable } from '@nestjs/common';
+import { FIREBASE_SERVICE } from "@types";
 import * as admin from 'firebase-admin';
 import { environment } from 'src/environments/environment';
 import * as stream from 'stream';
-import { inject } from '@extras/functions';
-import { FIREBASE_SERVICE } from "@types";
-import { FirebaseMessagingService, FirebaseStorageService } from "@aginix/nestjs-firebase-admin";
 @Injectable()
 export class FirebaseService {
 
   public static readonly inject = inject(FIREBASE_SERVICE, FirebaseService);
-  constructor(
-    protected readonly firebaseMessagingService: FirebaseMessagingService,
-    protected readonly firebaseStorageService: FirebaseStorageService,
-  ) { 
+  constructor() { 
     console.log(this);
   }
   public static readonly init = async () => {
@@ -28,7 +24,7 @@ export class FirebaseService {
     registrationToken: string | string[],
     payload: admin.messaging.MessagingPayload,
   ): Promise<admin.messaging.MessagingDevicesResponse> => {
-    return this.firebaseMessagingService.sendToDevice(registrationToken, payload, { priority: "normal", timeToLive: 24 * 24 * 60 });
+    return admin.messaging().sendToDevice(registrationToken, payload, { priority: "normal", timeToLive: 24 * 24 * 60 });
   }
   public readonly useUploadFileBase64 = async (path: string, data: string, type: string): Promise<any> => {
     const buffer = new stream.PassThrough();
@@ -54,7 +50,7 @@ export class FirebaseService {
     });
   }
   private readonly useGetStorage = () => {
-    const bucket = (name: string) => this.firebaseStorageService.bucket(name);
+    const bucket = (name: string) => admin.storage().bucket(name);
     return { bucket };
   }
 }

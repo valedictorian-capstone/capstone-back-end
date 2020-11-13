@@ -1,7 +1,7 @@
 import { ProcessInstance } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { AccountDepartmentRepository, CommentRepository, DepartmentRepository, ProcessInstanceRepository, ProcessStepRepository, TaskRepository } from "@repositories";
-import { ACCOUNT_DEPARTMENT_REPOSITORY, COMMENT_REPOSITORY, DEPARTMENT_REPOSITORY, PROCESS_INSTANCE_REPOSITORY, PROCESS_STEP_REPOSITORY, TASK_REPOSITORY } from "@types";
+import { ProcessInstanceRepository, ProcessStepRepository, ActivityRepository } from "@repositories";
+import { PROCESS_INSTANCE_REPOSITORY, PROCESS_STEP_REPOSITORY, ACTIVITY_REPOSITORY } from "@types";
 import { ProcessInstanceCM, ProcessInstanceFilter, ProcessInstanceUM, ProcessInstanceVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 
@@ -11,10 +11,7 @@ export class ProcessInstanceService {
   constructor(
     @Inject(PROCESS_INSTANCE_REPOSITORY) protected readonly instanceRepository: ProcessInstanceRepository,
     @Inject(PROCESS_STEP_REPOSITORY) protected readonly stepRepository: ProcessStepRepository,
-    @Inject(TASK_REPOSITORY) protected readonly taskRepository: TaskRepository,
-    @Inject(COMMENT_REPOSITORY) protected readonly commentRepository: CommentRepository,
-    @Inject(DEPARTMENT_REPOSITORY) protected readonly departmentRepository: DepartmentRepository,
-    @Inject(ACCOUNT_DEPARTMENT_REPOSITORY) protected readonly accountDepartmentRepository: AccountDepartmentRepository,
+    @Inject(ACTIVITY_REPOSITORY) protected readonly activityRepository: ActivityRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 

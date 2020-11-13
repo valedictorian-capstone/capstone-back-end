@@ -5,10 +5,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+
   OneToMany,
+
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Activity } from '.';
 import { Customer } from '../customer-models/customer.model';
 import { Process } from './process.model';
 
@@ -34,6 +37,9 @@ export class ProcessInstance extends BaseEntity {
   @ManyToOne(() => Process, process => process.processInstances)
   public process: Process;
 
+  @OneToMany(() => Activity, activity => activity.processInstance)
+  public activitys: Activity[];
+  
   @AutoMap()
   @Column({ default: null })
   public createdBy: string;
