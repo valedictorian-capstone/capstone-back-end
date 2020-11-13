@@ -13,7 +13,8 @@ export class AppProvider {
     admin.initializeApp({
       credential: admin.credential.cert(firebaseAuth),
       databaseURL: "https://capstone-crm.firebaseio.com",
-      storageBucket: "capstone-crm.appspot.com"
+      storageBucket: "capstone-crm.appspot.com",
+
     });
     return [
       {

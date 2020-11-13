@@ -63,6 +63,7 @@ import {
 } from './middlewares';
 import admin from 'firebase-admin';
 
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -72,7 +73,7 @@ import admin from 'firebase-admin';
       useUndefined: true,
     }),
     ConfigModule.forRoot({
-      envFilePath: process.env.WEBSITE_SKU ? 'prod.env' : '.env'
+      envFilePath: process.env.WEBSITE_SKU ? 'prod.env' : '.env',
     }),
     JwtModule.register({
       secretOrPrivateKey: '10',
@@ -87,6 +88,7 @@ import admin from 'firebase-admin';
         return ad;
       }
     }),
+    ScheduleModule.forRoot()
   ],
   controllers: [
     ...BASIC_CONTROLLERS,

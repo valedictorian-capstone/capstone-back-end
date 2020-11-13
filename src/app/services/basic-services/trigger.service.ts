@@ -1,18 +1,29 @@
 import { NotFoundException } from '@exceptions';
 import { Trigger } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { TriggerRepository } from '@repositories';
-import { TRIGGER_REPOSITORY } from '@types';
+import { CustomerRepository, TriggerRepository } from '@repositories';
+import { CUSTOMER_REPOSITORY, TRIGGER_REPOSITORY } from '@types';
 import { TriggerCM, TriggerUM, TriggerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
+import { Cron, CronExpression  } from '@nestjs/schedule';
+import { EmailService } from '../extra-services';
 
 @Injectable()
 export class TriggerService {
   constructor(
     @Inject(TRIGGER_REPOSITORY) protected readonly repository: TriggerRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    protected emailService: EmailService,
   ) { }
+
+  @Cron(CronExpression.EVERY_SECOND)
+  async handleCron() {
+    // const birtDayQuery = await this.repository.useHTTP().query('SELECT * FROM crm.customer WHERE MONTH(birthDate) = MONTH(NOW()) AND DAY(birthDate) = DAY(NOW())');
+    // await this.emailService.sendHappyBirtdayEmailCustomer(birtDayQuery);
+    console.log(new Date)
+  }
 
   public readonly findAll = async (ids?: string[]): Promise<TriggerVM[]> => {
     return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: [] })
