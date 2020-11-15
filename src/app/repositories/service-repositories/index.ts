@@ -1,9 +1,9 @@
-import { ServiceRepository, OrderRequestRepository} from '.';
+import { ProductRepository , TicketRepository} from '.';
 
-export * from './service.repository';
-export * from './order-request.repository';
+export * from './product.repository';
+export * from './ticket.repository';
 
 export const SERVICE_REPOSITORIES = [
-  ServiceRepository.inject,
-  OrderRequestRepository.inject
+  ProductRepository.inject,
+  TicketRepository.inject
 ];

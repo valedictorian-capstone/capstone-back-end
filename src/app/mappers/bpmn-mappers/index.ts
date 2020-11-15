@@ -1,5 +1,4 @@
-export * from './process.mapper'
-export * from './process-step.mapper'
-export * from './process-connection.mapper'
-export * from './process-instance.mapper'
+
+export * from './stage.mapper'
+export * from './deal.mapper'
 export * from './activity.mapper'

@@ -1,5 +1,5 @@
-export * from './process-connection.type';
-export * from './process.type';
-export * from './process-step.type';
-export * from './process-instance.type';
+
+export * from './stage.type';
+export * from './deal.type';
 export * from './activity.types';
+export * from './pipeline.type';

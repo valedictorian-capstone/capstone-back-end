@@ -114,7 +114,7 @@ export class ActivityService {
               },
               data: {
                 id: model.id,
-                url: `core/instance/${body.processInstance.id}`,
+                // url: `core/instance/${body.processInstance.id}`,
               },
               account: employee,
               type: 'activity',

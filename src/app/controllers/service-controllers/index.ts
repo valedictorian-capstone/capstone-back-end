@@ -1,7 +1,7 @@
-import { ServiceController, OrderRequestController } from '.'
+import { ProductController, TicketController } from '.'
 export * from './service.controller';
-export * from './order-request.controller';
+export * from './ticket.controller';
 export const SERVICE_CONTROLLERS = [
-  ServiceController,
-  OrderRequestController
+  ProductController,
+  TicketController
 ];

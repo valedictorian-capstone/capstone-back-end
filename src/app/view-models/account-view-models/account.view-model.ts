@@ -3,6 +3,7 @@ import { AutoMap } from 'nestjsx-automapper';
 import { RoleVM } from '.';
 import { DeviceVM, NotificationVM } from '../basic-view-models';
 import { ActivityVM } from '../bpmn-view-models';
+import { TicketVM } from '../service-view-models';
 
 export class AccountVM {
 
@@ -34,9 +35,14 @@ export class AccountVM {
 
   public readonly devices: DeviceVM[];
 
-  public readonly acvivitys: ActivityVM[];
+  public readonly activitys: ActivityVM[];
 
   public readonly notifications: NotificationVM[];
+
+  public readonly tickets: TicketVM[];
+
+  public readonly feedbackTickets: TicketVM[];
+  
 
   @AutoMap()
   public readonly isDelete: boolean;

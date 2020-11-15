@@ -1,6 +1,6 @@
 import { Activity } from "@models";
 import { AutoMapper, mapWith, ProfileBase } from "@nartc/automapper";
-import { AccountVM, ActivityUM, ActivityVM, ProcessInstanceVM } from "@view-models";
+import { AccountVM, ActivityUM, ActivityVM, DealVM } from "@view-models";
 
 export class ActivityMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -11,8 +11,8 @@ export class ActivityMapper extends ProfileBase {
         mapWith(AccountVM, s => s.assignee)
       )
       .forMember(
-        d => d.processInstance,
-        mapWith(ProcessInstanceVM, s => s.processInstance)
+        d => d.deal,
+        mapWith(DealVM, s => s.deal)
       )
       .forMember(
         d => d.assignBy,

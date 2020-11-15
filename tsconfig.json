@@ -28,5 +28,5 @@
       "@exceptions": ["src/app/exceptions"],
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/app/mappers/service-mappers/.mapper.ts"],
 }

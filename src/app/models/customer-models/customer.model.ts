@@ -11,8 +11,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Device, Group } from '../basic-models';
-import { ProcessInstance } from '../bpmn-models';
-import { OrderRequest } from '../service-models';
+import { Deal } from '../bpmn-models';
+import { Ticket } from '../service-models';
 
 @Entity()
 export class Customer extends BaseEntity {
@@ -70,7 +70,7 @@ export class Customer extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: false, default: 0 })
-  public totalOrder: number;
+  public totalDeal: number;
 
   @AutoMap()
   @Column({ nullable: false, default: 0 })
@@ -84,14 +84,14 @@ export class Customer extends BaseEntity {
   @JoinTable()
   public groups: Group[];
 
-  @OneToMany(() => ProcessInstance, processInstances => processInstances.customer)
-  public processInstances: ProcessInstance[];
+  @OneToMany(() => Deal, deals => deals.customer)
+  public deals: Deal[];
 
   @OneToMany(() => Device, devices => devices.account)
   public devices: Device[];
 
-  @OneToMany(() => OrderRequest, orderRequests => orderRequests.customer)
-  public orderRequests: OrderRequest[];
+  @OneToMany(() => Ticket, tickets => tickets.customer)
+  public tickets: Ticket[];
 
   @AutoMap()
   @Column({ default: null })

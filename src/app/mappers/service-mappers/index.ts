@@ -1,3 +1,3 @@
 
-export * from './service.mapper';
-export * from './order-request.mapper';
+export * from './product.mapper';
+export * from './ticket.mapper';

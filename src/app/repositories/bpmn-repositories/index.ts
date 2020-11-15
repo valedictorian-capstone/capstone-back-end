@@ -1,15 +1,13 @@
-import { ProcessConnectionRepository, ProcessInstanceRepository, ProcessRepository, ProcessStepRepository, ActivityRepository } from '.';
+import { DealRepository, StageRepository, ActivityRepository, PipelineRepository } from '.';
 
-export * from './process-connection.repository';
-export * from './process.repository';
-export * from './process-step.repository';
-export * from './process-instance.repository';
+export * from './stage.repository';
+export * from './deal.repository';
 export * from './activity.repository';
+export * from './pipeline.repository'
 
 export const BPMN_REPOSITORIES = [
-  ProcessRepository.inject,
-  ProcessConnectionRepository.inject,
-  ProcessStepRepository.inject,
-  ProcessInstanceRepository.inject,
+  StageRepository.inject,
+  DealRepository.inject,
   ActivityRepository.inject,
+  PipelineRepository.inject
 ];

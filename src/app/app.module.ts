@@ -35,17 +35,15 @@ import {
   AccountMapper,
   CustomerMapper,
   GroupMapper,
-  ServiceMapper,
-  ProcessConnectionMapper,
-  ProcessMapper,
-  ProcessStepMapper,
+  ProductMapper,
+  StageMapper,
   NotificationMapper,
   RoleMapper,
-  OrderRequestMapper,
+  TicketMapper,
   ActivityMapper,
   EventMapper,
   TriggerMapper,
-  ProcessInstanceMapper
+  DealMapper
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import {
@@ -109,17 +107,15 @@ export class AppModule implements OnModuleInit, NestModule {
     this.mapper.addProfile(AccountMapper);
     this.mapper.addProfile(CustomerMapper);
     this.mapper.addProfile(GroupMapper);
-    this.mapper.addProfile(ServiceMapper);
-    this.mapper.addProfile(ProcessConnectionMapper);
-    this.mapper.addProfile(ProcessMapper);
-    this.mapper.addProfile(ProcessStepMapper);
-    this.mapper.addProfile(ProcessInstanceMapper);
+    this.mapper.addProfile(ProductMapper);
+    this.mapper.addProfile(StageMapper);
     this.mapper.addProfile(NotificationMapper);
     this.mapper.addProfile(RoleMapper);
-    this.mapper.addProfile(OrderRequestMapper);
+    this.mapper.addProfile(TicketMapper);
     this.mapper.addProfile(ActivityMapper);
     this.mapper.addProfile(EventMapper);
     this.mapper.addProfile(TriggerMapper);
+    this.mapper.addProfile(DealMapper);
   }
   configure(consumer: MiddlewareConsumer) {
     consumer

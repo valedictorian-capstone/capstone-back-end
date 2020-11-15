@@ -1,3 +1,3 @@
 
-export * from './service.view-model';
-export * from './order-request.view-model';
+export * from './product.view-model';
+export * from './ticket.view-model';

@@ -1,3 +1,3 @@
 
-export * from './service.types';
-export * from './order-request.types';
+export * from './product.types';
+export * from './ticket.types';

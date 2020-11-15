@@ -1,7 +1,8 @@
 import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Device, Notification } from '../basic-models';
-import { Activity } from '../bpmn-models';
+import { Activity, Deal } from '../bpmn-models';
+import { Ticket } from '../service-models';
 import { Role } from './role.model';
 @Entity()
 export class Account extends BaseEntity {
@@ -50,6 +51,15 @@ export class Account extends BaseEntity {
 
   @OneToMany(() => Activity, activitys => activitys.assignee)
   public activitys: Activity[];
+
+  @OneToMany(() => Ticket, tickets => tickets.assignee)
+  public tickets: Ticket[];
+
+  @OneToMany(() => Ticket, tickets => tickets.feedbackAssignee)
+  public feedbackTickets: Ticket[];
+
+  @OneToMany(() => Deal, deals => deals.feedbackAssignee)
+  public deals: Deal[];
 
   @JoinTable()
   @ManyToMany(() => Role, role => role.accounts)

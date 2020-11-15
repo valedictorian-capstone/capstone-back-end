@@ -1,6 +1,8 @@
+import { Deal } from "@models";
 import { ApiProperty } from "@nestjs/swagger";
-import { AccountVM, ProcessInstanceVM } from "@view-models";
+import { AccountVM, StageVM } from "@view-models";
 import { AutoMap } from "nestjsx-automapper";
+import { DealVM } from "./deal.view-model";
 
 
 export class ActivityVM {
@@ -14,15 +16,18 @@ export class ActivityVM {
 
   public readonly assignee: AccountVM;
 
-  public readonly processInstance: ProcessInstanceVM;
-
   public readonly assignBy: AccountVM;
+
+  public readonly deal: Deal;
 
   @AutoMap()
   public readonly status: string;
 
   @AutoMap()
-  public readonly deadline: Date;
+  public readonly dateStart: Date;
+
+  @AutoMap()
+  public readonly dateEnd: Date;
 
   @AutoMap()
   public readonly createdBy: string;
@@ -54,9 +59,11 @@ export class ActivityCM {
 
   public readonly assignee: AccountVM;
 
-  public readonly processInstance: ProcessInstanceVM;
+  public readonly stage: StageVM;
 
   public readonly assignBy: AccountVM;
+
+  public readonly deal: DealVM;
 }
 
 export class ActivityUM {
@@ -80,7 +87,9 @@ export class ActivityUM {
   public readonly updateAt: Date;
   public readonly assignee: AccountVM;
 
-  public readonly processInstance: ProcessInstanceVM;
+  public readonly stage: StageVM;
 
   public readonly assignBy: AccountVM;
+
+  public readonly deal: DealVM;
 }

@@ -1,7 +1,8 @@
 import { AutoMap } from "nestjsx-automapper";
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Account } from "../account-models";
-import { ProcessInstance } from "./process-instance.model";
+import { Deal } from "./deal.model";
+import { Stage } from "./stage.model";
 
 @Entity()
 export class Activity extends BaseEntity {
@@ -23,8 +24,8 @@ export class Activity extends BaseEntity {
   @ManyToOne(() => Account, account => account)
   public assignBy: Account;
 
-  @ManyToOne(() => ProcessInstance, processInstance => processInstance.activitys)
-  public processInstance: ProcessInstance;
+  @ManyToOne(() => Deal, deal => deal.activitys)
+  public deal: Deal;
 
   @AutoMap()
   @Column({ default: "processing" })
@@ -32,7 +33,11 @@ export class Activity extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
-  public deadline: Date;
+  public dateStart: Date;
+
+  @AutoMap()
+  @Column({ default: null })
+  public dateEnd: Date;
 
   @AutoMap()
   @Column({ default: null })
