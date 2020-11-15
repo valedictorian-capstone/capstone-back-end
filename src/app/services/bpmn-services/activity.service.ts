@@ -59,8 +59,8 @@ export class ActivityService {
   public readonly insert = async (body: ActivityCM, token: string): Promise<ActivityVM> => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
     const account = Object.assign(decoded.valueOf()).account;
-    return await this.activityRepository.useHTTP().save({ ...body, assignBy: account })
-      .then(async (model) => {
+    return await this.activityRepository.useHTTP().save({ ...body, assignBy: account } as any )
+      .then(async (model)  => {
         //send notification
         await this.accountRepository.useHTTP()
           .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
@@ -103,7 +103,7 @@ export class ActivityService {
         }
       });
 
-    await this.activityRepository.useHTTP().save(body).then(model => {
+    await this.activityRepository.useHTTP().save(body as any).then(model => {
       this.accountRepository.useHTTP()
         .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
           async employee => {

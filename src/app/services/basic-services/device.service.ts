@@ -32,7 +32,7 @@ export class DeviceService {
   };
 
   public readonly insert = (body: DeviceCM): Promise<DeviceVM> => {
-    return this.repository.useHTTP().save(body)
+    return this.repository.useHTTP().save(body as any)
       .then((model) => {
         return this.findById(model.id);
       })
@@ -47,7 +47,7 @@ export class DeviceService {
           );
         }
         return await this.repository.useHTTP()
-          .save(body)
+          .save(body as any)
           .then(() => {
             return this.findById(model.id);
           })
