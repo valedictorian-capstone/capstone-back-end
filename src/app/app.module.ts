@@ -19,7 +19,7 @@ import {
   BASIC_REPOSITORIES,
   BPMN_REPOSITORIES,
   CUSTOMER_REPOSITORIES,
-  SERVICE_REPOSITORIES,
+  PRODUCT_REPOSITORIES,
 } from '@repositories';
 import {
   ACCOUNT_SERVICES,
@@ -94,7 +94,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ...BASIC_REPOSITORIES,
     ...BPMN_REPOSITORIES,
     ...CUSTOMER_REPOSITORIES,
-    ...SERVICE_REPOSITORIES,
+    ...PRODUCT_REPOSITORIES,
     ...FILTERS,
     AppGateway,
     ...AppProvider.init(),

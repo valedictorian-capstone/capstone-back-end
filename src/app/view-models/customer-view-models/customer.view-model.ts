@@ -1,7 +1,7 @@
 import { DealVM } from "../bpmn-view-models";
 import { AutoMap } from "nestjsx-automapper";
 import { ApiProperty } from "@nestjs/swagger";
-import { TicketVM } from "../service-view-models";
+import { TicketVM } from "../product-view-models";
 import { GroupVM } from "../basic-view-models";
 
 export class CustomerVM {

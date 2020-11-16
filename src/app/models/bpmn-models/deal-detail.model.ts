@@ -4,39 +4,35 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
+import { Product } from '../product-models';
+
+import { Deal } from './deal.model';
+
 
 @Entity()
-export class Product extends BaseEntity {
+export class DealDetail extends BaseEntity {
+
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @Column({ default: null })
   @AutoMap()
-  public code: string;
-  
-  @Column({ default: null })
-  @AutoMap()
-  public name: string;
+  @Column({ default: 1 })
+  public currentStep: number;
 
-  @Column({ default: null })
   @AutoMap()
-  public type: string;
+  @Column({ default: 1 })
+  public quantity: number;
 
-  @Column({ default: null })
-  @AutoMap()
-  public price: string;
+  @ManyToOne(() => Deal, deal => deal.dealDetails)
+  public deal: Deal;
 
-  @Column({ default: null })
-  @AutoMap()
-  public description: string;
-
-  @Column("json", { default: null })
-  public parameters: any;
+  @ManyToOne(() => Product, product => product.dealDetails)
+  public product: Product;
 
   @AutoMap()
   @Column({ default: null })

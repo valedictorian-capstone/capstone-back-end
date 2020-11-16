@@ -2,7 +2,7 @@ import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Device, Notification } from '../basic-models';
 import { Activity, Deal } from '../bpmn-models';
-import { Ticket } from '../service-models';
+import { Ticket } from '../product-models';
 import { Role } from './role.model';
 @Entity()
 export class Account extends BaseEntity {

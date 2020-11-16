@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
+import { DealDetailVM } from "../bpmn-view-models/deal-detail.view-model";
 
 export class ProductVM {
   
@@ -22,6 +23,8 @@ export class ProductVM {
   public readonly description: string;
 
   public readonly parameters: any;
+
+  public readonly dealDetails: DealDetailVM[];
   
   @AutoMap()
   public readonly isDelete: boolean;

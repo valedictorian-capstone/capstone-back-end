@@ -12,7 +12,8 @@ import {
 } from 'typeorm';
 import { Device, Group } from '../basic-models';
 import { Deal } from '../bpmn-models';
-import { Ticket } from '../service-models';
+import { Ticket } from '../product-models';
+
 
 @Entity()
 export class Customer extends BaseEntity {

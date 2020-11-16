@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { DealDetail } from '../bpmn-models';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -37,6 +38,9 @@ export class Product extends BaseEntity {
 
   @Column("json", { default: null })
   public parameters: any;
+
+  @OneToMany(() => DealDetail, dealDetails => dealDetails.product)
+  public dealDetails: DealDetail[];
 
   @AutoMap()
   @Column({ default: null })

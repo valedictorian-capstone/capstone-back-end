@@ -3,7 +3,7 @@ import { AutoMap } from 'nestjsx-automapper';
 import { RoleVM } from '.';
 import { DeviceVM, NotificationVM } from '../basic-view-models';
 import { ActivityVM } from '../bpmn-view-models';
-import { TicketVM } from '../service-view-models';
+import { TicketVM } from '../product-view-models';
 
 export class AccountVM {
 

@@ -1,9 +1,9 @@
-import { Customer } from "@models";
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from 'nestjsx-automapper';
 import { AccountVM } from "../account-view-models";
 import { CustomerVM } from "../customer-view-models";
 import { ActivityVM } from "./activity.view-model";
+import { DealDetailVM } from "./deal-detail.view-model";
 import { StageVM } from "./stage.view-model";
 
 export class DealVM {
@@ -36,6 +36,8 @@ export class DealVM {
   public readonly feedbackAssignee: AccountVM;
 
   public readonly activitys: ActivityVM;
+
+  public readonly dealDetails: DealDetailVM[];
 
   @AutoMap()
   public readonly isDelete: boolean;

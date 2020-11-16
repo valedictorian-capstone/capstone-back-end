@@ -2,7 +2,6 @@ import { AutoMap } from "nestjsx-automapper";
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Account } from "../account-models";
 import { Deal } from "./deal.model";
-import { Stage } from "./stage.model";
 
 @Entity()
 export class Activity extends BaseEntity {
