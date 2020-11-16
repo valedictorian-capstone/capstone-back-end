@@ -4,7 +4,6 @@ import {
   BPMN_CONTROLLERS,
   CUSTOMER_CONTROLLERS,
   EXTRA_CONTROLLERS,
-  FORM_CONTROLLERS,
   ACCOUNT_CONTROLLERS,
   SERVICE_CONTROLLERS,
 } from '@controllers';
@@ -20,8 +19,7 @@ import {
   BASIC_REPOSITORIES,
   BPMN_REPOSITORIES,
   CUSTOMER_REPOSITORIES,
-  FORM_REPOSITORIES,
-  SERVICE_REPOSITORIES,
+  PRODUCT_REPOSITORIES,
 } from '@repositories';
 import {
   ACCOUNT_SERVICES,
@@ -29,7 +27,6 @@ import {
   BPMN_SERVICES,
   CUSTOMER_SERVICES,
   EXTRA_SERVICES,
-  FORM_SERVICES,
   SERVICE_SERVICES,
 
 } from '@services';
@@ -37,25 +34,16 @@ import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
 import {
   AccountMapper,
   CustomerMapper,
-  DepartmentMapper,
-  FormControlMapper,
-  FormDataMapper,
-  FormGroupMapper,
   GroupMapper,
-  ServiceMapper,
-  ProcessConnectionMapper,
-  ProcessMapper,
-  ProcessStepMapper,
+  ProductMapper,
+  StageMapper,
   NotificationMapper,
-  CommentMapper,
-  ProcessStepInstanceMapper,
-  AccountDepartmentMapper,
   RoleMapper,
-  OrderRequestMapper,
-  TaskMapper,
+  TicketMapper,
+  ActivityMapper,
   EventMapper,
   TriggerMapper,
-  ProcessInstanceMapper
+  DealMapper
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import {
@@ -80,13 +68,10 @@ import { ScheduleModule } from '@nestjs/schedule';
       signOptions: { expiresIn: '60s' },
     }),
     FirebaseAdminModule.forRootAsync({
-      useFactory: () => {
-        const ad = {
-          credential: admin.credential.cert(require('../../service-account.json')),
-          databaseURL: environment.firebase.databaseURL,
-        }
-        return ad;
-      }
+      useFactory: () => ({
+        credential: admin.credential.cert(require('../../service-account.json')),
+        databaseURL: environment.firebase.databaseURL,
+      })
     }),
     ScheduleModule.forRoot()
   ],
@@ -94,7 +79,6 @@ import { ScheduleModule } from '@nestjs/schedule';
     ...BASIC_CONTROLLERS,
     ...EXTRA_CONTROLLERS,
     ...BPMN_CONTROLLERS,
-    ...FORM_CONTROLLERS,
     ...CUSTOMER_CONTROLLERS,
     ...ACCOUNT_CONTROLLERS,
     ...SERVICE_CONTROLLERS
@@ -103,7 +87,6 @@ import { ScheduleModule } from '@nestjs/schedule';
     ...BASIC_SERVICES,
     ...ACCOUNT_SERVICES,
     ...BPMN_SERVICES,
-    ...FORM_SERVICES,
     ...CUSTOMER_SERVICES,
     ...SERVICE_SERVICES,
     ...EXTRA_SERVICES,
@@ -111,8 +94,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ...BASIC_REPOSITORIES,
     ...BPMN_REPOSITORIES,
     ...CUSTOMER_REPOSITORIES,
-    ...FORM_REPOSITORIES,
-    ...SERVICE_REPOSITORIES,
+    ...PRODUCT_REPOSITORIES,
     ...FILTERS,
     AppGateway,
     ...AppProvider.init(),
@@ -124,25 +106,16 @@ export class AppModule implements OnModuleInit, NestModule {
   onModuleInit() {
     this.mapper.addProfile(AccountMapper);
     this.mapper.addProfile(CustomerMapper);
-    this.mapper.addProfile(DepartmentMapper);
-    this.mapper.addProfile(FormControlMapper);
-    this.mapper.addProfile(FormDataMapper);
-    this.mapper.addProfile(FormGroupMapper);
     this.mapper.addProfile(GroupMapper);
-    this.mapper.addProfile(ServiceMapper);
-    this.mapper.addProfile(ProcessConnectionMapper);
-    this.mapper.addProfile(ProcessMapper);
-    this.mapper.addProfile(ProcessStepInstanceMapper)
-    this.mapper.addProfile(ProcessStepMapper);
-    this.mapper.addProfile(ProcessInstanceMapper);
+    this.mapper.addProfile(ProductMapper);
+    this.mapper.addProfile(StageMapper);
     this.mapper.addProfile(NotificationMapper);
-    this.mapper.addProfile(CommentMapper);
-    this.mapper.addProfile(AccountDepartmentMapper);
     this.mapper.addProfile(RoleMapper);
-    this.mapper.addProfile(OrderRequestMapper);
-    this.mapper.addProfile(TaskMapper);
+    this.mapper.addProfile(TicketMapper);
+    this.mapper.addProfile(ActivityMapper);
     this.mapper.addProfile(EventMapper);
     this.mapper.addProfile(TriggerMapper);
+    this.mapper.addProfile(DealMapper);
   }
   configure(consumer: MiddlewareConsumer) {
     consumer

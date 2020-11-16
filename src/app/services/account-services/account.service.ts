@@ -21,29 +21,15 @@ export class AccountService {
   public readonly findAll = async (accountFilter: AccountFilter): Promise<AccountVM[]> => {
     if (accountFilter?.roleName) {
       return await this.findByRole(accountFilter.roleName);
-    } else if (accountFilter?.departmentId) {
-      return await this.findByDepartment(accountFilter?.departmentId)
     } else {
       return await this.mapper.mapArray(await this.accountRepository.useHTTP()
-        .find({ relations: ["accountDepartments", "roles"] }), AccountVM, Account);
+        .find({ relations: ["devices", "roles", "activitys"] }), AccountVM, Account);
     }
   };
-
-  private readonly findByDepartment = async (departmentId: string): Promise<AccountVM[]> => {
-    return await this.accountRepository.useHTTP().createQueryBuilder('account')
-      .leftJoinAndSelect('account.accountDepartments', 'accountDepartment')
-      .leftJoinAndSelect('account.roles', 'role')
-      .where('accountDepartment.id = :id', { id: departmentId })
-      .getMany()
-      .then(async (models) => {
-        return this.mapper.mapArray(models, AccountVM, Account)
-      });
-  }
 
   public readonly findByRole = async (roleName: string): Promise<AccountVM[]> => {
     return await this.accountRepository.useHTTP().createQueryBuilder('account')
       .leftJoinAndSelect('account.roles', 'role')
-      .leftJoinAndSelect('account.accountDepartments', 'accountDepartment')
       .where('role.name= :name', { name: roleName })
       .getMany()
       .then(async (models) => {
@@ -53,7 +39,7 @@ export class AccountService {
 
 
   public readonly findById = async (id: string): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["accountDepartments", "roles"] })
+    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["devices", "roles", "activitys"] })
       .then(async (model) => {
         if (model) {
           return this.mapper.map(model, AccountVM, Account);
@@ -78,14 +64,14 @@ export class AccountService {
   }
 
   public readonly import = async (body: AccountCM[]): Promise<any> => {
-    return await this.accountRepository.useHTTP().save(body).then(async (accounts) => {
+    return await this.accountRepository.useHTTP().save(body as any).then(async (accounts) => {
       return await this.mapper.mapArray(
         await this.accountRepository.useHTTP().find({ id: In(accounts.map(e => e.id)) }), AccountVM, Account);
     });
   };
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().save({ ...body, password: hashSync(body.password, 10) }).then(async (account) => {
+    return await this.accountRepository.useHTTP().save({ ...body, password: hashSync(body.password, 10) } as any).then(async (account) => {
       return await this.findById(account.id);
     });
   };
@@ -103,8 +89,7 @@ export class AccountService {
             `Can not find ${body.id}`,
           );
         } else {
-          await this.accountRepository.useHTTP().remove({ ...body } as any);
-          return await this.accountRepository.useHTTP().save(body).then(async (account) => {
+          return await this.accountRepository.useHTTP().save(body as any).then(async (account) => {
             return await this.findById(account.id);
           })
         }

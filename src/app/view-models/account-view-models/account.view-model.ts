@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AutoMap } from 'nestjsx-automapper';
-import { AccountDepartmentVM } from '.';
-import { ProcessStepInstanceVM } from '../bpmn-view-models';
-import { RoleVM } from './role.view-model';
+import { RoleVM } from '.';
+import { DeviceVM, NotificationVM } from '../basic-view-models';
+import { ActivityVM } from '../bpmn-view-models';
+import { TicketVM } from '../product-view-models';
 
 export class AccountVM {
 
@@ -30,16 +31,18 @@ export class AccountVM {
   @AutoMap()
   public readonly gender: boolean;
 
-  @AutoMap()
-  public readonly deviceId: string;
-
-  public readonly currentValidateCode: string;
-
-  public readonly accountDepartments: AccountDepartmentVM[];
-
-  public readonly processStepInstanceVMs: ProcessStepInstanceVM[];
-
   public readonly roles: RoleVM[];
+
+  public readonly devices: DeviceVM[];
+
+  public readonly activitys: ActivityVM[];
+
+  public readonly notifications: NotificationVM[];
+
+  public readonly tickets: TicketVM[];
+
+  public readonly feedbackTickets: TicketVM[];
+  
 
   @AutoMap()
   public readonly isDelete: boolean;
@@ -91,13 +94,7 @@ export class AccountCM {
   @ApiProperty({ required: true, format: 'string', minLength: 6 })
   public readonly password: string;
 
-  // public readonly accountDepartments: string[];
-
-  @ApiProperty()
-  public readonly roleNames?: string[];
-
-  @ApiProperty()
-  public readonly deviceId: string;
+  public readonly roles: string[];
 
 }
 
@@ -127,8 +124,8 @@ export class AccountUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly gender: boolean;
 
-  @ApiProperty()
-  public readonly deviceId: string;
+  public readonly roles: string[];
+  
 }
 
 export class AccountAuthVM {

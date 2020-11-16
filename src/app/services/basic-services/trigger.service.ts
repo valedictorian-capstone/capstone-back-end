@@ -18,12 +18,12 @@ export class TriggerService {
     protected emailService: EmailService,
   ) { }
 
-  @Cron(CronExpression.EVERY_SECOND)
-  async handleCron() {
+  // @Cron(CronExpression.EVERY_SECOND)
+  // async handleCron() {
     // const birtDayQuery = await this.repository.useHTTP().query('SELECT * FROM crm.customer WHERE MONTH(birthDate) = MONTH(NOW()) AND DAY(birthDate) = DAY(NOW())');
     // await this.emailService.sendHappyBirtdayEmailCustomer(birtDayQuery);
-    console.log(new Date)
-  }
+    // console.log(new Date)
+  // }
 
   public readonly findAll = async (ids?: string[]): Promise<TriggerVM[]> => {
     return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: [] })

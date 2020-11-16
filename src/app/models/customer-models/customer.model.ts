@@ -10,10 +10,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Group } from '../basic-models';
-import { ProcessInstance } from '../bpmn-models';
-import { Task } from '../bpmn-models/task.model';
-import { OrderRequest } from '../service-models';
+import { Device, Group } from '../basic-models';
+import { Deal } from '../bpmn-models';
+import { Ticket } from '../product-models';
+
 
 @Entity()
 export class Customer extends BaseEntity {
@@ -60,7 +60,7 @@ export class Customer extends BaseEntity {
   @AutoMap()
   @Column({ nullable: true })
   public shortName: string;
-  
+
   @AutoMap()
   @Column({ nullable: true })
   public province: string;
@@ -70,29 +70,29 @@ export class Customer extends BaseEntity {
   public district: string;
 
   @AutoMap()
-  @Column({ nullable: false, default: 0})
-  public totalOrder: number;
-  
+  @Column({ nullable: false, default: 0 })
+  public totalDeal: number;
+
   @AutoMap()
-  @Column({ nullable: false, default: 0})
+  @Column({ nullable: false, default: 0 })
   public totalSpending: number;
 
   @AutoMap()
-  @Column({ nullable: false, default: 0})
+  @Column({ nullable: false, default: 0 })
   public frequency: number;
 
   @ManyToMany(() => Group, group => group.customers)
   @JoinTable()
   public groups: Group[];
 
-  @OneToMany(() => ProcessInstance, processInstances => processInstances.customer)
-  public processInstances: ProcessInstance[];
+  @OneToMany(() => Deal, deals => deals.customer)
+  public deals: Deal[];
 
-  @OneToMany(() => Task, task => task.customer)
-  public tasks: Task[];
+  @OneToMany(() => Device, devices => devices.account)
+  public devices: Device[];
 
-  @OneToMany(() => OrderRequest, orderRequests => orderRequests.customer)
-  public orderRequests: OrderRequest[]; 
+  @OneToMany(() => Ticket, tickets => tickets.customer)
+  public tickets: Ticket[];
 
   @AutoMap()
   @Column({ default: null })

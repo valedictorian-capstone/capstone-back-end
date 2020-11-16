@@ -1,16 +1,13 @@
-import { ProcessService, ProcessConnectionService, ProcessInstanceService, ProcessStepInstanceService, ProcessStepService } from '.';
-import { TaskService } from './task.service';
-export * from './process-connection.service';
-export * from './process-instance.service';
-export * from './process-step-instance.service';
-export * from './process-step.service';
-export * from './process.service';
-export * from './task.service'
+import { ActivityService, DealService, StageService, PipelineService, DealDetailService } from '.';
+export * from './deal.service';
+export * from './stage.service';
+export * from './activity.service';
+export * from './pipeline.service';
+export * from './deal-detail.service';
 export const BPMN_SERVICES = [
-  ProcessService,
-  ProcessConnectionService,
-  ProcessStepService,
-  ProcessInstanceService,
-  ProcessStepInstanceService,
-  TaskService,
+  ActivityService,
+  DealService, 
+  StageService,
+  PipelineService,
+  DealDetailService
 ];

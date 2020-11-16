@@ -1,0 +1,71 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags
+} from '@nestjs/swagger';
+import { DealCM, DealFilter, DealUM, DealVM } from '@view-models';
+import { DealService } from '@services';
+
+@ApiBearerAuth('JWT')
+@ApiTags('Deal')
+@Controller('/api/v1/Deal')
+export class DealController {
+  constructor(
+    protected readonly dealService: DealService,
+  ) { }
+
+  @Get()
+  @ApiOperation({ summary: 'Get all deal' })
+  @ApiOkResponse({ description: 'Success return all deal' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async findAll(@Query() DealFilter: DealFilter): Promise<DealVM[]> {
+    return await this.dealService.findAll(DealFilter);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get an deal by Id' })
+  @ApiOkResponse({ description: "Success return an deal's information" })
+  @ApiNotFoundResponse({ description: 'Fail to find deal by Id' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async findById(@Param('id') id: string): Promise<DealVM> {
+    return await this.dealService.findById(id);
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Insert new deal' })
+  @ApiCreatedResponse({ description: 'Success create new deal' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async insert(@Body() body: DealCM): Promise<DealVM> {
+    return await this.dealService.insert(body);
+  }
+
+  @Put()
+  @ApiOperation({ summary: 'Update an deal by Id' })
+  @ApiCreatedResponse({ description: 'Success update new deal' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async update(@Body() body: DealUM): Promise<DealVM> {
+    return await this.dealService.update(body);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete an deal by Id' })
+  @ApiCreatedResponse({ description: 'Success delete new deal' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async remove(@Param('id') id: string): Promise<DealVM> {
+    return await this.dealService.remove(id);
+  }
+}

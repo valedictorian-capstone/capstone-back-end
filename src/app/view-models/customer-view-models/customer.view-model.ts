@@ -1,8 +1,7 @@
-import { ProcessInstanceVM } from "../bpmn-view-models";
+import { DealVM } from "../bpmn-view-models";
 import { AutoMap } from "nestjsx-automapper";
 import { ApiProperty } from "@nestjs/swagger";
-
-import { OrderRequestVM } from "../service-view-models";
+import { TicketVM } from "../product-view-models";
 import { GroupVM } from "../basic-view-models";
 
 export class CustomerVM {
@@ -57,9 +56,9 @@ export class CustomerVM {
 
   public groups: GroupVM[];
 
-  public processInstances: ProcessInstanceVM[];
+  public deals: DealVM[];
 
-  public orderRequests: OrderRequestVM[];
+  public tickets: TicketVM[];
 
   @AutoMap()
   public readonly isDelete: boolean;

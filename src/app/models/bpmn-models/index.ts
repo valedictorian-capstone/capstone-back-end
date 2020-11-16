@@ -1,11 +1,10 @@
-import { Process, ProcessCondition, ProcessConnection, ProcessInstance, ProcessStep, ProcessStepInstance, Task } from '.';
+import { Stage, Activity, Deal, Pipeline, DealDetail, Note } from '.';
 
-export * from './process.model';
-export * from './process-condition.model';
-export * from './process-connection.model';
-export * from './process-instance.model';
-export * from './process-step-instance.model';
-export * from './process-step.model';
-export * from './task.model'
+export * from './deal.model';
+export * from './stage.model';
+export * from './activity.model';
+export * from './pipeline.model';
+export * from './deal-detail.model';
+export * from './note.model';
 
-export const BPMN_MODELS = [Process, ProcessCondition, ProcessInstance, ProcessStep, ProcessStepInstance, ProcessConnection, Task];
+export const BPMN_MODELS = [ Stage, Activity, Deal, Pipeline, DealDetail, Note];

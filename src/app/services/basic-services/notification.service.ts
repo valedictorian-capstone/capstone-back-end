@@ -35,7 +35,7 @@ export class NotificationService {
   };
 
   public readonly insert = (body: NotificationCM): Promise<NotificationVM> => {
-    return this.notificationRepository.useHTTP().save(body)
+    return this.notificationRepository.useHTTP().save(body as any)
       .then((model) => {
         return this.findById(model.id);
       })
@@ -51,7 +51,7 @@ export class NotificationService {
           );
         }
         return await this.notificationRepository.useHTTP()
-          .save(body)
+          .save(body as any)
           .then((model) => {
             return this.findById(model.id);
           })
