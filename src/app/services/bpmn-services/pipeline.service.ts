@@ -4,7 +4,6 @@ import { PipelineRepository, StageRepository } from "@repositories";
 import { PIPELINE_REPOSITORY, STAGE_REPOSITORY } from "@types";
 import { PipelineCM, PipelineVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
-
 import { In } from "typeorm";
 
 @Injectable()
