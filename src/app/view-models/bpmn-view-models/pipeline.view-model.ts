@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { StageVM } from "./stage.view-model";
+import { StageUM, StageVM } from "./stage.view-model";
 
 export class PipelineVM {
 
@@ -21,7 +21,7 @@ export class PipelineCM {
     public name: string;
     
     @AutoMap()
-    public stages: {id: string}[];
+    public stages: StageUM[];
 
 }
 
@@ -36,6 +36,6 @@ export class PipelineUM {
     public name: string;
     
     @AutoMap()
-    public stages: {id: string}[];
+    public stages: StageUM[];
     
 }

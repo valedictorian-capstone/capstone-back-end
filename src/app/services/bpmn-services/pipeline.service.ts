@@ -1,9 +1,10 @@
 import { Pipeline } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { PipelineRepository } from "@repositories";
-import { PipelineCM, PipelineUM, PipelineVM } from "@view-models";
+import { PipelineRepository, StageRepository } from "@repositories";
+import { PIPELINE_REPOSITORY, STAGE_REPOSITORY } from "@types";
+import { PipelineCM, PipelineVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
-import { PIPELINE_REPOSITORY } from "src/app/types/bpmn-types/Pipeline.type";
+
 import { In } from "typeorm";
 
 @Injectable()
@@ -11,18 +12,19 @@ export class PipelineService {
 
   constructor(
     @Inject(PIPELINE_REPOSITORY) protected readonly pipelineRepository: PipelineRepository,
+    @Inject(STAGE_REPOSITORY) protected readonly stageRepository: StageRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<PipelineVM[]> => {
-    return await this.pipelineRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: [] })
+    return await this.pipelineRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: [ "stages" ] })
       .then((models) => {
         return this.mapper.mapArray(models, PipelineVM, Pipeline)
       });
   }
 
   public readonly findById = async (id: string): Promise<PipelineVM> => {
-    return await this.pipelineRepository.useHTTP().findOne({ where: { id: id }, relations: [] })
+    return await this.pipelineRepository.useHTTP().findOne({ where: { id: id }, relations: [ "stages" ] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -34,27 +36,16 @@ export class PipelineService {
       })
   }
 
-  public readonly checkUnique = async (label: string, value: string): Promise<boolean> => {
-    const query = { [label]: value };
-    return this.pipelineRepository.useHTTP().findOne({ where: query })
-      .then((model) => {
-        return model ? true : false;
-      })
-  }
 
-  public readonly insert = async (body: PipelineCM): Promise<PipelineVM> => {
-    return await this.pipelineRepository.useHTTP().save(body as any)
-      .then((model) => {
-        return this.findById(model.id);
-      })
-  }
+  public readonly save = async (body: PipelineCM): Promise<PipelineVM> => {
+    return await this.pipelineRepository.useHTTP().save(body)
+      .then(async (model) => {
+        for (let index = 0; index < body.stages.length; index++) {
+         await this.stageRepository.useHTTP().save({... body.stages[index], pipeline: model}) 
+        }
 
-  public readonly update = async (body: PipelineUM): Promise<PipelineVM> => {
-      return await this.pipelineRepository.useHTTP()
-        .save(body as any)
-        .then((model) => {
-          return this.findById(model.id);
-        })
+        return await this.findById(model.id);
+      })
   }
 
   public readonly remove = async (id: string): Promise<any> => {
