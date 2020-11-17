@@ -17,6 +17,7 @@ import { Ticket } from '../product-models';
 
 @Entity()
 export class Customer extends BaseEntity {
+
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
@@ -51,7 +52,7 @@ export class Customer extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: true })
-  public gender: boolean;
+  public gender: string;
 
   @AutoMap()
   @Column({ nullable: true })
@@ -68,6 +69,34 @@ export class Customer extends BaseEntity {
   @AutoMap()
   @Column({ nullable: true })
   public district: string;
+  
+  @AutoMap()
+  @Column({ nullable: true })
+  public readonly company: string;
+  
+  @AutoMap()
+  @Column({ nullable: true })
+  public readonly fax: string;
+  
+  @AutoMap()
+  @Column({ nullable: true })
+  public readonly website: string;
+  
+  @AutoMap()
+  @Column({ nullable: true })
+  public readonly source: string;
+  
+  @AutoMap()
+  @Column({ nullable: true })
+  public readonly skypeName: string;
+  
+  @AutoMap()
+  @Column({ nullable: true })
+  public readonly facebook: string;
+  
+  @AutoMap()
+  @Column({ nullable: true })
+  public readonly twitter: string;
 
   @AutoMap()
   @Column({ nullable: false, default: 0 })

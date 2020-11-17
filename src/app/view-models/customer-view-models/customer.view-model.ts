@@ -34,7 +34,7 @@ export class CustomerVM {
   public readonly avatar: string;
 
   @AutoMap()
-  public readonly gender: boolean;
+  public readonly gender: string;
 
   @AutoMap()
   public readonly shortName: string;
@@ -44,6 +44,27 @@ export class CustomerVM {
 
   @AutoMap()
   public readonly district: string;
+    
+  @AutoMap()
+  public readonly company: string;
+  
+  @AutoMap()
+  public readonly fax: string;
+  
+  @AutoMap()
+  public readonly website: string;
+  
+  @AutoMap()
+  public readonly source: string;
+  
+  @AutoMap()
+  public readonly skypeName: string;
+  
+  @AutoMap()
+  public readonly facebook: string;
+  
+  @AutoMap()
+  public readonly twitter: string;
 
   @AutoMap()
   public readonly totalOrder: number;
@@ -97,7 +118,7 @@ export class CustomerCM {
   public readonly address: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly gender: boolean;
+  public readonly gender: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly type: string;
@@ -117,6 +138,27 @@ export class CustomerCM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly district: string;
 
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly company: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly fax: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly website: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly source: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly skypeName: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly facebook: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly twitter: string;
+
   @ApiProperty({ required: true, format: 'number' })
   public readonly totalOrder: number;
 
@@ -131,7 +173,7 @@ export class CustomerUM {
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly id: string;
-
+  
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly phone: string;
 
@@ -151,7 +193,7 @@ export class CustomerUM {
   public readonly address: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly gender: boolean;
+  public readonly gender: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly type: string;
@@ -159,7 +201,7 @@ export class CustomerUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly delegate: string;
 
-  @ApiProperty({ required: true, format: 'Date'})
+  @ApiProperty({ required: true, format: 'Date' })
   public readonly birthDate: Date;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
@@ -170,6 +212,27 @@ export class CustomerUM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly district: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly company: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly fax: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly website: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly source: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly skypeName: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly facebook: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly twitter: string;
 
   @ApiProperty({ required: true, format: 'number' })
   public readonly totalOrder: number;

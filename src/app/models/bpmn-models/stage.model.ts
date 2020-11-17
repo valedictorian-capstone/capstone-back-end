@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { Activity } from './activity.model';
 import { Deal } from './deal.model';
-import { Pipeline } from './pipeline.model';
+import { Process } from './process.model';
 
 @Entity()
 export class Stage extends BaseEntity {
@@ -48,8 +48,8 @@ export class Stage extends BaseEntity {
   @OneToMany(() => Deal, deals => deals.stage)
   public deals: Deal[];
 
-  @ManyToOne(() => Pipeline, pipeline => pipeline.stages)
-  public pipeline: Pipeline;
+  @ManyToOne(() => Process, process => process.stages)
+  public process: Process;
 
   @AutoMap()
   @Column({ default: null })
