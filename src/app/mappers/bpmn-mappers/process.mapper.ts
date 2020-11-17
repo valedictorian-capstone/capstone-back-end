@@ -1,15 +1,15 @@
-import { Pipeline } from "@models";
+import { Process } from "@models";
 import { AutoMapper, mapWith, preCondition, ProfileBase } from "@nartc/automapper";
-import { StageVM, PipelineUM, PipelineVM} from "@view-models";
+import { StageVM, ProcessUM, ProcessVM} from "@view-models";
 
-export class PipelineMapper extends ProfileBase {
+export class ProcessMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
     super();
-    mapper.createMap(Pipeline, PipelineVM)
+    mapper.createMap(Process, ProcessVM)
       .forMember(d => d.stages,
         preCondition((s) => s.stages != null, []),
         mapWith(StageVM, s => s.stages)
       );
-    mapper.createMap(PipelineUM, PipelineVM);
+    mapper.createMap(ProcessUM, ProcessVM);
   }
 }

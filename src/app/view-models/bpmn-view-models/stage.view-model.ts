@@ -1,9 +1,8 @@
-import { Pipeline } from "@models";
+import { Process } from "@models";
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { ActivityVM } from "./activity.view-model";
 import { DealVM } from "./deal.view-model";
-import { PipelineVM } from "./pipeline.view-model";
+import { ProcessVM } from "./process.view-model";
 
 export class StageVM {
 
@@ -30,7 +29,7 @@ export class StageVM {
 
   public deals: DealVM[];
 
-  public pipeline: PipelineVM;
+  public process: ProcessVM;
 
   @AutoMap()
   public readonly isDelete: boolean;
@@ -75,7 +74,7 @@ export class StageCM {
   public readonly position: number;
 
   @AutoMap()
-  public readonly pipeline: Pipeline;
+  public readonly process: Process;
 
 }
 
@@ -110,8 +109,5 @@ export class StageUM {
   public readonly position: number;
 
   @AutoMap()
-  public readonly deals: {id: string}[];
-
-  @AutoMap()
-  public readonly activitys: {id: string}[];
+  public readonly process: Process;
 }

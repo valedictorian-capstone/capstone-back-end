@@ -11,7 +11,7 @@ import {
 import { Stage } from './stage.model';
 
 @Entity()
-export class Pipeline extends BaseEntity {
+export class Process extends BaseEntity {
 
     @AutoMap()
     @PrimaryGeneratedColumn('uuid')
@@ -21,7 +21,7 @@ export class Pipeline extends BaseEntity {
     @Column({ default: null })
     public name: string;
 
-    @OneToMany(() => Stage, stages => stages.pipeline)
+    @OneToMany(() => Stage, stages => stages.process)
     public stages: Stage[];
 
     @AutoMap()
