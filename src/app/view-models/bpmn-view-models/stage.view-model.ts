@@ -1,3 +1,4 @@
+import { Pipeline } from "@models";
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { ActivityVM } from "./activity.view-model";
@@ -70,14 +71,12 @@ export class StageCM {
   public readonly progress: string;
 
   @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  @ApiProperty({ required: true, format: 'number' })
   public readonly position: number;
 
   @AutoMap()
-  public readonly deals: {id: string}[];
+  public readonly pipeline: Pipeline;
 
-  @AutoMap()
-  public readonly activitys: {id: string}[];
 }
 
 export class StageUM {
@@ -107,7 +106,7 @@ export class StageUM {
   public readonly progress: string;
 
   @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  @ApiProperty({ required: true, format: 'number' })
   public readonly position: number;
 
   @AutoMap()
