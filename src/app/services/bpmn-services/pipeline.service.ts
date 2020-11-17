@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from
 import { PipelineRepository } from "@repositories";
 import { PipelineCM, PipelineUM, PipelineVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
-import { PIPELINE_REPOSITORY } from "src/app/types/bpmn-types/Pipeline.type";
+import { PIPELINE_REPOSITORY } from "src/app/types/bpmn-types/pipeline.type";
 import { In } from "typeorm";
 
 @Injectable()
