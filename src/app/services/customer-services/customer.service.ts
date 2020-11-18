@@ -67,7 +67,7 @@ export class CustomerService {
       const notOfLead = [];
 
       for (let i = 0; i < customers.length; i++) {
-        if (customers[i].totalOrder == 0 && customers[i].totalSpending == 0 && customers[i].frequency == 0) {
+        if (customers[i].totalDeal == 0 && customers[i].totalSpending == 0 && customers[i].frequency == 0) {
           await this.cusomterRepository.useHTTP().save({ ...customers[i], groups: [leadGroup] })
         } else {
           notOfLead.push(customers[i]);
@@ -76,7 +76,7 @@ export class CustomerService {
 
       const paramArray = [];
       for (let i = 0; i < notOfLead.length; i++) {
-        paramArray.push([notOfLead[i].totalOrder, notOfLead[i].totalSpending, notOfLead[i].frequency])
+        paramArray.push([notOfLead[i].totalDeal, notOfLead[i].totalSpending, notOfLead[i].frequency])
       }
 
       let classificationGroups = await this.callClassification(paramArray);
@@ -113,12 +113,12 @@ export class CustomerService {
     // await this.firebaseService.useUploadFileBase64("avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64")), customer.avatar, customer.avatar.substring(customer.avatar.indexOf("data:image/") + 5, customer.avatar.indexOf(";base64")));
     // customer.avatar = environment.firebase.linkDownloadFile + "avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64"));
     return await this.cusomterRepository.useHTTP().save({ ...customer }).then(async (data) => {
-      if (customer.totalOrder == 0 && customer.totalSpending == 0 && customer.frequency == 0) {
+      if (customer.totalDeal == 0 && customer.totalSpending == 0 && customer.frequency == 0) {
         const leadGroup = await this.groupRepository.useHTTP().findOne({ where: { id: 3 } });
         await this.cusomterRepository.useHTTP().save({ ...data, groups: [leadGroup] })
       } else {
         const paramArray = [];
-        paramArray.push([customer.totalOrder, customer.totalSpending, customer.frequency])
+        paramArray.push([customer.totalDeal, customer.totalSpending, customer.frequency])
         let classificationGroups = await this.callClassification(paramArray);
         classificationGroups = JSON.parse(classificationGroups.replace(' ', ','));
         if (classificationGroups == '0') {

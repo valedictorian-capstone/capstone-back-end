@@ -7,7 +7,7 @@
         "GGCLOUD_SQL_HOST": "localhost",
         "GGCLOUD_SQL_POST": "3306",
         "GGCLOUD_SQL_USERNAME": "root",
-        "GGCLOUD_SQL_PASS": "root",
+        "GGCLOUD_SQL_PASS": "123456cb",
         "GGCLOUD_SQL_DATABASE": "crm"
     }
 }

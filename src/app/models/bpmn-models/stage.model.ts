@@ -4,15 +4,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
+
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Activity } from './activity.model';
 import { Deal } from './deal.model';
-import { Process } from './process.model';
+import { Pipeline } from './pipeline.model';
 
 @Entity()
 export class Stage extends BaseEntity {
@@ -48,8 +47,8 @@ export class Stage extends BaseEntity {
   @OneToMany(() => Deal, deals => deals.stage)
   public deals: Deal[];
 
-  @ManyToOne(() => Process, process => process.stages)
-  public process: Process;
+  @ManyToOne(() => Pipeline, pipeline => pipeline.stages)
+  public pipeline: Pipeline;
 
   @AutoMap()
   @Column({ default: null })

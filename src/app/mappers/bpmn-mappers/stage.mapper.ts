@@ -1,6 +1,6 @@
 import { Stage } from "@models";
 import { AutoMapper, mapWith, preCondition, ProfileBase } from "@nartc/automapper";
-import {  DealVM, StageUM, StageVM, ProcessVM} from "@view-models";
+import {  DealVM, StageUM, StageVM, PipelineVM} from "@view-models";
 
 export class StageMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -10,9 +10,9 @@ export class StageMapper extends ProfileBase {
         preCondition((s) => s.deals != null, []),
         mapWith(DealVM, s => s.deals)
       )
-      .forMember(d => d.process,
-        preCondition((s) => s.process != null, []),
-        mapWith(ProcessVM, s => s.process)
+      .forMember(d => d.pipeline,
+        preCondition((s) => s.pipeline != null, []),
+        mapWith(PipelineVM, s => s.pipeline)
       );
     mapper.createMap(StageUM, StageVM);
   }
