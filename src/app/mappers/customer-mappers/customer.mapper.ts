@@ -1,6 +1,6 @@
 import { Customer } from "@models";
 import { AutoMapper, mapWith, preCondition, ProfileBase } from '@nartc/automapper';
-import { CustomerUM, CustomerVM, GroupVM, TicketVM, DealVM } from "@view-models";
+import { CustomerUM, CustomerVM, GroupVM, TicketVM, DealVM, NotificationVM, DeviceVM } from "@view-models";
 
 export class CustomerMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -12,6 +12,13 @@ export class CustomerMapper extends ProfileBase {
       .forMember(d => d.tickets,
         preCondition((s) => s.tickets != null, []),
         mapWith(TicketVM, s => s.tickets)
+      )
+      .forMember(d => d.notifications,
+        preCondition((s) => s.notifications != null, []),
+        mapWith(NotificationVM, s => s.notifications))
+      .forMember(d => d.devices,
+        preCondition((s) => s.devices != null, []),
+        mapWith(DeviceVM, s => s.devices)
       )
       .forMember(d => d.deals,
         preCondition((s) => s.deals != null, []),

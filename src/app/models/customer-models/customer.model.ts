@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Device, Group } from '../basic-models';
+import { Device, Group, Notification } from '../basic-models';
 import { Deal } from '../bpmn-models';
 import { Ticket } from '../product-models';
 
@@ -28,10 +28,6 @@ export class Customer extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: false, unique: true })
-  public code: string;
-
-  @AutoMap()
-  @Column({ nullable: false, unique: true })
   public email: string;
 
   @AutoMap()
@@ -44,7 +40,7 @@ export class Customer extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: true })
-  public birthDate: Date;
+  public birthDay: Date;
 
   @AutoMap()
   @Column({ nullable: true })
@@ -60,43 +56,47 @@ export class Customer extends BaseEntity {
 
   @AutoMap()
   @Column({ nullable: true })
-  public shortName: string;
+  public street: string;
 
   @AutoMap()
   @Column({ nullable: true })
-  public province: string;
+  public city: string;
 
   @AutoMap()
   @Column({ nullable: true })
-  public district: string;
+  public state: string;
+
+  @AutoMap()
+  @Column({ nullable: true })
+  public country: string;
   
   @AutoMap()
   @Column({ nullable: true })
-  public readonly company: string;
+  public company: string;
   
   @AutoMap()
   @Column({ nullable: true })
-  public readonly fax: string;
+  public fax: string;
   
   @AutoMap()
   @Column({ nullable: true })
-  public readonly website: string;
+  public website: string;
   
   @AutoMap()
   @Column({ nullable: true })
-  public readonly source: string;
+  public source: string;
   
   @AutoMap()
   @Column({ nullable: true })
-  public readonly skypeName: string;
+  public skypeName: string;
   
   @AutoMap()
   @Column({ nullable: true })
-  public readonly facebook: string;
+  public facebook: string;
   
   @AutoMap()
   @Column({ nullable: true })
-  public readonly twitter: string;
+  public twitter: string;
 
   @AutoMap()
   @Column({ nullable: false, default: 0 })
@@ -110,6 +110,10 @@ export class Customer extends BaseEntity {
   @Column({ nullable: false, default: 0 })
   public frequency: number;
 
+  @AutoMap()
+  @Column({ nullable: true })
+  public description: string;
+
   @ManyToMany(() => Group, group => group.customers)
   @JoinTable()
   public groups: Group[];
@@ -122,6 +126,9 @@ export class Customer extends BaseEntity {
 
   @OneToMany(() => Ticket, tickets => tickets.customer)
   public tickets: Ticket[];
+
+  @OneToMany(() => Notification, notifications => notifications.customer)
+  public notifications: Notification[];
 
   @AutoMap()
   @Column({ default: null })

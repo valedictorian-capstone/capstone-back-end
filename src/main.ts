@@ -3,7 +3,10 @@ import { LogRequestInterceptor } from '@extras/intercepters/log.intercepter';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as http from 'http';
+import * as https from 'https';
 import express, { json, urlencoded } from 'express';
+import { readFileSync } from 'fs';
 import { AppModule } from 'src/app/app.module';
 declare const module: any;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -22,6 +25,10 @@ declare const module: any;
   //   res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type,authorization");
   //   next();
   // });
+  const httpsOptions = {
+    key: readFileSync('localhost.key'),
+    cert: readFileSync('localhost.crt'),
+  };
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new LogRequestInterceptor());
@@ -37,8 +44,10 @@ declare const module: any;
     customCss: ".swagger-ui table tbody tr td:first-of-type {max-width : 30%} .swagger-ui .parameters-col_description {width:70%}",
   };
   SwaggerModule.setup('api/v1/swagger', app, document, styles);
+  await app.init();
 
-  await app.listen(8080);
+  http.createServer(server).listen(8080);
+  https.createServer(httpsOptions, server).listen(8081);
 
 
   if (module.hot) {

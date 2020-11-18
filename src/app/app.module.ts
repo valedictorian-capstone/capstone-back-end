@@ -44,7 +44,7 @@ import {
   EventMapper,
   TriggerMapper,
   DealMapper,
-  ProcessMapper
+  PipelineMapper
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import {
@@ -117,7 +117,7 @@ export class AppModule implements OnModuleInit, NestModule {
     this.mapper.addProfile(EventMapper);
     this.mapper.addProfile(TriggerMapper);
     this.mapper.addProfile(DealMapper);
-    this.mapper.addProfile(ProcessMapper);
+    this.mapper.addProfile(PipelineMapper);
   }
   configure(consumer: MiddlewareConsumer) {
     consumer

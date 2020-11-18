@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { StageUM, StageVM } from "./stage.view-model";
 
-export class ProcessVM {
+export class PipelineVM {
 
     @AutoMap()
     public readonly id: string;
@@ -14,7 +14,7 @@ export class ProcessVM {
 
 }
 
-export class ProcessCM {
+export class PipelineCM {
 
     @AutoMap()
     @ApiProperty({ required: true, format: 'string', minLength: 2 })
@@ -25,7 +25,7 @@ export class ProcessCM {
 
 }
 
-export class ProcessUM {
+export class PipelineUM {
 
     @AutoMap()
     @ApiProperty({ required: true, format: 'uuid', minLength: 36 })

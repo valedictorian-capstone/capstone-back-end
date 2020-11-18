@@ -1,50 +1,50 @@
-import { DealVM } from "../bpmn-view-models";
-import { AutoMap } from "nestjsx-automapper";
 import { ApiProperty } from "@nestjs/swagger";
+import { AutoMap } from "nestjsx-automapper";
+import { DeviceVM, GroupVM, NotificationVM } from "../basic-view-models";
+import { DealVM } from "../bpmn-view-models";
 import { TicketVM } from "../product-view-models";
-import { GroupVM } from "../basic-view-models";
 
 export class CustomerVM {
 
   @AutoMap()
   public readonly id: string;
-
+  
   @AutoMap()
   public readonly phone: string;
-
+  
   @AutoMap()
   public readonly email: string;
-
-  @AutoMap()
-  public readonly code: string;
-
+  
   @AutoMap()
   public readonly fullname: string;
-
+  
   @AutoMap()
-  public readonly delegate: string;
-
-  @AutoMap()
-  public readonly birthDate: Date;
-
-  @AutoMap()
-  public readonly type: string;
-
+  public readonly birthDay: Date;
+  
   @AutoMap()
   public readonly avatar: string;
-
+  
+  @AutoMap()
+  public readonly source: string;
+  
+  @AutoMap()
+  public readonly type: string;
+  
+  @AutoMap()
+  public readonly industry: string;
+  
+  @AutoMap()
+  public readonly frequency: number;
+  
+  @AutoMap()
+  public readonly totalSpending: number;
+  
+  @AutoMap()
+  public readonly totalDeal: number;
+  
   @AutoMap()
   public readonly gender: string;
-
-  @AutoMap()
-  public readonly shortName: string;
-
-  @AutoMap()
-  public readonly province: string;
-
-  @AutoMap()
-  public readonly district: string;
-    
+  
   @AutoMap()
   public readonly company: string;
   
@@ -55,7 +55,7 @@ export class CustomerVM {
   public readonly website: string;
   
   @AutoMap()
-  public readonly source: string;
+  public readonly stage: string;
   
   @AutoMap()
   public readonly skypeName: string;
@@ -65,21 +65,31 @@ export class CustomerVM {
   
   @AutoMap()
   public readonly twitter: string;
-
+  
   @AutoMap()
-  public readonly totalOrder: number;
-
+  public readonly street: string;
+  
   @AutoMap()
-  public readonly totalSpending: number;
-
+  public readonly city: string;
+  
   @AutoMap()
-  public readonly frequency: number;
+  public readonly state: string;
+  
+  @AutoMap()
+  public readonly country: string;
+  
+  @AutoMap()
+  public readonly description: string;
 
-  public groups: GroupVM[];
+  public readonly groups: GroupVM[];
 
-  public deals: DealVM[];
+  public readonly deals: DealVM[];
 
-  public tickets: TicketVM[];
+  public readonly tickets: TicketVM[];
+  
+  public readonly notifications: NotificationVM[];
+  
+  public readonly devices: DeviceVM[];
 
   @AutoMap()
   public readonly isDelete: boolean;
@@ -100,147 +110,153 @@ export class CustomerVM {
 export class CustomerCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly phone: string;
-
+  public phone: string;
+  
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly email: string;
-
+  public email: string;
+  
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly code: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly fullname: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly avatar: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly address: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly gender: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly type: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly delegate: string;
-
+  public fullname: string;
+  
   @ApiProperty({ required: true, format: 'Date' })
-  public readonly birthDate: Date;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly shortName: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly province: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly district: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly company: string;
+  public birthDay: Date;
   
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly fax: string;
+  public avatar: string;
   
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly website: string;
+  public source: string;
   
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly source: string;
+  public type: string;
   
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly skypeName: string;
+  public industry: string;
   
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly facebook: string;
-  
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly twitter: string;
+  @ApiProperty({ required: true, format: 'number' })
+  public totalSpending: number;
 
   @ApiProperty({ required: true, format: 'number' })
-  public readonly totalOrder: number;
-
+  public frequency: number;
+  
   @ApiProperty({ required: true, format: 'number' })
-  public readonly totalSpending: number;
-
-  @ApiProperty({ required: true, format: 'number' })
-  public readonly frequency: number;
+  public totalDeal: number;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public gender: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public company: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public fax: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public website: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public stage: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public skypeName: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public facebook: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public twitter: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public street: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public city: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public state: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public country: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public description: string;
 }
 
 export class CustomerUM {
 
-  @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
-  public readonly id: string;
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public id: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public phone: string;
   
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly phone: string;
-
+  public email: string;
+  
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly email: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly code: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly fullname: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly avatar: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly address: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly gender: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly type: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly delegate: string;
-
+  public fullname: string;
+  
   @ApiProperty({ required: true, format: 'Date' })
-  public readonly birthDate: Date;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly shortName: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly province: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly district: string;
-
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly company: string;
+  public birthDay: Date;
   
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly fax: string;
+  public avatar: string;
   
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly website: string;
+  public source: string;
   
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly source: string;
+  public type: string;
   
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly skypeName: string;
+  public industry: string;
   
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly facebook: string;
-  
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly twitter: string;
+  @ApiProperty({ required: true, format: 'number' })
+  public totalSpending: number;
 
   @ApiProperty({ required: true, format: 'number' })
-  public readonly totalOrder: number;
-
+  public frequency: number;
+  
   @ApiProperty({ required: true, format: 'number' })
-  public readonly totalSpending: number;
-
-  @ApiProperty({ required: true, format: 'number' })
-  public readonly frequency: number;
+  public totalDeal: number;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public gender: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public company: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public fax: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public website: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public stage: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public skypeName: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public facebook: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public twitter: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public street: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public city: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public state: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public country: string;
+  
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public description: string;
 
 }

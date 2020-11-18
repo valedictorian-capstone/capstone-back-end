@@ -1,15 +1,15 @@
-import { DealRepository, StageRepository, ActivityRepository, ProcessRepository, DealDetailRepository } from '.';
+import { DealRepository, StageRepository, ActivityRepository, PipelineRepository, DealDetailRepository } from '.';
 
 export * from './stage.repository';
 export * from './deal.repository';
 export * from './activity.repository';
-export * from './process.repository'
+export * from './pipeline.repository'
 export * from './deal-detail.repository'
 
 export const BPMN_REPOSITORIES = [
   StageRepository.inject,
   DealRepository.inject,
   ActivityRepository.inject,
-  ProcessRepository.inject,
+  PipelineRepository.inject,
   DealDetailRepository.inject
 ];
