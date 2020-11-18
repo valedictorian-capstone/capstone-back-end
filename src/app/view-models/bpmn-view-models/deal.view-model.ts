@@ -39,6 +39,8 @@ export class DealVM {
 
   public readonly dealDetails: DealDetailVM[];
 
+  public totalPrice: number;
+
   @AutoMap()
   public readonly isDelete: boolean;
 

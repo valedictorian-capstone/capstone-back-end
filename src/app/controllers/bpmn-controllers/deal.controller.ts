@@ -32,8 +32,8 @@ export class DealController {
   @ApiOperation({ summary: 'Get all deal' })
   @ApiOkResponse({ description: 'Success return all deal' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async findAll(@Query() DealFilter: DealFilter): Promise<DealVM[]> {
-    return await this.dealService.findAll(DealFilter);
+  public async findAll(): Promise<DealVM[]> {
+    return await this.dealService.findAll();
   }
 
   @Get(':id')
@@ -43,6 +43,15 @@ export class DealController {
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findById(@Param('id') id: string): Promise<DealVM> {
     return await this.dealService.findById(id);
+  }
+
+  @Get('/stage/:id')
+  @ApiOperation({ summary: 'Get an deal by stage' })
+  @ApiOkResponse({ description: "Success return an deal's information" })
+  @ApiNotFoundResponse({ description: 'Fail to find deal by stage' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async findByStage(@Param('id') id: string): Promise<DealVM> {
+    return await this.dealService.findByStage(id);
   }
 
   @Post()

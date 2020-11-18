@@ -1,6 +1,7 @@
 import { Stage } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { StageRepository } from "@repositories";
+import { PipelineRepository, StageRepository } from "@repositories";
+import { PIPELINE_REPOSITORY } from "@types";
 import { StageCM, StageUM, StageVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { STAGE_REPOSITORY } from "src/app/types/bpmn-types/stage.type";
@@ -11,6 +12,7 @@ export class StageService {
 
   constructor(
     @Inject(STAGE_REPOSITORY) protected readonly stageRepository: StageRepository,
+    @Inject(PIPELINE_REPOSITORY) protected readonly pipelineRepository: PipelineRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
@@ -23,6 +25,22 @@ export class StageService {
 
   public readonly findById = async (id: string): Promise<StageVM> => {
     return await this.stageRepository.useHTTP().findOne({ where: { id: id }, relations: [] })
+      .then(async (model) => {
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${id}`,
+          );
+        } else {
+          return this.mapper.map(model, StageVM, Stage)
+        }
+      })
+  }
+
+  public readonly findByPipeline = async (id: string): Promise<StageVM> => {
+
+    const pipeline = await this.pipelineRepository.useHTTP().findOne(id);
+
+    return await this.stageRepository.useHTTP().findOne({ where: { pipeline: pipeline }, relations: [ 'pipeline' ] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(

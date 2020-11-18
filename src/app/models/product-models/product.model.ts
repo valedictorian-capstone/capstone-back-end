@@ -30,7 +30,7 @@ export class Product extends BaseEntity {
 
   @Column({ default: null })
   @AutoMap()
-  public price: string;
+  public price: number;
 
   @Column({ default: null })
   @AutoMap()

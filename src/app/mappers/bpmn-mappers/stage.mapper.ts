@@ -11,7 +11,7 @@ export class StageMapper extends ProfileBase {
         mapWith(DealVM, s => s.deals)
       )
       .forMember(d => d.pipeline,
-        preCondition((s) => s.pipeline != null, []),
+        preCondition((s) => s.pipeline != null, undefined),
         mapWith(PipelineVM, s => s.pipeline)
       );
     mapper.createMap(StageUM, StageVM);

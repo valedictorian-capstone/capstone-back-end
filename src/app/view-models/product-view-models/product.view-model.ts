@@ -17,7 +17,7 @@ export class ProductVM {
   public readonly type: string;
 
   @AutoMap()
-  public readonly price: string;
+  public readonly price: number;
   
   @AutoMap()
   public readonly description: string;
@@ -53,8 +53,8 @@ export class ProductCM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly brand: string;
 
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly price: string;
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly price: number;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly description: string;
@@ -75,8 +75,8 @@ export class ProductUM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly brand: string;
 
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly price: string;
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly price: number;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly description: string;
