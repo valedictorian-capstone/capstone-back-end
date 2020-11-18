@@ -42,7 +42,7 @@ export class Deal extends BaseEntity {
   public customer: Customer;
 
   @AutoMap()
-  @Column({ default: 1 })
+  @Column({ default: null })
   public feedbackMessage: string;
 
   @AutoMap()

@@ -29,7 +29,7 @@ export class StageController {
   ) { }
 
   @Get()
-  @ApiOperation({ summary: 'Get all process' })
+  @ApiOperation({ summary: 'Get all stage information' })
   @ApiOkResponse({ description: 'Success return all process' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findAll(): Promise<StageVM[]> {
@@ -45,25 +45,34 @@ export class StageController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get an process step by Id' })
-  @ApiOkResponse({ description: "Success return an process step's information" })
-  @ApiNotFoundResponse({ description: 'Fail to find process step by Id' })
+  @ApiOperation({ summary: 'Get an stage information by Id' })
+  @ApiOkResponse({ description: "Success return an stage information" })
+  @ApiNotFoundResponse({ description: 'Fail to find stage information by Id' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findById(@Param('id') id: string): Promise<StageVM> {
     return await this.stageService.findById(id);
   }
 
+  @Get('/pipeline/:id')
+  @ApiOperation({ summary: 'Get an stage information by Id' })
+  @ApiOkResponse({ description: "Success return an stage information" })
+  @ApiNotFoundResponse({ description: 'Fail to find stage information by Id' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async findByPipeline(@Param('id') id: string): Promise<StageVM> {
+    return await this.stageService.findByPipeline(id);
+  }
+
   @Post()
-  @ApiOperation({ summary: 'Insert new process step' })
-  @ApiCreatedResponse({ description: 'Success create new process step' })
+  @ApiOperation({ summary: 'Insert new stage information' })
+  @ApiCreatedResponse({ description: 'Success create new stage information' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async insert(@Body() body: StageCM): Promise<StageVM> {
     return await this.stageService.insert(body);
   }
 
   @Put()
-  @ApiOperation({ summary: 'Update an process step by Id' })
-  @ApiCreatedResponse({ description: 'Success update new process step' })
+  @ApiOperation({ summary: 'Update an stage information by Id' })
+  @ApiCreatedResponse({ description: 'Success update new stage information' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async update(@Body() body: StageUM): Promise<StageVM> {
     return await this.stageService.update(body);
@@ -71,7 +80,7 @@ export class StageController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an process step by Id' })
-  @ApiCreatedResponse({ description: 'Success delete new process step' })
+  @ApiCreatedResponse({ description: 'Success delete new stage information' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async remove(@Param('id') id: string): Promise<StageVM> {
     return await this.stageService.remove(id);
