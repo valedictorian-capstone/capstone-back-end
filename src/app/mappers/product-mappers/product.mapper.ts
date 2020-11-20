@@ -1,6 +1,6 @@
 import { Product } from "@models";
 import { AutoMapper, mapFrom, mapWith, preCondition, ProfileBase } from '@nartc/automapper';
-import { DealDetailVM, ProductUM, ProductVM } from "@view-models";
+import { CategoryVM, DealDetailVM, ProductUM, ProductVM } from "@view-models";
 
 export class ProductMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -11,6 +11,10 @@ export class ProductMapper extends ProfileBase {
         preCondition(s => s.dealDetails != null),
         mapWith(DealDetailVM, s => s.dealDetails)
       )
+      .forMember(d => d.category,
+        preCondition(s => s.category != null),
+        mapWith(CategoryVM, s => s.category)
+      );
     mapper.createMap(ProductUM, ProductVM);
   }
 }

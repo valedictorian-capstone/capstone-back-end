@@ -45,7 +45,7 @@ export class ProductService {
   }
 
   public readonly insert = async (body: ProductCM): Promise<any> => {
-    return await this.productRepository.useHTTP().save(body).then(async (product) => {
+    return await this.productRepository.useHTTP().save(body as any).then(async (product) => {
       return this.findById(product.id);
     }).catch(err => err);
   };
@@ -58,8 +58,8 @@ export class ProductService {
             `Can not find ${body.id}`,
           );
         }else{
-          return await this.productRepository.useHTTP().save(body).then(async (Product) => {
-            return await this.findById(Product.id);
+          return await this.productRepository.useHTTP().save(body as any).then(async (product) => {
+            return await this.findById(product.id);
           });
         }
       });
