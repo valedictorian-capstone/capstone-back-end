@@ -4,11 +4,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { DealDetail } from '../bpmn-models';
+import { Category } from './category.model';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -38,6 +40,9 @@ export class Product extends BaseEntity {
 
   @Column("json", { default: null })
   public parameters: any;
+
+  @ManyToOne(() => Category, category => category.products)
+  public category: Category;
 
   @OneToMany(() => DealDetail, dealDetails => dealDetails.product)
   public dealDetails: DealDetail[];

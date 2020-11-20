@@ -1,3 +1,4 @@
 
-export * from './product.types';
-export * from './ticket.types';
+export * from './product.type';
+export * from './ticket.type';
+export * from './category.type';
