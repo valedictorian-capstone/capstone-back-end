@@ -21,8 +21,8 @@ import { ProductCM, ProductUM, ProductVM } from '@view-models';
 import { ProductService } from '@services';
 
 @ApiBearerAuth('JWT')
-@ApiTags('Service')
-@Controller('/api/v1/Service')
+@ApiTags('Product')
+@Controller('/api/v1/Product')
 export class ProductController{
   constructor(
     protected service: ProductService,
@@ -57,7 +57,7 @@ export class ProductController{
   @ApiOperation({ summary: 'Insert new Product' })
   @ApiCreatedResponse({ description: 'Success create new Product' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: ProductCM[]): Promise<any> {
+  public insert(@Body() body: ProductCM): Promise<any> {
     return this.service.insert(body);
   }
 
