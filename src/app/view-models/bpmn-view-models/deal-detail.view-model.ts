@@ -9,9 +9,6 @@ export class DealDetailVM {
   public readonly id: string;
 
   @AutoMap()
-  public readonly currentStep: number;
-
-  @AutoMap()
   public readonly quantity: number;
 
   public readonly deal: DealVM;

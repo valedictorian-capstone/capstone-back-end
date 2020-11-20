@@ -13,16 +13,7 @@ export class StageVM {
   public readonly name: string;
 
   @AutoMap()
-  public readonly description: string;
-
-  @AutoMap()
-  public readonly type: string;
-
-  @AutoMap()
-  public readonly subType: string;
-
-  @AutoMap()
-  public readonly progress: string;
+  public readonly probability: number;
 
   @AutoMap()
   public readonly position: number;
@@ -49,65 +40,32 @@ export class StageVM {
 
 export class StageCM {
 
-  @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public name: string;
-  
-  @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public description: string;
 
-  @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public type: string;
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly probability: number;
 
-  @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly subType: string;
-
-  @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly progress: string;
-
-  @AutoMap()
   @ApiProperty({ required: true, format: 'number' })
   public readonly position: number;
 
-  @AutoMap()
   public readonly pipeline: Pipeline;
 
 }
 
 export class StageUM {
 
-  @AutoMap()
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public id: string;
 
-  @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public name: string;
   
-  @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public description: string;
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly probability: number;
 
-  @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public type: string;
-
-  @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly subType: string;
-
-  @AutoMap()
-  @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly progress: string;
-
-  @AutoMap()
   @ApiProperty({ required: true, format: 'number' })
   public readonly position: number;
 
-  @AutoMap()
   public readonly pipeline: Pipeline;
 }

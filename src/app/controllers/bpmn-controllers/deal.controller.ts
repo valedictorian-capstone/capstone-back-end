@@ -5,8 +5,7 @@ import {
   Get,
   Param,
   Post,
-  Put,
-  Query
+  Put
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -17,8 +16,8 @@ import {
   ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
-import { DealCM, DealFilter, DealUM, DealVM } from '@view-models';
 import { DealService } from '@services';
+import { DealCM, DealUM, DealVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Deal')
@@ -50,7 +49,7 @@ export class DealController {
   @ApiOkResponse({ description: "Success return an deal's information" })
   @ApiNotFoundResponse({ description: 'Fail to find deal by stage' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async findByStage(@Param('id') id: string): Promise<DealVM> {
+  public async findByStage(@Param('id') id: string): Promise<DealVM[]> {
     return await this.dealService.findByStage(id);
   }
 

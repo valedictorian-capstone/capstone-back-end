@@ -24,7 +24,7 @@ export class StageService {
   }
 
   public readonly findById = async (id: string): Promise<StageVM> => {
-    return await this.stageRepository.useHTTP().findOne({ where: { id: id }, relations: [] })
+    return await this.stageRepository.useHTTP().findOne({ where: { id: id }, relations: ['deals', 'pipeline'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(

@@ -4,7 +4,8 @@ import {
   Delete,
   Get,
   Param,
-  Post
+
+  Put
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -43,7 +44,7 @@ export class PipelineController {
     return await this.service.findById(id);
   }
 
-  @Post()
+  @Put()
   @ApiOperation({ summary: 'Save new Pipeline step' })
   @ApiCreatedResponse({ description: 'Success create new Pipeline' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })

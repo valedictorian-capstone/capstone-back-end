@@ -11,6 +11,9 @@ export class DealVM {
   @AutoMap()
   public readonly id: string;
 
+  @AutoMap()
+  public readonly title: string;
+
   public readonly customer: CustomerVM;
 
   public readonly stage: StageVM;
@@ -71,6 +74,10 @@ export class DealCM {
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly title: string;
+
+  @AutoMap()
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly status: string;
 
   @AutoMap()
@@ -93,7 +100,9 @@ export class DealCM {
   public readonly feedbackAssignee: {id : string};
 
   @ApiProperty()
-  public readonly activitys: {id : string}[];
+  public readonly activitys: { id: string }[];
+  
+  public readonly dealDetails: DealDetailVM[];
 }
 
 export class DealUM {
@@ -110,6 +119,10 @@ export class DealUM {
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly description: string;
+
+  @AutoMap()
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly title: string;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })

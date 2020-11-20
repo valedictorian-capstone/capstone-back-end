@@ -33,11 +33,7 @@ export class Customer extends BaseEntity {
   @AutoMap()
   @Column({ nullable: false, unique: true })
   public phone: string;
-
-  @AutoMap()
-  @Column({ nullable: true })
-  public delegate: string;
-
+  
   @AutoMap()
   @Column({ nullable: true })
   public birthDay: Date;

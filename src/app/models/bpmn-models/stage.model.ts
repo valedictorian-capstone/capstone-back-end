@@ -26,22 +26,10 @@ export class Stage extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
-  public type: string;
-
-  @AutoMap()
-  @Column({ default: null })
-  public subType: string;
-
-  @AutoMap()
-  @Column({ default: null })
-  public progress: string;
-
-  @AutoMap()
-  @Column({ default: null })
-  public description: string;
+  public probability: number;
   
   @AutoMap()
-  @Column({ default: 1 })
+  @Column({ default: 0 })
   public position: number;
 
   @OneToMany(() => Deal, deals => deals.stage)

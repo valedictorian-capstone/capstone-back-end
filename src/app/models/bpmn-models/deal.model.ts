@@ -25,6 +25,10 @@ export class Deal extends BaseEntity {
 
   @AutoMap()
   @Column({ default: null })
+  public title: string;
+
+  @AutoMap()
+  @Column({ default: null })
   public description: string;
 
   @AutoMap()

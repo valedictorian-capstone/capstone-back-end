@@ -25,7 +25,7 @@ export class ProductService {
   };
 
   public readonly findById = async (id: string): Promise<ProductVM> => {
-    return await this.productRepository.useHTTP().findOne({ where: { id: id }, relations: [] })
+    return await this.productRepository.useHTTP().findOne({ where: { id: id }, relations: ['dealDetails'] })
       .then(async (model) => {
         if (model) {
           return this.mapper.map(model, ProductVM, Product);
@@ -44,9 +44,9 @@ export class ProductService {
       }).catch(err => err);
   }
 
-  public readonly insert = async (body: ProductCM[]): Promise<any> => {
-    return await this.productRepository.useHTTP().save(body).then(async (Products) => {
-      return  "Inserted " + Products.length;
+  public readonly insert = async (body: ProductCM): Promise<any> => {
+    return await this.productRepository.useHTTP().save(body).then(async (product) => {
+      return this.findById(product.id);
     }).catch(err => err);
   };
 

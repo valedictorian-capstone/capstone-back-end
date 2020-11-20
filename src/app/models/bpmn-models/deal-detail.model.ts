@@ -19,11 +19,7 @@ export class DealDetail extends BaseEntity {
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
-
-  @AutoMap()
-  @Column({ default: 1 })
-  public currentStep: number;
-
+  
   @AutoMap()
   @Column({ default: 1 })
   public quantity: number;

@@ -2,7 +2,7 @@ import { DealDetail } from '@models';
 import { AutoMapper, mapWith, preCondition, ProfileBase } from "@nartc/automapper";
 import { DealDetailCM, DealDetailUM, DealDetailVM, ProductVM, DealVM } from "@view-models";
 
-export class DealDetailDetailMapper extends ProfileBase {
+export class DealDetailMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
     super();
     mapper.createMap(DealDetail, DealDetailVM)
