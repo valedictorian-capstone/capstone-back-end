@@ -4,3 +4,5 @@ export * from './deal.type';
 export * from './deal-detail.type';
 export * from './activity.types';
 export * from './pipeline.type';
+export * from './note.type';
+export * from './log.type';

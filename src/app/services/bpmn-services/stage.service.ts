@@ -38,9 +38,7 @@ export class StageService {
 
   public readonly findByPipeline = async (id: string): Promise<StageVM> => {
 
-    const pipeline = await this.pipelineRepository.useHTTP().findOne(id);
-
-    return await this.stageRepository.useHTTP().findOne({ where: { pipeline: pipeline }, relations: [ 'pipeline' ] })
+    return await this.stageRepository.useHTTP().findOne({ where: { pipeline: { id } }, relations: [ 'pipeline' ] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(

@@ -1,0 +1,4 @@
+export const LOG_REPOSITORY = "LOG_REPOSITORY";
+export const LOG_SERVICE = "LOG_SERVICE";
+export const LOG_CONTROLLER = "LOG_CONTROLLER";
+export const LOG_PROVIDER = "LOG_PROVIDER";

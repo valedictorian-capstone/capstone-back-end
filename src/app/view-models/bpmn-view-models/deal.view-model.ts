@@ -4,6 +4,8 @@ import { AccountVM } from "../account-view-models";
 import { CustomerVM } from "../customer-view-models";
 import { ActivityVM } from "./activity.view-model";
 import { DealDetailVM } from "./deal-detail.view-model";
+import { LogVM } from "./log.view-model";
+import { NoteVM } from "./note.view-model";
 import { StageVM } from "./stage.view-model";
 
 export class DealVM {
@@ -41,6 +43,10 @@ export class DealVM {
   public readonly activitys: ActivityVM;
 
   public readonly dealDetails: DealDetailVM[];
+
+  public readonly notes: NoteVM[];
+
+  public readonly logs: LogVM[];
 
   public totalPrice: number;
 
