@@ -7,11 +7,11 @@ export class DealDetailMapper extends ProfileBase {
     super();
     mapper.createMap(DealDetail, DealDetailVM)
       .forMember(d => d.product,
-        preCondition(s => s.product != null),
+        preCondition(s => s.product != null, undefined),
         mapWith(ProductVM, s => s.product)
       )
       .forMember(d => d.deal,
-        preCondition(s => s.deal != null),
+        preCondition(s => s.deal != null, undefined),
         mapWith(DealVM, s => s.deal)
       );
     mapper.createMap(DealDetailUM, DealDetailVM);

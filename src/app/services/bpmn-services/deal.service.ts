@@ -1,7 +1,7 @@
 import { Deal } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { ActivityRepository, DealDetailRepository, DealRepository, ProductRepository, StageRepository } from "@repositories";
-import { ACTIVITY_REPOSITORY, DEAL_DETAIL_REPOSITORY, DEAL_REPOSITORY, PRODUCT_REPOSITORY, STAGE_REPOSITORY } from "@types";
+import { ActivityRepository, DealDetailRepository, DealRepository, LogRepository, ProductRepository, StageRepository } from "@repositories";
+import { ACTIVITY_REPOSITORY, DEAL_DETAIL_REPOSITORY, DEAL_REPOSITORY, LOG_REPOSITORY, PRODUCT_REPOSITORY, STAGE_REPOSITORY } from "@types";
 import { DealCM, DealUM, DealVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { In } from 'typeorm';
@@ -15,11 +15,12 @@ export class DealService {
     @Inject(ACTIVITY_REPOSITORY) protected readonly activityRepository: ActivityRepository,
     @Inject(DEAL_DETAIL_REPOSITORY) protected readonly dealDetailRepository: DealDetailRepository,
     @Inject(PRODUCT_REPOSITORY) protected readonly productRepository: ProductRepository,
+    @Inject(LOG_REPOSITORY) protected readonly logRepository: LogRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
   public readonly findAll = async (): Promise<DealVM[]> => {
-    return await this.dealRepository.useHTTP().find({ relations: ['stage', 'customer'] })
+    return await this.dealRepository.useHTTP().find({ relations: ['stage', 'customer', 'logs'] })
       .then(async (models) => {
         return this.mapper.mapArray(models, DealVM, Deal);
       }
@@ -28,14 +29,14 @@ export class DealService {
 
 
   public readonly findById = async (id: string): Promise<DealVM> => {
-    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'customer', 'dealDetails'] })
+    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'customer', 'dealDetails', 'logs'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         } else {
-          model.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { deal: model }, relations: ['product'] });
+          model.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(model.dealDetails.map((e) => e.id)) }, relations: ['product'] }); 
           return this.mapper.map(model, DealVM, Deal)
         }
       })
@@ -56,10 +57,15 @@ export class DealService {
   }
 
   public readonly insert = async (body: DealCM): Promise<DealVM> => {
-
     return await this.dealRepository.useHTTP()
       .save(body as any)
       .then(async (model) => {
+
+        const log = {
+          description: "Deal created",
+          deal: model
+        }   
+        await this.logRepository.useHTTP().save(log);
         await this.dealDetailRepository.useHTTP().save(body.dealDetails.map((e) => ({ ...e, deal: model })) as any);
         return await this.findById(model.id);
       })
@@ -76,6 +82,35 @@ export class DealService {
         return await this.dealRepository.useHTTP()
           .save(body as any)
           .then((model) => {
+            return this.findById(model.id);
+          })
+      });
+  }
+
+  // function (oldDeal: Deal, updateDeal: DealUM) {
+  //   if(oldDeal.stage != updateDeal.stage){
+  //     const oldStage = this.stageRepository.useHTTP().findOne({ where: {id: oldDeal.id} });
+  //     const updateStage = this.stageRepository.useHTTP().findOne({ where: {id: updateDeal.id} });
+  //     return "Stage: ->" + oldStage.name + ''
+  //   }
+  //   if(oldDeal.status != updateDeal.status){
+      
+  //   }
+  // }
+
+  public readonly updateStage = async (body: DealUM): Promise<DealVM> => {
+
+
+    return await this.dealRepository.useHTTP().findOne({ id: body.id })
+      .then(async (model) => {
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${body.id}`,
+          );
+        }
+        return await this.dealRepository.useHTTP()
+          .save(body as any)
+          .then(async (model) => {
             return this.findById(model.id);
           })
       });

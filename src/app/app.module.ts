@@ -46,6 +46,8 @@ import {
   DealMapper,
   PipelineMapper,
   DealDetailMapper,
+  NoteMapper,
+  LogMapper,
   CategoryMapper,
   AttachmentMapper
 } from './mappers';
@@ -123,6 +125,8 @@ export class AppModule implements OnModuleInit, NestModule {
     this.mapper.addProfile(DealMapper);
     this.mapper.addProfile(DealDetailMapper);
     this.mapper.addProfile(PipelineMapper);
+    this.mapper.addProfile(NoteMapper);
+    this.mapper.addProfile(LogMapper);
     this.mapper.addProfile(CategoryMapper);
   }
   configure(consumer: MiddlewareConsumer) {

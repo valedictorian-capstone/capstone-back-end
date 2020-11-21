@@ -14,6 +14,7 @@ import { Customer } from '../customer-models/customer.model';
 import { Activity } from './activity.model';
 import { Attachment } from './attachment.model';
 import { DealDetail } from './deal-detail.model';
+import { Log } from './log.model';
 import { Note } from './note.model';
 import { Stage } from './stage.model'
 
@@ -69,6 +70,10 @@ export class Deal extends BaseEntity {
 
   @OneToMany(() => Note, notes => notes.deal)
   public notes: Note[];
+
+
+  @OneToMany(() => Log, logs => logs.deal)
+  public logs: Log[];
 
   @OneToMany(() => Attachment, attachments => attachments.deal)
   public attachments: Attachment[];

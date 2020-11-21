@@ -111,30 +111,32 @@ export class CustomerService {
 
   public readonly insert = async (body: CustomerCM): Promise<any> => {
     const customer = { ...body };
+    console.log(customer);
+    
     if (customer.avatar) {
       await this.firebaseService.useUploadFileBase64("avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64")), customer.avatar, customer.avatar.substring(customer.avatar.indexOf("data:image/") + 5, customer.avatar.indexOf(";base64")));
       customer.avatar = environment.firebase.linkDownloadFile + "avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64"));
     }
     return await this.cusomterRepository.useHTTP().save({ ...customer }).then(async (data) => {
-      // if (customer.totalDeal == 0 && customer.totalSpending == 0 && customer.frequency == 0) {
-      //   const leadGroup = await this.groupRepository.useHTTP().findOne({ where: { id: 3 } });
-      //   await this.cusomterRepository.useHTTP().save({ ...data, groups: [leadGroup] })
-      // } else {
-      //   const paramArray = [];
-      //   paramArray.push([customer.totalDeal, customer.totalSpending, customer.frequency])
-      //   let classificationGroups = await this.callClassification(paramArray);
-      //   classificationGroups = JSON.parse(classificationGroups.replace(' ', ','));
-      //   if (classificationGroups == '0') {
-      //     const group1 = await this.groupRepository.useHTTP().findOne({ where: { id: 0 } });
-      //     await this.cusomterRepository.useHTTP().save({ ...data, groups: [group1] });
-      //   } else if (classificationGroups == '1') {
-      //     const group2 = await this.groupRepository.useHTTP().findOne({ where: { id: 1 } });
-      //     await this.cusomterRepository.useHTTP().save({ ...data, groups: [group2] });
-      //   } else {
-      //     const group3 = await this.groupRepository.useHTTP().findOne({ where: { id: 2 } });
-      //     await this.cusomterRepository.useHTTP().save({ ...data, groups: [group3] });
-      //   }
-      // }
+      if (customer.totalDeal == 0 && customer.totalSpending == 0 && customer.frequency == 0) {
+        const leadGroup = await this.groupRepository.useHTTP().findOne({ where: { id: 3 } });
+        await this.cusomterRepository.useHTTP().save({ ...data, groups: [leadGroup] })
+      } else {
+        const paramArray = [];
+        paramArray.push([customer.totalDeal, customer.totalSpending, customer.frequency])
+        let classificationGroups = await this.callClassification(paramArray);
+        classificationGroups = JSON.parse(classificationGroups.replace(' ', ','));
+        if (classificationGroups == '0') {
+          const group1 = await this.groupRepository.useHTTP().findOne({ where: { id: 0 } });
+          await this.cusomterRepository.useHTTP().save({ ...data, groups: [group1] });
+        } else if (classificationGroups == '1') {
+          const group2 = await this.groupRepository.useHTTP().findOne({ where: { id: 1 } });
+          await this.cusomterRepository.useHTTP().save({ ...data, groups: [group2] });
+        } else {
+          const group3 = await this.groupRepository.useHTTP().findOne({ where: { id: 2 } });
+          await this.cusomterRepository.useHTTP().save({ ...data, groups: [group3] });
+        }
+      }
 
       return this.findById(data.id);
     });

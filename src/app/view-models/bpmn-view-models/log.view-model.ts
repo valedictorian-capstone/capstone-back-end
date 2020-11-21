@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from 'nestjsx-automapper';
 import { DealVM } from "./deal.view-model";
 
-export class NoteVM {
+export class LogVM {
 
   @AutoMap()
   public readonly id: string;
@@ -28,7 +28,7 @@ export class NoteVM {
   public readonly updatedAt: Date;
 }
 
-export class NoteCM {
+export class LogCM {
 
   @ApiProperty()
   public readonly deal: {id : string};
@@ -37,9 +37,10 @@ export class NoteCM {
   @ApiProperty({ required: true, format: 'string'})
   public readonly description: string;
 
+
 }
 
-export class NoteUM {
+export class LogUM {
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly id: string;
