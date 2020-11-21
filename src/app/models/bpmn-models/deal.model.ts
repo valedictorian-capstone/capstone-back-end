@@ -12,6 +12,7 @@ import {
 import { Account } from '../account-models';
 import { Customer } from '../customer-models/customer.model';
 import { Activity } from './activity.model';
+import { Attachment } from './attachment.model';
 import { DealDetail } from './deal-detail.model';
 import { Note } from './note.model';
 import { Stage } from './stage.model'
@@ -68,6 +69,9 @@ export class Deal extends BaseEntity {
 
   @OneToMany(() => Note, notes => notes.deal)
   public notes: Note[];
+
+  @OneToMany(() => Attachment, attachments => attachments.deal)
+  public attachments: Attachment[];
   
   @AutoMap()
   @Column({ default: null })

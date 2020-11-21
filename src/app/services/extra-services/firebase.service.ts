@@ -10,7 +10,7 @@ import * as stream from 'stream';
 export class FirebaseService {
 
   public static readonly inject = inject(FIREBASE_SERVICE, FirebaseService);
-  constructor() { 
+  constructor() {
     console.log(this);
   }
   public static readonly init = async () => {
@@ -33,6 +33,18 @@ export class FirebaseService {
     buffer.pipe(file.createWriteStream({
       metadata: {
         contentType: type,
+      },
+    })).on("finish", () => {
+      return "";
+    });
+  }
+  public readonly useUploadFile = async (path: string, data: any): Promise<any> => {
+    const buffer = new stream.PassThrough();
+    buffer.end(Buffer.from(data.buffer));
+    const file = this.useGetStorage().bucket(environment.firebase.bucketUrl).file(path);
+    buffer.pipe(file.createWriteStream({
+      metadata: {
+        contentType: data.mimetype,
       },
     })).on("finish", () => {
       return "";

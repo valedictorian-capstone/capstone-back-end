@@ -1,11 +1,13 @@
-import { ActivityController, DealController, StageController, PipelineController } from '.';
+import { ActivityController, DealController, StageController, PipelineController, AttachmentController } from '.';
 export * from './stage.controller';
 export * from './deal.controller';
+export * from './attachment.controller';
 export * from './activity.controller';
 export * from './pipeline.controller';
 export const BPMN_CONTROLLERS = [
   ActivityController,
   DealController, 
   StageController,
-  PipelineController
+  PipelineController,
+  AttachmentController
 ];
