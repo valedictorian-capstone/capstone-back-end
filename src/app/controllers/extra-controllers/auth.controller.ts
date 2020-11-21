@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
+import { Body, Controller, Post, Put, Request } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { AccountVM, DeviceCM } from '@view-models';
 import { AuthService } from 'src/app/services/extra-services/auth.service';
@@ -18,11 +18,11 @@ export class AuthController {
     protected authenService: AuthService
   ) { }
 
-  @Post()
+  @Put()
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async findAll(@Request() req: any, @Body() device: DeviceCM): Promise<AccountVM> {
+  public async auth(@Request() req: any, @Body() device: DeviceCM): Promise<AccountVM> {
     const token = req.headers.authorization;
     return this.authenService.refresh(token, device);
   }

@@ -44,7 +44,7 @@ export class ActivityService {
       where: {
         id: id
       },
-      relations: ["assignee", "assignBy", "processStepInstance"],
+      relations: ["assignee", "assignBy"],
     })
       .then((model) => {
         if (model) {

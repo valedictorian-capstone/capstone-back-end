@@ -1,0 +1,57 @@
+import { Inject, Injectable } from "@nestjs/common";
+import { ActivityRepository, AttachmentRepository, DealRepository, CustomerRepository } from "@repositories";
+import { ACTIVITY_REPOSITORY, ATTACHMENT_REPOSITORY, DEAL_REPOSITORY, CUSTOMER_REPOSITORY } from "@types";
+import { RoleVM } from "@view-models";
+import { verify } from "jsonwebtoken";
+import { AutoMapper, InjectMapper } from "nestjsx-automapper";
+
+@Injectable()
+export class SearchService {
+  constructor(
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(ACTIVITY_REPOSITORY) protected readonly activityRepository: ActivityRepository,
+    @Inject(ATTACHMENT_REPOSITORY) protected readonly attachmentRepository: AttachmentRepository,
+    @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
+    @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
+  ) { }
+  public readonly search = async (value: string, token: string): Promise<any> => {
+    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
+    const roles: RoleVM[] = Object.assign(decoded.valueOf()).account.roles;
+    const rs = [];
+    if (roles.filter((e) => e.canAccessDeal).length > 0) {
+      const deals = await this.dealRepository.useHTTP().find();
+      const attachments = await this.attachmentRepository.useHTTP().find();
+      rs.push({
+        type: 'deal',
+        data: deals.filter((e) => e.title.toLowerCase().includes(value.toLowerCase()))
+      });
+      rs.push({
+        type: 'attachment',
+        data: attachments.filter((e) => e.name.toLowerCase().includes(value.toLowerCase()))
+      });
+    }
+    if (roles.filter((e) => e.canAccessActivity).length > 0) {
+      const ativitys = await this.activityRepository.useHTTP().find();
+      rs.push({
+        type: 'ativity',
+        data: ativitys.filter((e) => e.name.toLowerCase().includes(value.toLowerCase()))
+      });
+    }
+    if (roles.filter((e) => e.canAccessCustomer).length > 0) {
+      const customers = await this.cusomterRepository.useHTTP().find({ relations: ['groups'] });
+      rs.push({
+        type: 'lead',
+        data: customers.filter((e) => e.fullname.toLowerCase().includes(value.toLowerCase()) && e.groups.filter((e) => e.id == '0').length > 0)
+      });
+      rs.push({
+        type: 'contact',
+        data: customers.filter((e) => e.fullname.toLowerCase().includes(value.toLowerCase()))
+      });
+      rs.push({
+        type: 'account',
+        data: customers.filter((e) => e.fullname.toLowerCase().includes(value.toLowerCase()) && e.groups.filter((e) => e.id != '0').length > 0)
+      });
+    }
+    return rs;
+  }
+}

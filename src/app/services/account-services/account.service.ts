@@ -3,17 +3,21 @@ import { Account } from '@models';
 import { BadRequestException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, RoleRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY, ROLE_REPOSITORY } from '@types';
+import { ACCOUNT_REPOSITORY, FIREBASE_SERVICE, ROLE_REPOSITORY } from '@types';
 import { AccountCM, AccountFilter, AccountUM, AccountVM } from '@view-models';
 import { hashSync } from 'bcrypt';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
+import { EmailService, FirebaseService } from '../extra-services';
 
 @Injectable()
 export class AccountService {
   constructor(
     @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
     @Inject(ROLE_REPOSITORY) protected readonly roleRepository: RoleRepository,
+    @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
+    protected readonly emailService: EmailService,
     @InjectMapper() protected readonly mapper: AutoMapper,
     private readonly jwtService: JwtService
   ) { }
@@ -71,7 +75,18 @@ export class AccountService {
   };
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().save({ ...body, password: hashSync(body.password, 10) } as any).then(async (account) => {
+    const acc = { ...body };
+    if (acc.avatar) {
+      await this.firebaseService.useUploadFileBase64("employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64")), acc.avatar, acc.avatar.substring(acc.avatar.indexOf("data:image/") + 5, acc.avatar.indexOf(";base64")));
+      acc.avatar = environment.firebase.linkDownloadFile + "employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, body.avatar.indexOf(";base64"));
+    }
+    return await this.accountRepository.useHTTP().save({ ...acc, passwordHash: hashSync(acc.password, 10) } as any).then(async (account) => {
+      await this.emailService.sendManualEmailCustomer({
+        info: account as any,
+        subject: 'EMPLOYEE ACCOUNT FOR SYSTEM',
+        content: '<span>Email: </span> ' + acc.email + '<br>' +
+          '<span>Password: </span> ' + acc.password
+      });
       return await this.findById(account.id);
     });
   };

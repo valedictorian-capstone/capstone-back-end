@@ -10,11 +10,7 @@ import * as stream from 'stream';
 export class FirebaseService {
 
   public static readonly inject = inject(FIREBASE_SERVICE, FirebaseService);
-  constructor() {
-    console.log(this);
-  }
   public static readonly init = async () => {
-    console.log(require('service-account.json'));
     await admin.initializeApp({
       credential: admin.credential.cert(require('service-account.json')),
       databaseURL: environment.firebase.databaseURL,

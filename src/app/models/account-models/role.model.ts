@@ -13,8 +13,16 @@ export class Role extends BaseEntity {
   public name: string;
 
   @AutoMap()
+  @Column({ default: false })
+  public notChange: boolean;
+
+  @AutoMap()
+  @Column({ default: 0 })
+  public level: number;
+
+  @AutoMap()
   @Column({ default: true })
-  public readonly canManageEmployee: boolean;
+  public readonly canAccessEmployee: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -38,31 +46,7 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canManageLead: boolean;
-
-  @AutoMap()
-  @Column({ default: true })
-  public readonly canCreateLead: boolean;
-
-  @AutoMap()
-  @Column({ default: true })
-  public readonly canUpdateLead: boolean;
-
-  @AutoMap()
-  @Column({ default: true })
-  public readonly canRemoveLead: boolean;
-
-  @AutoMap()
-  @Column({ default: true })
-  public readonly canImportLead: boolean;
-
-  @AutoMap()
-  @Column({ default: true })
-  public readonly canExportLead: boolean;
-
-  @AutoMap()
-  @Column({ default: true })
-  public readonly canManageDeal: boolean;
+  public readonly canAccessDeal: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -86,7 +70,7 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canManageProcess: boolean;
+  public readonly canAccessProcess: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -110,7 +94,7 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canManageRole: boolean;
+  public readonly canAccessRole: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -134,7 +118,7 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canManageCustomer: boolean;
+  public readonly canAccessCustomer: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -158,7 +142,7 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canManageActivity: boolean;
+  public readonly canAccessActivity: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -182,7 +166,7 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canManageTicket: boolean;
+  public readonly canAccessTicket: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -206,31 +190,31 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canManageService: boolean;
+  public readonly canAccessProduct: boolean;
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canCreateService: boolean;
+  public readonly canCreateProduct: boolean;
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canUpdateService: boolean;
+  public readonly canUpdateProduct: boolean;
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canRemoveService: boolean;
+  public readonly canRemoveProduct: boolean;
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canImportService: boolean;
+  public readonly canImportProduct: boolean;
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canExportService: boolean;
+  public readonly canExportProduct: boolean;
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canManageEvent: boolean;
+  public readonly canAccessEvent: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -254,7 +238,7 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canManageFeedback: boolean;
+  public readonly canAccessFeedback: boolean;
 
   @AutoMap()
   @Column({ default: true })

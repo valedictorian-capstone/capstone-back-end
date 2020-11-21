@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
+import { AccountVM } from ".";
 
 export class RoleVM {
 
@@ -10,7 +11,13 @@ export class RoleVM {
   public readonly name: string;
 
   @AutoMap()
-  public readonly canManageEmployee: boolean;
+  public readonly notChange: boolean;
+
+  @AutoMap()
+  public readonly level: number;
+
+  @AutoMap()
+  public readonly canAccessEmployee: boolean;
 
   @AutoMap()
   public readonly canCreateEmployee: boolean;
@@ -28,9 +35,6 @@ export class RoleVM {
   public readonly canExportEmployee: boolean;
 
   @AutoMap()
-  public readonly canManageLead: boolean;
-
-  @AutoMap()
   public readonly canCreateLead: boolean;
 
   @AutoMap()
@@ -46,7 +50,7 @@ export class RoleVM {
   public readonly canExportLead: boolean;
 
   @AutoMap()
-  public readonly canManageDeal: boolean;
+  public readonly canAccessDeal: boolean;
 
   @AutoMap()
   public readonly canCreateDeal: boolean;
@@ -64,7 +68,7 @@ export class RoleVM {
   public readonly canExportDeal: boolean;
 
   @AutoMap()
-  public readonly canManageProcess: boolean;
+  public readonly canAccessProcess: boolean;
 
   @AutoMap()
   public readonly canCreateProcess: boolean;
@@ -82,7 +86,7 @@ export class RoleVM {
   public readonly canExportProcess: boolean;
 
   @AutoMap()
-  public readonly canManageRole: boolean;
+  public readonly canAccessRole: boolean;
 
   @AutoMap()
   public readonly canCreateRole: boolean;
@@ -100,7 +104,7 @@ export class RoleVM {
   public readonly canExportRole: boolean;
 
   @AutoMap()
-  public readonly canManageCustomer: boolean;
+  public readonly canAccessCustomer: boolean;
 
   @AutoMap()
   public readonly canCreateCustomer: boolean;
@@ -118,7 +122,7 @@ export class RoleVM {
   public readonly canExportCustomer: boolean;
 
   @AutoMap()
-  public readonly canManageActivity: boolean;
+  public readonly canAccessActivity: boolean;
 
   @AutoMap()
   public readonly canCreateActivity: boolean;
@@ -136,7 +140,7 @@ export class RoleVM {
   public readonly canExportActivity: boolean;
 
   @AutoMap()
-  public readonly canManageTicket: boolean;
+  public readonly canAccessTicket: boolean;
 
   @AutoMap()
   public readonly canCreateTicket: boolean;
@@ -154,25 +158,25 @@ export class RoleVM {
   public readonly canExportTicket: boolean;
 
   @AutoMap()
-  public readonly canManageService: boolean;
+  public readonly canAccessProduct: boolean;
 
   @AutoMap()
-  public readonly canCreateService: boolean;
+  public readonly canCreateProduct: boolean;
 
   @AutoMap()
-  public readonly canUpdateService: boolean;
+  public readonly canUpdateProduct: boolean;
 
   @AutoMap()
-  public readonly canRemoveService: boolean;
+  public readonly canRemoveProduct: boolean;
 
   @AutoMap()
-  public readonly canImportService: boolean;
+  public readonly canImportProduct: boolean;
 
   @AutoMap()
-  public readonly canExportService: boolean;
+  public readonly canExportProduct: boolean;
 
   @AutoMap()
-  public readonly canManageEvent: boolean;
+  public readonly canAccessEvent: boolean;
 
   @AutoMap()
   public readonly canCreateEvent: boolean;
@@ -190,7 +194,7 @@ export class RoleVM {
   public readonly canExportEvent: boolean;
 
   @AutoMap()
-  public readonly canManageFeedback: boolean;
+  public readonly canAccessFeedback: boolean;
 
   @AutoMap()
   public readonly canCreateFeedback: boolean;
@@ -209,20 +213,41 @@ export class RoleVM {
 
   @AutoMap()
   public readonly description: string;
+
+  public readonly accounts: AccountVM[];
+
+  @AutoMap()
+  public readonly isDelete: boolean;
+
+  @AutoMap()
+  public readonly createdBy: string;
+
+  @AutoMap()
+  public readonly updatedBy: string;
+
+  @AutoMap()
+  public readonly createdAt: Date;
+
+  @AutoMap()
+  public readonly updatedAt: Date;
 }
 
 export class RoleCM {
 
-  @AutoMap()
   @ApiProperty()
   public readonly id: string;
 
-  @AutoMap()
   @ApiProperty()
   public readonly name: string;
 
+  @ApiProperty()
+  public readonly notChange: boolean;
+
+  @ApiProperty()
+  public readonly level: number;
+
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageEmployee: boolean;
+  public readonly canAccessEmployee: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateEmployee: boolean;
@@ -240,7 +265,7 @@ export class RoleCM {
   public readonly canExportEmployee: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageLead: boolean;
+  public readonly canAccessLead: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateLead: boolean;
@@ -258,7 +283,7 @@ export class RoleCM {
   public readonly canExportLead: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageDeal: boolean;
+  public readonly canAccessDeal: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateDeal: boolean;
@@ -276,7 +301,7 @@ export class RoleCM {
   public readonly canExportDeal: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageProcess: boolean;
+  public readonly canAccessProcess: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateProcess: boolean;
@@ -294,7 +319,7 @@ export class RoleCM {
   public readonly canExportProcess: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageRole: boolean;
+  public readonly canAccessRole: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateRole: boolean;
@@ -312,7 +337,7 @@ export class RoleCM {
   public readonly canExportRole: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageCustomer: boolean;
+  public readonly canAccessCustomer: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateCustomer: boolean;
@@ -330,7 +355,7 @@ export class RoleCM {
   public readonly canExportCustomer: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageActivity: boolean;
+  public readonly canAccessActivity: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateActivity: boolean;
@@ -348,7 +373,7 @@ export class RoleCM {
   public readonly canExportActivity: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageTicket: boolean;
+  public readonly canAccessTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateTicket: boolean;
@@ -366,25 +391,25 @@ export class RoleCM {
   public readonly canExportTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageService: boolean;
+  public readonly canAccessProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canCreateService: boolean;
+  public readonly canCreateProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canUpdateService: boolean;
+  public readonly canUpdateProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canRemoveService: boolean;
+  public readonly canRemoveProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canImportService: boolean;
+  public readonly canImportProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canExportService: boolean;
+  public readonly canExportProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageEvent: boolean;
+  public readonly canAccessEvent: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateEvent: boolean;
@@ -402,7 +427,7 @@ export class RoleCM {
   public readonly canExportEvent: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageFeedback: boolean;
+  public readonly canAccessFeedback: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateFeedback: boolean;
@@ -426,16 +451,20 @@ export class RoleCM {
 
 export class RoleUM {
 
-  @AutoMap()
   @ApiProperty()
   public readonly id: string;
 
-  @AutoMap()
   @ApiProperty()
   public readonly name: string;
 
+  @ApiProperty()
+  public readonly notChange: boolean;
+
+  @ApiProperty()
+  public readonly level: number;
+
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageEmployee: boolean;
+  public readonly canAccessEmployee: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateEmployee: boolean;
@@ -453,25 +482,10 @@ export class RoleUM {
   public readonly canExportEmployee: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageLead: boolean;
+  public readonly canAccessLead: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canCreateLead: boolean;
-
-  @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canUpdateLead: boolean;
-
-  @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canRemoveLead: boolean;
-
-  @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canImportLead: boolean;
-
-  @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canExportLead: boolean;
-
-  @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageDeal: boolean;
+  public readonly canAccessDeal: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateDeal: boolean;
@@ -489,7 +503,7 @@ export class RoleUM {
   public readonly canExportDeal: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageProcess: boolean;
+  public readonly canAccessProcess: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateProcess: boolean;
@@ -507,7 +521,7 @@ export class RoleUM {
   public readonly canExportProcess: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageRole: boolean;
+  public readonly canAccessRole: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateRole: boolean;
@@ -525,7 +539,7 @@ export class RoleUM {
   public readonly canExportRole: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageCustomer: boolean;
+  public readonly canAccessCustomer: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateCustomer: boolean;
@@ -543,7 +557,7 @@ export class RoleUM {
   public readonly canExportCustomer: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageActivity: boolean;
+  public readonly canAccessActivity: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateActivity: boolean;
@@ -561,7 +575,7 @@ export class RoleUM {
   public readonly canExportActivity: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageTicket: boolean;
+  public readonly canAccessTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateTicket: boolean;
@@ -579,25 +593,25 @@ export class RoleUM {
   public readonly canExportTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageService: boolean;
+  public readonly canAccessProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canCreateService: boolean;
+  public readonly canCreateProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canUpdateService: boolean;
+  public readonly canUpdateProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canRemoveService: boolean;
+  public readonly canRemoveProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canImportService: boolean;
+  public readonly canImportProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canExportService: boolean;
+  public readonly canExportProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageEvent: boolean;
+  public readonly canAccessEvent: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateEvent: boolean;
@@ -615,7 +629,7 @@ export class RoleUM {
   public readonly canExportEvent: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canManageFeedback: boolean;
+  public readonly canAccessFeedback: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateFeedback: boolean;

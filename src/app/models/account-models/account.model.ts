@@ -32,16 +32,8 @@ export class Account extends BaseEntity {
   public avatar: string;
 
   @AutoMap()
-  @Column({ nullable: true })
-  public address: string;
-
-  @AutoMap()
-  @Column({ nullable: true, default: true })
-  public gender: boolean;
-
-  @AutoMap()
   @Column({ nullable: false, default: '1' })
-  public password: string;
+  public passwordHash: string;
 
   @OneToMany(() => Device, devices => devices.account)
   public devices: Device[];
