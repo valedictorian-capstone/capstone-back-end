@@ -5,47 +5,34 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
-import { DealDetail } from '../bpmn-models';
-import { Category } from './category.model';
+
+import { Deal } from './deal.model';
+
 
 @Entity()
-export class Product extends BaseEntity {
+export class Attachment extends BaseEntity {
+
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @Column({ default: null })
   @AutoMap()
-  public code: string;
-  
   @Column({ default: null })
-  @AutoMap()
   public name: string;
 
-  @Column({ default: null })
   @AutoMap()
-  public type: string;
-
   @Column({ default: null })
-  @AutoMap()
-  public price: number;
+  public extension: string;
 
+  @AutoMap()
   @Column({ default: null })
-  @AutoMap()
-  public description: string;
+  public url: string;
 
-  @Column("json", { default: null })
-  public parameters: any;
-
-  @ManyToOne(() => Category, category => category.products)
-  public category: Category;
-
-  @OneToMany(() => DealDetail, dealDetails => dealDetails.product)
-  public dealDetails: DealDetail[];
+  @ManyToOne(() => Deal, deal => deal.attachments)
+  public deal: Deal;
 
   @AutoMap()
   @Column({ default: null })

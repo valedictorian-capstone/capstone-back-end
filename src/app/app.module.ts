@@ -47,7 +47,9 @@ import {
   PipelineMapper,
   DealDetailMapper,
   NoteMapper,
-  LogMapper
+  LogMapper,
+  CategoryMapper,
+  AttachmentMapper
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import {
@@ -117,6 +119,7 @@ export class AppModule implements OnModuleInit, NestModule {
     this.mapper.addProfile(RoleMapper);
     this.mapper.addProfile(TicketMapper);
     this.mapper.addProfile(ActivityMapper);
+    this.mapper.addProfile(AttachmentMapper);
     this.mapper.addProfile(EventMapper);
     this.mapper.addProfile(TriggerMapper);
     this.mapper.addProfile(DealMapper);
@@ -124,6 +127,7 @@ export class AppModule implements OnModuleInit, NestModule {
     this.mapper.addProfile(PipelineMapper);
     this.mapper.addProfile(NoteMapper);
     this.mapper.addProfile(LogMapper);
+    this.mapper.addProfile(CategoryMapper);
   }
   configure(consumer: MiddlewareConsumer) {
     consumer
