@@ -36,7 +36,7 @@ export class DealService {
             `Can not find ${id}`,
           );
         } else {
-          model.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(model.dealDetails.map((e) => e.id)) }, relations: ['product'] }); 
+          model.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(model.dealDetails.map((e) => e.id)) }, relations: ['product'] });
           return this.mapper.map(model, DealVM, Deal)
         }
       })
@@ -64,7 +64,7 @@ export class DealService {
         const log = {
           description: "Deal created",
           deal: model
-        }   
+        }
         await this.logRepository.useHTTP().save(log);
         await this.dealDetailRepository.useHTTP().save(body.dealDetails.map((e) => ({ ...e, deal: model })) as any);
         return await this.findById(model.id);
@@ -73,30 +73,40 @@ export class DealService {
 
   public readonly update = async (body: DealUM): Promise<DealVM> => {
     return await this.dealRepository.useHTTP().findOne({ id: body.id })
-      .then(async (model) => {
-        if (!model) {
+      .then(async (oldModel) => {
+        if (!oldModel) {
           throw new NotFoundException(
             `Can not find ${body.id}`,
           );
         }
         return await this.dealRepository.useHTTP()
           .save(body as any)
-          .then((model) => {
-            return this.findById(model.id);
+          .then((newModel) => {
+            this.saveLog(oldModel, newModel);
+            return this.findById(newModel.id);
           })
       });
   }
 
-  // function (oldDeal: Deal, updateDeal: DealUM) {
-  //   if(oldDeal.stage != updateDeal.stage){
-  //     const oldStage = this.stageRepository.useHTTP().findOne({ where: {id: oldDeal.id} });
-  //     const updateStage = this.stageRepository.useHTTP().findOne({ where: {id: updateDeal.id} });
-  //     return "Stage: ->" + oldStage.name + ''
-  //   }
-  //   if(oldDeal.status != updateDeal.status){
-      
-  //   }
-  // }
+  private readonly saveLog = async (oldDeal: Deal, updateDeal: Deal) => {
+
+    let description = "";
+
+    if (oldDeal.stage != updateDeal.stage) {
+      const oldStage = await this.stageRepository.useHTTP().findOne({ where: { id: oldDeal.id } });
+      const updateStage = await this.stageRepository.useHTTP().findOne({ where: { id: updateDeal.id } });
+      description = "Stage: " + oldStage.name + ' -> ' + updateStage.name;
+    }
+    if (oldDeal.status != updateDeal.status) {
+      description = "Status: " + oldDeal.status + ' -> ' + updateDeal.status;
+    }
+
+    const log = {
+      description: description,
+      deal: updateDeal
+    }
+    await this.logRepository.useHTTP().save(log);
+  }
 
   public readonly updateStage = async (body: DealUM): Promise<DealVM> => {
 
