@@ -4,3 +4,4 @@ export * from './deal.mapper';
 export * from './activity.mapper';
 export * from './deal-detail.mapper';
 export * from './pipeline.mapper';
+export * from './attachment.mapper';
