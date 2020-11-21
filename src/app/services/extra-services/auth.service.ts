@@ -26,7 +26,7 @@ export class AuthService {
           return {
             expiresIn: '24h',
             accessToken: this.generateJWT(account),
-            roles: account.roles.map((e) => e.name),
+            roles: account.roles,
             fullname: account.fullname,
             avatar: account.avatar,
             id: account.id,
@@ -62,12 +62,12 @@ export class AuthService {
     const option = isNaN(+emailOrPhone) ?
       { email: emailOrPhone }
       : { phone: emailOrPhone }
-    return await this.accountRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "tasks", "devices"] }).then(
+    return await this.accountRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "activitys", "devices"] }).then(
       async account => {
         if (!account) {
           throw new UnauthorizedException("Invalid email or phone", "Invalid email or phone");
         }
-        this.comparePasswords(password, account?.password).pipe(
+        this.comparePasswords(password, account?.passwordHash).pipe(
           map((match: boolean) => {
             if (!match) {
               throw new UnauthorizedException("Invalid Password", "Invalid Password");

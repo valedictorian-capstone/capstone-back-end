@@ -111,11 +111,9 @@ export class CustomerService {
 
   public readonly insert = async (body: CustomerCM): Promise<any> => {
     const customer = { ...body };
-    console.log(customer);
-    
     if (customer.avatar) {
-      await this.firebaseService.useUploadFileBase64("avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64")), customer.avatar, customer.avatar.substring(customer.avatar.indexOf("data:image/") + 5, customer.avatar.indexOf(";base64")));
-      customer.avatar = environment.firebase.linkDownloadFile + "avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64"));
+      await this.firebaseService.useUploadFileBase64("customer/avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64")), customer.avatar, customer.avatar.substring(customer.avatar.indexOf("data:image/") + 5, customer.avatar.indexOf(";base64")));
+      customer.avatar = environment.firebase.linkDownloadFile + "customer/avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64"));
     }
     return await this.cusomterRepository.useHTTP().save({ ...customer }).then(async (data) => {
       if (customer.totalDeal == 0 && customer.totalSpending == 0 && customer.frequency == 0) {
