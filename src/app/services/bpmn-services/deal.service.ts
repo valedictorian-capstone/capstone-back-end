@@ -37,6 +37,7 @@ export class DealService {
           );
         } else {
           model.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(model.dealDetails.map((e) => e.id)) }, relations: ['product'] });
+          model.logs = model.logs.sort((a, b) => a.createdAt > b.createdAt ? 1 : -1);
           return this.mapper.map(model, DealVM, Deal)
         }
       })
@@ -72,11 +73,11 @@ export class DealService {
   }
 
   public readonly update = async (body: DealUM): Promise<DealVM> => {
-    return await this.dealRepository.useHTTP().findOne({ id: body.id })
+    return await this.dealRepository.useHTTP().findOne({ id: body.id }, {relations: ['stage']})
       .then(async (oldModel) => {
         if (!oldModel) {
           throw new NotFoundException(
-            `Can not find ${body.id}`,
+           `Can not find ${body.id},`
           );
         }
         return await this.dealRepository.useHTTP()
@@ -89,13 +90,10 @@ export class DealService {
   }
 
   private readonly saveLog = async (oldDeal: Deal, updateDeal: Deal) => {
-
     let description = "";
-
+    updateDeal = await this.dealRepository.useHTTP().findOne({ where: { id: updateDeal.id }, relations: ['stage'] });
     if (oldDeal.stage != updateDeal.stage) {
-      const oldStage = await this.stageRepository.useHTTP().findOne({ where: { id: oldDeal.id } });
-      const updateStage = await this.stageRepository.useHTTP().findOne({ where: { id: updateDeal.id } });
-      description = "Stage: " + oldStage.name + ' -> ' + updateStage.name;
+      description = "Stage: " + oldDeal.stage.name + ' -> ' + updateDeal.stage.name;
     }
     if (oldDeal.status != updateDeal.status) {
       description = "Status: " + oldDeal.status + ' -> ' + updateDeal.status;
@@ -106,24 +104,6 @@ export class DealService {
       deal: updateDeal
     }
     await this.logRepository.useHTTP().save(log);
-  }
-
-  public readonly updateStage = async (body: DealUM): Promise<DealVM> => {
-
-
-    return await this.dealRepository.useHTTP().findOne({ id: body.id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${body.id}`,
-          );
-        }
-        return await this.dealRepository.useHTTP()
-          .save(body as any)
-          .then(async (model) => {
-            return this.findById(model.id);
-          })
-      });
   }
 
   public readonly remove = async (id: string): Promise<any> => {
