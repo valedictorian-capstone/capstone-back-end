@@ -16,7 +16,7 @@ export class TicketService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<TicketVM[]> => {
-    return await this.ticketRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["customer", "service"] })
+    return await this.ticketRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["customer"] })
       .then(async (models) => {
         return this.mapper.mapArray(models, TicketVM, Ticket)
       }).catch((err) => {
@@ -26,7 +26,7 @@ export class TicketService {
   };
 
   public readonly findById = async (id: string): Promise<TicketVM> => {
-    return await this.ticketRepository.useHTTP().findOne({ where: { id: id }, relations: ["customer", "service"] })
+    return await this.ticketRepository.useHTTP().findOne({ where: { id: id }, relations: ["customer"] })
       .then(async (model) => {
         if (model) {
           return this.mapper.map(model, TicketVM, Ticket);
