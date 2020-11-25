@@ -1,12 +1,12 @@
 import { NotFoundException } from '@exceptions';
 import { Trigger } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CustomerRepository, TriggerRepository } from '@repositories';
-import { CUSTOMER_REPOSITORY, TRIGGER_REPOSITORY } from '@types';
+import { CustomerRepository, EventRepository, GroupRepository, TriggerRepository } from '@repositories';
+import { CUSTOMER_REPOSITORY, EVENT_REPOSITORY, GROUP_REPOSITORY, TRIGGER_REPOSITORY } from '@types';
 import { TriggerCM, TriggerUM, TriggerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
-import { Cron, CronExpression  } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { EmailService } from '../extra-services';
 
 @Injectable()
@@ -14,16 +14,28 @@ export class TriggerService {
   constructor(
     @Inject(TRIGGER_REPOSITORY) protected readonly repository: TriggerRepository,
     @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
+    @Inject(EVENT_REPOSITORY) protected readonly eventRepository: EventRepository,
+    @Inject(GROUP_REPOSITORY) protected readonly groupRepository: GroupRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
     protected emailService: EmailService,
   ) { }
 
-  // @Cron(CronExpression.EVERY_SECOND)
-  // async handleCron() {
-    // const birtDayQuery = await this.repository.useHTTP().query('SELECT * FROM crm.customer WHERE MONTH(birthDate) = MONTH(NOW()) AND DAY(birthDate) = DAY(NOW())');
-    // await this.emailService.sendHappyBirtdayEmailCustomer(birtDayQuery);
-    // console.log(new Date)
-  // }
+  @Cron(CronExpression.EVERY_MINUTE)
+  async handleCron() {
+    const triggers = await this.repository.useHTTP().query('SELECT * FROM crm.trigger WHERE YEAR(time) = YEAR(NOW()) AND MONTH(time) = MONTH(NOW()) AND DAY(time) = DAY(NOW()) AND HOUR(time) = HOUR(NOW()) AND MINUTE(time) = MINUTE(NOW())');
+    for (let index = 0; index < triggers.length; index++) {
+      const trigger = triggers[index];
+      const event = await this.eventRepository.useHTTP().findOne({ where: { id: trigger.eventId }, relations: ['groups'] });
+      console.log(event);
+      for (let j = 0; j < event.groups.length; j++) {
+        let group = event.groups[j];
+        group = await this.groupRepository.useHTTP().findOne({ where: { id: group.id }, relations: ['customers'] });
+        console.log(group);
+        await this.emailService.sendEventCustomer(group.customers ,event);
+      }
+    }
+  }
+
 
   public readonly findAll = async (ids?: string[]): Promise<TriggerVM[]> => {
     return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: [] })

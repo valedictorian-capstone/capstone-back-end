@@ -5,10 +5,12 @@ import {
   CreateDateColumn,
   Entity,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Group } from './group.model';
+import { Trigger } from './trigger.model';
 
 @Entity()
 export class Event extends BaseEntity {
@@ -39,6 +41,9 @@ export class Event extends BaseEntity {
 
     @ManyToMany(() => Group, groups => groups.events)
     public groups: Group[];
+
+    @OneToMany(() => Trigger, triggers => triggers.event )
+    public triggers: Trigger[];
 
     @AutoMap()
     @Column({ default: null })

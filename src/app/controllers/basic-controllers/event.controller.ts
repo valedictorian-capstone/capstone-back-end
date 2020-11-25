@@ -44,20 +44,12 @@ import {
       return this.service.findById(id);
     }
   
-    @Post()
-    @ApiOperation({ summary: 'Insert new Event' })
-    @ApiCreatedResponse({ description: 'Success create new Event' })
-    @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Body() body: EventCM): Promise<EventVM> {
-      return this.service.insert(body);
-    }
-  
     @Put()
     @ApiOperation({ summary: 'Update an Event by Id' })
     @ApiCreatedResponse({ description: 'Success update new Event' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public update(@Body() body: EventUM): Promise<EventVM> {
-      return this.service.update(body);
+    public save(@Body() body: EventUM): Promise<EventVM> {
+      return this.service.save(body);
     }
   
     @Delete(':id')
