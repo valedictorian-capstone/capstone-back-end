@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { GroupVM } from "./group.view-model";
+import { TriggerCM, TriggerVM } from "./trigger.view-model";
 
 export class EventVM {
     @AutoMap()
@@ -22,6 +23,8 @@ export class EventVM {
     public readonly dateEnd: Date;
 
     public readonly groups: GroupVM[];
+
+    public readonly triggers: TriggerVM[];
 
     @AutoMap()
     public readonly isDelete: boolean;
@@ -59,6 +62,9 @@ export class EventCM{
     @ApiProperty({ required: true })
     public readonly groups: {id: string}[];
 
+    @ApiProperty({ required: true })
+    public readonly triggers: TriggerCM[];
+
 }
 
 export class EventUM{
@@ -83,5 +89,8 @@ export class EventUM{
 
     @ApiProperty({ required: true })
     public readonly groups: {id: string}[];
+
+    @ApiProperty({ required: true })
+    public readonly triggers: TriggerCM[];
 
 }

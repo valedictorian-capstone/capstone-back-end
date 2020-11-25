@@ -1,6 +1,6 @@
 
 import { Inject, Injectable } from '@nestjs/common';
-import { Customer } from '@models';
+import { Customer, Event } from '@models';
 import { CustomerRepository } from '@repositories';
 import { CUSTOMER_REPOSITORY } from '@types';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
@@ -37,6 +37,28 @@ export class EmailService {
                 }
                 return "OK";
             }).catch(err => err);
+    }
+
+    public readonly sendEventCustomer = async (customers: Customer[], event: Event): Promise<string> => {
+        const transporter = createTransport({ // config mail server
+            service: 'Gmail',
+            auth: {
+                user: 'crmdynamic123@gmail.com',
+                pass: '123456crm'
+            }
+        });
+        for (let index = 0; index < customers.length; index++) {
+            const customer = customers[index];
+            transporter.sendMail(this.getEventTemplate(customer, event), (err, info) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('Message sent: ' + info.response);
+                }
+            })
+
+        };
+        return "OK";
     }
 
     public readonly sendManualEmailCustomer = async (emailManual: EmailManual): Promise<any> => {
@@ -77,7 +99,7 @@ export class EmailService {
                 }
             }
         }
-        return "Send happy birthday mail"  +countSuccess;
+        return "Send happy birthday mail" + countSuccess;
     }
 
     private getDemoTemplate(customer: Customer) {
@@ -106,7 +128,17 @@ export class EmailService {
             to: customer.email,
             subject: 'Chúc mừng sinh nhật',
             text: 'You recieved message from ',
-            html: '<p>Kính gửi ' +customer.fullname + '</p><p><br></p><p>Cám ơn bạn đã đồng hành với công ty. </p><p>Chúc bạn có một sinh nhật thật vui vẻ với những người thân thương</p><p><br></p><p>Trân trọng</p>'
+            html: '<p>Kính gửi ' + customer.fullname + '</p><p><br></p><p>Cám ơn bạn đã đồng hành với công ty. </p><p>Chúc bạn có một sinh nhật thật vui vẻ với những người thân thương</p><p><br></p><p>Trân trọng</p>'
+        }
+    };
+
+    private getEventTemplate(customer: Customer, event: Event) {
+        return {
+            from: 'CRM Capstone',
+            to: customer.email,
+            subject: event.name,
+            text: 'You recieved message from ',
+            html: '<p>Dear ' + customer.fullname + ',</p></b>' + event.description + '<p>Best regard,</p></b><p>CRM</p>'
         }
     };
 }

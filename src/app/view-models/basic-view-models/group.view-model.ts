@@ -16,16 +16,11 @@ export class GroupVM {
   public readonly description: string;
 
   @AutoMap()
-  public readonly type: string;
-
-  @AutoMap()
   public readonly condition: string;
   
   public readonly customers: CustomerVM[];
 
   public readonly events: EventVM[];
-
-  public readonly triggers: TriggerVM[];
   
   @AutoMap()
   public readonly isDelete: boolean;

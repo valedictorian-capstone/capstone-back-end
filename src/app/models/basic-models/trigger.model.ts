@@ -4,11 +4,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Group } from './group.model';
+import { Event } from './event.model';
 
 @Entity()
 export class Trigger extends BaseEntity {
@@ -19,26 +19,10 @@ export class Trigger extends BaseEntity {
 
     @AutoMap()
     @Column({ nullable: false })
-    public name: string;
+    public time: Date;
 
-    @AutoMap()
-    @Column({ nullable: false })
-    public code: string;
-
-    @AutoMap()
-    @Column({ nullable: false })
-    public description: string;
-
-    @AutoMap()
-    @Column({ nullable: false })
-    public date: Date;
-    
-    @AutoMap()
-    @Column({ nullable: false })
-    public content: string;
-
-    @ManyToMany(() => Group, groups => groups.triggers)
-    public groups: Group[];
+    @ManyToOne(() => Event, event => event.triggers)
+    public event: Event;
 
     @AutoMap()
     @Column({ default: null })
