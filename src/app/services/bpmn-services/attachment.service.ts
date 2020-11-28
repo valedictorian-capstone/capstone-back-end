@@ -49,7 +49,9 @@ export class AttachmentService {
         deal: deal as any,
         name: time + (file as any).originalname,
         extension: (file as any).mimetype,
-        url: environment.firebase.linkDownloadFile + "attachments/" + deal.id + '/' + time + (file as any).originalname
+        url: environment.firebase.linkDownloadFile + "attachments/" + deal.id + '/' + time + (file as any).originalname,
+        size: (file as any).size,
+        description: ''
       });
     }
     return await this.attachmentRepository.useHTTP()

@@ -69,6 +69,14 @@ export class AccountService {
 
   public readonly import = async (body: AccountCM[]): Promise<any> => {
     return await this.accountRepository.useHTTP().save(body as any).then(async (accounts) => {
+      for (const acc of body) {
+        await this.emailService.sendManualEmailCustomer({
+          info: acc as any,
+          subject: 'EMPLOYEE ACCOUNT FOR SYSTEM',
+          content: '<span>Email: </span> ' + acc.email + '<br>' +
+            '<span>Password: </span> ' + acc.password
+        });
+      }
       return await this.mapper.mapArray(
         await this.accountRepository.useHTTP().find({ id: In(accounts.map(e => e.id)) }), AccountVM, Account);
     });

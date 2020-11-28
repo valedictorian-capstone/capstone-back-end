@@ -14,6 +14,14 @@ export class Activity extends BaseEntity {
   public name: string;
 
   @AutoMap()
+  @Column({ nullable: false })
+  public type: string;
+
+  @AutoMap()
+  @Column({ default: null })
+  public location: string;
+
+  @AutoMap()
   @Column({ default: null })
   public description: string;
   

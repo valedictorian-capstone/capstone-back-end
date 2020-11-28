@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, DeviceRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, DEVICE_REPOSITORY } from '@types';
 import { AccountVM, DeviceCM } from '@view-models';
-import { compare } from 'bcrypt';
+import { compare, hashSync } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { Observable, of } from 'rxjs';
@@ -53,11 +53,19 @@ export class AuthService {
       subject: 'se20fa27'
     });
   }
-
+  public readonly updatePassword = async (data: { password: string }, token: string) => {
+    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
+    const account = Object.assign(decoded.valueOf()).account;
+    return await this.accountRepository.useHTTP().save({ id: account.id, passwordHash: hashSync(data.password, 10) } as any).then(() => null);
+  }
+  public readonly updateProfile = async (data: AccountVM, token: string) => {
+    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
+    const account = Object.assign(decoded.valueOf()).account;
+    return await this.accountRepository.useHTTP().save({ ...data, id: account.id } as any).then(() => ({ ...data }));
+  }
   protected readonly comparePasswords = (newPassword: string, passwordHash: string): Observable<any> => {
     return of<any | boolean>(compare(newPassword, passwordHash));
   }
-
   protected readonly validateAccount = async (emailOrPhone: string, password: string): Promise<AccountVM> => {
     const option = isNaN(+emailOrPhone) ?
       { email: emailOrPhone }

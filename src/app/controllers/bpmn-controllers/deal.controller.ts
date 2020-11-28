@@ -65,7 +65,7 @@ export class DealController {
   @ApiOperation({ summary: 'Update an deal by Id' })
   @ApiCreatedResponse({ description: 'Success update new deal' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async update(@Body() body: DealUM): Promise<DealVM> {
+  public async update(@Body() body: DealUM | DealUM[]): Promise<DealVM | DealVM[]> {
     return await this.dealService.update(body);
   }
 

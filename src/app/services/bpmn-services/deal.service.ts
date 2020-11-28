@@ -20,16 +20,23 @@ export class DealService {
   ) { }
 
   public readonly findAll = async (): Promise<DealVM[]> => {
-    return await this.dealRepository.useHTTP().find({ relations: ['stage', 'customer', 'logs'] })
-      .then(async (models) => {
-        return this.mapper.mapArray(models, DealVM, Deal);
+    return await this.dealRepository.useHTTP().find({ relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments'] })
+      .then(async (deals) => {
+        for (let i = 0; i < deals.length; i++) {
+          const deal = deals[i];
+          if (deal.dealDetails.length > 0) {
+            deal.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(deal.dealDetails.map((e) => e.id)) }, relations: ['product'] });
+
+          }
+        }
+        return this.mapper.mapArray(deals, DealVM, Deal);
       }
       )
   }
 
 
   public readonly findById = async (id: string): Promise<DealVM> => {
-    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'customer', 'dealDetails', 'logs'] })
+    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -71,30 +78,45 @@ export class DealService {
       })
   }
 
-  public readonly update = async (body: DealUM): Promise<DealVM> => {
-    return await this.dealRepository.useHTTP().findOne({ id: body.id })
-      .then(async (oldModel) => {
-        if (!oldModel) {
-          throw new NotFoundException(
-            `Can not find ${body.id}`,
-          );
-        }
-        return await this.dealRepository.useHTTP()
-          .save(body as any)
-          .then((newModel) => {
-            this.saveLog(oldModel, newModel);
-            return this.findById(newModel.id);
+  public readonly update = async (body: DealUM | DealUM[]): Promise<DealVM | DealVM[]> => {
+    if ((body as DealUM[]).length) {
+      const rs = [];
+      for (let i = 0; i < (body as DealUM[]).length; i++) {
+        const deal = body[i];
+        const oldModel = await this.dealRepository.useHTTP().findOne({ id: deal.id }, {relations: ['stage']});
+        await this.dealRepository.useHTTP()
+          .save(deal as any)
+          .then(async (newModel) => {
+            await this.saveLog(oldModel, {...newModel, stage: deal.stage ? deal.stage : oldModel.stage});
+            await rs.push(await this.findById(deal.id));
           })
-      });
+      }
+      return rs;
+    } else {
+      return await this.dealRepository.useHTTP().findOne({ id: (body as DealUM).id }, { relations: ['stage'] })
+        .then(async (oldModel) => {
+          if (!oldModel) {
+            throw new NotFoundException(
+              `Can not find ${(body as DealUM).id}`,
+            );
+          }
+          return await this.dealRepository.useHTTP()
+            .save(body as any)
+            .then((newModel) => {
+              this.saveLog(oldModel, {...newModel, stage: (body as DealUM).stage ? (body as DealUM).stage : oldModel.stage});
+              return this.findById(newModel.id);
+            })
+        });
+    }
   }
 
   private readonly saveLog = async (oldDeal: Deal, updateDeal: Deal) => {
 
     let description = "";
 
-    if (oldDeal.stage != updateDeal.stage) {
-      const oldStage = await this.stageRepository.useHTTP().findOne({ where: { id: oldDeal.id } });
-      const updateStage = await this.stageRepository.useHTTP().findOne({ where: { id: updateDeal.id } });
+    if (oldDeal.stage != updateDeal.stage && oldDeal.stage && updateDeal.stage) {
+      const oldStage = await this.stageRepository.useHTTP().findOne({ id: oldDeal.stage.id });
+      const updateStage = await this.stageRepository.useHTTP().findOne({ id: updateDeal.stage.id });
       description = "Stage: " + oldStage.name + ' -> ' + updateStage.name;
     }
     if (oldDeal.status != updateDeal.status) {

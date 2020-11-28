@@ -17,7 +17,7 @@ export class RoleService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<RoleVM[]> => {
-    return await this.roleRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}) })
+    return await this.roleRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ['accounts'] })
       .then(async (models) => {
         return this.mapper.mapArray(models, RoleVM, Role)
       });

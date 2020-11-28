@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from 'nestjsx-automapper';
+import { AttachmentVM } from ".";
 import { AccountVM } from "../account-view-models";
 import { CustomerVM } from "../customer-view-models";
 import { ActivityVM } from "./activity.view-model";
@@ -47,6 +48,8 @@ export class DealVM {
   public readonly notes: NoteVM[];
 
   public readonly logs: LogVM[];
+  
+  public readonly attachments: AttachmentVM[];
 
   public totalPrice: number;
 
@@ -109,6 +112,8 @@ export class DealCM {
   public readonly activitys: { id: string }[];
   
   public readonly dealDetails: DealDetailVM[];
+
+  public readonly attachments: AttachmentVM[];
 }
 
 export class DealUM {

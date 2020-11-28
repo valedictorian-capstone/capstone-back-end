@@ -1,6 +1,6 @@
 import { Deal } from '@models';
 import { AutoMapper, mapWith, preCondition, ProfileBase } from "@nartc/automapper";
-import { AccountVM, CustomerVM, DealCM, DealUM, DealVM, StageVM, ActivityVM, DealDetailVM, NoteVM, LogVM } from "@view-models";
+import { AccountVM, CustomerVM, DealCM, DealUM, DealVM, StageVM, ActivityVM, DealDetailVM, NoteVM, LogVM, AttachmentVM } from "@view-models";
 
 export class DealMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -29,6 +29,10 @@ export class DealMapper extends ProfileBase {
       .forMember(d => d.notes,
         preCondition(s => s.notes != null, []),
         mapWith(NoteVM, s => s.notes)
+      )
+      .forMember(d => d.attachments,
+        preCondition(s => s.attachments != null, []),
+        mapWith(AttachmentVM, s => s.attachments)
       )
       .forMember(d => d.logs,
         preCondition(s => s.logs != null, []),

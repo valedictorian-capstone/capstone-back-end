@@ -10,6 +10,9 @@ export class NoteVM {
   @AutoMap()
   public readonly description: string;
 
+  @AutoMap()
+  public readonly pin: boolean;
+
   public readonly deal: DealVM;
 
   @AutoMap()
@@ -32,6 +35,8 @@ export class NoteCM {
 
   @ApiProperty()
   public readonly deal: {id : string};
+  @ApiProperty()
+  public readonly pin: boolean;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string'})
@@ -44,6 +49,8 @@ export class NoteUM {
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public readonly id: string;
 
+  @ApiProperty()
+  public readonly pin: boolean;
   @ApiProperty()
   public readonly deal: {id : string};
 

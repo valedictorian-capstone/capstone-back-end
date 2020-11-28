@@ -30,9 +30,17 @@ export class Attachment extends BaseEntity {
   @AutoMap()
   @Column({ default: null })
   public url: string;
+  
+  @AutoMap()
+  @Column({ default: null })
+  public size: number;
 
   @ManyToOne(() => Deal, deal => deal.attachments)
   public deal: Deal;
+
+  @AutoMap()
+  @Column({ length: 1000, default: null })
+  public description: string;
 
   @AutoMap()
   @Column({ default: null })

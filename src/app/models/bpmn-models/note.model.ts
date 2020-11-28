@@ -23,6 +23,10 @@ export class Note extends BaseEntity {
   @Column({ default: 1 })
   public description: string;
 
+  @AutoMap()
+  @Column({ default: false })
+  public pin: boolean;
+
   @ManyToOne(() => Deal, deal => deal.notes)
   public deal: Deal;
 

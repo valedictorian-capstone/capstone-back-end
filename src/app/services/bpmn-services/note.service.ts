@@ -45,11 +45,8 @@ export class NoteService {
 
   public readonly insert = async (body: NoteCM): Promise<NoteVM> => {
 
-    const deal = await this.dealRepository.useHTTP().findOne(body.deal.id)
-
     return await this.noteRepository.useHTTP().save(body)
       .then((model) => {
-        this.noteRepository.useHTTP().save({ ...model, deal: deal })
         return this.findById(model.id);
       })
   }

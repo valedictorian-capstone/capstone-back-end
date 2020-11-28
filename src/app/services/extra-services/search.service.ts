@@ -33,7 +33,7 @@ export class SearchService {
     if (roles.filter((e) => e.canAccessActivity).length > 0) {
       const ativitys = await this.activityRepository.useHTTP().find();
       rs.push({
-        type: 'ativity',
+        type: 'activity',
         data: ativitys.filter((e) => e.name.toLowerCase().includes(value.toLowerCase()))
       });
     }

@@ -23,7 +23,7 @@ export class DealDetailService {
   }
 
   public readonly findById = async (id: string): Promise<DealDetailVM> => {
-    return await this.dealDetailRepository.useHTTP().findOne({ where: { id: id }, relations: [] })
+    return await this.dealDetailRepository.useHTTP().findOne({ where: { id: id }, relations: ['product', 'deal'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
