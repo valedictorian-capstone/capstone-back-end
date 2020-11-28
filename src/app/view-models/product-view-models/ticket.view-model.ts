@@ -17,6 +17,12 @@ export class TicketVM {
     public readonly assignee: AccountVM;
 
     @AutoMap()
+    public readonly type: string;
+
+    @AutoMap()
+    public readonly description: string;
+
+    @AutoMap()
     public readonly feedbackMessage: string;
 
     @AutoMap()
@@ -53,6 +59,14 @@ export class TicketCM {
 
     @AutoMap()
     @ApiProperty({ required: true, format: 'string' })
+    public readonly type: string;
+    
+    @AutoMap()
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly description: string;
+
+    @AutoMap()
+    @ApiProperty({ required: true, format: 'string' })
     public readonly feedbackMessage: string;
 
     @AutoMap()
@@ -72,6 +86,15 @@ export class TicketUM {
 
     @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
     public readonly id: string;
+
+    @AutoMap()
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly type: string;
+    
+    @AutoMap()
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly description: string;
+
 
     @ApiProperty({ required: true, format: 'string', minLength: 2 })
     public readonly feedback: string;

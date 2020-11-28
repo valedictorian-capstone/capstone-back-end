@@ -2,16 +2,22 @@ from __future__ import print_function
 from sklearn.cluster import KMeans
 import numpy as np
 import pickle
+import xlrd
 
-means = [[50, 50, 100], [10, 90, 50], [10, 10, 10]]
-cov = [[2, 0, 0], [0, 2, 0], [0, 0, 2]]
-N = 100
-TX = np.random.multivariate_normal(means[0], cov, N)
-LN = np.random.multivariate_normal(means[1], cov, N)
-MH = np.random.multivariate_normal(means[2], cov, N)
-X = np.concatenate((TX, LN, MH), axis = 0)
+loc = ("./Customers_dataset.xlsx")
 
-kmeans = KMeans(n_clusters=3).fit(X)
+wb = xlrd.open_workbook(loc)
+sheet = wb.sheet_by_index(0)
+sheet.cell_value(0, 0)
+data_set = list()
+for i in range(1, sheet.nrows):
+    X = sheet.cell_value(i, 1)
+    Y = sheet.cell_value(i, 2)
+    Z = sheet.cell_value(i, 3)
+    item = [X, Y, Z]
+    data_set.append(item)
+
+kmeans = KMeans(n_clusters=3).fit(data_set)
 
 def printDetailKmeans():
     print('Centers found by scikit-learn:')
@@ -24,7 +30,7 @@ def classification ( cus ):
     print(kmeans.predict(cus))
 
 def saveModel():
-    filename = 'src/app/kmeans/finalized_model.sav'
+    filename = 'finalized_model.sav'
     pickle.dump(kmeans, open(filename, 'wb'))
 
 printDetailKmeans()
