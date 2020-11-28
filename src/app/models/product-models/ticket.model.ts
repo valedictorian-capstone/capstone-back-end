@@ -34,6 +34,10 @@ export class Ticket extends BaseEntity {
 
     @AutoMap()
     @Column({ default: null })
+    public type: string;
+
+    @AutoMap()
+    @Column({ default: null })
     public feedbackMessage: string;
 
     @AutoMap()
