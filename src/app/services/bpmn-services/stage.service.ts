@@ -74,7 +74,7 @@ export class StageService {
   }
 
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.stageRepository.useHTTP().findOne({ id: id })
+    return await this.stageRepository.useHTTP().findOne({ id: id }, {relations: ['deals']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(

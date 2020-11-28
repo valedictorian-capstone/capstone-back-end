@@ -69,6 +69,14 @@ export class ProductController{
     return this.service.update(body);
   }
 
+  @Post('/import')
+  @ApiOperation({ summary: 'Import List Product' })
+  @ApiCreatedResponse({ description: 'Success insert list to database' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public import(@Body() body: ProductCM[]): Promise<any> {
+    return this.service.import(body);
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an Product by Id' })
   @ApiCreatedResponse({ description: 'Success delete new Product' })

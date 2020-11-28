@@ -14,7 +14,13 @@ export class AttachmentVM {
   public readonly extension: string;
 
   @AutoMap()
+  public readonly size: number;
+
+  @AutoMap()
   public readonly url: string;
+
+  @AutoMap()
+  public readonly description: string;
 
   public readonly deal: DealVM;
 
@@ -40,7 +46,11 @@ export class AttachmentCM {
   @ApiProperty()
   public readonly extension: string;
   @ApiProperty()
+  public readonly description: string;
+  @ApiProperty()
   public readonly url: string;
+  @ApiProperty()
+  public readonly size: number;
 
   public readonly deal: DealVM;
 }
@@ -53,7 +63,10 @@ export class AttachmentUM {
   @ApiProperty()
   public readonly extension: string;
   @ApiProperty()
+  public readonly description: string;
+  @ApiProperty()
   public readonly url: string;
-
+  @ApiProperty()
+  public readonly size: number;
   public readonly deal: DealVM;
 }

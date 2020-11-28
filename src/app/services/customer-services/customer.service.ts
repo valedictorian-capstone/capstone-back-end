@@ -29,9 +29,15 @@ export class CustomerService {
   };
 
   public readonly findAllByType = async (type: string): Promise<CustomerVM[]> => {
-    return await this.cusomterRepository.useHTTP().find({ where: { type: type }, relations: ["groups"] })
+    let searchType = [type];
+    if (type === '1') {
+      searchType = ['1', '2', '3'];
+    } else if (type === '-1') {
+      searchType = ['0', '1', '2', '3'];
+    } 
+    return await this.cusomterRepository.useHTTP().find({ relations: ["groups"] })
       .then(async (models) => {
-        return this.mapper.mapArray(models, CustomerVM, Customer)
+        return this.mapper.mapArray(models.filter((e) => e.groups.filter((group) => searchType.findIndex((id) => group.id === id) > -1).length > 0), CustomerVM, Customer)
       }).catch((err) => {
         console.log(err);
         throw new InvalidException(err);
@@ -40,7 +46,7 @@ export class CustomerService {
 
 
   public readonly findById = async (id: string): Promise<CustomerVM> => {
-    return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups"] })
+    return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "deals", "devices", "tickets"] })
       .then(async (model) => {
         if (model) {
           return this.mapper.map(model, CustomerVM, Customer);

@@ -49,7 +49,11 @@ export class ProductService {
       return this.findById(product.id);
     }).catch(err => err);
   };
-
+  public readonly import = async (body: ProductCM[]): Promise<any> => {
+    return await this.productRepository.useHTTP().save(body as any).then(async (products) => {
+      return this.findAll(products.map((e) => e.id));
+    });
+  };
   public readonly update = async (body: ProductUM): Promise<ProductVM> => {
     return await this.productRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {

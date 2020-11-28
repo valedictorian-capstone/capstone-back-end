@@ -29,7 +29,7 @@ export class ActivityService {
       relations: [
         "assignee",
         "assignBy",
-        "customer"
+        'deal'
       ]
     }
     return await this.activityRepository.useHTTP()
@@ -44,7 +44,7 @@ export class ActivityService {
       where: {
         id: id
       },
-      relations: ["assignee", "assignBy"],
+      relations: ["assignee", "assignBy", 'deal'],
     })
       .then((model) => {
         if (model) {
@@ -59,8 +59,8 @@ export class ActivityService {
   public readonly insert = async (body: ActivityCM, token: string): Promise<ActivityVM> => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
     const account = Object.assign(decoded.valueOf()).account;
-    return await this.activityRepository.useHTTP().save({ ...body, assignBy: account } as any )
-      .then(async (model)  => {
+    return await this.activityRepository.useHTTP().save({ ...body, assignBy: account } as any)
+      .then(async (model) => {
         //send notification
         await this.accountRepository.useHTTP()
           .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
@@ -80,8 +80,8 @@ export class ActivityService {
               }
 
               await this.notificationRepository.useHTTP().save(noti).then(async (notifi) => {
-                for (const device of employee.devices) {
-                  await this.firebaseService.useSendToDevice(device.id, {
+                if (employee.devices.length > 0) {
+                  await this.firebaseService.useSendToDevice(employee.devices.map((e) => e.id), {
                     notification: notifi.notification,
                     data: {
                       noti: JSON.stringify({ ...notifi, account: employee }),
@@ -96,43 +96,46 @@ export class ActivityService {
   };
 
   public readonly update = async (body: ActivityUM): Promise<ActivityVM> => {
-    await this.activityRepository.useHTTP().findOne({ id: body.id })
-      .then(model => {
-        if (!model) {
+    return await this.activityRepository.useHTTP().findOne({ id: body.id }, { relations: ['assignee'] })
+      .then(async data => {
+        if (!data) {
           throw new NotFoundException(`activity id ${body.id} not found`)
         }
+        await this.activityRepository.useHTTP().save(body as any).then(model => {
+          this.accountRepository.useHTTP()
+            .findOne({ id: data.assignee.id }, { relations: ['devices'] }).then(
+              async employee => {
+                const noti = {
+                  notification: {
+                    body: `New activity code ${model.name} created for you`,
+                    title: "You have a new activity",
+                  },
+                  data: {
+                    id: model.id,
+                    // url: `core/instance/${body.processInstance.id}`,
+                  },
+                  account: employee,
+                  type: 'activity',
+                  isSeen: false
+                }
+
+                await this.notificationRepository.useHTTP().save(noti).then(async (notifi) => {
+                  if (employee.devices.length > 0) {
+                    await this.firebaseService.useSendToDevice(employee.devices.map((e) => e.id), {
+                      notification: notifi.notification,
+                      data: {
+                        noti: JSON.stringify({ ...notifi, account: employee }),
+                      },
+                    });
+                  }
+                })
+              }
+            )
+        })
+        return this.findById(body.id);
       });
 
-    await this.activityRepository.useHTTP().save(body as any).then(model => {
-      this.accountRepository.useHTTP()
-        .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
-          async employee => {
-            const noti = {
-              notification: {
-                body: `New activity code ${model.name} created for you`,
-                title: "You have a new activity",
-              },
-              data: {
-                id: model.id,
-                // url: `core/instance/${body.processInstance.id}`,
-              },
-              account: employee,
-              type: 'activity',
-              isSeen: false
-            }
 
-            await this.notificationRepository.useHTTP().save(noti).then(async (notifi) => {
-              await this.firebaseService.useSendToDevice(employee.devices.map((e) => e.id), {
-                notification: notifi.notification,
-                data: {
-                  noti: JSON.stringify({ ...notifi, account: employee }),
-                },
-              });
-            })
-          }
-        )
-    })
-    return this.findById(body.id);
   };
 
   public readonly remove = async (id: string): Promise<ActivityVM> => {

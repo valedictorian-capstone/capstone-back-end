@@ -12,7 +12,11 @@ export class ActivityVM {
   @AutoMap()
   public readonly name: string;
   @AutoMap()
+  public readonly type: string;
+  @AutoMap()
   public readonly description: string;
+  @AutoMap()
+  public readonly location: string;
 
   public readonly assignee: AccountVM;
 
@@ -51,6 +55,10 @@ export class ActivityCM {
   @ApiProperty()
   public readonly name: string;
   @ApiProperty()
+  public readonly type: string;
+  @ApiProperty()
+  public readonly location: string;
+  @ApiProperty()
   public readonly status: string;
   @ApiProperty()
   public readonly description: string;
@@ -71,6 +79,10 @@ export class ActivityUM {
   public readonly id: string;
   @ApiProperty()
   public readonly name: string;
+  @ApiProperty()
+  public readonly type: string;
+  @ApiProperty()
+  public readonly location: string;
   @ApiProperty()
   public readonly status: string;
   @ApiProperty()
