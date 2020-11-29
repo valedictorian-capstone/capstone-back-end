@@ -148,7 +148,12 @@ export class CustomerService {
             `Can not find ${body.id}`,
           );
         } else {
-          return await this.cusomterRepository.useHTTP().save(body).then(async (customer) => {
+          const customer = { ...body };
+          if (customer.avatar) {
+            await this.firebaseService.useUploadFileBase64("customer/avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64")), customer.avatar, customer.avatar.substring(customer.avatar.indexOf("data:image/") + 5, customer.avatar.indexOf(";base64")));
+            customer.avatar = environment.firebase.linkDownloadFile + "customer/avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64"));
+          }
+          return await this.cusomterRepository.useHTTP().save(customer).then(async (customer) => {
             return await this.findById(customer.id);
           }).catch(err => err);
         }
