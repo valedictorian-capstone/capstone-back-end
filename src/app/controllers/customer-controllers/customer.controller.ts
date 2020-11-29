@@ -36,12 +36,12 @@ export class CustomerController{
     return this.service.findAll();
   }
 
-  @Get('/type')
-  @ApiOperation({ summary: 'Get all Customers by type' })
-  @ApiOkResponse({ description: 'Success return all Customers by type' })
+  @Get('/lead')
+  @ApiOperation({ summary: 'Get all Customers by type lead' })
+  @ApiOkResponse({ description: 'Success return all Customers by type lead' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public findAllByType(@Query('type') type:string): Promise<CustomerVM[]> {
-    return this.service.findAllByType(type);
+  public findAllByLead(): Promise<CustomerVM[]> {
+    return this.service.findAllByLead();
   }
 
   @Get('/unique')
