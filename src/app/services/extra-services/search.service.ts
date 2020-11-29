@@ -41,15 +41,11 @@ export class SearchService {
       const customers = await this.cusomterRepository.useHTTP().find({ relations: ['groups'] });
       rs.push({
         type: 'lead',
-        data: customers.filter((e) => e.fullname.toLowerCase().includes(value.toLowerCase()) && e.groups.filter((e) => e.id == '0').length > 0)
+        data: customers.filter((e) => e.fullname.toLowerCase().includes(value.toLowerCase()) && e.groups.filter((e) => e.id == '3').length > 0)
       });
       rs.push({
-        type: 'contact',
+        type: 'customer',
         data: customers.filter((e) => e.fullname.toLowerCase().includes(value.toLowerCase()))
-      });
-      rs.push({
-        type: 'account',
-        data: customers.filter((e) => e.fullname.toLowerCase().includes(value.toLowerCase()) && e.groups.filter((e) => e.id != '0').length > 0)
       });
     }
     return rs;

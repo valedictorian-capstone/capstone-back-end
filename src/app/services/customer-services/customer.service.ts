@@ -28,21 +28,15 @@ export class CustomerService {
       });
   };
 
-  public readonly findAllByType = async (type: string): Promise<CustomerVM[]> => {
-    let searchType = [type];
-    if (type === '1') {
-      searchType = ['1', '2', '3'];
-    } else if (type === '-1') {
-      searchType = ['0', '1', '2', '3'];
-    } 
-    return await this.cusomterRepository.useHTTP().find({ relations: ["groups"] })
-      .then(async (models) => {
-        return this.mapper.mapArray(models.filter((e) => e.groups.filter((group) => searchType.findIndex((id) => group.id === id) > -1).length > 0), CustomerVM, Customer)
-      }).catch((err) => {
-        console.log(err);
-        throw new InvalidException(err);
-      });
-  };
+  public readonly findAllByLead = async (): Promise<CustomerVM[]> => {
+    return await this.groupRepository.useHTTP().findOne({ where: { id: 3 }, relations: ['customers'] })
+    .then((model) => {
+      return this.mapper.mapArray(model.customers, CustomerVM, Customer);
+    }).catch((err) => {
+      console.log(err);
+      throw new InvalidException(err);
+    });
+  }
 
 
   public readonly findById = async (id: string): Promise<CustomerVM> => {
