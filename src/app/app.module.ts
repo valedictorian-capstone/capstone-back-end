@@ -47,6 +47,7 @@ import {
   PipelineMapper,
   DealDetailMapper,
   NoteMapper,
+  DeviceMapper,
   LogMapper,
   CategoryMapper,
   AttachmentMapper
@@ -123,6 +124,7 @@ export class AppModule implements OnModuleInit, NestModule {
     this.mapper.addProfile(EventMapper);
     this.mapper.addProfile(TriggerMapper);
     this.mapper.addProfile(DealMapper);
+    this.mapper.addProfile(DeviceMapper);
     this.mapper.addProfile(DealDetailMapper);
     this.mapper.addProfile(PipelineMapper);
     this.mapper.addProfile(NoteMapper);

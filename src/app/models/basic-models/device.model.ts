@@ -1,5 +1,5 @@
 import { AutoMap } from 'nestjsx-automapper';
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { Account } from '../account-models';
 import { Customer } from '../customer-models';
 
@@ -7,7 +7,7 @@ import { Customer } from '../customer-models';
 export class Device extends BaseEntity {
 
   @AutoMap()
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   public id: string;
 
   @AutoMap()

@@ -8,6 +8,7 @@ import * as https from 'https';
 import express, { json, urlencoded } from 'express';
 import { readFileSync } from 'fs';
 import { AppModule } from 'src/app/app.module';
+import terminalLink from 'terminal-link';
 declare const module: any;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 // const open = require("open");
@@ -54,4 +55,12 @@ declare const module: any;
     module.hot.accept();
     module.hot.dispose(() => app.close());
   }
+  const local_http_link = terminalLink('HTTP Swagger', 'http://localhost:8080/api/v1/swagger', {
+    fallback: (text, url) => text + ' : ' + url
+  });
+  console.log(local_http_link);
+  const local_https_link = terminalLink('HTTPS Swagger', 'https://localhost:8081/api/v1/swagger', {
+    fallback: (text, url) => text + ' : ' + url
+  });
+  console.log(local_https_link);
 })();
