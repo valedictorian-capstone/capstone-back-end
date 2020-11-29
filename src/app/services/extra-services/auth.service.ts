@@ -2,13 +2,15 @@ import { Account } from '@models';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, DeviceRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY, DEVICE_REPOSITORY } from '@types';
+import { ACCOUNT_REPOSITORY, DEVICE_REPOSITORY, FIREBASE_SERVICE } from '@types';
 import { AccountVM, DeviceCM } from '@view-models';
 import { compare, hashSync } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import { FirebaseService } from '.';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +19,7 @@ export class AuthService {
     @Inject(DEVICE_REPOSITORY) protected readonly deviceRepository: DeviceRepository,
     private readonly jwtService: JwtService,
     @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
   ) { }
 
   public readonly login = async (emailOrPhone: string, password: string,): Promise<any> => {
@@ -60,8 +63,12 @@ export class AuthService {
   }
   public readonly updateProfile = async (data: AccountVM, token: string) => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const account = Object.assign(decoded.valueOf()).account;
-    return await this.accountRepository.useHTTP().save({ ...data, id: account.id } as any).then(() => ({ ...data }));
+    const acc ={...data, id:  Object.assign(decoded.valueOf()).account.id};
+    if (acc.avatar) {
+      await this.firebaseService.useUploadFileBase64("employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64")), acc.avatar, acc.avatar.substring(acc.avatar.indexOf("data:image/") + 5, acc.avatar.indexOf(";base64")));
+      acc.avatar = environment.firebase.linkDownloadFile + "employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64"));
+    }
+    return await this.accountRepository.useHTTP().save(acc as any).then(() => ({ ...data }));
   }
   protected readonly comparePasswords = (newPassword: string, passwordHash: string): Observable<any> => {
     return of<any | boolean>(compare(newPassword, passwordHash));
