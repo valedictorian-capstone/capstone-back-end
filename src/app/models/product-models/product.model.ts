@@ -38,6 +38,10 @@ export class Product extends BaseEntity {
   @AutoMap()
   public description: string;
 
+  @Column({ default: null })
+  @AutoMap()
+  public image: string;
+
   @Column("json", { default: null })
   public parameters: any;
 

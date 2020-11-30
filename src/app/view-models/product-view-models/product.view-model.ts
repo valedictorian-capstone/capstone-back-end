@@ -23,6 +23,9 @@ export class ProductVM {
   @AutoMap()
   public readonly description: string;
 
+  @AutoMap()
+  public readonly image: string;
+
   public readonly parameters: any;
 
   public readonly category: CategoryVM;
@@ -62,6 +65,9 @@ export class ProductCM {
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly description: string;
 
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly image: string;
+
   public readonly category: CategoryVM;
 
 }
@@ -85,6 +91,9 @@ export class ProductUM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
   public readonly description: string;
+
+  @ApiProperty({ required: true, format: 'string', minLength: 2 })
+  public readonly image: string;
 
   public readonly category: CategoryVM;
 
