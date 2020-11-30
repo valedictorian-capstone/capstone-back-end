@@ -1,8 +1,8 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { Ticket } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CustomerRepository, TicketRepository } from '@repositories';
-import { CUSTOMER_REPOSITORY, TICKET_REPOSITORY } from '@types';
+import { AccountRepository, CustomerRepository, TicketRepository } from '@repositories';
+import { ACCOUNT_REPOSITORY, CUSTOMER_REPOSITORY, TICKET_REPOSITORY } from '@types';
 import { TicketCM, TicketUM, TicketVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
@@ -13,6 +13,7 @@ export class TicketService {
   constructor(
     @Inject(TICKET_REPOSITORY) protected readonly ticketRepository: TicketRepository,
     @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
+    @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
@@ -47,6 +48,8 @@ export class TicketService {
   };
 
   public readonly update = async (body: TicketUM, token: string): Promise<TicketVM> => {
+    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
+    const account = await this.accountRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).account.id }});
     return await this.ticketRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -54,7 +57,7 @@ export class TicketService {
             `Can not find ${body.id}`,
           );
         } else {
-          return await this.ticketRepository.useHTTP().save(body as any).then(async (model) => {
+          return await this.ticketRepository.useHTTP().save({...body, account} as any).then(async (model) => {
             return await this.findById(model.id);
           });
         }
