@@ -1,9 +1,9 @@
-import { Account } from '@models';
+import { Account, Customer } from '@models';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AccountRepository, DeviceRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY, DEVICE_REPOSITORY, FIREBASE_SERVICE } from '@types';
-import { AccountVM, DeviceCM } from '@view-models';
+import { AccountRepository, CustomerRepository, DeviceRepository } from '@repositories';
+import { ACCOUNT_REPOSITORY, CUSTOMER_REPOSITORY, DEVICE_REPOSITORY, FIREBASE_SERVICE } from '@types';
+import { AccountVM, CustomerVM, DeviceCM } from '@view-models';
 import { compare, hashSync } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
@@ -16,6 +16,7 @@ import { FirebaseService } from '.';
 export class AuthService {
   constructor(
     @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
+    @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
     @Inject(DEVICE_REPOSITORY) protected readonly deviceRepository: DeviceRepository,
     private readonly jwtService: JwtService,
     @InjectMapper() protected readonly mapper: AutoMapper,
@@ -38,23 +39,56 @@ export class AuthService {
       }
     )
   }
+  public readonly loginCustomer = async (phone: string): Promise<any> => {
+    const customer = await this.customerRepository.useHTTP().findOne({ where: { phone } });
+    if (customer != null) {
+      return {
+        accessToken: this.generateJWT(this.mapper.map(customer, CustomerVM, Customer)),
+        fullname: customer.fullname,
+        avatar: customer.avatar,
+        id: customer.id,
+      }
+    } else {
+      return { notExist: true };
+    }
+  }
   public readonly refresh = async (token: string, device: DeviceCM) => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const account = Object.assign(decoded.valueOf()).account;
-    const exist = await this.deviceRepository.useHTTP().findOne({ id: device?.id, account: account });
-    if (device.id && !exist) {
-      await this.deviceRepository.useHTTP().insert({ ...device, account: account, customer: undefined });
-      return { ...account, devices: [...account.devices, device] };
+    const account = await this.accountRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).account.id }, relations: ["roles", "activitys", "devices"] });
+    if (device.id && !account.devices.find((e) => e.id === device.id)) {
+      const rs = (await this.deviceRepository.useHTTP().save({ ...device, account: account, customer: undefined }));
+      account.devices.push(rs);
+      return this.mapper.map(account, AccountVM, Account);
     }
-    return account;
+    return this.mapper.map(account, AccountVM, Account);
   }
-  protected readonly generateJWT = (account: AccountVM): string => {
+  public readonly refreshCustomer = async (token: string, device: DeviceCM) => {
+    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
+    const customer = await this.customerRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).customer.id }, relations: ["devices"] });
+    if (device.id && !customer.devices.find((e) => e.id === device.id)) {
+      const rs = (await this.deviceRepository.useHTTP().save({ ...device, customer, account: undefined }));
+      customer.devices.push(rs);
+      return this.mapper.map(customer, CustomerVM, Customer);
+    }
+    return this.mapper.map(customer, CustomerVM, Customer);
+  }
+  protected readonly generateJWT = (account: AccountVM | CustomerVM): string => {
     return sign({ account }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
       expiresIn: '24h',
       audience: account.email,
       issuer: 'crm',
       subject: 'se20fa27'
     });
+  }
+  public readonly updateCustomerProfile = async (data: CustomerVM, token: string) => {
+    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
+    const cus = { ...data, id: Object.assign(decoded.valueOf()).customer.id };
+    if (cus.avatar) {
+      await this.firebaseService.useUploadFileBase64("customer/avatars/" + cus.phone + "." + cus.avatar.substring(cus.avatar.indexOf("data:image/") + 11, cus.avatar.indexOf(";base64")), cus.avatar, cus.avatar.substring(cus.avatar.indexOf("data:image/") + 5, cus.avatar.indexOf(";base64")));
+      cus.avatar = environment.firebase.linkDownloadFile + "customer/avatars/" + cus.phone + "." + cus.avatar.substring(cus.avatar.indexOf("data:image/") + 11, cus.avatar.indexOf(";base64"));
+    }
+    const customer = await this.customerRepository.useHTTP().save(cus as any);
+    return this.mapper.map(customer, CustomerVM, Customer);
   }
   public readonly updatePassword = async (data: { password: string }, token: string) => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
@@ -63,12 +97,13 @@ export class AuthService {
   }
   public readonly updateProfile = async (data: AccountVM, token: string) => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const acc ={...data, id:  Object.assign(decoded.valueOf()).account.id};
+    const acc = { ...data, id: Object.assign(decoded.valueOf()).account.id };
     if (acc.avatar) {
       await this.firebaseService.useUploadFileBase64("employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64")), acc.avatar, acc.avatar.substring(acc.avatar.indexOf("data:image/") + 5, acc.avatar.indexOf(";base64")));
       acc.avatar = environment.firebase.linkDownloadFile + "employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64"));
     }
-    return await this.accountRepository.useHTTP().save(acc as any).then(() => ({ ...data }));
+    const account = await this.accountRepository.useHTTP().save(acc as any);
+    return this.mapper.map(account, AccountVM, Account);
   }
   protected readonly comparePasswords = (newPassword: string, passwordHash: string): Observable<any> => {
     return of<any | boolean>(compare(newPassword, passwordHash));
