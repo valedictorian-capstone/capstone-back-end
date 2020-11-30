@@ -84,7 +84,7 @@ export class AccountService {
 
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
     const acc = { ...body };
-    if (acc.avatar) {
+    if (acc.avatar && !acc.avatar.includes(';base64')) {
       await this.firebaseService.useUploadFileBase64("employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64")), acc.avatar, acc.avatar.substring(acc.avatar.indexOf("data:image/") + 5, acc.avatar.indexOf(";base64")));
       acc.avatar = environment.firebase.linkDownloadFile + "employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64"));
     }
@@ -113,7 +113,7 @@ export class AccountService {
           );
         } else {
           const acc = { ...body };
-          if (acc.avatar) {
+          if (acc.avatar && !acc.avatar.includes(';base64')) {
             await this.firebaseService.useUploadFileBase64("employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64")), acc.avatar, acc.avatar.substring(acc.avatar.indexOf("data:image/") + 5, acc.avatar.indexOf(";base64")));
             acc.avatar = environment.firebase.linkDownloadFile + "employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64"));
           }
