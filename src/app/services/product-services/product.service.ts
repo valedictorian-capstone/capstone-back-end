@@ -49,7 +49,7 @@ export class ProductService {
 
   public readonly insert = async (body: ProductCM): Promise<any> => {
     const product = { ...body };
-    if (product.image) {
+    if (product.image && !product.image.includes(';base64')) {
       await this.firebaseService.useUploadFileBase64("product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64")), product.image, product.image.substring(product.image.indexOf("data:image/") + 5, product.image.indexOf(";base64")));
       product.image = environment.firebase.linkDownloadFile + "product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64"));
     }
@@ -71,7 +71,7 @@ export class ProductService {
           );
         }else{
           const product = { ...body };
-          if (product.image) {
+          if (product.image && !product.image.includes(';base64')) {
             await this.firebaseService.useUploadFileBase64("product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64")), product.image, product.image.substring(product.image.indexOf("data:image/") + 5, product.image.indexOf(";base64")));
             product.image = environment.firebase.linkDownloadFile + "product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64"));
           }

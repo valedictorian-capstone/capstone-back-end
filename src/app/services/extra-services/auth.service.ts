@@ -106,7 +106,7 @@ export class AuthService {
   public readonly updateCustomerProfile = async (data: CustomerVM, token: string) => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
     const cus = { ...data, id: Object.assign(decoded.valueOf()).customer.id };
-    if (cus.avatar) {
+    if (cus.avatar && !cus.avatar.includes(';base64')) {
       await this.firebaseService.useUploadFileBase64("customer/avatars/" + cus.phone + "." + cus.avatar.substring(cus.avatar.indexOf("data:image/") + 11, cus.avatar.indexOf(";base64")), cus.avatar, cus.avatar.substring(cus.avatar.indexOf("data:image/") + 5, cus.avatar.indexOf(";base64")));
       cus.avatar = environment.firebase.linkDownloadFile + "customer/avatars/" + cus.phone + "." + cus.avatar.substring(cus.avatar.indexOf("data:image/") + 11, cus.avatar.indexOf(";base64"));
     }
@@ -121,7 +121,7 @@ export class AuthService {
   public readonly updateProfile = async (data: AccountVM, token: string) => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
     const acc = { ...data, id: Object.assign(decoded.valueOf()).account.id };
-    if (acc.avatar) {
+    if (acc.avatar && !acc.avatar.includes(';base64')) {
       await this.firebaseService.useUploadFileBase64("employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64")), acc.avatar, acc.avatar.substring(acc.avatar.indexOf("data:image/") + 5, acc.avatar.indexOf(";base64")));
       acc.avatar = environment.firebase.linkDownloadFile + "employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64"));
     }
