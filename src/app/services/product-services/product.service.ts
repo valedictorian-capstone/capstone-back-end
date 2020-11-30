@@ -18,7 +18,7 @@ export class ProductService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<ProductVM[]> => {
-    return await this.productRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: [] })
+    return await this.productRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ['category'] })
       .then(async (models) => {
         return this.mapper.mapArray(models, ProductVM, Product)
       }).catch((err) => {

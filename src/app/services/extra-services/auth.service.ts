@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, CustomerRepository, DeviceRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, CUSTOMER_REPOSITORY, DEVICE_REPOSITORY, FIREBASE_SERVICE } from '@types';
 import { AccountVM, CustomerCM, CustomerVM, DeviceCM } from '@view-models';
-import { compare, hashSync } from 'bcrypt';
+import { compareSync, hashSync } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { Observable, of } from 'rxjs';
@@ -128,9 +128,6 @@ export class AuthService {
     const account = await this.accountRepository.useHTTP().save(acc as any);
     return this.mapper.map(account, AccountVM, Account);
   }
-  protected readonly comparePasswords = (newPassword: string, passwordHash: string): Observable<any> => {
-    return of<any | boolean>(compare(newPassword, passwordHash));
-  }
   protected readonly validateAccount = async (emailOrPhone: string, password: string): Promise<AccountVM> => {
     const option = isNaN(+emailOrPhone) ?
       { email: emailOrPhone }
@@ -140,13 +137,9 @@ export class AuthService {
         if (!account) {
           throw new UnauthorizedException("Invalid email or phone", "Invalid email or phone");
         }
-        this.comparePasswords(password, account?.passwordHash).pipe(
-          map((match: boolean) => {
-            if (!match) {
-              throw new UnauthorizedException("Invalid Password", "Invalid Password");
-            }
-          })
-        )
+        if (!compareSync(password, account?.passwordHash)) {
+          throw new UnauthorizedException("Invalid Password", "Invalid Password");
+        }
         return this.mapper.map(account, AccountVM, Account);
       }
     )
