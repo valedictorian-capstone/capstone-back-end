@@ -45,7 +45,16 @@ export class ProductService {
   }
 
   public readonly insert = async (body: ProductCM): Promise<any> => {
+<<<<<<< Updated upstream
     return await this.productRepository.useHTTP().save(body as any).then(async (product) => {
+=======
+    const product = { ...body };
+    if (product.image) {
+      await this.firebaseService.useUploadFileBase64("product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64")), product.image, product.image.substring(product.image.indexOf("data:image/") + 5, product.image.indexOf(";base64")));
+      product.image = environment.firebase.linkDownloadFile + "product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64"));
+    }
+    return await this.productRepository.useHTTP().save(product as any).then(async (product) => {
+>>>>>>> Stashed changes
       return this.findById(product.id);
     }).catch(err => err);
   };
@@ -62,7 +71,16 @@ export class ProductService {
             `Can not find ${body.id}`,
           );
         }else{
+<<<<<<< Updated upstream
           return await this.productRepository.useHTTP().save(body as any).then(async (product) => {
+=======
+          const product = { ...body };
+          if (product.image) {
+            await this.firebaseService.useUploadFileBase64("product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64")), product.image, product.image.substring(product.image.indexOf("data:image/") + 5, product.image.indexOf(";base64")));
+            product.image = environment.firebase.linkDownloadFile + "product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64"));
+          }
+          return await this.productRepository.useHTTP().save(product as any).then(async (product) => {
+>>>>>>> Stashed changes
             return await this.findById(product.id);
           });
         }
