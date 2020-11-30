@@ -112,6 +112,11 @@ export class AccountService {
             `Can not find ${body.id}`,
           );
         } else {
+          const acc = { ...body };
+          if (acc.avatar) {
+            await this.firebaseService.useUploadFileBase64("employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64")), acc.avatar, acc.avatar.substring(acc.avatar.indexOf("data:image/") + 5, acc.avatar.indexOf(";base64")));
+            acc.avatar = environment.firebase.linkDownloadFile + "employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64"));
+          }
           return await this.accountRepository.useHTTP().save(body as any).then(async (account) => {
             return await this.findById(account.id);
           })

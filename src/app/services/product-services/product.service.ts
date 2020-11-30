@@ -2,15 +2,18 @@ import { InvalidException, NotFoundException } from '@exceptions';
 import { Product } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ProductRepository } from '@repositories';
-import { PRODUCT_REPOSITORY } from '@types';
+import { FIREBASE_SERVICE, PRODUCT_REPOSITORY } from '@types';
 import { ProductCM, ProductUM, ProductVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
+import { FirebaseService } from '../extra-services';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class ProductService {
   constructor(
     @Inject(PRODUCT_REPOSITORY) protected readonly productRepository: ProductRepository,
+    @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
@@ -45,6 +48,11 @@ export class ProductService {
   }
 
   public readonly insert = async (body: ProductCM): Promise<any> => {
+    const product = { ...body };
+    if (product.image) {
+      await this.firebaseService.useUploadFileBase64("product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64")), product.image, product.image.substring(product.image.indexOf("data:image/") + 5, product.image.indexOf(";base64")));
+      product.image = environment.firebase.linkDownloadFile + "product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64"));
+    }
     return await this.productRepository.useHTTP().save(body as any).then(async (product) => {
       return this.findById(product.id);
     }).catch(err => err);
@@ -62,6 +70,11 @@ export class ProductService {
             `Can not find ${body.id}`,
           );
         }else{
+          const product = { ...body };
+          if (product.image) {
+            await this.firebaseService.useUploadFileBase64("product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64")), product.image, product.image.substring(product.image.indexOf("data:image/") + 5, product.image.indexOf(";base64")));
+            product.image = environment.firebase.linkDownloadFile + "product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64"));
+          }
           return await this.productRepository.useHTTP().save(body as any).then(async (product) => {
             return await this.findById(product.id);
           });
