@@ -6,6 +6,7 @@ import { CUSTOMER_REPOSITORY, TICKET_REPOSITORY } from '@types';
 import { TicketCM, TicketUM, TicketVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
+import { verify } from 'jsonwebtoken';
 
 @Injectable()
 export class TicketService {
@@ -37,18 +38,15 @@ export class TicketService {
       })
   };
 
-  public readonly insert = async (body: TicketCM): Promise<TicketVM> => {
-    return await this.ticketRepository.useHTTP().save(body).then(async (model) => {
-
-      const customer = await this.customerRepository.useHTTP().findOne(body.customer.id);
-      await this.ticketRepository.useHTTP().save({...model, 
-        customer: customer
-      })
+  public readonly insert = async (body: TicketCM, token: string): Promise<TicketVM> => {
+    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
+    const customer = await this.customerRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).customer.id }});
+    return await this.ticketRepository.useHTTP().save({...body, status: 'waiting', customer}).then(async (model) => {
       return await this.findById(model.id);
     });
   };
 
-  public readonly update = async (body: TicketUM): Promise<TicketVM> => {
+  public readonly update = async (body: TicketUM, token: string): Promise<TicketVM> => {
     return await this.ticketRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {

@@ -20,7 +20,7 @@ export class Note extends BaseEntity {
   public id: string;
 
   @AutoMap()
-  @Column({ default: 1 })
+  @Column({ default: '', length: 10000 })
   public description: string;
 
   @AutoMap()

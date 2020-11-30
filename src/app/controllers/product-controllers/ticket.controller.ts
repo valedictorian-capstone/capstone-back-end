@@ -18,6 +18,7 @@ import {
   } from '@nestjs/swagger';
   import { TicketCM, TicketUM, TicketVM } from '@view-models';
   import { TicketService } from '@services';
+import { Request } from '@nestjs/common';
   
   @ApiBearerAuth('JWT')
   @ApiTags('Ticket')
@@ -48,16 +49,18 @@ import {
     @ApiOperation({ summary: 'Insert new Ticket' })
     @ApiCreatedResponse({ description: 'Success create new Ticket' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Body() body: TicketCM): Promise<TicketVM> {
-      return this.service.insert(body);
+    public insert(@Request() req: any, @Body() body: TicketCM): Promise<TicketVM> {
+      const token = req.headers.authorization;
+      return this.service.insert(body, token);
     }
   
     @Put()
     @ApiOperation({ summary: 'Update an Ticket by Id' })
     @ApiCreatedResponse({ description: 'Success update new Ticket' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public update(@Body() body: TicketUM): Promise<TicketVM> {
-      return this.service.update(body);
+    public update(@Request() req: any, @Body() body: TicketUM): Promise<TicketVM> {
+      const token = req.headers.authorization;
+      return this.service.update(body, token);
     }
   
     @Delete(':id')

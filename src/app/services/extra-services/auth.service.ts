@@ -7,8 +7,6 @@ import { AccountVM, CustomerCM, CustomerVM, DeviceCM } from '@view-models';
 import { compareSync, hashSync } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { FirebaseService } from '.';
 
