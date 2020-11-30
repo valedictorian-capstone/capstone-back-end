@@ -10,7 +10,7 @@ export class TicketVM {
     public readonly id: string;
 
     @AutoMap()
-    public readonly feedback: string;
+    public readonly status: string;
 
     public readonly customer: CustomerVM;
 
@@ -57,6 +57,9 @@ export class TicketCM {
     @ApiProperty()
     public readonly assignee: { id: string };
 
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly status: string;
+
     @AutoMap()
     @ApiProperty({ required: true, format: 'string' })
     public readonly type: string;
@@ -90,6 +93,9 @@ export class TicketUM {
     @AutoMap()
     @ApiProperty({ required: true, format: 'string' })
     public readonly type: string;
+
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly status: string;
     
     @AutoMap()
     @ApiProperty({ required: true, format: 'string' })

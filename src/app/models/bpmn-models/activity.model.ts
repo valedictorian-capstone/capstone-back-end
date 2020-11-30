@@ -22,7 +22,7 @@ export class Activity extends BaseEntity {
   public location: string;
 
   @AutoMap()
-  @Column({ default: null })
+  @Column({ default: null, length: 10000 })
   public description: string;
   
   @ManyToOne(() => Account, account => account)

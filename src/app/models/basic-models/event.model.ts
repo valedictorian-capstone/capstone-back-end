@@ -28,7 +28,7 @@ export class Event extends BaseEntity {
     public code: string;
 
     @AutoMap()
-    @Column({ nullable: false })
+    @Column({ nullable: false, length: 10000 })
     public description: string;
 
     @AutoMap()
