@@ -1,5 +1,5 @@
 
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Customer, Event } from '@models';
 import { CustomerRepository } from '@repositories';
 import { CUSTOMER_REPOSITORY } from '@types';
@@ -13,40 +13,52 @@ export class EmailService {
     constructor(
         @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
         @InjectMapper() protected readonly mapper: AutoMapper,
-    ) { }
-
-    public readonly sendEmailCustomer = async (ids: string[]): Promise<string> => {
-        const transporter = createTransport({ // config mail server
+    ) {
+        this.auth = createTransport({ // config mail server
             service: 'Gmail',
             auth: {
+                type: 'OAuth2',
                 user: 'crmdynamic123@gmail.com',
-                pass: '123456crm'
+                clientId: '995040905872-25sb1bet01gs4i226qrv95q4baltjv76.apps.googleusercontent.com',
+                clientSecret: 'OS2Qongc4QZ1IX3uN_oamAV8',
+                accessToken: 'ya29.a0AfH6SMCdHOVcRdNcNcV39v-bsYcOdxZnwBpLUbguA4BCOFkWQAd9-rmJCb_XB1Sj0hESnDpfzf6g0JLc4Mh-Pz48Z8KQcgmGlRPQKdO29lje6EE2bAzXo0CoLguCS8VMjfpGlQSpZdaRnZgfgRGmkz9Nb_PH1mIlLcFldnNPGak',
+                refreshToken: '1//04v9fUEqiyQKoCgYIARAAGAQSNwF-L9IrUqqav5cXcP6RW9o9S5pL0LOhidOBTrrCG8x-hkBsxQbrEFRv5QXK_zbN2nVxUiAellg'
             }
         });
+     }
+    
+    private auth = createTransport({ // config mail server
+        service: 'Gmail',
+        auth: {
+            type: 'OAuth2',
+            user: 'crmdynamic123@gmail.com',
+            clientId: '995040905872-25sb1bet01gs4i226qrv95q4baltjv76.apps.googleusercontent.com',
+            clientSecret: 'OS2Qongc4QZ1IX3uN_oamAV8',
+            accessToken: 'ya29.a0AfH6SMCdHOVcRdNcNcV39v-bsYcOdxZnwBpLUbguA4BCOFkWQAd9-rmJCb_XB1Sj0hESnDpfzf6g0JLc4Mh-Pz48Z8KQcgmGlRPQKdO29lje6EE2bAzXo0CoLguCS8VMjfpGlQSpZdaRnZgfgRGmkz9Nb_PH1mIlLcFldnNPGak',
+            refreshToken: '1//04v9fUEqiyQKoCgYIARAAGAQSNwF-L9IrUqqav5cXcP6RW9o9S5pL0LOhidOBTrrCG8x-hkBsxQbrEFRv5QXK_zbN2nVxUiAellg'
+        }
+    });
+
+    public readonly sendEmailCustomer = async (ids: string[]): Promise<string> => {
+        const transporter = this.auth
         return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}) })
             .then(async (models) => {
-                console.log(models)
+                if (models.length == 0) {
+                    throw new NotFoundException("cant found id");
+                }
+                console.log(this.auth)
                 for (const model of models) {
-                    transporter.sendMail(this.getDemoTemplate(model), (err, info) => {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            console.log('Message sent: ' + info.response);
-                        }
+                    this.auth.sendMail(this.getDemoTemplate(model), (err, info) => {
+                        console.log('Message sent: ' + info);
+                        console.log('Message sent: ' + err);
                     })
                 }
                 return "OK";
-            }).catch(err => err);
+            });
     }
 
     public readonly sendEventCustomer = async (customers: Customer[], event: Event): Promise<string> => {
-        const transporter = createTransport({ // config mail server
-            service: 'Gmail',
-            auth: {
-                user: 'crmdynamic123@gmail.com',
-                pass: '123456crm'
-            }
-        });
+        const transporter = this.auth
         for (let index = 0; index < customers.length; index++) {
             const customer = customers[index];
             transporter.sendMail(this.getEventTemplate(customer, event), (err, info) => {
@@ -62,13 +74,7 @@ export class EmailService {
     }
 
     public readonly sendManualEmailCustomer = async (emailManual: EmailManual): Promise<any> => {
-        const transporter = createTransport({ // config mail server
-            service: 'Gmail',
-            auth: {
-                user: 'crmdynamic123@gmail.com',
-                pass: '123456crm'
-            }
-        });
+        const transporter = this.auth
         await transporter.sendMail(this.getManualMailTemplate(emailManual.info.email, emailManual.subject, emailManual.content), (err, info) => {
             if (err) {
                 console.log(err);
@@ -81,13 +87,7 @@ export class EmailService {
     }
 
     public readonly sendHappyBirtdayEmailCustomer = async (customers: []): Promise<string> => {
-        const transporter = createTransport({ // config mail server
-            service: 'Gmail',
-            auth: {
-                user: 'crmdynamic123@gmail.com',
-                pass: '123456crm'
-            }
-        });
+        const transporter = this.auth
         let countSuccess = 0;
         for (let i = 0; i < customers.length; i++) {
             await transporter.sendMail(this.getHappyBirthdayTemplate(customers[i])), (err, info) => {
