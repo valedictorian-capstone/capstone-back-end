@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Put, Request } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
-import { AccountVM, CustomerVM, DeviceCM } from '@view-models';
+import { AccountVM, CustomerCM, CustomerVM, DeviceCM } from '@view-models';
 import { AuthService } from '@services';
 
 class LoginGM {
@@ -73,7 +73,13 @@ export class AuthController {
   public login(@Body() body: LoginGM): any {
     return this.authenService.login(body.emailOrPhone, body.password);
   }
-
+  @Post('/Customer/register')
+  @ApiOperation({ summary: 'Register' })
+  @ApiCreatedResponse({ description: 'Register Success' })
+  @ApiBadRequestResponse({ description: 'Register Fail' })
+  public registerCustomer(@Body() body: CustomerCM): any {
+    return this.authenService.registerCustomer(body);
+  }
   @Post('/Customer/login')
   @ApiOperation({ summary: 'Login' })
   @ApiCreatedResponse({ description: 'Login Success' })

@@ -3,8 +3,8 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, CustomerRepository, DeviceRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, CUSTOMER_REPOSITORY, DEVICE_REPOSITORY, FIREBASE_SERVICE } from '@types';
-import { AccountVM, CustomerVM, DeviceCM } from '@view-models';
-import { compare, hashSync } from 'bcrypt';
+import { AccountVM, CustomerCM, CustomerVM, DeviceCM } from '@view-models';
+import { compareSync, hashSync } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { Observable, of } from 'rxjs';
@@ -43,7 +43,7 @@ export class AuthService {
     const customer = await this.customerRepository.useHTTP().findOne({ where: { phone } });
     if (customer != null) {
       return {
-        accessToken: this.generateJWT(this.mapper.map(customer, CustomerVM, Customer)),
+        accessToken: this.generateJWTCustomer(this.mapper.map(customer, CustomerVM, Customer)),
         fullname: customer.fullname,
         avatar: customer.avatar,
         id: customer.id,
@@ -51,6 +51,21 @@ export class AuthService {
     } else {
       return { notExist: true };
     }
+  }
+  public readonly registerCustomer = async (customer: CustomerCM): Promise<any> => {
+    return await this.customerRepository.useHTTP().save({
+      ...customer,
+      frequency: 0,
+      totalDeal: 0,
+      totalSpending: 0
+    } as any).then((res) => {
+      return {
+        accessToken: this.generateJWTCustomer(this.mapper.map(res.id, CustomerVM, Customer)),
+        fullname: res.fullname,
+        avatar: res.avatar,
+        id: res.id,
+      }
+    })
   }
   public readonly refresh = async (token: string, device: DeviceCM) => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
@@ -72,10 +87,18 @@ export class AuthService {
     }
     return this.mapper.map(customer, CustomerVM, Customer);
   }
-  protected readonly generateJWT = (account: AccountVM | CustomerVM): string => {
+  protected readonly generateJWT = (account: AccountVM): string => {
     return sign({ account }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
       expiresIn: '24h',
       audience: account.email,
+      issuer: 'crm',
+      subject: 'se20fa27'
+    });
+  }
+  protected readonly generateJWTCustomer = (customer: CustomerVM): string => {
+    return sign({ customer }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
+      expiresIn: '24h',
+      audience: customer.email,
       issuer: 'crm',
       subject: 'se20fa27'
     });
@@ -105,9 +128,6 @@ export class AuthService {
     const account = await this.accountRepository.useHTTP().save(acc as any);
     return this.mapper.map(account, AccountVM, Account);
   }
-  protected readonly comparePasswords = (newPassword: string, passwordHash: string): Observable<any> => {
-    return of<any | boolean>(compare(newPassword, passwordHash));
-  }
   protected readonly validateAccount = async (emailOrPhone: string, password: string): Promise<AccountVM> => {
     const option = isNaN(+emailOrPhone) ?
       { email: emailOrPhone }
@@ -117,13 +137,9 @@ export class AuthService {
         if (!account) {
           throw new UnauthorizedException("Invalid email or phone", "Invalid email or phone");
         }
-        this.comparePasswords(password, account?.passwordHash).pipe(
-          map((match: boolean) => {
-            if (!match) {
-              throw new UnauthorizedException("Invalid Password", "Invalid Password");
-            }
-          })
-        )
+        if (!compareSync(password, account?.passwordHash)) {
+          throw new UnauthorizedException("Invalid Password", "Invalid Password");
+        }
         return this.mapper.map(account, AccountVM, Account);
       }
     )
