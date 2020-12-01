@@ -27,7 +27,13 @@ export class AuthService {
         if (account) {
           return {
             expiresIn: '24h',
-            accessToken: this.generateJWT(account),
+            accessToken: this.generateJWT({
+              fullname: account.fullname,
+              id: account.id,
+              email: account.email,
+              phone: account.phone,
+            } as any),
+            devices: account.devices,
             roles: account.roles,
             fullname: account.fullname,
             avatar: account.avatar,
