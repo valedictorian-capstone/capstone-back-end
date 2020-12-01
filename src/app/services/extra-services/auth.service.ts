@@ -38,27 +38,30 @@ export class AuthService {
     )
   }
   public readonly loginCustomer = async (phone: string): Promise<any> => {
-    const customer = await this.customerRepository.useHTTP().findOne({ where: { phone } });
-    if (customer != null) {
-      return {
-        accessToken: this.generateJWTCustomer(this.mapper.map(customer, CustomerVM, Customer)),
-        fullname: customer.fullname,
-        avatar: customer.avatar,
-        id: customer.id,
+    return await this.customerRepository.useHTTP().findOne({ where: { phone } }).then((customer) => {
+      if (customer != null) {
+        return {
+          accessToken: this.generateJWTCustomer(this.mapper.map(customer, CustomerVM, Customer)),
+          fullname: customer.fullname,
+          avatar: customer.avatar,
+          id: customer.id,
+        }
+      } else {
+        return { notExist: true };
       }
-    } else {
-      return { notExist: true };
-    }
+    });
+
   }
   public readonly registerCustomer = async (customer: CustomerCM): Promise<any> => {
     return await this.customerRepository.useHTTP().save({
       ...customer,
       frequency: 0,
       totalDeal: 0,
-      totalSpending: 0
-    } as any).then((res) => {
+      totalSpending: 0,
+      groups: [{id: '3'}]
+    } as any).then(async (res) => {
       return {
-        accessToken: this.generateJWTCustomer(this.mapper.map(res.id, CustomerVM, Customer)),
+        accessToken: this.generateJWTCustomer(this.mapper.map(await this.customerRepository.useHTTP().findOne({ where: { id: res.id }, relations: ["devices"] }), CustomerVM, Customer)),
         fullname: res.fullname,
         avatar: res.avatar,
         id: res.id,
@@ -95,7 +98,6 @@ export class AuthService {
   }
   protected readonly generateJWTCustomer = (customer: CustomerVM): string => {
     return sign({ customer }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
-      expiresIn: '24h',
       audience: customer.email,
       issuer: 'crm',
       subject: 'se20fa27'
