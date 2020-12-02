@@ -12,6 +12,12 @@ export class TicketVM {
     @AutoMap()
     public readonly status: string;
 
+    @AutoMap()
+    public readonly ability: number;
+
+    @AutoMap()
+    public readonly note: string;
+
     public readonly customer: CustomerVM;
 
     public readonly assignee: AccountVM;
@@ -60,6 +66,12 @@ export class TicketCM {
     @ApiProperty({ required: true, format: 'string' })
     public readonly status: string;
 
+    @ApiProperty({ required: true, format: 'number' })
+    public readonly ability: number;
+
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly note: string;
+
     @AutoMap()
     @ApiProperty({ required: true, format: 'string' })
     public readonly type: string;
@@ -96,6 +108,12 @@ export class TicketUM {
 
     @ApiProperty({ required: true, format: 'string' })
     public readonly status: string;
+    
+    @ApiProperty({ required: true, format: 'number' })
+    public readonly ability: number;
+
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly note: string;
     
     @AutoMap()
     @ApiProperty({ required: true, format: 'string' })

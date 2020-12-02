@@ -3,18 +3,17 @@ import { NextFunction, Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
 
 @Injectable()
-export class AuthMiddleware implements NestMiddleware {
-
+export class AuthCustomerMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const token = req.headers.authorization;
-    console.log(token);
+    console.log('customer', token);
     if (!token) {
       throw new UnauthorizedException("You have no permission");
     }
     try {
       const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-      const account = Object.assign(decoded.valueOf()).account;
-      if (account) {
+      const customer = Object.assign(decoded.valueOf()).customer;
+      if (customer) {
         next();
         return;
       }
