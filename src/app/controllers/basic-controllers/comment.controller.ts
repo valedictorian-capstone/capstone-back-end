@@ -43,6 +43,15 @@ import {
     public findById(@Param('id') id: string): Promise<CommentVM> {
       return this.service.findById(id);
     }
+
+    @Get('/product/:id')
+    @ApiOperation({ summary: 'Get an Comment by productId' })
+    @ApiOkResponse({ description: "Success return an Comment's information" })
+    @ApiNotFoundResponse({ description: 'Fail to find Comment by Id' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public findAllByProduct(@Param('id') id: string): Promise<CommentVM> {
+      return this.service.findAllByProduct(id);
+    }
   
     @Put()
     @ApiOperation({ summary: 'Update an Comment by Id' })

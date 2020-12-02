@@ -28,7 +28,7 @@ export class ProductService {
   };
 
   public readonly findById = async (id: string): Promise<ProductVM> => {
-    return await this.productRepository.useHTTP().findOne({ where: { id: id }, relations: ['dealDetails', 'category', 'comments'] })
+    return await this.productRepository.useHTTP().findOne({ where: { id: id }, relations: ['dealDetails', 'category'] })
       .then(async (model) => {
         if (model) {
           return this.mapper.map(model, ProductVM, Product);

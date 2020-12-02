@@ -11,6 +11,7 @@ import { In } from 'typeorm';
 export class CommentService {
   constructor(
     @Inject(COMMENT_REPOSITORY) protected readonly repository: CommentRepository,
+    @Inject(PRODUCT_REPOSITORY) protected readonly productRepository: ProductRepository,
     @InjectMapper() protected readonly mapper: AutoMapper
   ) { }
 
@@ -21,6 +22,21 @@ export class CommentService {
 
   public readonly findById = async (id: string): Promise<CommentVM> => {
     return await this.repository.useHTTP().findOne({ where: {id: id}, relations: [] })
+      .then((model) => {
+        if (model) {
+          return this.mapper.map(model, CommentVM, Comment);
+        }
+        throw new NotFoundException(
+          `Can not find ${id}`,
+        );
+      })
+  };
+
+  public readonly findAllByProduct = async (id: string): Promise<CommentVM> => {
+
+    const product = await this.productRepository.useHTTP().findOne(id);
+
+    return await this.repository.useHTTP().findOne({ where: {product: product}, relations: ['customer'] })
       .then((model) => {
         if (model) {
           return this.mapper.map(model, CommentVM, Comment);
