@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { DealDetail } from '../bpmn-models';
 import { Category } from './category.model';
+import { Comment } from '../basic-models';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -50,6 +51,9 @@ export class Product extends BaseEntity {
 
   @OneToMany(() => DealDetail, dealDetails => dealDetails.product)
   public dealDetails: DealDetail[];
+
+  @OneToMany(() => Comment, comments => comments.product)
+  public comments: Comment[];
 
   @AutoMap()
   @Column({ default: null })

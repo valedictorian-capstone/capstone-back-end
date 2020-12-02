@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { DeviceVM, GroupVM, NotificationVM } from "../basic-view-models";
+import { CommentVM, DeviceVM, GroupVM, NotificationVM } from "../basic-view-models";
 import { DealVM } from "../bpmn-view-models";
 import { TicketVM } from "../product-view-models";
 
@@ -90,6 +90,8 @@ export class CustomerVM {
   public readonly notifications: NotificationVM[];
   
   public readonly devices: DeviceVM[];
+
+  public readonly comments: CommentVM[];
 
   @AutoMap()
   public readonly isDelete: boolean;
