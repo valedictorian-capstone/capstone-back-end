@@ -54,7 +54,8 @@ import {
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import {
-  AuthMiddleware
+  AuthMiddleware,
+  AuthCustomerMiddleware
 } from './middlewares';
 import admin from 'firebase-admin';
 
@@ -105,7 +106,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     ...FILTERS,
     AppGateway,
     ...AppProvider.init(),
-    AuthMiddleware
+    AuthMiddleware,
+    AuthCustomerMiddleware
   ],
 })
 export class AppModule implements OnModuleInit, NestModule {
@@ -133,10 +135,16 @@ export class AppModule implements OnModuleInit, NestModule {
   }
   configure(consumer: MiddlewareConsumer) {
     consumer
+    .apply(AuthCustomerMiddleware)
+    .forRoutes(
+      { path: '/api/v1/Auth/Customer', method: RequestMethod.PUT },
+      // { path: '/api/v1/Account', method: RequestMethod.GET }
+    );
+    consumer
       .apply(AuthMiddleware)
       .forRoutes(
-        { path: '/api/v1/Auth', method: RequestMethod.GET },
+        { path: '/api/v1/Auth', method: RequestMethod.PUT },
         // { path: '/api/v1/Account', method: RequestMethod.GET }
-      );
+    );
   }
 }

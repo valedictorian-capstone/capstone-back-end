@@ -15,10 +15,7 @@ export class SearchService {
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
   ) { }
   public readonly search = async (value: string, token: string): Promise<any> => {
-    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const roles: RoleVM[] = Object.assign(decoded.valueOf()).account.roles;
     const rs = [];
-    if (roles.filter((e) => e.canAccessDeal).length > 0) {
       const deals = await this.dealRepository.useHTTP().find();
       const attachments = await this.attachmentRepository.useHTTP().find();
       rs.push({
@@ -29,15 +26,11 @@ export class SearchService {
         type: 'attachment',
         data: attachments.filter((e) => e.name.toLowerCase().includes(value.toLowerCase()))
       });
-    }
-    if (roles.filter((e) => e.canAccessActivity).length > 0) {
       const ativitys = await this.activityRepository.useHTTP().find();
       rs.push({
         type: 'activity',
         data: ativitys.filter((e) => e.name.toLowerCase().includes(value.toLowerCase()))
       });
-    }
-    if (roles.filter((e) => e.canAccessCustomer).length > 0) {
       const customers = await this.cusomterRepository.useHTTP().find({ relations: ['groups'] });
       rs.push({
         type: 'lead',
@@ -47,7 +40,6 @@ export class SearchService {
         type: 'customer',
         data: customers.filter((e) => e.fullname.toLowerCase().includes(value.toLowerCase()))
       });
-    }
     return rs;
   }
 }

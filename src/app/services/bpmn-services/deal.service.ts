@@ -33,8 +33,6 @@ export class DealService {
       }
       )
   }
-
-
   public readonly findById = async (id: string): Promise<DealVM> => {
     return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments'] })
       .then(async (model) => {
@@ -48,7 +46,6 @@ export class DealService {
         }
       })
   }
-
   public readonly findByStage = async (id: string): Promise<DealVM[]> => {
     return await this.dealRepository.useHTTP().find({ where: { stage: { id } }, relations: ['stage', 'customer', 'dealDetails'] })
       .then(async (deals) => {
@@ -62,7 +59,6 @@ export class DealService {
         return await this.mapper.mapArray(deals, DealVM, Deal);
       });
   }
-
   public readonly insert = async (body: DealCM): Promise<DealVM> => {
     return await this.dealRepository.useHTTP()
       .save(body as any)
@@ -77,7 +73,6 @@ export class DealService {
         return await this.findById(model.id);
       })
   }
-
   public readonly update = async (body: DealUM | DealUM[]): Promise<DealVM | DealVM[]> => {
     if ((body as DealUM[]).length) {
       const rs = [];
@@ -109,7 +104,6 @@ export class DealService {
         });
     }
   }
-
   private readonly saveLog = async (oldDeal: Deal, updateDeal: Deal) => {
 
     let description = "";
@@ -129,7 +123,6 @@ export class DealService {
     }
     await this.logRepository.useHTTP().save(log);
   }
-
   public readonly updateStage = async (body: DealUM): Promise<DealVM> => {
 
 
@@ -147,17 +140,14 @@ export class DealService {
           })
       });
   }
-
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.dealRepository.useHTTP().findOne({ id: id }, { relations: ['dealDetails', 'activitys'] })
+    return await this.dealRepository.useHTTP().findOne({ id: id }, { relations: ['dealDetails', 'activitys', 'logs', 'notes', 'attachments'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        await this.dealDetailRepository.useHTTP().remove(model.dealDetails);
-        await this.activityRepository.useHTTP().remove(model.activitys);
         return await this.dealRepository.useHTTP()
           .remove(model)
           .then(() => {

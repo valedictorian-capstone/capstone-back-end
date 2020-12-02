@@ -19,12 +19,20 @@ export class Ticket extends BaseEntity {
     public id: string;
 
     @AutoMap()
-    @Column({ default: null, length: 10000 })
+    @Column({ default: null, length: 1000 })
+    public note: string;
+
+    @AutoMap()
+    @Column({ default: null, length: 500 })
     public description: string;
 
     @AutoMap()
     @Column({ default: 'waiting' })
     public status: string;
+  
+    @AutoMap()
+    @Column({ default: 0 })
+    public ability: number;
 
     @ManyToOne(() => Customer, customer => customer.tickets)
     public customer: Customer;
