@@ -4,6 +4,7 @@ import {
   TriggerController,
   NotificationController,
   DeviceController,
+  CommentController,
 } from '.'
 
 export * from './group.controller';
@@ -11,6 +12,7 @@ export * from './trigger.controller';
 export * from './event.controller';
 export * from './device.controller';
 export * from './notification.controller';
+export * from './comment.controller';
 
 
 export const BASIC_CONTROLLERS = [
@@ -19,4 +21,5 @@ export const BASIC_CONTROLLERS = [
   TriggerController,
   NotificationController,
   DeviceController,
+  CommentController,
 ];
