@@ -59,4 +59,12 @@ export class PipelineController {
   public async remove(@Param('id') id: string): Promise<PipelineVM> {
     return await this.service.remove(id);
   }
+
+  @Put('restore/:id')
+  @ApiOperation({ summary: 'Restore an pipeline step by Id' })
+  @ApiCreatedResponse({ description: 'Success restore Pipeline' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async restore(@Param('id') id: string): Promise<PipelineVM> {
+    return await this.service.restore(id);
+  }
 }

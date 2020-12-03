@@ -1,5 +1,5 @@
 import { Pipeline } from "@models";
-import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { PipelineRepository, StageRepository } from "@repositories";
 import { PIPELINE_REPOSITORY, STAGE_REPOSITORY } from "@types";
 import { PipelineCM, PipelineVM } from "@view-models";
@@ -56,12 +56,24 @@ export class PipelineService {
           );
         }
         return await this.pipelineRepository.useHTTP()
-          .remove(model)
+          .save({ id, isDelete: true })
           .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+            return this.findById(id);
+          })
+      });
+  }
+  public readonly restore = async (id: string): Promise<any> => {
+    return await this.pipelineRepository.useHTTP().findOne({ id: id })
+      .then(async (model) => {
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${id}`,
+          );
+        }
+        return await this.pipelineRepository.useHTTP()
+          .save({ id, isDelete: false })
+          .then(() => {
+            return this.findById(id);
           })
       });
   }

@@ -1,13 +1,13 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { Product } from '@models';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ProductRepository } from '@repositories';
 import { FIREBASE_SERVICE, PRODUCT_REPOSITORY } from '@types';
 import { ProductCM, ProductUM, ProductVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
 import { FirebaseService } from '../extra-services';
-import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class ProductService {
@@ -42,7 +42,7 @@ export class ProductService {
   public readonly checkUnique = async (label: string, value: string): Promise<string> => {
     const query = { [label]: value };
     return this.productRepository.useHTTP().findOne({ where: query })
-      .then((model) =>{
+      .then((model) => {
         return model ? true : false;
       }).catch(err => err);
   }
@@ -69,7 +69,7 @@ export class ProductService {
           throw new NotFoundException(
             `Can not find ${body.id}`,
           );
-        }else{
+        } else {
           const product = { ...body };
           if (product.image && product.image.includes(';base64')) {
             await this.firebaseService.useUploadFileBase64("product/images/" + product.name + "." + product.image.substring(product.image.indexOf("data:image/") + 11, product.image.indexOf(";base64")), product.image, product.image.substring(product.image.indexOf("data:image/") + 5, product.image.indexOf(";base64")));
@@ -91,17 +91,14 @@ export class ProductService {
           );
         }
         return await this.productRepository.useHTTP()
-          .remove(model)
+          .save({ id, isDelete: true })
           .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+            return this.findById(id);
           })
       });
   };
 
-  public readonly active = async (id: string): Promise<ProductVM[]> => {
+  public readonly restore = async (id: string): Promise<ProductVM> => {
     return await this.productRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -110,29 +107,9 @@ export class ProductService {
           );
         }
         return await this.productRepository.useHTTP()
-          .save({ ...model, IsDelete: false })
+          .save({ id, IsDelete: false })
           .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
-      });
-  };
-
-  public readonly deactive = async (id: string): Promise<ProductVM[]> => {
-    return await this.productRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.productRepository.useHTTP()
-          .save({ ...model, IsDelete: true })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
+            return this.findById(id);
           })
       });
   };

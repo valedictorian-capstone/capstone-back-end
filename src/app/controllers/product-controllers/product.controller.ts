@@ -84,20 +84,11 @@ export class ProductController{
   public remove(@Param('id') id: string): Promise<ProductVM> {
     return this.service.remove(id);
   }
-
-  @Put('Active/:id')
-  @ApiOperation({ summary: 'Active an Product by Id' })
-  @ApiCreatedResponse({ description: 'Success active new Product' })
+  @Put('restore/:id')
+  @ApiOperation({ summary: 'Restore an product by Id' })
+  @ApiCreatedResponse({ description: 'Success restore new Product' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<ProductVM[]> {
-    return this.service.active(id);
-  }
-
-  @Put('DeActive/:id')
-  @ApiOperation({ summary: 'Deative an Product by Id' })
-  @ApiCreatedResponse({ description: 'Success deactive new Product' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<ProductVM[]> {
-    return this.service.deactive(id);
+  public restore(@Param('id') id: string): Promise<ProductVM> {
+    return this.service.restore(id);
   }
 }

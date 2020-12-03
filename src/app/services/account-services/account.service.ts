@@ -133,7 +133,7 @@ export class AccountService {
           );
         }
         return await this.accountRepository.useHTTP()
-          .remove(model)
+          .save({ id, isDelete: true})
           .then(() => {
             throw new HttpException(
               `Remove information of ${id} successfully !!!`,
@@ -142,8 +142,7 @@ export class AccountService {
           })
       });
   };
-
-  public readonly active = async (id: string): Promise<AccountVM> => {
+  public readonly restore = async (id: string): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -152,23 +151,7 @@ export class AccountService {
           );
         }
         return await this.accountRepository.useHTTP()
-          .save({ ...model, IsDelete: false })
-          .then(async () => {
-            return this.mapper.map(await this.accountRepository.useHTTP().findOne({ id: id }), AccountVM, Account);
-          })
-      });
-  };
-
-  public readonly deactive = async (id: string): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.accountRepository.useHTTP()
-          .save({ ...model, IsDelete: true })
+          .save({ id, IsDelete: false })
           .then(async () => {
             return this.mapper.map(await this.accountRepository.useHTTP().findOne({ id: id }), AccountVM, Account);
           })

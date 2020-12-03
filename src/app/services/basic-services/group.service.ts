@@ -1,6 +1,6 @@
 import { NotFoundException } from '@exceptions';
 import { Group } from '@models';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { GroupRepository } from '@repositories';
 import { GROUP_REPOSITORY } from '@types';
 import { GroupCM, GroupUM, GroupVM } from '@view-models';
@@ -63,17 +63,14 @@ export class GroupService {
           );
         }
         return await this.repository.useHTTP()
-          .remove(model)
+          .save({ id, isDelete: true })
           .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+            return this.findById(id);
           })
       });
   };
 
-  public readonly active = async (id: string): Promise<GroupVM[]> => {
+  public readonly restore = async (id: string): Promise<GroupVM> => {
     return await this.repository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -82,29 +79,9 @@ export class GroupService {
           );
         }
         return await this.repository.useHTTP()
-          .save({ ...model, IsDelete: false })
+          .save({ id, IsDelete: false })
           .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
-      });
-  };
-
-  public readonly deactive = async (id: string): Promise<GroupVM[]> => {
-    return await this.repository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.repository.useHTTP()
-          .save({ ...model, IsDelete: true })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
+            return this.findById(id);
           })
       });
   };

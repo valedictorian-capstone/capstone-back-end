@@ -38,7 +38,7 @@ export class StageService {
 
   public readonly findByPipeline = async (id: string): Promise<StageVM> => {
 
-    return await this.stageRepository.useHTTP().findOne({ where: { pipeline: { id } }, relations: [ 'pipeline' ] })
+    return await this.stageRepository.useHTTP().findOne({ where: { pipeline: { id } }, relations: ['pipeline'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -66,15 +66,15 @@ export class StageService {
   }
 
   public readonly update = async (body: StageUM): Promise<StageVM> => {
-      return await this.stageRepository.useHTTP()
-        .save(body as any)
-        .then((model) => {
-          return this.findById(model.id);
-        })
+    return await this.stageRepository.useHTTP()
+      .save(body as any)
+      .then((model) => {
+        return this.findById(model.id);
+      })
   }
 
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.stageRepository.useHTTP().findOne({ id: id }, {relations: ['deals']})
+    return await this.stageRepository.useHTTP().findOne({ id: id }, { relations: ['deals'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(

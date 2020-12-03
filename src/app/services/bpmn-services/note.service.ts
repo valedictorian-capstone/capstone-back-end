@@ -68,7 +68,7 @@ export class NoteService {
           );
         }
         return await this.noteRepository.useHTTP()
-          .remove(model)
+        .remove(model)
           .then(() => {
             throw new HttpException(
               `Remove information of ${id} successfully !!!`,

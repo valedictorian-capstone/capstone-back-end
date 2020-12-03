@@ -1,5 +1,5 @@
 import { Category } from "@models";
-import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { CategoryRepository, ProductRepository } from "@repositories";
 import { CATEGORY_REPOSITORY, PRODUCT_REPOSITORY } from "@types";
 import { CategoryCM, CategoryVM } from "@view-models";
@@ -54,12 +54,24 @@ export class CategoryService {
           );
         }
         return await this.categoryRepository.useHTTP()
-          .remove(model)
+          .save({ id, isDelete: true })
           .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+            return this.findById(id);
+          })
+      });
+  }
+  public readonly restore = async (id: string): Promise<any> => {
+    return await this.categoryRepository.useHTTP().findOne({ id: id })
+      .then(async (model) => {
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${id}`,
+          );
+        }
+        return await this.categoryRepository.useHTTP()
+          .save({ id, isDelete: false })
+          .then(() => {
+            return this.findById(id);
           })
       });
   }

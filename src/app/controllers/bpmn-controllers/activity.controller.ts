@@ -68,20 +68,4 @@ export class ActivityController {
     public remove(id: string): Promise<ActivityVM> {
         return this.service.remove(id);
     }
-
-    @Put('Active:id')
-    @ApiOperation({ summary: 'Active an task by Id' })
-    @ApiCreatedResponse({ description: 'Success active new task' })
-    @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public active(@Param('id') id: string): Promise<ActivityVM[]> {
-        return this.service.active(id);
-    }
-
-    @Put('DeActive:id')
-    @ApiOperation({ summary: 'Deative an task by Id' })
-    @ApiCreatedResponse({ description: 'Success deactive new task' })
-    @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public deactive(@Param('id') id: string): Promise<ActivityVM[]> {
-        return this.service.deactive(id);
-    }
 }

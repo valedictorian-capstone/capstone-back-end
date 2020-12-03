@@ -59,4 +59,12 @@ export class CategoryController {
   public async remove(@Param('id') id: string): Promise<CategoryVM> {
     return await this.service.remove(id);
   }
+
+  @Put('restore/:id')
+  @ApiOperation({ summary: 'Restore an category by Id' })
+  @ApiCreatedResponse({ description: 'Success restore new Category' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public restore(@Param('id') id: string): Promise<CategoryVM> {
+    return this.service.restore(id);
+  }
 }

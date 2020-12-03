@@ -67,20 +67,4 @@ export class DeviceController{
   public remove(@Param('id') id: string): Promise<DeviceVM> {
     return this.service.remove(id);
   }
-
-  @Put('Active/:id')
-  @ApiOperation({ summary: 'Active an Device by Id' })
-  @ApiCreatedResponse({ description: 'Success active new Device' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<DeviceVM[]> {
-    return this.service.active(id);
-  }
-
-  @Put('DeActive/:id')
-  @ApiOperation({ summary: 'Deative an Device by Id' })
-  @ApiCreatedResponse({ description: 'Success deactive new Device' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<DeviceVM[]> {
-    return this.service.deactive(id);
-  }
 }

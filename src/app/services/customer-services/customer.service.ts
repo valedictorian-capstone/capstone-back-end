@@ -1,6 +1,6 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { Customer } from '@models';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CustomerRepository, GroupRepository } from '@repositories';
 import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
@@ -30,12 +30,12 @@ export class CustomerService {
 
   public readonly findAllByLead = async (): Promise<CustomerVM[]> => {
     return await this.groupRepository.useHTTP().findOne({ where: { id: 3 }, relations: ['customers'] })
-    .then((model) => {
-      return this.mapper.mapArray(model.customers, CustomerVM, Customer);
-    }).catch((err) => {
-      console.log(err);
-      throw new InvalidException(err);
-    });
+      .then((model) => {
+        return this.mapper.mapArray(model.customers, CustomerVM, Customer);
+      }).catch((err) => {
+        console.log(err);
+        throw new InvalidException(err);
+      });
   }
 
 
@@ -98,7 +98,7 @@ export class CustomerService {
   };
 
   private readonly callClassification = async (customerParam: [][]): Promise<string> => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { spawn } = require('child_process');
       const python = spawn('python', ['src/app/kmeans/classification.py', JSON.stringify(customerParam)]);
@@ -169,17 +169,14 @@ export class CustomerService {
           );
         }
         return await this.cusomterRepository.useHTTP()
-          .remove(model)
+          .save({ id, isDelete: true })
           .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+            return this.findById(id);
           })
       });
   };
 
-  public readonly active = async (id: string): Promise<CustomerVM[]> => {
+  public readonly restore = async (id: string): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -188,29 +185,9 @@ export class CustomerService {
           );
         }
         return await this.cusomterRepository.useHTTP()
-          .save({ ...model, IsDelete: false })
+          .save({ id, IsDelete: false })
           .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
-      });
-  };
-
-  public readonly deactive = async (id: string): Promise<CustomerVM[]> => {
-    return await this.cusomterRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.cusomterRepository.useHTTP()
-          .save({ ...model, IsDelete: true })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
+            return this.findById(id);
           })
       });
   };

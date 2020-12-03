@@ -3,11 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  Headers,
+
   Param,
   Post,
   Put,
-  Query,
+  Query
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -16,10 +16,10 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
-import { RoleCM, RoleUM, RoleVM } from '@view-models';
 import { RoleService } from '@services';
+import { RoleCM, RoleUM, RoleVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Role')
@@ -78,19 +78,11 @@ export class RoleController {
     return this.service.remove(id);
   }
 
-  @Put('Active/:id')
-  @ApiOperation({ summary: 'Active an Role by Id' })
+  @Put('restore/:id')
+  @ApiOperation({ summary: 'Restore an role by Id' })
   @ApiCreatedResponse({ description: 'Success active new Role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public active(@Param('id') id: string): Promise<RoleVM[]> {
-    return this.service.active(id);
-  }
-
-  @Put('DeActive/:id')
-  @ApiOperation({ summary: 'Deative an Role by Id' })
-  @ApiCreatedResponse({ description: 'Success deactive new Role' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<RoleVM[]> {
-    return this.service.deactive(id);
+    return this.service.restore(id);
   }
 }

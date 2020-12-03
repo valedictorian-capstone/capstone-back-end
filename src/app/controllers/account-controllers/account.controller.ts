@@ -97,19 +97,11 @@ export class AccountController {
     return this.service.remove(id);
   }
 
-  @Put('Active/:id')
-  @ApiOperation({ summary: 'Active an Account by Id' })
+  @Put('restore/:id')
+  @ApiOperation({ summary: 'Restore an account by Id' })
   @ApiCreatedResponse({ description: 'Success active new Account' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<AccountVM> {
-    return this.service.active(id);
-  }
-
-  @Put('DeActive/:id')
-  @ApiOperation({ summary: 'Deative an Account by Id' })
-  @ApiCreatedResponse({ description: 'Success deactive new Account' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<AccountVM> {
-    return this.service.deactive(id);
+  public restore(@Param('id') id: string): Promise<AccountVM> {
+    return this.service.restore(id);
   }
 }

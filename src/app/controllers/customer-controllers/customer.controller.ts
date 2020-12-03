@@ -91,19 +91,11 @@ export class CustomerController{
     return this.service.remove(id);
   }
 
-  @Put('Active/:id')
-  @ApiOperation({ summary: 'Active an Customer by Id' })
-  @ApiCreatedResponse({ description: 'Success active new Customer' })
+  @Put('restore/:id')
+  @ApiOperation({ summary: 'Restore an customer by Id' })
+  @ApiCreatedResponse({ description: 'Success restore new Customer' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<CustomerVM[]> {
-    return this.service.active(id);
-  }
-
-  @Put('DeActive/:id')
-  @ApiOperation({ summary: 'Deative an Customer by Id' })
-  @ApiCreatedResponse({ description: 'Success deactive new Customer' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<CustomerVM[]> {
-    return this.service.deactive(id);
+  public restore(@Param('id') id: string): Promise<CustomerVM> {
+    return this.service.restore(id);
   }
 }

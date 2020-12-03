@@ -51,11 +51,11 @@ export class DealDetailService {
   }
 
   public readonly update = async (body: DealDetailUM): Promise<DealDetailVM> => {
-      return await this.dealDetailRepository.useHTTP()
-        .save(body as any)
-        .then((model) => {
-          return this.findById(model.id);
-        })
+    return await this.dealDetailRepository.useHTTP()
+      .save(body as any)
+      .then((model) => {
+        return this.findById(model.id);
+      })
   }
 
   public readonly remove = async (id: string): Promise<any> => {
@@ -67,7 +67,7 @@ export class DealDetailService {
           );
         }
         return await this.dealDetailRepository.useHTTP()
-          .remove(model)
+        .remove(model)
           .then(() => {
             throw new HttpException(
               `Remove information of ${id} successfully !!!`,
