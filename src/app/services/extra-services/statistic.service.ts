@@ -1,8 +1,9 @@
-import { Deal, Group } from "@models";
+import { AppGateway } from "@extras/gateways";
+import { Deal, Group, Product } from "@models";
 import { Inject, Injectable } from "@nestjs/common";
 import { CustomerRepository, DealRepository, GroupRepository, ProductRepository } from "@repositories";
 import { CUSTOMER_REPOSITORY, DEAL_REPOSITORY, GROUP_REPOSITORY, PRODUCT_REPOSITORY } from "@types";
-import { CustomerVM, DealVM, GroupVM } from "@view-models";
+import { CustomerVM, DealVM, GroupVM, ProductVM } from '@view-models';
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 
 @Injectable()
@@ -13,6 +14,7 @@ export class StatisticService {
     @Inject(PRODUCT_REPOSITORY) protected readonly productRepository: ProductRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
+    protected readonly gateway: AppGateway
   ) {
 
   }
@@ -24,6 +26,11 @@ export class StatisticService {
         const data = vm.customers.filter((customer) => {
           const createdAt = new Date(customer.createdAt);
           return createdAt.getFullYear() == year && createdAt.getMonth() == month;
+        });
+        this.gateway.server.emit('customer-in-month', {
+          id: vm.id,
+          name: vm.name,
+          data
         });
         return {
           id: vm.id,
@@ -41,6 +48,11 @@ export class StatisticService {
           const createdAt = new Date(customer.createdAt);
           return createdAt.getFullYear() == year && createdAt.getMonth() == month;
         }));
+        this.gateway.server.emit('customer-in-year', {
+          id: vm.id,
+          name: vm.name,
+          data
+        });
         return {
           id: vm.id,
           name: vm.name,
@@ -57,6 +69,10 @@ export class StatisticService {
           const createdAt = new Date(deal.createdAt);
           return createdAt.getFullYear() == year && createdAt.getMonth() == month && deal.status.toLowerCase() === status.toLowerCase();
         });
+        this.gateway.server.emit('deal-in-month', {
+          status,
+          data
+        });
         return {
           status,
           data
@@ -72,11 +88,45 @@ export class StatisticService {
           const createdAt = new Date(deal.createdAt);
           return createdAt.getFullYear() == year && createdAt.getMonth() == month && deal.status.toLowerCase() === status.toLowerCase();
         }));
+        this.gateway.server.emit('deal-in-year', {
+          status,
+          data
+        });
         return {
           status,
           data
         }
       });
+    });
+  }
+  public readonly getTopRatingProduct = async (): Promise<ProductVM[]> => {
+    return await this.productRepository.useHTTP().find({ relations: ['comments'] }).then((products) => {
+      const rs = products.filter((product) => {
+        const calculate = ((
+          (1 * product.comments.filter((e) => e.rating === 1).length) +
+          (2 * product.comments.filter((e) => e.rating === 2).length) +
+          (3 * product.comments.filter((e) => e.rating === 3).length) +
+          (4 * product.comments.filter((e) => e.rating === 4).length) +
+          (5 * product.comments.filter((e) => e.rating === 5).length)
+        ) / product.comments.length).toFixed(2);
+        return parseInt(calculate, 0) > 0;
+      }).sort((a, b) => {
+        return parseInt(((
+          (1 * b.comments.filter((e) => e.rating === 1).length) +
+          (2 * b.comments.filter((e) => e.rating === 2).length) +
+          (3 * b.comments.filter((e) => e.rating === 3).length) +
+          (4 * b.comments.filter((e) => e.rating === 4).length) +
+          (5 * b.comments.filter((e) => e.rating === 5).length)
+        ) / a.comments.length).toFixed(2), 0) - parseInt(((
+          (1 * a.comments.filter((e) => e.rating === 1).length) +
+          (2 * a.comments.filter((e) => e.rating === 2).length) +
+          (3 * a.comments.filter((e) => e.rating === 3).length) +
+          (4 * a.comments.filter((e) => e.rating === 4).length) +
+          (5 * a.comments.filter((e) => e.rating === 5).length)
+        ) / a.comments.length).toFixed(2), 0);
+      });
+      this.gateway.server.emit('top-product', this.mapper.mapArray(rs.length > 9 ? rs.slice(0, 9) : rs, ProductVM, Product));
+      return this.mapper.mapArray(rs.length > 9 ? rs.slice(0, 9) : rs, ProductVM, Product);
     });
   }
 }

@@ -79,7 +79,7 @@ export class GroupService {
           );
         }
         return await this.repository.useHTTP()
-          .save({ id, IsDelete: false })
+          .save({ id, isDelete: false })
           .then(() => {
             return this.findById(id);
           })

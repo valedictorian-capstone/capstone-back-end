@@ -94,7 +94,7 @@ export class CommentService {
           );
         }
         return await this.repository.useHTTP()
-          .save({ ...model, IsDelete: false })
+          .save({ ...model, isDelete: false })
           .then(() => {
             const ids = [];
             ids.push(model.id);
@@ -112,7 +112,7 @@ export class CommentService {
           );
         }
         return await this.repository.useHTTP()
-          .save({ ...model, IsDelete: true })
+          .save({ ...model, isDelete: true })
           .then(() => {
             const ids = [];
             ids.push(model.id);
