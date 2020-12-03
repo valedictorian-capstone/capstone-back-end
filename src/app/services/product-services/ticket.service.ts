@@ -41,15 +41,15 @@ export class TicketService {
 
   public readonly insert = async (body: TicketCM, token: string): Promise<TicketVM> => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const customer = await this.customerRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).customer.id }});
-    return await this.ticketRepository.useHTTP().save({...body, status: 'waiting', customer}).then(async (model) => {
+    const customer = await this.customerRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).customer.id } });
+    return await this.ticketRepository.useHTTP().save({ ...body, status: 'waiting', customer }).then(async (model) => {
       return await this.findById(model.id);
     });
   };
 
   public readonly update = async (body: TicketUM, token: string): Promise<TicketVM> => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const account = await this.accountRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).account.id }});
+    const account = await this.accountRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).account.id } });
     return await this.ticketRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -57,7 +57,7 @@ export class TicketService {
             `Can not find ${body.id}`,
           );
         } else {
-          return await this.ticketRepository.useHTTP().save({...body, account} as any).then(async (model) => {
+          return await this.ticketRepository.useHTTP().save({ ...body, account } as any).then(async (model) => {
             return await this.findById(model.id);
           });
         }
@@ -83,35 +83,4 @@ export class TicketService {
       });
   };
 
-  public readonly active = async (id: string): Promise<TicketVM> => {
-    return await this.ticketRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.ticketRepository.useHTTP()
-          .save({ ...model, IsDelete: false })
-          .then((model) => {
-            return this.findById(model.id);
-          })
-      });
-  };
-
-  public readonly deactive = async (id: string): Promise<TicketVM> => {
-    return await this.ticketRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.ticketRepository.useHTTP()
-          .save({ ...model, IsDelete: true })
-          .then((model) => {
-            return this.findById(model.id);
-          })
-      });
-  };
 }

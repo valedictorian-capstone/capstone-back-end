@@ -68,7 +68,7 @@ export class NotificationService {
           );
         }
         return await this.notificationRepository.useHTTP()
-          .remove(model)
+          .save({ id, isDelete: true })
           .then(() => {
             throw new HttpException(
               `Remove information of ${id} successfully !!!`,

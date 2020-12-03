@@ -44,7 +44,7 @@ export class AttachmentService {
       const file = files[i];
       const time = new Date().getTime();
       await this.firebaseService.useUploadFile(
-        "attachments/" +  deal.id + '/' + time + (file as any).originalname, file);
+        "attachments/" + deal.id + '/' + time + (file as any).originalname, file);
       attachments.push({
         deal: deal as any,
         name: time + (file as any).originalname,
@@ -78,7 +78,7 @@ export class AttachmentService {
           );
         }
         return await this.attachmentRepository.useHTTP()
-          .remove(model)
+        .remove(model)
           .then(() => {
             throw new HttpException(
               `Remove information of ${id} successfully !!!`,

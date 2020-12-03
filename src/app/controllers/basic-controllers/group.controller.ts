@@ -68,19 +68,11 @@ export class GroupController{
     return this.service.remove(id);
   }
 
-  @Put('Active/:id')
-  @ApiOperation({ summary: 'Active an Group by Id' })
+  @Put('restore/:id')
+  @ApiOperation({ summary: 'Restore an group by Id' })
   @ApiCreatedResponse({ description: 'Success active new Group' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<GroupVM[]> {
-    return this.service.active(id);
-  }
-
-  @Put('DeActive/:id')
-  @ApiOperation({ summary: 'Deative an Group by Id' })
-  @ApiCreatedResponse({ description: 'Success deactive new Group' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public deactive(@Param('id') id: string): Promise<GroupVM[]> {
-    return this.service.deactive(id);
+  public restore(@Param('id') id: string): Promise<GroupVM> {
+    return this.service.restore(id);
   }
 }

@@ -1,23 +1,23 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Post,
-    Put,
-  } from '@nestjs/common';
-  import {
-    ApiBadRequestResponse,
-    ApiBearerAuth,
-    ApiCreatedResponse,
-    ApiNotFoundResponse,
-    ApiOkResponse,
-    ApiOperation,
-    ApiTags,
-  } from '@nestjs/swagger';
-  import { EventCM, EventUM, EventVM } from '@view-models';
-  import { EventService } from '@services';
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+
+  Put
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags
+} from '@nestjs/swagger';
+import { EventService } from '@services';
+import { EventUM, EventVM } from '@view-models';
   
   @ApiBearerAuth('JWT')
   @ApiTags('Event')
@@ -58,22 +58,6 @@ import {
     @ApiBadRequestResponse({ description: 'Have error in run time' })
     public remove(@Param('id') id: string): Promise<EventVM> {
       return this.service.remove(id);
-    }
-  
-    @Put('Active/:id')
-    @ApiOperation({ summary: 'Active an Event by Id' })
-    @ApiCreatedResponse({ description: 'Success active new Event' })
-    @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public active(@Param('id') id: string): Promise<EventVM[]> {
-      return this.service.active(id);
-    }
-  
-    @Put('DeActive/:id')
-    @ApiOperation({ summary: 'Deative an Event by Id' })
-    @ApiCreatedResponse({ description: 'Success deactive new Event' })
-    @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public deactive(@Param('id') id: string): Promise<EventVM[]> {
-      return this.service.deactive(id);
     }
   }
   

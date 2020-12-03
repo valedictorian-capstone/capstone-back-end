@@ -67,21 +67,5 @@ import {
     public remove(@Param('id') id: string): Promise<TriggerVM> {
       return this.service.remove(id);
     }
-  
-    @Put('Active/:id')
-    @ApiOperation({ summary: 'Active an Trigger by Id' })
-    @ApiCreatedResponse({ description: 'Success active new Trigger' })
-    @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public active(@Param('id') id: string): Promise<TriggerVM[]> {
-      return this.service.active(id);
-    }
-  
-    @Put('DeActive/:id')
-    @ApiOperation({ summary: 'Deative an Trigger by Id' })
-    @ApiCreatedResponse({ description: 'Success deactive new Trigger' })
-    @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public deactive(@Param('id') id: string): Promise<TriggerVM[]> {
-      return this.service.deactive(id);
-    }
   }
   

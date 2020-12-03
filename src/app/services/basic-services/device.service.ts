@@ -72,40 +72,4 @@ export class DeviceService {
           })
       });
   };
-
-  public readonly active = async (id: string): Promise<DeviceVM[]> => {
-    return await this.repository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.repository.useHTTP()
-          .save({ ...model, IsDelete: false })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
-      });
-  };
-
-  public readonly deactive = async (id: string): Promise<DeviceVM[]> => {
-    return await this.repository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.repository.useHTTP()
-          .save({ ...model, IsDelete: true })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
-      });
-  };
 }

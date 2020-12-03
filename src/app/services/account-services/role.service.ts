@@ -1,7 +1,7 @@
-import { InvalidException, NotFoundException } from '@exceptions';
+import { NotFoundException } from '@exceptions';
 import { Role } from '@models';
-import { JwtService } from '@nestjs/jwt';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { RoleRepository } from '@repositories';
 import { ROLE_REPOSITORY } from '@types';
 import { RoleCM, RoleUM, RoleVM } from '@view-models';
@@ -73,7 +73,7 @@ export class RoleService {
           );
         }
         return await this.roleRepository.useHTTP()
-          .remove(model)
+          .save({ id, isDelete: true })
           .then(() => {
             throw new HttpException(
               `Remove information of ${id} successfully !!!`,
@@ -83,7 +83,7 @@ export class RoleService {
       });
   };
 
-  public readonly active = async (id: string): Promise<RoleVM[]> => {
+  public readonly restore = async (id: string): Promise<RoleVM[]> => {
     return await this.roleRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -92,25 +92,7 @@ export class RoleService {
           );
         }
         return await this.roleRepository.useHTTP()
-          .save({ ...model, IsDelete: false })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
-      });
-  };
-
-  public readonly deactive = async (id: string): Promise<RoleVM[]> => {
-    return await this.roleRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.roleRepository.useHTTP()
-          .save({ ...model, IsDelete: true })
+          .save({ id, IsDelete: false })
           .then(() => {
             const ids = [];
             ids.push(model.id);

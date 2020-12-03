@@ -14,7 +14,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiConsumes,
+
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,

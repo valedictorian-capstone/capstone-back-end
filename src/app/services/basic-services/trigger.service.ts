@@ -31,7 +31,7 @@ export class TriggerService {
         let group = event.groups[j];
         group = await this.groupRepository.useHTTP().findOne({ where: { id: group.id }, relations: ['customers'] });
         console.log(group);
-        await this.emailService.sendEventCustomer(group.customers ,event);
+        await this.emailService.sendEventCustomer(group.customers, event);
       }
     }
   }
@@ -96,39 +96,4 @@ export class TriggerService {
       });
   };
 
-  public readonly active = async (id: string): Promise<TriggerVM[]> => {
-    return await this.repository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.repository.useHTTP()
-          .save({ ...model, IsDelete: false })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
-      });
-  };
-
-  public readonly deactive = async (id: string): Promise<TriggerVM[]> => {
-    return await this.repository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.repository.useHTTP()
-          .save({ ...model, IsDelete: true })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
-      });
-  };
 }

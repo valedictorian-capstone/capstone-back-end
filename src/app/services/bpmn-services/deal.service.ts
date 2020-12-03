@@ -78,11 +78,11 @@ export class DealService {
       const rs = [];
       for (let i = 0; i < (body as DealUM[]).length; i++) {
         const deal = body[i];
-        const oldModel = await this.dealRepository.useHTTP().findOne({ id: deal.id }, {relations: ['stage']});
+        const oldModel = await this.dealRepository.useHTTP().findOne({ id: deal.id }, { relations: ['stage'] });
         await this.dealRepository.useHTTP()
           .save(deal as any)
           .then(async (newModel) => {
-            await this.saveLog(oldModel, {...newModel, stage: deal.stage ? deal.stage : oldModel.stage});
+            await this.saveLog(oldModel, { ...newModel, stage: deal.stage ? deal.stage : oldModel.stage });
             await rs.push(await this.findById(deal.id));
           })
       }
@@ -98,7 +98,7 @@ export class DealService {
           return await this.dealRepository.useHTTP()
             .save(body as any)
             .then((newModel) => {
-              this.saveLog(oldModel, {...newModel, stage: (body as DealUM).stage ? (body as DealUM).stage : oldModel.stage});
+              this.saveLog(oldModel, { ...newModel, stage: (body as DealUM).stage ? (body as DealUM).stage : oldModel.stage });
               return this.findById(newModel.id);
             })
         });
@@ -141,7 +141,7 @@ export class DealService {
       });
   }
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.dealRepository.useHTTP().findOne({ id: id }, { relations: ['dealDetails', 'activitys', 'logs', 'notes', 'attachments'] })
+    return await this.dealRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -149,7 +149,25 @@ export class DealService {
           );
         }
         return await this.dealRepository.useHTTP()
-          .remove(model)
+          .save({ id, isDelete: true })
+          .then(() => {
+            throw new HttpException(
+              `Remove information of ${id} successfully !!!`,
+              HttpStatus.NO_CONTENT,
+            );
+          })
+      });
+  }
+  public readonly restore = async (id: string): Promise<any> => {
+    return await this.dealRepository.useHTTP().findOne({ id: id })
+      .then(async (model) => {
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${id}`,
+          );
+        }
+        return await this.dealRepository.useHTTP()
+          .save({ id, isDelete: false })
           .then(() => {
             throw new HttpException(
               `Remove information of ${id} successfully !!!`,
