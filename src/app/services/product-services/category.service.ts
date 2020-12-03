@@ -1,5 +1,5 @@
 import { Category } from "@models";
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { CategoryRepository, ProductRepository } from "@repositories";
 import { CATEGORY_REPOSITORY, PRODUCT_REPOSITORY } from "@types";
 import { CategoryCM, CategoryVM } from "@view-models";
@@ -61,18 +61,29 @@ export class CategoryService {
       });
   }
   public readonly restore = async (id: string): Promise<any> => {
-    return await this.categoryRepository.useHTTP().findOne({ id: id })
+    return await this.categoryRepository.useHTTP().findOne({ id: id }, {relations: ['products']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await this.categoryRepository.useHTTP()
-          .save({ id, isDelete: false })
-          .then(() => {
-            return this.findById(id);
-          })
+        return await
+          (
+            model.products.length === 0
+              ? this.categoryRepository.useHTTP().remove(model)
+              : this.categoryRepository.useHTTP().save({ id, isDelete: true })
+          )
+            .then(() => {
+              if (model.products.length === 0) {
+                throw new HttpException(
+                  `Remove information of ${id} successfully !!!`,
+                  HttpStatus.NO_CONTENT,
+                );
+              } else {
+                return this.findById(id);
+              }
+            })
       });
   }
 }

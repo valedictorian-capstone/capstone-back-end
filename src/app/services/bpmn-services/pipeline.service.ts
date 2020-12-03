@@ -1,5 +1,5 @@
 import { Pipeline } from "@models";
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException, HttpStatus, HttpException } from '@nestjs/common';
 import { PipelineRepository, StageRepository } from "@repositories";
 import { PIPELINE_REPOSITORY, STAGE_REPOSITORY } from "@types";
 import { PipelineCM, PipelineVM } from "@view-models";
@@ -48,17 +48,28 @@ export class PipelineService {
   }
 
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.pipelineRepository.useHTTP().findOne({ id: id })
+    return await this.pipelineRepository.useHTTP().findOne({ id: id }, {relations: ['stages']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await this.pipelineRepository.useHTTP()
-          .save({ id, isDelete: true })
+        return await
+          (
+            model.stages.length === 0
+              ? this.pipelineRepository.useHTTP().remove(model)
+              : this.pipelineRepository.useHTTP().save({ id, isDelete: true })
+          )
           .then(() => {
-            return this.findById(id);
+            if (model.stages.length === 0) {
+              throw new HttpException(
+                `Remove information of ${id} successfully !!!`,
+                HttpStatus.NO_CONTENT,
+              );
+            } else {
+              return this.findById(id);
+            }
           })
       });
   }
