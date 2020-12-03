@@ -50,7 +50,8 @@ import {
   DeviceMapper,
   LogMapper,
   CategoryMapper,
-  AttachmentMapper
+  AttachmentMapper,
+  CommentMapper
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import {
@@ -132,6 +133,7 @@ export class AppModule implements OnModuleInit, NestModule {
     this.mapper.addProfile(NoteMapper);
     this.mapper.addProfile(LogMapper);
     this.mapper.addProfile(CategoryMapper);
+    this.mapper.addProfile(CommentMapper);
   }
   configure(consumer: MiddlewareConsumer) {
     consumer

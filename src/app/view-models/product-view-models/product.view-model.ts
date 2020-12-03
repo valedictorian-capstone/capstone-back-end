@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { CategoryVM } from ".";
+import { CommentVM } from "../basic-view-models";
 import { DealDetailVM } from "../bpmn-view-models/deal-detail.view-model";
 
 export class ProductVM {
@@ -31,6 +32,8 @@ export class ProductVM {
   public readonly category: CategoryVM;
 
   public readonly dealDetails: DealDetailVM[];
+
+  public readonly comments: CommentVM[];
   
   @AutoMap()
   public readonly isDelete: boolean;

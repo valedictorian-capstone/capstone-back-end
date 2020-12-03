@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Device, Group, Notification } from '../basic-models';
+import { Device, Group, Notification, Comment } from '../basic-models';
 import { Deal } from '../bpmn-models';
 import { Ticket } from '../product-models';
 
@@ -125,6 +125,9 @@ export class Customer extends BaseEntity {
 
   @OneToMany(() => Notification, notifications => notifications.customer)
   public notifications: Notification[];
+
+  @OneToMany(() => Comment, comments => comments.customer)
+  public comments: Comment[];
 
   @AutoMap()
   @Column({ default: null })
