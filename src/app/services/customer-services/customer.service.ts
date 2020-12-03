@@ -185,7 +185,7 @@ export class CustomerService {
           );
         }
         return await this.cusomterRepository.useHTTP()
-          .save({ id, IsDelete: false })
+          .save({ id, isDelete: false })
           .then(() => {
             return this.findById(id);
           })

@@ -92,7 +92,7 @@ export class RoleService {
           );
         }
         return await this.roleRepository.useHTTP()
-          .save({ id, IsDelete: false })
+          .save({ id, isDelete: false })
           .then(() => {
             const ids = [];
             ids.push(model.id);

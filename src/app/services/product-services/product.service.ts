@@ -1,6 +1,6 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { Product } from '@models';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ProductRepository } from '@repositories';
 import { FIREBASE_SERVICE, PRODUCT_REPOSITORY } from '@types';
 import { ProductCM, ProductUM, ProductVM } from '@view-models';
@@ -99,29 +99,18 @@ export class ProductService {
   };
 
   public readonly restore = async (id: string): Promise<ProductVM> => {
-    return await this.productRepository.useHTTP().findOne({ id: id }, { relations: ['dealDetails'] })
+    return await this.productRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await
-          (
-            model.dealDetails.length === 0
-              ? this.productRepository.useHTTP().remove(model)
-              : this.productRepository.useHTTP().save({ id, isDelete: true })
-          )
-            .then(() => {
-              if (model.dealDetails.length === 0) {
-                throw new HttpException(
-                  `Remove information of ${id} successfully !!!`,
-                  HttpStatus.NO_CONTENT,
-                );
-              } else {
-                return this.findById(id);
-              }
-            })
+        return await this.productRepository.useHTTP()
+          .save({ id, isDelete: false })
+          .then(async () => {
+            return this.findById(id);
+          })
       });
   };
 }

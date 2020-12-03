@@ -151,7 +151,7 @@ export class AccountService {
           );
         }
         return await this.accountRepository.useHTTP()
-          .save({ id, IsDelete: false })
+          .save({ id, isDelete: false })
           .then(async () => {
             return this.mapper.map(await this.accountRepository.useHTTP().findOne({ id: id }), AccountVM, Account);
           })
