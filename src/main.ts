@@ -46,7 +46,7 @@ declare const module: any;
   };
   SwaggerModule.setup('api/v1/swagger', app, document, styles);
   await app.init();
-  await app.listen(8081);
+  await app.listen(8080);
   // http.createServer(server).listen(8080);
 //  https.createServer(httpsOptions, server).listen(8081);
   // eslint-disable-next-line @typescript-eslint/no-var-requires
