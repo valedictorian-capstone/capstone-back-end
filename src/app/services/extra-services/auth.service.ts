@@ -78,9 +78,8 @@ export class AuthService {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
     const account = await this.accountRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).account.id }, relations: ["roles", "activitys", "devices"] });
     if (device.id && !account.devices.find((e) => e.id === device.id)) {
-      const rs = (await this.deviceRepository.useHTTP().save({ ...device, account: account, customer: undefined }));
-      account.devices.push(rs);
-      return this.mapper.map(account, AccountVM, Account);
+      await this.deviceRepository.useHTTP().save({ ...device, account: account, customer: undefined });
+      return this.mapper.map(await this.accountRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).account.id }, relations: ["roles", "activitys", "devices"] }), AccountVM, Account);
     }
     return this.mapper.map(account, AccountVM, Account);
   }
@@ -88,9 +87,8 @@ export class AuthService {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
     const customer = await this.customerRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).customer.id }, relations: ["devices"] });
     if (device.id && !customer.devices.find((e) => e.id === device.id)) {
-      const rs = (await this.deviceRepository.useHTTP().save({ ...device, customer, account: undefined }));
-      customer.devices.push(rs);
-      return this.mapper.map(customer, CustomerVM, Customer);
+      await this.deviceRepository.useHTTP().save({ ...device, customer, account: undefined });
+      return this.mapper.map(await this.customerRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).customer.id }, relations: ["devices"] }), CustomerVM, Customer);
     }
     return this.mapper.map(customer, CustomerVM, Customer);
   }
