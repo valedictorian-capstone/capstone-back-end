@@ -1,9 +1,10 @@
 import { NotFoundException } from '@exceptions';
+import { AppGateway } from '@extras/gateways';
 import { Comment } from '@models';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CommentRepository, CustomerRepository, ProductRepository } from '@repositories';
-import { COMMENT_REPOSITORY, CUSTOMER_REPOSITORY, PRODUCT_REPOSITORY } from '@types';
-import { CommentUM, CommentVM } from '@view-models';
+import { CommentRepository, ProductRepository } from '@repositories';
+import { COMMENT_REPOSITORY, PRODUCT_REPOSITORY } from '@types';
+import { CommentCM, CommentUM, CommentVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
 
@@ -12,7 +13,8 @@ export class CommentService {
   constructor(
     @Inject(COMMENT_REPOSITORY) protected readonly repository: CommentRepository,
     @Inject(PRODUCT_REPOSITORY) protected readonly productRepository: ProductRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    protected readonly gateway: AppGateway,
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CommentVM[]> => {
@@ -21,7 +23,7 @@ export class CommentService {
   };
 
   public readonly findById = async (id: string): Promise<CommentVM> => {
-    return await this.repository.useHTTP().findOne({ where: {id: id}, relations: [] })
+    return await this.repository.useHTTP().findOne({ where: {id: id}, relations: ['customer', 'product'] })
       .then((model) => {
         if (model) {
           return this.mapper.map(model, CommentVM, Comment);
@@ -32,14 +34,14 @@ export class CommentService {
       })
   };
 
-  public readonly findAllByProduct = async (id: string): Promise<CommentVM> => {
+  public readonly findAllByProduct = async (id: string): Promise<CommentVM[]> => {
 
     const product = await this.productRepository.useHTTP().findOne(id);
 
-    return await this.repository.useHTTP().findOne({ where: {product: product}, relations: ['customer'] })
+    return await this.repository.useHTTP().find({ where: {product: product}, relations: ['customer'] })
       .then((model) => {
         if (model) {
-          return this.mapper.map(model, CommentVM, Comment);
+          return this.mapper.mapArray(model, CommentVM, Comment);
         }
         throw new NotFoundException(
           `Can not find ${id}`,
@@ -48,9 +50,19 @@ export class CommentService {
   };
 
   public readonly save = async (body: CommentUM): Promise<CommentVM> => {
-    return await this.repository.useHTTP().save({... body, product: body.product, customer: body.customer})
+    return await this.repository.useHTTP().save(body)
     .then(async (model) => {
       return await this.findById(model.id);
+    })
+  };
+
+  public readonly insert = async (body: CommentCM): Promise<CommentVM> => {
+    return await this.repository.useHTTP().save(body)
+      .then(async (model) => {
+        const rs = await this.findById(model.id);
+        this.gateway.server.emit('comment-product-' + body.product.id, rs);
+        this.gateway.server.emit('comment-customer-' + body.customer.id, rs);
+      return rs;
     })
   };
 

@@ -16,7 +16,7 @@ import {
     ApiOperation,
     ApiTags,
   } from '@nestjs/swagger';
-  import { CommentUM, CommentVM } from '@view-models';
+  import { CommentCM, CommentUM, CommentVM } from '@view-models';
   import { CommentService } from '@services';
   
   @ApiBearerAuth('JWT')
@@ -49,7 +49,7 @@ import {
     @ApiOkResponse({ description: "Success return an Comment's information" })
     @ApiNotFoundResponse({ description: 'Fail to find Comment by Id' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public findAllByProduct(@Param('id') id: string): Promise<CommentVM> {
+    public findAllByProduct(@Param('id') id: string): Promise<CommentVM[]> {
       return this.service.findAllByProduct(id);
     }
   
@@ -59,6 +59,14 @@ import {
     @ApiBadRequestResponse({ description: 'Have error in run time' })
     public save(@Body() body: CommentUM): Promise<CommentVM> {
       return this.service.save(body);
+    }
+
+    @Post()
+    @ApiOperation({ summary: 'Update an Comment by Id' })
+    @ApiCreatedResponse({ description: 'Success update new Comment' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public insert(@Body() body: CommentCM): Promise<CommentVM> {
+      return this.service.insert(body);
     }
   
     @Delete(':id')
