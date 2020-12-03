@@ -70,7 +70,7 @@ export class AttachmentController {
   @ApiOperation({ summary: 'Delete an task by Id' })
   @ApiCreatedResponse({ description: 'Success delete new task' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public remove(id: string): Promise<AttachmentVM> {
+  public remove(@Param('id') id: string): Promise<AttachmentVM> {
     return this.service.remove(id);
   }
 }

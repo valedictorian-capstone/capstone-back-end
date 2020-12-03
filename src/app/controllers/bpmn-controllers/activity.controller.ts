@@ -65,7 +65,7 @@ export class ActivityController {
     @ApiOperation({ summary: 'Delete an task by Id' })
     @ApiCreatedResponse({ description: 'Success delete new task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public remove(id: string): Promise<ActivityVM> {
+    public remove(@Param('id') id: string): Promise<ActivityVM> {
         return this.service.remove(id);
     }
 }
