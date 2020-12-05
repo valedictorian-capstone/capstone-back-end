@@ -35,6 +35,10 @@ export class EventService {
   public readonly save = async (body: EventUM): Promise<EventVM> => {
     return await this.repository.useHTTP().save(body)
     .then(async (model) => {
+      if(body.id == null){
+        const triggers = await this.triggerRepository.useHTTP().find({where: {event: model}});
+        await this.triggerRepository.useHTTP().remove(triggers);
+      }
       await this.triggerRepository.useHTTP().save(body.triggers.map((trigger) => ({...trigger, event: model})));
       return await this.findById(model.id);
     })
