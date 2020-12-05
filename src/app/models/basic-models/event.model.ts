@@ -22,11 +22,7 @@ export class Event extends BaseEntity {
     @AutoMap()
     @Column({ nullable: false })
     public name: string;
-
-    @AutoMap()
-    @Column({ nullable: false })
-    public code: string;
-
+    
     @AutoMap()
     @Column({ nullable: false, length: 10000 })
     public description: string;

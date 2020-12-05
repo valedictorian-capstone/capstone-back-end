@@ -9,9 +9,6 @@ export class EventVM {
     
     @AutoMap()
     public readonly name: string;
-
-    @AutoMap()
-    public readonly code: string;
     
     @AutoMap()
     public readonly description: string;
@@ -50,9 +47,6 @@ export class EventCM{
     @ApiProperty({ required: true, format: 'string', minLength: 2 })
     public readonly description: string;
 
-    @ApiProperty({ required: true, format: 'string', minLength: 2 })
-    public readonly code: string;
-
     @ApiProperty({ required: true })
     public readonly dateEnd: Date;
 
@@ -78,8 +72,6 @@ export class EventUM{
     @ApiProperty({ required: true, format: 'string', minLength: 2 })
     public readonly description: string;
 
-    @ApiProperty({ required: true, format: 'string', minLength: 2 })
-    public readonly code: string;
 
     @ApiProperty({ required: true })
     public readonly dateEnd: Date;
