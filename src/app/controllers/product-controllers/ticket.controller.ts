@@ -53,6 +53,15 @@ import { Request } from '@nestjs/common';
       const token = req.headers.authorization;
       return this.service.insert(body, token);
     }
+
+     
+    @Post('/bot')
+    @ApiOperation({ summary: 'Bot Insert new Ticket' })
+    @ApiCreatedResponse({ description: 'Success create new Ticket' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public botInsert(@Request() req: any, @Body() body: TicketCM): Promise<TicketVM> {
+      return this.service.botInsert(body);
+    }
   
     @Put()
     @ApiOperation({ summary: 'Update an Ticket by Id' })

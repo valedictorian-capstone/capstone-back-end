@@ -47,6 +47,13 @@ export class TicketService {
     });
   };
 
+  public readonly botInsert = async (body: TicketCM): Promise<TicketVM> => {
+    const customer = await this.customerRepository.useHTTP().findOne({ where: { id: body.customer.id } });
+    return await this.ticketRepository.useHTTP().save({ ...body, status: 'waiting', customer }).then(async (model) => {
+      return await this.findById(model.id);
+    });
+  };
+
   public readonly update = async (body: TicketUM, token: string): Promise<TicketVM> => {
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
     const account = await this.accountRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).account.id } });
