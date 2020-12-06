@@ -82,7 +82,7 @@ export class RoleController {
   @ApiOperation({ summary: 'Restore an role by Id' })
   @ApiCreatedResponse({ description: 'Success active new Role' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<RoleVM[]> {
+  public active(@Param('id') id: string): Promise<RoleVM> {
     return this.service.restore(id);
   }
 }

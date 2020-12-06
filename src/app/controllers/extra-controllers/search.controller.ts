@@ -1,5 +1,5 @@
-import { Controller, Get, Query, Request } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Query } from '@nestjs/common';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SearchService } from '@services';
 
 @ApiBearerAuth('JWT')
@@ -14,9 +14,8 @@ export class SearchController {
   @ApiOperation({ summary: 'Search' })
   @ApiOkResponse({ description: 'Search' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async search(@Query('value') value: string, @Request() req: any): Promise<any[]> {
-    const token = req.headers.authorization;
-    return this.searchService.search(value, token);
+  public async search(@Query('value') value: string): Promise<any[]> {
+    return this.searchService.search(value);
   }
 
 }

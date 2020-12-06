@@ -68,15 +68,6 @@ export class DealController {
   public async update(@Body() body: DealUM | DealUM[]): Promise<DealVM | DealVM[]> {
     return await this.dealService.update(body);
   }
-
-  @Put('/stage')
-  @ApiOperation({ summary: 'Update an deal by Id' })
-  @ApiCreatedResponse({ description: 'Success update new deal' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updateStage(@Body() body: DealUM): Promise<DealVM> {
-    return await this.dealService.updateStage(body);
-  }
-
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an deal by Id' })
   @ApiCreatedResponse({ description: 'Success delete new deal' })

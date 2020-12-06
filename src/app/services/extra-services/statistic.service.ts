@@ -1,8 +1,8 @@
-import { AppGateway } from "@extras/gateways";
 import { Deal, Group, Product } from "@models";
 import { Inject, Injectable } from "@nestjs/common";
 import { CustomerRepository, DealRepository, GroupRepository, ProductRepository } from "@repositories";
-import { CUSTOMER_REPOSITORY, DEAL_REPOSITORY, GROUP_REPOSITORY, PRODUCT_REPOSITORY } from "@types";
+import { SocketService } from "@services";
+import { CUSTOMER_REPOSITORY, DEAL_REPOSITORY, GROUP_REPOSITORY, PRODUCT_REPOSITORY, SOCKET_SERVICE } from "@types";
 import { CustomerVM, DealVM, GroupVM, ProductVM } from '@view-models';
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 
@@ -14,11 +14,9 @@ export class StatisticService {
     @Inject(PRODUCT_REPOSITORY) protected readonly productRepository: ProductRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
-    protected readonly gateway: AppGateway
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) {
-
   }
-
   public readonly getCustomerInMonth = async (month: number, year: number): Promise<{ id: string, name: string, data: CustomerVM[] }[]> => {
     return await this.groupRepository.useHTTP().find({ relations: ['customers'] }).then((groups) => {
       return groups.map((group) => {
@@ -27,11 +25,11 @@ export class StatisticService {
           const createdAt = new Date(customer.createdAt);
           return createdAt.getFullYear() == year && createdAt.getMonth() == month;
         });
-        this.gateway.server.emit('customer-in-month', {
+        this.socketService.with('customer-in-month', {
           id: vm.id,
           name: vm.name,
           data
-        });
+        }, 'view');
         return {
           id: vm.id,
           name: vm.name,
@@ -48,11 +46,11 @@ export class StatisticService {
           const createdAt = new Date(customer.createdAt);
           return createdAt.getFullYear() == year && createdAt.getMonth() == month;
         }));
-        this.gateway.server.emit('customer-in-year', {
+        this.socketService.with('customer-in-year', {
           id: vm.id,
           name: vm.name,
           data
-        });
+        }, 'view');
         return {
           id: vm.id,
           name: vm.name,
@@ -69,10 +67,10 @@ export class StatisticService {
           const createdAt = new Date(deal.createdAt);
           return createdAt.getFullYear() == year && createdAt.getMonth() == month && deal.status.toLowerCase() === status.toLowerCase();
         });
-        this.gateway.server.emit('deal-in-month', {
+        this.socketService.with('deal-in-month', {
           status,
           data
-        });
+        }, 'view');
         return {
           status,
           data
@@ -88,10 +86,10 @@ export class StatisticService {
           const createdAt = new Date(deal.createdAt);
           return createdAt.getFullYear() == year && createdAt.getMonth() == month && deal.status.toLowerCase() === status.toLowerCase();
         }));
-        this.gateway.server.emit('deal-in-year', {
+        this.socketService.with('deal-in-year', {
           status,
           data
-        });
+        }, 'view');
         return {
           status,
           data
@@ -125,7 +123,7 @@ export class StatisticService {
           (5 * a.comments.filter((e) => e.rating === 5).length)
         ) / a.comments.length).toFixed(2), 0);
       });
-      this.gateway.server.emit('top-product', this.mapper.mapArray(rs.length > 9 ? rs.slice(0, 9) : rs, ProductVM, Product));
+      this.socketService.with('top-product', this.mapper.mapArray(rs.length > 9 ? rs.slice(0, 9) : rs, ProductVM, Product), 'view');
       return this.mapper.mapArray(rs.length > 9 ? rs.slice(0, 9) : rs, ProductVM, Product);
     });
   }

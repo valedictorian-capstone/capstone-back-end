@@ -8,164 +8,164 @@ import { TicketVM } from '../product-view-models';
 export class AccountVM {
 
   @AutoMap()
-  public readonly id: string;
+  public id: string;
 
   @AutoMap()
-  public readonly phone: string;
+  public phone: string;
 
   @AutoMap()
-  public readonly email: string;
+  public email: string;
 
   @AutoMap()
-  public readonly code: string;
+  public code: string;
 
   @AutoMap()
-  public readonly fullname: string;
+  public fullname: string;
 
   @AutoMap()
-  public readonly avatar: string;
+  public avatar: string;
 
   @AutoMap()
-  public readonly address: string;
+  public address: string;
 
   @AutoMap()
-  public readonly gender: boolean;
+  public gender: boolean;
 
-  public readonly roles: RoleVM[];
+  public roles: RoleVM[];
 
-  public readonly devices: DeviceVM[];
+  public devices: DeviceVM[];
 
-  public readonly activitys: ActivityVM[];
+  public activitys: ActivityVM[];
 
-  public readonly notifications: NotificationVM[];
+  public notifications: NotificationVM[];
 
-  public readonly tickets: TicketVM[];
+  public tickets: TicketVM[];
 
-  public readonly feedbackTickets: TicketVM[];
+  public feedbackTickets: TicketVM[];
   
 
   @AutoMap()
-  public readonly isDelete: boolean;
+  public isDelete: boolean;
 
   @AutoMap()
-  public readonly createdBy: string;
+  public createdBy: string;
 
   @AutoMap()
-  public readonly updatedBy: string;
+  public updatedBy: string;
 
   @AutoMap()
-  public readonly createdAt: Date;
+  public createdAt: Date;
 
   @AutoMap()
-  public readonly updatedAt: Date;
+  public updatedAt: Date;
 }
 
 export class AccountCM {
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 10, pattern: "(\(\d{2,4}\)\s{0,1}\d{6,9})$|^\d{8,13}$|^\d{3,5}\s?\d{3}\s?\d{3,4}$|^[\d\(\)\s\-\/]{6,}" })
-  public readonly phone: string;
+  public phone: string;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 8, pattern: "[a-zA-Z0-9.#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*" })
-  public readonly email: string;
+  public email: string;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly code: string;
+  public code: string;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly fullname: string;
+  public fullname: string;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly avatar: string;
+  public avatar: string;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly address: string;
+  public address: string;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly gender: boolean;
+  public gender: boolean;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 6 })
-  public readonly password: string;
+  public password: string;
 
-  public readonly roles: string[];
+  public roles: string[];
 
 }
 
 export class AccountUM {
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
-  public readonly id: string;
+  public id: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 10, pattern: "(\(\d{2,4}\)\s{0,1}\d{6,9})$|^\d{8,13}$|^\d{3,5}\s?\d{3}\s?\d{3,4}$|^[\d\(\)\s\-\/]{6,}" })
-  public readonly phone: string;
+  public phone: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 8, pattern: "[a-zA-Z0-9.#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*" })
-  public readonly email: string;
+  public email: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly code: string;
+  public code: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly fullname: string;
+  public fullname: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly avatar: string;
+  public avatar: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly address: string;
+  public address: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly gender: boolean;
+  public gender: boolean;
 
-  public readonly roles: string[];
+  public roles: string[];
   
 }
 
 export class AccountAuthVM {
 
   @AutoMap()
-  public readonly id: string;
+  public id: string;
 
   @AutoMap()
-  public readonly phone: string;
+  public phone: string;
 
   @AutoMap()
-  public readonly email: string;
+  public email: string;
 
   @AutoMap()
-  public readonly code: string;
+  public code: string;
 
   @AutoMap()
-  public readonly password: string;
+  public password: string;
 
   @AutoMap()
-  public readonly isDelete: boolean;
+  public isDelete: boolean;
 
   @AutoMap()
-  public readonly createdBy: string;
+  public createdBy: string;
 
   @AutoMap()
-  public readonly updatedBy: string;
+  public updatedBy: string;
 
   @AutoMap()
-  public readonly createdAt: Date;
+  public createdAt: Date;
 
   @AutoMap()
-  public readonly updatedAt: Date;
+  public updatedAt: Date;
 
   @AutoMap()
-  public readonly deviceId: string;
+  public deviceId: string;
 }
 
 export class AccountFilter {
-  public readonly roleName?: string;
-  public readonly ids?: string[];
-  public readonly departmentId: string;
+  public roleName?: string;
+  public ids?: string[];
+  public departmentId: string;
 }

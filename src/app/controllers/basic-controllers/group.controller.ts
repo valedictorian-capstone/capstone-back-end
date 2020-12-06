@@ -44,35 +44,35 @@ export class GroupController{
     return this.service.findById(id);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Insert new Group' })
-  @ApiCreatedResponse({ description: 'Success create new Group' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public insert(@Body() body: GroupCM): Promise<GroupVM> {
-    return this.service.insert(body);
-  }
+  // @Post()
+  // @ApiOperation({ summary: 'Insert new Group' })
+  // @ApiCreatedResponse({ description: 'Success create new Group' })
+  // @ApiBadRequestResponse({ description: 'Have error in run time' })
+  // public insert(@Body() body: GroupCM): Promise<GroupVM> {
+  //   return this.service.insert(body);
+  // }
 
-  @Put()
-  @ApiOperation({ summary: 'Update an Group by Id' })
-  @ApiCreatedResponse({ description: 'Success update new Group' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public update(@Body() body: GroupUM): Promise<GroupVM> {
-    return this.service.update(body);
-  }
+  // @Put()
+  // @ApiOperation({ summary: 'Update an Group by Id' })
+  // @ApiCreatedResponse({ description: 'Success update new Group' })
+  // @ApiBadRequestResponse({ description: 'Have error in run time' })
+  // public update(@Body() body: GroupUM): Promise<GroupVM> {
+  //   return this.service.update(body);
+  // }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete an Group by Id' })
-  @ApiCreatedResponse({ description: 'Success delete new Group' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public remove(@Param('id') id: string): Promise<GroupVM> {
-    return this.service.remove(id);
-  }
+  // @Delete(':id')
+  // @ApiOperation({ summary: 'Delete an Group by Id' })
+  // @ApiCreatedResponse({ description: 'Success delete new Group' })
+  // @ApiBadRequestResponse({ description: 'Have error in run time' })
+  // public remove(@Param('id') id: string): Promise<GroupVM> {
+  //   return this.service.remove(id);
+  // }
 
-  @Put('restore/:id')
-  @ApiOperation({ summary: 'Restore an group by Id' })
-  @ApiCreatedResponse({ description: 'Success active new Group' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public restore(@Param('id') id: string): Promise<GroupVM> {
-    return this.service.restore(id);
-  }
+  // @Put('restore/:id')
+  // @ApiOperation({ summary: 'Restore an group by Id' })
+  // @ApiCreatedResponse({ description: 'Success active new Group' })
+  // @ApiBadRequestResponse({ description: 'Have error in run time' })
+  // public restore(@Param('id') id: string): Promise<GroupVM> {
+  //   return this.service.restore(id);
+  // }
 }

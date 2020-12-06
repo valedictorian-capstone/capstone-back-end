@@ -25,8 +25,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async auth(@Request() req: any, @Body() device: DeviceCM): Promise<AccountVM> {
-    const token = req.headers.authorization;
+  public async auth(@Request() req: Request, @Body() device: DeviceCM): Promise<AccountVM> {
+    const token = req.headers['authorization'];
     return this.authenService.refresh(token, device);
   }
 
@@ -34,8 +34,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async authCustomer(@Request() req: any, @Body() device: DeviceCM): Promise<CustomerVM> {
-    const token = req.headers.authorization;
+  public async authCustomer(@Request() req: Request, @Body() device: DeviceCM): Promise<CustomerVM> {
+    const token = req.headers['authorization'];
     return this.authenService.refreshCustomer(token, device);
   }
 
@@ -43,8 +43,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Change password' })
   @ApiOkResponse({ description: 'Change password' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updatePassword(@Request() req: any, @Body() data: { password: string }): Promise<AccountVM> {
-    const token = req.headers.authorization;
+  public async updatePassword(@Request() req: Request, @Body() data: { password: string }): Promise<AccountVM> {
+    const token = req.headers['authorization'];
     return this.authenService.updatePassword(data, token);
   }
 
@@ -52,8 +52,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updateProfile(@Request() req: any, @Body() account: AccountVM): Promise<AccountVM> {
-    const token = req.headers.authorization;
+  public async updateProfile(@Request() req: Request, @Body() account: AccountVM): Promise<AccountVM> {
+    const token = req.headers['authorization'];
     return this.authenService.updateProfile(account, token);
   }
 
@@ -61,8 +61,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updateCustomerProfile(@Request() req: any, @Body() customer: CustomerVM): Promise<CustomerVM> {
-    const token = req.headers.authorization;
+  public async updateCustomerProfile(@Request() req: Request, @Body() customer: CustomerVM): Promise<CustomerVM> {
+    const token = req.headers['authorization'];
     return this.authenService.updateCustomerProfile(customer, token);
   }
 

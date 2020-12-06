@@ -1,9 +1,9 @@
 import { NotFoundException } from '@exceptions';
-import { AppGateway } from '@extras/gateways';
 import { Comment } from '@models';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CommentRepository, ProductRepository } from '@repositories';
-import { COMMENT_REPOSITORY, PRODUCT_REPOSITORY } from '@types';
+import { SocketService } from '@services';
+import { COMMENT_REPOSITORY, PRODUCT_REPOSITORY, SOCKET_SERVICE } from '@types';
 import { CommentCM, CommentUM, CommentVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
@@ -14,14 +14,13 @@ export class CommentService {
     @Inject(COMMENT_REPOSITORY) protected readonly repository: CommentRepository,
     @Inject(PRODUCT_REPOSITORY) protected readonly productRepository: ProductRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
-    protected readonly gateway: AppGateway,
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CommentVM[]> => {
     return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: [] })
       .then((models) => this.mapper.mapArray(models, CommentVM, Comment))
   };
-
   public readonly findById = async (id: string): Promise<CommentVM> => {
     return await this.repository.useHTTP().findOne({ where: {id: id}, relations: ['customer', 'product'] })
       .then((model) => {
@@ -33,7 +32,6 @@ export class CommentService {
         );
       })
   };
-
   public readonly findAllByProduct = async (id: string): Promise<CommentVM[]> => {
 
     const product = await this.productRepository.useHTTP().findOne(id);
@@ -48,26 +46,24 @@ export class CommentService {
         );
       })
   };
-
   public readonly save = async (body: CommentUM): Promise<CommentVM> => {
     return await this.repository.useHTTP().save(body)
-    .then(async (model) => {
-      return await this.findById(model.id);
+      .then(async (model) => {
+        const rs = await this.findById(model.id);
+        this.socketService.with('comment-product-' + body.product.id, rs, 'update');
+      return rs;
     })
   };
-
   public readonly insert = async (body: CommentCM): Promise<CommentVM> => {
     return await this.repository.useHTTP().save(body)
       .then(async (model) => {
         const rs = await this.findById(model.id);
-        this.gateway.server.emit('comment-product-' + body.product.id, rs);
-        this.gateway.server.emit('comment-customer-' + body.customer.id, rs);
+        this.socketService.with('comment-product-' + body.product.id, rs, 'create');
       return rs;
     })
   };
-
   public readonly remove = async (id: string): Promise<CommentVM> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.repository.useHTTP().findOne({ id: id }, {relations: ['product']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -77,46 +73,9 @@ export class CommentService {
         return await this.repository.useHTTP()
           .remove(model)
           .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
-          })
-      });
-  };
-
-  public readonly active = async (id: string): Promise<CommentVM[]> => {
-    return await this.repository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.repository.useHTTP()
-          .save({ ...model, isDelete: false })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
-          })
-      });
-  };
-
-  public readonly deactive = async (id: string): Promise<CommentVM[]> => {
-    return await this.repository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.repository.useHTTP()
-          .save({ ...model, isDelete: true })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
+            const rs = this.mapper.map({...model, id} as Comment, CommentVM, Comment);
+            this.socketService.with('comment-product-' + model.product.id, rs, 'remove');
+            return rs;
           })
       });
   };

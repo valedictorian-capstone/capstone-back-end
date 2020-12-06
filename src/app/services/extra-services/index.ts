@@ -4,7 +4,8 @@ import {
     SMSService,
     FirebaseService,
     SearchService,
-    StatisticService
+    StatisticService,
+    SocketService
 } from '.'
 
 export * from './auth.service';
@@ -12,6 +13,7 @@ export * from './firebase.service';
 export * from './email.service';
 export * from './sms.service';
 export * from './search.service';
+export * from './socket.service';
 export * from './statistic.service';
 
 export const EXTRA_SERVICES = [
@@ -20,5 +22,6 @@ export const EXTRA_SERVICES = [
     SMSService,
     FirebaseService.inject,
     SearchService,
-    StatisticService
+    StatisticService,
+    SocketService.inject
 ]

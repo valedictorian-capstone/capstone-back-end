@@ -49,8 +49,8 @@ import { Request } from '@nestjs/common';
     @ApiOperation({ summary: 'Insert new Ticket' })
     @ApiCreatedResponse({ description: 'Success create new Ticket' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Request() req: any, @Body() body: TicketCM): Promise<TicketVM> {
-      const token = req.headers.authorization;
+    public insert(@Request() req: Request, @Body() body: TicketCM): Promise<TicketVM> {
+      const token = req.headers['authorization'];
       return this.service.insert(body, token);
     }
   
@@ -58,8 +58,8 @@ import { Request } from '@nestjs/common';
     @ApiOperation({ summary: 'Update an Ticket by Id' })
     @ApiCreatedResponse({ description: 'Success update new Ticket' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public update(@Request() req: any, @Body() body: TicketUM): Promise<TicketVM> {
-      const token = req.headers.authorization;
+    public update(@Request() req: Request, @Body() body: TicketUM): Promise<TicketVM> {
+      const token = req.headers['authorization'];
       return this.service.update(body, token);
     }
   

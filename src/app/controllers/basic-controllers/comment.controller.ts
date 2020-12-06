@@ -1,23 +1,23 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Post,
-    Put,
-  } from '@nestjs/common';
-  import {
-    ApiBadRequestResponse,
-    ApiBearerAuth,
-    ApiCreatedResponse,
-    ApiNotFoundResponse,
-    ApiOkResponse,
-    ApiOperation,
-    ApiTags,
-  } from '@nestjs/swagger';
-  import { CommentCM, CommentUM, CommentVM } from '@view-models';
-  import { CommentService } from '@services';
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags
+} from '@nestjs/swagger';
+import { CommentService } from '@services';
+import { CommentCM, CommentUM, CommentVM } from '@view-models';
   
   @ApiBearerAuth('JWT')
   @ApiTags('Comment')
@@ -75,22 +75,6 @@ import {
     @ApiBadRequestResponse({ description: 'Have error in run time' })
     public remove(@Param('id') id: string): Promise<CommentVM> {
       return this.service.remove(id);
-    }
-  
-    @Put('Active/:id')
-    @ApiOperation({ summary: 'Active an Comment by Id' })
-    @ApiCreatedResponse({ description: 'Success active new Comment' })
-    @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public active(@Param('id') id: string): Promise<CommentVM[]> {
-      return this.service.active(id);
-    }
-  
-    @Put('DeActive/:id')
-    @ApiOperation({ summary: 'Deative an Comment by Id' })
-    @ApiCreatedResponse({ description: 'Success deactive new Comment' })
-    @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public deactive(@Param('id') id: string): Promise<CommentVM[]> {
-      return this.service.deactive(id);
     }
   }
   

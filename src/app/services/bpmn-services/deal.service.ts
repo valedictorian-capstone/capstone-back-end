@@ -1,10 +1,11 @@
 import { Deal } from "@models";
-import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ActivityRepository, DealDetailRepository, DealRepository, LogRepository, ProductRepository, StageRepository } from "@repositories";
-import { ACTIVITY_REPOSITORY, DEAL_DETAIL_REPOSITORY, DEAL_REPOSITORY, LOG_REPOSITORY, PRODUCT_REPOSITORY, STAGE_REPOSITORY } from "@types";
+import { ACTIVITY_REPOSITORY, DEAL_DETAIL_REPOSITORY, DEAL_REPOSITORY, LOG_REPOSITORY, PRODUCT_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from "@types";
 import { DealCM, DealUM, DealVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { In } from 'typeorm';
+import { SocketService } from "../extra-services";
 
 @Injectable()
 export class DealService {
@@ -16,7 +17,8 @@ export class DealService {
     @Inject(DEAL_DETAIL_REPOSITORY) protected readonly dealDetailRepository: DealDetailRepository,
     @Inject(PRODUCT_REPOSITORY) protected readonly productRepository: ProductRepository,
     @Inject(LOG_REPOSITORY) protected readonly logRepository: LogRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
 
   public readonly findAll = async (): Promise<DealVM[]> => {
@@ -70,7 +72,9 @@ export class DealService {
         }
         await this.logRepository.useHTTP().save(log);
         await this.dealDetailRepository.useHTTP().save(body.dealDetails.map((e) => ({ ...e, deal: model })) as any);
-        return await this.findById(model.id);
+        const rs = await this.findById(model.id);
+        this.socketService.with('deals', rs, 'create');
+        return rs;
       })
   }
   public readonly update = async (body: DealUM | DealUM[]): Promise<DealVM | DealVM[]> => {
@@ -86,6 +90,7 @@ export class DealService {
             await rs.push(await this.findById(deal.id));
           })
       }
+      this.socketService.with('deals', rs, 'list');
       return rs;
     } else {
       return await this.dealRepository.useHTTP().findOne({ id: (body as DealUM).id }, { relations: ['stage'] })
@@ -97,17 +102,17 @@ export class DealService {
           }
           return await this.dealRepository.useHTTP()
             .save(body as any)
-            .then((newModel) => {
+            .then(async (newModel) => {
               this.saveLog(oldModel, { ...newModel, stage: (body as DealUM).stage ? (body as DealUM).stage : oldModel.stage });
-              return this.findById(newModel.id);
+              const rs = await this.findById(newModel.id);
+              this.socketService.with('deals', rs, 'update');
+              return rs;
             })
         });
     }
   }
   private readonly saveLog = async (oldDeal: Deal, updateDeal: Deal) => {
-
     let description = "";
-
     if (oldDeal.stage != updateDeal.stage && oldDeal.stage && updateDeal.stage) {
       const oldStage = await this.stageRepository.useHTTP().findOne({ id: oldDeal.stage.id });
       const updateStage = await this.stageRepository.useHTTP().findOne({ id: updateDeal.stage.id });
@@ -116,29 +121,11 @@ export class DealService {
     if (oldDeal.status != updateDeal.status) {
       description = "Status: " + oldDeal.status + ' -> ' + updateDeal.status;
     }
-
     const log = {
       description: description,
       deal: updateDeal
     }
     await this.logRepository.useHTTP().save(log);
-  }
-  public readonly updateStage = async (body: DealUM): Promise<DealVM> => {
-
-
-    return await this.dealRepository.useHTTP().findOne({ id: body.id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${body.id}`,
-          );
-        }
-        return await this.dealRepository.useHTTP()
-          .save(body as any)
-          .then(async (model) => {
-            return this.findById(model.id);
-          })
-      });
   }
   public readonly remove = async (id: string): Promise<any> => {
     return await this.dealRepository.useHTTP().findOne({ id: id })
@@ -150,11 +137,10 @@ export class DealService {
         }
         return await this.dealRepository.useHTTP()
           .save({ id, isDelete: true })
-          .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+          .then(async (model) => {
+            const rs = await this.findById(model.id);
+            this.socketService.with('deals', rs, 'update');
+            return rs;
           })
       });
   }
@@ -168,11 +154,10 @@ export class DealService {
         }
         return await this.dealRepository.useHTTP()
           .save({ id, isDelete: false })
-          .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+          .then(async (model) => {
+            const rs = await this.findById(model.id);
+            this.socketService.with('deals', rs, 'update');
+            return rs;
           })
       });
   }

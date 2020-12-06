@@ -7,8 +7,7 @@ export class NotificationMapper extends ProfileBase {
     super();
     mapper.createMap(Notification, NotificationVM)
       .forMember(d => d.account, mapWith(AccountVM, s => s.account))
-      .forMember(d => d.data, mapFrom(s => s.data))
-      .forMember(d => d.notification, mapFrom(s => s.notification));
+      .forMember(d => d.data, mapFrom(s => s.data));
     mapper.createMap(NotificationUM, NotificationVM);
   }
 }

@@ -1,11 +1,12 @@
 import { Log } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { DealRepository, LogRepository } from "@repositories";
-import { DEAL_REPOSITORY, LOG_REPOSITORY } from "@types";
+import { DEAL_REPOSITORY, LOG_REPOSITORY, SOCKET_SERVICE } from "@types";
 import { LogCM, LogUM, LogVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 
 import { In } from "typeorm";
+import { SocketService } from "../extra-services";
 
 @Injectable()
 export class LogService {
@@ -13,7 +14,8 @@ export class LogService {
   constructor(
     @Inject(LOG_REPOSITORY) protected readonly logRepository: LogRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<LogVM[]> => {

@@ -1,18 +1,20 @@
 import { DealDetail } from "@models";
-import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { DealDetailRepository } from "@repositories";
-import { DEAL_DETAIL_REPOSITORY } from "@types";
+import { DEAL_DETAIL_REPOSITORY, SOCKET_SERVICE } from "@types";
 import { DealDetailCM, DealDetailUM, DealDetailVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
-
 import { In } from "typeorm";
+import { SocketService } from "../extra-services";
+
 
 @Injectable()
 export class DealDetailService {
 
   constructor(
     @Inject(DEAL_DETAIL_REPOSITORY) protected readonly dealDetailRepository: DealDetailRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<DealDetailVM[]> => {
@@ -45,16 +47,20 @@ export class DealDetailService {
 
   public readonly insert = async (body: DealDetailCM): Promise<DealDetailVM> => {
     return await this.dealDetailRepository.useHTTP().save(body as any)
-      .then((model) => {
-        return this.findById(model.id);
+      .then(async (model) => {
+        const rs = await this.findById(model.id);
+        this.socketService.with('dealDetails', rs, 'create');
+        return rs;
       })
   }
 
   public readonly update = async (body: DealDetailUM): Promise<DealDetailVM> => {
     return await this.dealDetailRepository.useHTTP()
       .save(body as any)
-      .then((model) => {
-        return this.findById(model.id);
+      .then(async (model) => {
+        const rs = await this.findById(model.id);
+        this.socketService.with('dealDetails', rs, 'update');
+        return rs;
       })
   }
 
@@ -69,10 +75,9 @@ export class DealDetailService {
         return await this.dealDetailRepository.useHTTP()
         .remove(model)
           .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+            const rs = this.mapper.map({...model, id} as DealDetail, DealDetailVM, DealDetail);
+            this.socketService.with('dealDetails', rs, 'remove');
+            return rs;
           })
       });
   }

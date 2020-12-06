@@ -2,12 +2,12 @@ import { InvalidException, NotFoundException } from '@exceptions';
 import { Customer } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
 import { CustomerRepository, GroupRepository } from '@repositories';
-import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY } from '@types';
+import { FirebaseService, SocketService } from '@services';
+import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY, SOCKET_SERVICE } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
-import { FirebaseService } from '../extra-services';
 
 @Injectable()
 export class CustomerService {
@@ -15,9 +15,9 @@ export class CustomerService {
     @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
     @Inject(GROUP_REPOSITORY) protected readonly groupRepository: GroupRepository,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
   ) { }
-
   public readonly findAll = async (ids?: string[]): Promise<CustomerVM[]> => {
     return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups"] })
       .then(async (models) => {
@@ -27,7 +27,6 @@ export class CustomerService {
         throw new InvalidException(err);
       });
   };
-
   public readonly findAllByLead = async (): Promise<CustomerVM[]> => {
     return await this.groupRepository.useHTTP().findOne({ where: { id: 3 }, relations: ['customers'] })
       .then((model) => {
@@ -37,8 +36,6 @@ export class CustomerService {
         throw new InvalidException(err);
       });
   }
-
-
   public readonly findById = async (id: string): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "deals", "devices", "tickets"] })
       .then(async (model) => {
@@ -50,7 +47,6 @@ export class CustomerService {
         );
       })
   };
-
   public readonly checkUnique = async (label: string, value: string): Promise<string> => {
     const query = { [label]: value };
     return this.cusomterRepository.useHTTP().findOne({ where: query })
@@ -58,8 +54,12 @@ export class CustomerService {
         return model ? true : false;
       }).catch(err => err);
   }
-
   public readonly import = async (body: CustomerCM[]): Promise<any> => {
+    for (const customer of body) {
+      if (customer.avatar && customer.avatar.includes(';base64')) {
+        customer.avatar = this.solveImage(customer.avatar, customer.phone) as any;
+      }
+    }
     return await this.cusomterRepository.useHTTP().save(body).then(async (customers) => {
       const leadGroup = await this.groupRepository.useHTTP().findOne({ where: { id: 3 } });
       const group1 = await this.groupRepository.useHTTP().findOne({ where: { id: 0 } });
@@ -92,11 +92,11 @@ export class CustomerService {
           await this.cusomterRepository.useHTTP().save({ ...notOfLead[i], groups: [group3] });
         }
       }
-
-      return await this.findAll(customers.map((e) => e.id));
+      const rs = await this.findAll(customers.map((e) => e.id));
+      this.socketService.with('customers', rs, 'list');
+      return rs;
     });
   };
-
   private readonly callClassification = async (customerParam: [][]): Promise<string> => {
     return new Promise(async (resolve) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -108,12 +108,10 @@ export class CustomerService {
       });
     });
   };
-
   public readonly insert = async (body: CustomerCM): Promise<any> => {
     const customer = { ...body };
     if (customer.avatar && customer.avatar.includes(';base64')) {
-      await this.firebaseService.useUploadFileBase64("customer/avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64")), customer.avatar, customer.avatar.substring(customer.avatar.indexOf("data:image/") + 5, customer.avatar.indexOf(";base64")));
-      customer.avatar = environment.firebase.linkDownloadFile + "customer/avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64"));
+      customer.avatar = this.solveImage(customer.avatar, customer.phone) as any;
     }
     return await this.cusomterRepository.useHTTP().save({ ...customer }).then(async (data) => {
       if (customer.totalDeal == 0 && customer.totalSpending == 0 && customer.frequency == 0) {
@@ -135,11 +133,11 @@ export class CustomerService {
           await this.cusomterRepository.useHTTP().save({ ...data, groups: [group3] });
         }
       }
-
-      return this.findById(data.id);
+      const rs = await this.findById(data.id)
+      this.socketService.with('customers', rs, 'create');
+      return rs;
     });
   };
-
   public readonly update = async (body: CustomerUM): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
@@ -150,16 +148,16 @@ export class CustomerService {
         } else {
           const customer = { ...body };
           if (customer.avatar && customer.avatar.includes(';base64')) {
-            await this.firebaseService.useUploadFileBase64("customer/avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64")), customer.avatar, customer.avatar.substring(customer.avatar.indexOf("data:image/") + 5, customer.avatar.indexOf(";base64")));
-            customer.avatar = environment.firebase.linkDownloadFile + "customer/avatars/" + customer.phone + "." + customer.avatar.substring(customer.avatar.indexOf("data:image/") + 11, customer.avatar.indexOf(";base64"));
+            customer.avatar = this.solveImage(customer.avatar, customer.id) as any;
           }
           return await this.cusomterRepository.useHTTP().save(customer).then(async (customer) => {
-            return await this.findById(customer.id);
+            const rs = await this.findById(customer.id)
+            this.socketService.with('customers', rs, 'update');
+            return rs;
           }).catch(err => err);
         }
       });
   };
-
   public readonly remove = async (id: string): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
@@ -170,12 +168,13 @@ export class CustomerService {
         }
         return await this.cusomterRepository.useHTTP()
           .save({ id, isDelete: true })
-          .then(() => {
-            return this.findById(id);
+          .then(async (model) => {
+            const rs = await this.findById(model.id)
+            this.socketService.with('customers', rs, 'update');
+            return rs;
           })
       });
   };
-
   public readonly restore = async (id: string): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
@@ -186,9 +185,15 @@ export class CustomerService {
         }
         return await this.cusomterRepository.useHTTP()
           .save({ id, isDelete: false })
-          .then(() => {
-            return this.findById(id);
+          .then(async (model) => {
+            const rs = await this.findById(model.id)
+            this.socketService.with('customers', rs, 'update');
+            return rs;
           })
       });
   };
+  private readonly solveImage = async (avatar: string, triggerName: string) => {
+    await this.firebaseService.useUploadFileBase64("customer/avatars/" + triggerName + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
+    return environment.firebase.linkDownloadFile + "customer/avatars/" + triggerName + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
+  }
 }
