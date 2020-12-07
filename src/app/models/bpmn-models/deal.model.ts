@@ -59,9 +59,6 @@ export class Deal extends BaseEntity {
   @Column({ default: false })
   public feedbackStatus: boolean;
 
-  @ManyToOne(() => Account, feedbackAssignee => feedbackAssignee.deals)
-  public feedbackAssignee: Account;
-
   @OneToMany(() => Activity, activitys => activitys.deal)
   public activitys: Activity[];
 
@@ -71,6 +68,8 @@ export class Deal extends BaseEntity {
   @OneToMany(() => Note, notes => notes.deal)
   public notes: Note[];
 
+  @ManyToOne(() => Account, account => account.deals)
+  public assignee: Account;
 
   @OneToMany(() => Log, logs => logs.deal)
   public logs: Log[];

@@ -32,8 +32,8 @@ export class ActivityController {
     @ApiOperation({ summary: 'Get all task' })
     @ApiOkResponse({ description: 'Success return all task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public findAll(): Promise<ActivityVM[]> {
-        return this.service.findAll();
+    public findAll(@Headers('requester') requester: AccountVM): Promise<ActivityVM[]> {
+        return this.service.findAll(requester);
     }
 
     @Get(':id')

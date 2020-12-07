@@ -6,7 +6,6 @@ import { FirebaseService, SocketService } from '@services';
 import { ACCOUNT_REPOSITORY, ACTIVITY_REPOSITORY, FIREBASE_SERVICE, NOTIFICATION_REPOSITORY, SOCKET_SERVICE } from '@types';
 import { AccountVM, ActivityCM, ActivityUM, ActivityVM, NotificationVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { FindManyOptions, In } from 'typeorm';
 
 @Injectable()
 export class ActivityService {
@@ -19,20 +18,13 @@ export class ActivityService {
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
-  public readonly findAll = async (ids?: string[], status?: string): Promise<ActivityVM[]> => {
-    const whereOption = {};
-    if (ids) whereOption['id'] = In(ids);
-    if (status) whereOption['status'] = status;
-    const queryObj: FindManyOptions = {
-      where: whereOption,
-      relations: [
-        "assignee",
-        "assignBy",
-        'deal'
-      ]
+  public readonly findAll = async (requester: AccountVM): Promise<ActivityVM[]> => {
+    const query = {};
+    if (requester.roles.filter((e) => e.canAccessActivity && e.canGetAllActivity).length === 0) {
+      query['assignee'] = { id: requester.id };
     }
     return await this.activityRepository.useHTTP()
-      .find(queryObj)
+      .find()
       .then((models) =>
         this.mapper.mapArray(models, ActivityVM, Activity)
       )
@@ -54,7 +46,7 @@ export class ActivityService {
       })
   };
   public readonly insert = async (body: ActivityCM, requester: AccountVM): Promise<ActivityVM> => {
-    return await this.activityRepository.useHTTP().save({ ...body, assignBy: {id: requester.id} } as any)
+    return await this.activityRepository.useHTTP().save({ ...body, assignBy: { id: requester.id } } as any)
       .then(async (model) => {
         await this.accountRepository.useHTTP()
           .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
@@ -66,9 +58,9 @@ export class ActivityService {
                 name: 'activity',
                 data: (await this.findById(model.id)),
                 icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
-                account: {id: employee.id}
+                account: { id: employee.id }
               }).then(async (notification) => {
-                this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({id: notification.id} , {relations: ['account']}), NotificationVM, Notification), 'create');
+                this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
                 if (employee.devices.length > 0) {
                   await this.firebaseService.useSendToDevice(employee.devices.map((e) => e.id), {
                     notification: {
@@ -111,7 +103,7 @@ export class ActivityService {
         return await this.activityRepository.useHTTP()
           .remove(model)
           .then(() => {
-            const rs = this.mapper.map({...model, id} as Activity, ActivityVM, Activity);
+            const rs = this.mapper.map({ ...model, id } as Activity, ActivityVM, Activity);
             this.socketService.with('activitys', rs, 'remove');
             return rs;
           })
