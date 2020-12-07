@@ -44,8 +44,9 @@ export class NotificationService {
           })
       });
   };
-  public readonly seenAll = async (ids: string[]): Promise<NotificationVM[]> => {
-    const rs = this.mapper.mapArray(await this.notificationRepository.useHTTP().save(ids.map((id) => ({ id, isSeen: true }))), NotificationVM, Notification);
+  public readonly seenAll = async (notifications: NotificationVM[]): Promise<NotificationVM[]> => {
+    const rs = this.mapper.mapArray(await this.notificationRepository.useHTTP()
+      .save(notifications.map((notification) => ({ ...notification, isSeen: true })) as any[]), NotificationVM, Notification);
     this.socketService.with('notifications', rs, 'list');
     return rs;
   };
