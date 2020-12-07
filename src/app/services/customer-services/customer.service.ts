@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CustomerRepository, GroupRepository } from '@repositories';
 import { FirebaseService, SocketService } from '@services';
 import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY, SOCKET_SERVICE } from '@types';
-import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
+import { AccountVM, CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
@@ -19,19 +19,33 @@ export class CustomerService {
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
   ) { }
-  public readonly findAll = async (ids?: string[]): Promise<CustomerVM[]> => {
-    return await this.cusomterRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups"] })
+  public readonly findAll = async (ids?: string[], requester?: AccountVM): Promise<CustomerVM[]> => {
+    const query = {};
+    if (requester && requester.roles.filter((e) => e.canAccessCustomer && e.canGetAllCustomer).length === 0) {
+      query['assignee'] = { id: requester.id };
+    }
+    if (ids) {
+      query['id'] = In(ids);
+    }
+    return await this.cusomterRepository.useHTTP().find({ where: query, relations: ["groups", 'assignee'] })
       .then(async (models) => {
         return this.mapper.mapArray(models, CustomerVM, Customer)
       }).catch((err) => {
-        console.log(err);
         throw new InvalidException(err);
       });
   };
-  public readonly findAllByLead = async (): Promise<CustomerVM[]> => {
-    return await this.groupRepository.useHTTP().findOne({ where: { id: 3 }, relations: ['customers'] })
-      .then((model) => {
-        return this.mapper.mapArray(model.customers, CustomerVM, Customer);
+  public readonly findAllByLead = async (requester: AccountVM): Promise<CustomerVM[]> => {
+    const query = {};
+    if (requester.roles.filter((e) => e.canAccessCustomer && e.canGetAllCustomer).length === 0) {
+      query['assignee'] = { id: requester.id };
+    }
+    return await this.cusomterRepository.useHTTP().find({ where: query, relations: ['groups', 'assignee'] })
+      .then((customers) => {
+        customers = customers.filter((customer) => customer.groups.filter((group) => group.id == '3').length > 0);
+        if (requester.roles.filter((e) => e.canAccessCustomer && e.canGetAllCustomer).length === 0) {
+          customers = customers.filter((customer) => customer.assignee?.id === requester.id);
+        }
+        return this.mapper.mapArray(customers, CustomerVM, Customer);
       }).catch((err) => {
         console.log(err);
         throw new InvalidException(err);

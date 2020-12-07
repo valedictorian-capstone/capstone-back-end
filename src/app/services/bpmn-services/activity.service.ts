@@ -20,11 +20,11 @@ export class ActivityService {
   ) { }
   public readonly findAll = async (requester: AccountVM): Promise<ActivityVM[]> => {
     const query = {};
-    if (requester.roles.filter((e) => e.canAccessActivity && e.canGetAllActivity).length === 0) {
+    if (requester.roles.filter((e) => e.canAccessDeal && e.canGetAllActivity).length === 0) {
       query['assignee'] = { id: requester.id };
     }
     return await this.activityRepository.useHTTP()
-      .find()
+      .find({where: query})
       .then((models) =>
         this.mapper.mapArray(models, ActivityVM, Activity)
       )
