@@ -190,6 +190,8 @@ export class AppModule implements OnModuleInit, NestModule {
         { path: '/api/v1/Stage', method: RequestMethod.PUT },
         { path: '/api/v1/Stage/:id', method: RequestMethod.DELETE },
         // Deal
+        { path: '/api/v1/Deal', method: RequestMethod.GET },
+        { path: '/api/v1/Deal/stage/:id', method: RequestMethod.GET },
         { path: '/api/v1/Deal', method: RequestMethod.POST },
         { path: '/api/v1/Deal', method: RequestMethod.PUT },
         { path: '/api/v1/Deal/:id', method: RequestMethod.DELETE },
@@ -202,6 +204,8 @@ export class AppModule implements OnModuleInit, NestModule {
         { path: '/api/v1/Account/restore/:id', method: RequestMethod.PUT },
         // Customer
         { path: '/api/v1/Customer/import', method: RequestMethod.POST },
+        { path: '/api/v1/Customer', method: RequestMethod.GET },
+        { path: '/api/v1/Customer/lead', method: RequestMethod.GET },
         { path: '/api/v1/Customer', method: RequestMethod.POST },
         { path: '/api/v1/Customer', method: RequestMethod.PUT },
         { path: '/api/v1/Customer/restore/:id', method: RequestMethod.PUT },
@@ -226,6 +230,7 @@ export class AppModule implements OnModuleInit, NestModule {
         { path: '/api/v1/Category/restore/:id', method: RequestMethod.PUT },
         { path: '/api/v1/Category/:id', method: RequestMethod.DELETE },
         // Ticket
+        { path: '/api/v1/Ticket', method: RequestMethod.GET },
         { path: '/api/v1/Ticket', method: RequestMethod.PUT },
         { path: '/api/v1/Ticket/:id', method: RequestMethod.DELETE },
 

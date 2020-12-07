@@ -1,12 +1,11 @@
 import { InvalidException, NotFoundException } from '@exceptions';
-import { Ticket, Notification } from '@models';
+import { Notification, Ticket } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
 import { AccountRepository, CustomerRepository, NotificationRepository, TicketRepository } from '@repositories';
 import { FirebaseService, SocketService } from '@services';
 import { ACCOUNT_REPOSITORY, CUSTOMER_REPOSITORY, FIREBASE_SERVICE, NOTIFICATION_REPOSITORY, SOCKET_SERVICE, TICKET_REPOSITORY } from '@types';
-import { AccountVM, CustomerVM, TicketCM, TicketUM, TicketVM, NotificationVM } from '@view-models';
+import { AccountVM, CustomerVM, NotificationVM, TicketCM, TicketUM, TicketVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { In } from 'typeorm';
 
 @Injectable()
 export class TicketService {
@@ -20,10 +19,23 @@ export class TicketService {
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
 
-  public readonly findAll = async (ids?: string[]): Promise<TicketVM[]> => {
-    return await this.ticketRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["customer"] })
+  public readonly findAll = async (requester: AccountVM): Promise<TicketVM[]> => {
+    return await this.ticketRepository.useHTTP().find({ relations: ["customer", "assignee"] })
       .then(async (models) => {
-        return this.mapper.mapArray(models, TicketVM, Ticket)
+        if (requester.roles.filter((e) => e.canGetTicketDeal).length > 0 && requester.roles.filter((e) => e.canGetTicketSupport).length > 0) {
+        } else if (requester.roles.filter((e) => e.canGetTicketDeal).length === 0 && requester.roles.filter((e) => e.canGetTicketSupport).length === 0) {
+          models =  [];
+        } else {
+          const types = [];
+          if (requester.roles.filter((e) => e.canGetTicketDeal).length > 0) {
+            types.push('deal');
+          }
+          if (requester.roles.filter((e) => e.canGetTicketSupport).length > 0) {
+            types.push('orther');
+          }
+          models = models.filter((e) => types.findIndex((type) => type === e.type) > -1 && (e.assignee?.id === requester.id || e.assignee == null));
+        }
+        return this.mapper.mapArray(models, TicketVM, Ticket);
       }).catch((err) => {
         throw new InvalidException(err);
       });

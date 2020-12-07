@@ -2,7 +2,7 @@ import { Deal } from "@models";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ActivityRepository, DealDetailRepository, DealRepository, LogRepository, ProductRepository, StageRepository } from "@repositories";
 import { ACTIVITY_REPOSITORY, DEAL_DETAIL_REPOSITORY, DEAL_REPOSITORY, LOG_REPOSITORY, PRODUCT_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from "@types";
-import { DealCM, DealUM, DealVM } from "@view-models";
+import { AccountVM, DealCM, DealUM, DealVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { In } from 'typeorm';
 import { SocketService } from "../extra-services";
@@ -21,8 +21,12 @@ export class DealService {
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
 
-  public readonly findAll = async (): Promise<DealVM[]> => {
-    return await this.dealRepository.useHTTP().find({ relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments'] })
+  public readonly findAll = async (requester: AccountVM): Promise<DealVM[]> => {
+    const query = {};
+    if (requester.roles.filter((e) => e.canAccessDeal && e.canGetAllDeal).length === 0) {
+      query['assignee'] = { id: requester.id };
+    }
+    return await this.dealRepository.useHTTP().find({where: query ,relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments', 'assignee'] })
       .then(async (deals) => {
         for (let i = 0; i < deals.length; i++) {
           const deal = deals[i];
@@ -36,7 +40,7 @@ export class DealService {
       )
   }
   public readonly findById = async (id: string): Promise<DealVM> => {
-    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments'] })
+    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments', 'assignee'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -48,8 +52,12 @@ export class DealService {
         }
       })
   }
-  public readonly findByStage = async (id: string): Promise<DealVM[]> => {
-    return await this.dealRepository.useHTTP().find({ where: { stage: { id } }, relations: ['stage', 'customer', 'dealDetails'] })
+  public readonly findByStage = async (id: string, requester: AccountVM): Promise<DealVM[]> => {
+    const query = {};
+    if (requester.roles.filter((e) => e.canAccessDeal && e.canGetAllDeal).length === 0) {
+      query['assignee'] = { id: requester.id };
+    }
+    return await this.dealRepository.useHTTP().find({ where: { stage: { id }, ...query }, relations: ['stage', 'customer', 'dealDetails', 'assignee'] })
       .then(async (deals) => {
         for (let i = 0; i < deals.length; i++) {
           const deal = deals[i];
