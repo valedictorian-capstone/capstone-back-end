@@ -147,6 +147,7 @@ export class AppModule implements OnModuleInit, NestModule {
       .apply(AuthCustomerMiddleware)
       .forRoutes(
         { path: '/api/v1/Auth/Customer', method: RequestMethod.PUT },
+        { path: '/api/v1/Auth/Customer/profile', method: RequestMethod.PUT },
         { path: '/api/v1/Comment', method: RequestMethod.PUT },
         { path: '/api/v1/Comment', method: RequestMethod.PUT },
         { path: '/api/v1/Ticket', method: RequestMethod.POST },
@@ -154,7 +155,14 @@ export class AppModule implements OnModuleInit, NestModule {
     consumer
       .apply(AuthMiddleware)
       .forRoutes(
+        // Auth
         { path: '/api/v1/Auth', method: RequestMethod.PUT },
+        { path: '/api/v1/Auth/profile', method: RequestMethod.PUT },
+        { path: '/api/v1/Auth/password', method: RequestMethod.PUT },
+        // Notification
+        { path: '/api/v1/Notification', method: RequestMethod.GET },
+        { path: '/api/v1/Notification/Seen/:id', method: RequestMethod.PUT },
+        { path: '/api/v1/Notification/Seen', method: RequestMethod.PUT },
         // Activity
         { path: '/api/v1/Activity', method: RequestMethod.POST },
         { path: '/api/v1/Activity', method: RequestMethod.PUT },

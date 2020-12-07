@@ -1,7 +1,7 @@
-import { Body, Controller, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Headers, Post, Put } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
-import { AccountVM, CustomerCM, CustomerVM, DeviceCM } from '@view-models';
 import { AuthService } from '@services';
+import { AccountVM, CustomerCM, CustomerVM, DeviceCM } from '@view-models';
 
 class LoginGM {
   @ApiProperty({ required: true })
@@ -25,45 +25,40 @@ export class AuthController {
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async auth(@Request() req: Request, @Body() device: DeviceCM): Promise<AccountVM> {
-    const token = req.headers['authorization'];
-    return this.authenService.refresh(token, device);
+  public async auth(@Headers('requester') requester: AccountVM, @Body() device: DeviceCM): Promise<AccountVM> {
+    return this.authenService.refresh(requester, device);
   }
 
   @Put('/Customer')
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async authCustomer(@Request() req: Request, @Body() device: DeviceCM): Promise<CustomerVM> {
-    const token = req.headers['authorization'];
-    return this.authenService.refreshCustomer(token, device);
+  public async authCustomer(@Headers('requester') requester: CustomerVM, @Body() device: DeviceCM): Promise<CustomerVM> {
+    return this.authenService.refreshCustomer(requester, device);
   }
 
   @Put('/password')
   @ApiOperation({ summary: 'Change password' })
   @ApiOkResponse({ description: 'Change password' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updatePassword(@Request() req: Request, @Body() data: { password: string }): Promise<AccountVM> {
-    const token = req.headers['authorization'];
-    return this.authenService.updatePassword(data, token);
+  public async updatePassword(@Headers('requester') requester: AccountVM, @Body() data: { password: string }): Promise<AccountVM> {
+    return this.authenService.updatePassword(data, requester);
   }
 
   @Put('/profile')
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updateProfile(@Request() req: Request, @Body() account: AccountVM): Promise<AccountVM> {
-    const token = req.headers['authorization'];
-    return this.authenService.updateProfile(account, token);
+  public async updateProfile(@Headers('requester') requester: AccountVM, @Body() account: AccountVM): Promise<AccountVM> {
+    return this.authenService.updateProfile(account, requester);
   }
 
   @Put('/Customer/profile')
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updateCustomerProfile(@Request() req: Request, @Body() customer: CustomerVM): Promise<CustomerVM> {
-    const token = req.headers['authorization'];
-    return this.authenService.updateCustomerProfile(customer, token);
+  public async updateCustomerProfile(@Headers('requester') requester: CustomerVM, customer: CustomerVM): Promise<CustomerVM> {
+    return this.authenService.updateCustomerProfile(customer, requester);
   }
 
   @Post('/Login')

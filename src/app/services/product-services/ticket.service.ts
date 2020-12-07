@@ -40,29 +40,31 @@ export class TicketService {
       })
   };
   public readonly insert = async (body: TicketCM, requester: CustomerVM): Promise<TicketVM> => {
-    return await this.ticketRepository.useHTTP().save({ ...body, status: 'waiting', customer: requester } as any).then(async (model) => {
-      await this.notificationRepository.useHTTP().save({
-        body: `New ticket ${model.name} need to resolve`,
-        title: "Have a new ticket",
-        type: 'create',
-        name: 'ticket',
-        data: (await this.findById(model.id)),
-        icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
-      }).then(async (notification) => {
-        this.socketService.with('notifications', this.mapper.map(notification, NotificationVM, Notification), 'create');
-        let devices = [];
-        (await this.accountRepository.useHTTP().find({ relations: ['devices'] })).map((e) => e.devices).forEach((des) => devices = devices.concat(des));
-        if (devices.length > 0) {
-          await this.firebaseService.useSendToDevice(devices.map((e) => e.id), {
-            notification: {
-              body: `New ticket ${model.name} need to resolve`,
-              title: "Have a new ticket",
-              icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
-            },
-            // data: (await this.findById(model.id)) as any
-          });
-        }
-      })
+    return await this.ticketRepository.useHTTP().save({ ...body, status: 'waiting', customer: { id: requester.id } } as any).then(async (model) => {
+      const accounts = (await this.accountRepository.useHTTP().find({ relations: ['devices'] }));
+      for (const account of accounts) {
+        await this.notificationRepository.useHTTP().save({
+          body: `New ticket ${model.name} need to resolve`,
+          title: "Have a new ticket",
+          type: 'create',
+          name: 'ticket',
+          data: (await this.findById(model.id)),
+          icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
+          account: { id: account.id }
+        }).then(async (notification) => {
+          this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({id: notification.id} , {relations: ['account']}), NotificationVM, Notification), 'create');
+          if (account.devices.length > 0) {
+            await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+              notification: {
+                body: `New ticket ${model.name} need to resolve`,
+                title: "Have a new ticket",
+                icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
+              },
+              // data: (await this.findById(model.id)) as any
+            });
+          }
+        })
+      }
       const rs = await this.findById(model.id)
       this.socketService.with('tickets', rs, 'create');
       return rs;
@@ -76,7 +78,7 @@ export class TicketService {
             `Can not find ${body.id}`,
           );
         } else {
-          return await this.ticketRepository.useHTTP().save({ ...body, account: requester } as any).then(async (model) => {
+          return await this.ticketRepository.useHTTP().save({ ...body, account: { id: requester.id } } as any).then(async (model) => {
             const rs = await this.findById(model.id)
             this.socketService.with('tickets', rs, 'update');
             return rs;
@@ -95,7 +97,7 @@ export class TicketService {
         return await this.ticketRepository.useHTTP()
           .remove(model)
           .then(async () => {
-            const rs = this.mapper.map({...model, id} as Ticket, TicketVM, Ticket);
+            const rs = this.mapper.map({ ...model, id } as Ticket, TicketVM, Ticket);
             this.socketService.with('tickets', rs, 'remove');
             return rs;
           })

@@ -9,6 +9,7 @@ import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
 import { EmailService, FirebaseService, SocketService } from '../extra-services';
+import { uuid } from 'uuidv4';
 
 @Injectable()
 export class AccountService {
@@ -45,7 +46,7 @@ export class AccountService {
   public readonly import = async (body: AccountCM[]): Promise<any> => {
     for (const account of body) {
       if (account.avatar && account.avatar.includes(';base64')) {
-        account.avatar = this.solveImage(account.avatar, account.phone) as any;
+        account.avatar = this.solveImage(account.avatar) as any;
       }
     }
     return await this.accountRepository.useHTTP().save(body as any).then(async (accounts: Account[]) => {
@@ -65,7 +66,7 @@ export class AccountService {
   public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
     const acc = { ...body };
     if (acc.avatar && acc.avatar.includes(';base64')) {
-      acc.avatar = this.solveImage(acc.avatar, acc.phone) as any;
+      acc.avatar = this.solveImage(acc.avatar) as any;
     }
     return await this.accountRepository.useHTTP().save({ ...acc, passwordHash: hashSync(acc.password, 10) } as any).then(async (account) => {
       await this.emailService.sendManualEmailCustomer({
@@ -89,7 +90,7 @@ export class AccountService {
         } else {
           const acc = { ...body };
           if (acc.avatar && acc.avatar.includes(';base64')) {
-            acc.avatar = this.solveImage(acc.avatar, acc.id) as any;
+            acc.avatar = this.solveImage(acc.avatar) as any;
           }
           return await this.accountRepository.useHTTP().save(body as any).then(async (account) => {
             const rs = await this.findById(account.id)
@@ -133,8 +134,8 @@ export class AccountService {
           })
       });
   };
-  private readonly solveImage = async (avatar: string, triggerName: string) => {
-    await this.firebaseService.useUploadFileBase64("employee/avatars/" + triggerName + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
-    return environment.firebase.linkDownloadFile + "employee/avatars/" + triggerName + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
+  private readonly solveImage = async (avatar: string) => {
+    await this.firebaseService.useUploadFileBase64("employee/avatars/" + uuid() + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
+    return environment.firebase.linkDownloadFile + "employee/avatars/" + uuid() + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
   }
 }

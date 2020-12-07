@@ -54,7 +54,7 @@ export class ActivityService {
       })
   };
   public readonly insert = async (body: ActivityCM, requester: AccountVM): Promise<ActivityVM> => {
-    return await this.activityRepository.useHTTP().save({ ...body, assignBy: requester } as any)
+    return await this.activityRepository.useHTTP().save({ ...body, assignBy: {id: requester.id} } as any)
       .then(async (model) => {
         await this.accountRepository.useHTTP()
           .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
@@ -65,9 +65,10 @@ export class ActivityService {
                 type: 'create',
                 name: 'activity',
                 data: (await this.findById(model.id)),
-                icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
+                icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
+                account: {id: employee.id}
               }).then(async (notification) => {
-                this.socketService.with('notifications', this.mapper.map(notification, NotificationVM, Notification), 'create');
+                this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({id: notification.id} , {relations: ['account']}), NotificationVM, Notification), 'create');
                 if (employee.devices.length > 0) {
                   await this.firebaseService.useSendToDevice(employee.devices.map((e) => e.id), {
                     notification: {
