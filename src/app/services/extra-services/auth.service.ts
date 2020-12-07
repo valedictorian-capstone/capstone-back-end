@@ -1,11 +1,11 @@
-import { Account, Customer } from '@models';
+import { Account, Customer, Device } from '@models';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, CustomerRepository, DeviceRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, CUSTOMER_REPOSITORY, DEVICE_REPOSITORY, FIREBASE_SERVICE } from '@types';
-import { AccountVM, CustomerCM, CustomerVM, DeviceCM } from '@view-models';
+import { AccountVM, CustomerCM, CustomerVM, DeviceCM, DeviceVM } from '@view-models';
 import { compareSync, hashSync } from 'bcrypt';
-import { sign, verify } from 'jsonwebtoken';
+import { sign } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { environment } from 'src/environments/environment';
 import { FirebaseService } from '.';
@@ -21,6 +21,7 @@ export class AuthService {
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
   ) { }
 
+  // Account
   public readonly login = async (emailOrPhone: string, password: string,): Promise<any> => {
     return await this.validateAccount(emailOrPhone, password).then(
       async (account) => {
@@ -43,6 +44,36 @@ export class AuthService {
       }
     )
   }
+  public readonly refresh = async (requester: AccountVM, device?: DeviceCM) => {
+    if (device?.id && !requester.devices.find((e) => e.id === device.id)) {
+      const newDevice = await this.deviceRepository.useHTTP()
+        .save({ ...device, account: {id: requester.id}, customer: undefined } as any).then((data) => this.mapper.map(data, DeviceVM, Device));
+      requester.devices.push(newDevice);
+      return requester;
+    }
+    return requester;
+  }
+  protected readonly generateJWT = (account: AccountVM): string => {
+    return sign({ account }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
+      expiresIn: '24h',
+      audience: account.email,
+      issuer: 'crm',
+      subject: 'se20fa27'
+    });
+  }
+  public readonly updatePassword = async (data: { password: string }, requester: AccountVM) => {
+    return await this.accountRepository.useHTTP().save({ id: requester.id, passwordHash: hashSync(data.password, 10) } as any).then(() => null);
+  }
+  public readonly updateProfile = async (data: AccountVM, requester: AccountVM) => {
+    const acc = { ...requester, ...data };
+    if (acc.avatar && acc.avatar.includes(';base64')) {
+      acc.avatar = this.solveImage(acc.avatar, acc.id, 'employee/avatars') as any;
+    }
+    const account = await this.accountRepository.useHTTP().save(acc as any);
+    return this.mapper.map(account, AccountVM, Account);
+  }
+
+  // Customer
   public readonly loginCustomer = async (phone: string): Promise<any> => {
     return await this.customerRepository.useHTTP().findOne({ where: { phone } }).then((customer) => {
       if (customer != null) {
@@ -74,31 +105,14 @@ export class AuthService {
       }
     })
   }
-  public readonly refresh = async (token: string, device: DeviceCM) => {
-    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const account = await this.accountRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).account.id }, relations: ["roles", "activitys", "devices"] });
-    if (device.id && !account.devices.find((e) => e.id === device.id)) {
-      await this.deviceRepository.useHTTP().save({ ...device, account: account, customer: undefined });
-      return this.mapper.map(await this.accountRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).account.id }, relations: ["roles", "activitys", "devices"] }), AccountVM, Account);
+  public readonly refreshCustomer = async (requester: CustomerVM, device?: DeviceCM) => {
+    if (device?.id && !requester.devices.find((e) => e.id === device.id)) {
+      const newDevice = await this.deviceRepository.useHTTP()
+        .save({ ...device, account: undefined, customer: {id: requester} } as any).then((data) => this.mapper.map(data, DeviceVM, Device));
+      requester.devices.push(newDevice);
+      return requester;
     }
-    return this.mapper.map(account, AccountVM, Account);
-  }
-  public readonly refreshCustomer = async (token: string, device: DeviceCM) => {
-    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const customer = await this.customerRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).customer.id }, relations: ["devices"] });
-    if (device.id && !customer.devices.find((e) => e.id === device.id)) {
-      await this.deviceRepository.useHTTP().save({ ...device, customer, account: undefined });
-      return this.mapper.map(await this.customerRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).customer.id }, relations: ["devices"] }), CustomerVM, Customer);
-    }
-    return this.mapper.map(customer, CustomerVM, Customer);
-  }
-  protected readonly generateJWT = (account: AccountVM): string => {
-    return sign({ account }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
-      expiresIn: '24h',
-      audience: account.email,
-      issuer: 'crm',
-      subject: 'se20fa27'
-    });
+    return requester;
   }
   protected readonly generateJWTCustomer = (customer: CustomerVM): string => {
     return sign({ customer }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
@@ -107,30 +121,18 @@ export class AuthService {
       subject: 'se20fa27'
     });
   }
-  public readonly updateCustomerProfile = async (data: CustomerVM, token: string) => {
-    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const cus = { ...data, id: Object.assign(decoded.valueOf()).customer.id };
+  public readonly updateCustomerProfile = async (data: CustomerVM, requester: CustomerVM) => {
+    const cus = { ...requester, ...data };
     if (cus.avatar && cus.avatar.includes(';base64')) {
-      await this.firebaseService.useUploadFileBase64("customer/avatars/" + cus.phone + "." + cus.avatar.substring(cus.avatar.indexOf("data:image/") + 11, cus.avatar.indexOf(";base64")), cus.avatar, cus.avatar.substring(cus.avatar.indexOf("data:image/") + 5, cus.avatar.indexOf(";base64")));
-      cus.avatar = environment.firebase.linkDownloadFile + "customer/avatars/" + cus.phone + "." + cus.avatar.substring(cus.avatar.indexOf("data:image/") + 11, cus.avatar.indexOf(";base64"));
+      cus.avatar = this.solveImage(cus.avatar, cus.id, 'customer/avatars') as any;
     }
     const customer = await this.customerRepository.useHTTP().save(cus as any);
     return this.mapper.map(customer, CustomerVM, Customer);
   }
-  public readonly updatePassword = async (data: { password: string }, token: string) => {
-    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const account = Object.assign(decoded.valueOf()).account;
-    return await this.accountRepository.useHTTP().save({ id: account.id, passwordHash: hashSync(data.password, 10) } as any).then(() => null);
-  }
-  public readonly updateProfile = async (data: AccountVM, token: string) => {
-    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const acc = { ...data, id: Object.assign(decoded.valueOf()).account.id };
-    if (acc.avatar && acc.avatar.includes(';base64')) {
-      await this.firebaseService.useUploadFileBase64("employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64")), acc.avatar, acc.avatar.substring(acc.avatar.indexOf("data:image/") + 5, acc.avatar.indexOf(";base64")));
-      acc.avatar = environment.firebase.linkDownloadFile + "employee/avatars/" + acc.phone + "." + acc.avatar.substring(acc.avatar.indexOf("data:image/") + 11, acc.avatar.indexOf(";base64"));
-    }
-    const account = await this.accountRepository.useHTTP().save(acc as any);
-    return this.mapper.map(account, AccountVM, Account);
+
+  private readonly solveImage = async (avatar: string, triggerName: string, path: string) => {
+    await this.firebaseService.useUploadFileBase64(path + triggerName + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
+    return environment.firebase.linkDownloadFile + path + triggerName + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
   }
   protected readonly validateAccount = async (emailOrPhone: string, password: string): Promise<AccountVM> => {
     const option = isNaN(+emailOrPhone) ?
