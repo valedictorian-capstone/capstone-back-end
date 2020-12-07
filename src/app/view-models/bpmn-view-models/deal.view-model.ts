@@ -39,7 +39,7 @@ export class DealVM {
   @AutoMap()
   public readonly feedbackStatus: boolean;
 
-  public readonly feedbackAssignee: AccountVM;
+  public readonly assignee: AccountVM;
 
   public readonly activitys: ActivityVM;
 

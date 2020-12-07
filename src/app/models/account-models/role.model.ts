@@ -13,10 +13,6 @@ export class Role extends BaseEntity {
   public name: string;
 
   @AutoMap()
-  @Column({ default: false })
-  public notChange: boolean;
-
-  @AutoMap()
   @Column({ default: 0 })
   public level: number;
 
@@ -47,6 +43,10 @@ export class Role extends BaseEntity {
   @AutoMap()
   @Column({ default: true })
   public readonly canAccessDeal: boolean;
+
+  @AutoMap()
+  @Column({ default: true })
+  public readonly canGetAllDeal: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -122,6 +122,10 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
+  public readonly canGetAllCustomer: boolean;
+
+  @AutoMap()
+  @Column({ default: true })
   public readonly canCreateCustomer: boolean;
 
   @AutoMap()
@@ -146,6 +150,10 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
+  public readonly canGetAllActivity: boolean;
+
+  @AutoMap()
+  @Column({ default: true })
   public readonly canCreateActivity: boolean;
 
   @AutoMap()
@@ -167,6 +175,14 @@ export class Role extends BaseEntity {
   @AutoMap()
   @Column({ default: true })
   public readonly canAccessTicket: boolean;
+
+  @AutoMap()
+  @Column({ default: true })
+  public readonly canGetTicketDeal: boolean;
+
+  @AutoMap()
+  @Column({ default: true })
+  public readonly canGetTicketSupport: boolean;
 
   @AutoMap()
   @Column({ default: true })

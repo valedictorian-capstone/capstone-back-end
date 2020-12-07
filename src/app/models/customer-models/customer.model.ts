@@ -13,6 +13,8 @@ import {
 import { Device, Group, Notification, Comment } from '../basic-models';
 import { Deal } from '../bpmn-models';
 import { Ticket } from '../product-models';
+import { Account } from '@models';
+import { ManyToOne } from 'typeorm';
 
 
 @Entity()
@@ -128,6 +130,9 @@ export class Customer extends BaseEntity {
 
   @OneToMany(() => Comment, comments => comments.customer)
   public comments: Comment[];
+
+  @ManyToOne(() => Account, account => account.customers)
+  public assignee: Account;
 
   @AutoMap()
   @Column({ default: null })

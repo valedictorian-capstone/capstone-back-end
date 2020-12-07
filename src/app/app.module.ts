@@ -164,6 +164,7 @@ export class AppModule implements OnModuleInit, NestModule {
         { path: '/api/v1/Notification/Seen/:id', method: RequestMethod.PUT },
         { path: '/api/v1/Notification/Seen', method: RequestMethod.PUT },
         // Activity
+        { path: '/api/v1/Activity', method: RequestMethod.GET },
         { path: '/api/v1/Activity', method: RequestMethod.POST },
         { path: '/api/v1/Activity', method: RequestMethod.PUT },
         { path: '/api/v1/Activity/:id', method: RequestMethod.DELETE },
