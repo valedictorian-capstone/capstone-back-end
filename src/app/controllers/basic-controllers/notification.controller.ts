@@ -37,8 +37,8 @@ export class NotificationController {
   @ApiOperation({ summary: 'Seen one' })
   @ApiCreatedResponse({ description: 'Success seen ntification' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public seenAll(@Body() ids: string[]): Promise<NotificationVM[]> {
-    return this.service.seenAll(ids);
+  public seenAll(@Body() notifications: NotificationVM[]): Promise<NotificationVM[]> {
+    return this.service.seenAll(notifications);
   }
   @Put('/Seen/:id')
   @ApiOperation({ summary: 'Seen one' })
