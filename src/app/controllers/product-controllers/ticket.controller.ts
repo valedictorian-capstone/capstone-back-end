@@ -1,24 +1,22 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Post,
-    Put,
-  } from '@nestjs/common';
-  import {
-    ApiBadRequestResponse,
-    ApiBearerAuth,
-    ApiCreatedResponse,
-    ApiNotFoundResponse,
-    ApiOkResponse,
-    ApiOperation,
-    ApiTags,
-  } from '@nestjs/swagger';
-  import { TicketCM, TicketUM, TicketVM, AccountVM } from '@view-models';
-  import { TicketService } from '@services';
-import { Request, Headers } from '@nestjs/common';
+  Body,
+  Controller,
+  Delete,
+  Get, Headers, Param,
+  Post,
+  Put
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags
+} from '@nestjs/swagger';
+import { TicketService } from '@services';
+import { AccountVM, CustomerVM, TicketCM, TicketUM, TicketVM } from '@view-models';
   
   @ApiBearerAuth('JWT')
   @ApiTags('Ticket')
@@ -49,18 +47,16 @@ import { Request, Headers } from '@nestjs/common';
     @ApiOperation({ summary: 'Insert new Ticket' })
     @ApiCreatedResponse({ description: 'Success create new Ticket' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Request() req: Request, @Body() body: TicketCM): Promise<TicketVM> {
-      const token = req.headers['authorization'];
-      return this.service.insert(body, token);
+    public insert(@Headers('requester') requester: CustomerVM, @Body() body: TicketCM): Promise<TicketVM> {
+      return this.service.insert(body, requester);
     }
   
     @Put()
     @ApiOperation({ summary: 'Update an Ticket by Id' })
     @ApiCreatedResponse({ description: 'Success update new Ticket' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public update(@Request() req: Request, @Body() body: TicketUM): Promise<TicketVM> {
-      const token = req.headers['authorization'];
-      return this.service.update(body, token);
+    public update(@Body() body: TicketUM): Promise<TicketVM> {
+      return this.service.update(body);
     }
   
     @Delete(':id')

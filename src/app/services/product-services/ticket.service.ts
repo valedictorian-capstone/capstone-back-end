@@ -41,7 +41,7 @@ export class TicketService {
       });
   };
   public readonly findById = async (id: string): Promise<TicketVM> => {
-    return await this.ticketRepository.useHTTP().findOne({ where: { id: id }, relations: ["customer"] })
+    return await this.ticketRepository.useHTTP().findOne({ where: { id: id }, relations: ["customer", "assignee"] })
       .then(async (model) => {
         if (model) {
           return this.mapper.map(model, TicketVM, Ticket);
@@ -82,7 +82,7 @@ export class TicketService {
       return rs;
     });
   };
-  public readonly update = async (body: TicketUM, requester: AccountVM): Promise<TicketVM> => {
+  public readonly update = async (body: TicketUM): Promise<TicketVM> => {
     return await this.ticketRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
@@ -90,7 +90,7 @@ export class TicketService {
             `Can not find ${body.id}`,
           );
         } else {
-          return await this.ticketRepository.useHTTP().save({ ...body, account: { id: requester.id } } as any).then(async (model) => {
+          return await this.ticketRepository.useHTTP().save(body).then(async (model) => {
             const rs = await this.findById(model.id)
             this.socketService.with('tickets', rs, 'update');
             return rs;
