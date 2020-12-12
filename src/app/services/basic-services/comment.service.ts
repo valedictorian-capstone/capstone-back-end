@@ -18,7 +18,7 @@ export class CommentService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CommentVM[]> => {
-    return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: [] })
+    return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ['customer', 'product'] })
       .then((models) => this.mapper.mapArray(models, CommentVM, Comment))
   };
   public readonly findById = async (id: string): Promise<CommentVM> => {

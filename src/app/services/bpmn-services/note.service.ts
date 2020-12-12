@@ -19,7 +19,7 @@ export class NoteService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<NoteVM[]> => {
-    return await this.noteRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: [] })
+    return await this.noteRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ['deal'] })
       .then((models) => {
         return this.mapper.mapArray(models, NoteVM, Note)
       });
