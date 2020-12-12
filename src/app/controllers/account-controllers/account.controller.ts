@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-
+  Headers,
   Param,
   Post,
   Put,
@@ -34,8 +34,8 @@ export class AccountController {
   @ApiOkResponse({ description: 'Success return all Accounts' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   @ApiQuery({ name: 'roleName', allowEmptyValue: true })
-  public findAll(): Promise<AccountVM[]> {
-    return this.service.findAll();
+  public findAll(@Headers('requester') requester: AccountVM): Promise<AccountVM[]> {
+    return this.service.findAll(requester);
   }
   @Get('/unique')
   @ApiOperation({ summary: 'Check duplicate data for phoneNumber, email, code' })

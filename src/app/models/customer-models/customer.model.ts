@@ -8,13 +8,11 @@ import {
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
-import { Device, Group, Notification, Comment } from '../basic-models';
+import { Comment, Device, Group, Notification } from '../basic-models';
 import { Deal } from '../bpmn-models';
 import { Ticket } from '../product-models';
-import { Account } from '@models';
-import { ManyToOne } from 'typeorm';
 
 
 @Entity()
@@ -97,15 +95,15 @@ export class Customer extends BaseEntity {
   public twitter: string;
 
   @AutoMap()
-  @Column({ nullable: false, default: 0 })
+  @Column({ nullable: false, default: 0, type: 'float' })
   public totalDeal: number;
 
   @AutoMap()
-  @Column({ nullable: false, default: 0 })
+  @Column({ nullable: false, default: 0, type: 'float' })
   public totalSpending: number;
 
   @AutoMap()
-  @Column({ nullable: false, default: 0 })
+  @Column({ nullable: false, default: 0, type: 'float' })
   public frequency: number;
 
   @AutoMap()
@@ -130,9 +128,6 @@ export class Customer extends BaseEntity {
 
   @OneToMany(() => Comment, comments => comments.customer)
   public comments: Comment[];
-
-  @ManyToOne(() => Account, account => account.customers)
-  public assignee: Account;
 
   @AutoMap()
   @Column({ default: null })

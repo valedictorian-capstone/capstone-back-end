@@ -4,7 +4,6 @@ import { Device, Notification } from '../basic-models';
 import { Activity, Deal } from '../bpmn-models';
 import { Ticket } from '../product-models';
 import { Role } from './role.model';
-import { Customer } from '@models';
 @Entity()
 export class Account extends BaseEntity {
 
@@ -47,9 +46,6 @@ export class Account extends BaseEntity {
 
   @OneToMany(() => Ticket, tickets => tickets.assignee)
   public tickets: Ticket[];
-
-  @OneToMany(() => Customer, customers => customers.assignee)
-  public customers: Customer[];
 
   @OneToMany(() => Ticket, tickets => tickets.feedbackAssignee)
   public feedbackTickets: Ticket[];

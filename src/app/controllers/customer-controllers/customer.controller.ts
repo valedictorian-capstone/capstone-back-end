@@ -6,7 +6,7 @@ import {
   Param,
   Post,
   Put,
-  Query,
+  Query
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -15,11 +15,10 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
-import { CustomerCM, CustomerUM, CustomerVM, AccountVM } from '@view-models';
 import { CustomerService } from '@services';
-import { Headers } from '@nestjs/common';
+import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Customer')
@@ -33,16 +32,16 @@ export class CustomerController{
   @ApiOperation({ summary: 'Get all Customers' })
   @ApiOkResponse({ description: 'Success return all Customers' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public findAll(@Headers('requester') requester: AccountVM): Promise<CustomerVM[]> {
-    return this.service.findAll(undefined ,requester);
+  public findAll(): Promise<CustomerVM[]> {
+    return this.service.findAll();
   }
 
   @Get('/lead')
   @ApiOperation({ summary: 'Get all Customers by type lead' })
   @ApiOkResponse({ description: 'Success return all Customers by type lead' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public findAllByLead(@Headers('requester') requester: AccountVM): Promise<CustomerVM[]> {
-    return this.service.findAllByLead(requester);
+  public findAllByLead(): Promise<CustomerVM[]> {
+    return this.service.findAllByLead();
   }
 
   @Get('/unique')

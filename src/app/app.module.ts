@@ -149,7 +149,6 @@ export class AppModule implements OnModuleInit, NestModule {
         { path: '/api/v1/Auth/Customer', method: RequestMethod.PUT },
         { path: '/api/v1/Auth/Customer/profile', method: RequestMethod.PUT },
         { path: '/api/v1/Comment', method: RequestMethod.PUT },
-        { path: '/api/v1/Comment', method: RequestMethod.PUT },
         { path: '/api/v1/Ticket', method: RequestMethod.POST },
       );
     consumer
@@ -199,6 +198,7 @@ export class AppModule implements OnModuleInit, NestModule {
         // Account
         { path: '/api/v1/Account/import', method: RequestMethod.POST },
         { path: '/api/v1/Account/:id', method: RequestMethod.DELETE },
+        { path: '/api/v1/Account', method: RequestMethod.GET },
         { path: '/api/v1/Account', method: RequestMethod.POST },
         { path: '/api/v1/Account', method: RequestMethod.PUT },
         { path: '/api/v1/Account/restore/:id', method: RequestMethod.PUT },
@@ -211,6 +211,7 @@ export class AppModule implements OnModuleInit, NestModule {
         { path: '/api/v1/Customer/restore/:id', method: RequestMethod.PUT },
         { path: '/api/v1/Customer/:id', method: RequestMethod.DELETE },
         // Role
+        { path: '/api/v1/Role', method: RequestMethod.GET },
         { path: '/api/v1/Role', method: RequestMethod.POST },
         { path: '/api/v1/Role', method: RequestMethod.PUT },
         { path: '/api/v1/Role/restore/:id', method: RequestMethod.PUT },

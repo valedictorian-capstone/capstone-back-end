@@ -45,6 +45,15 @@ export class DealController {
     return await this.dealService.findById(id);
   }
 
+  @Get('/customer/:id')
+  @ApiOperation({ summary: 'Get an deal by Customer Id' })
+  @ApiOkResponse({ description: "Success return an deal's information" })
+  @ApiNotFoundResponse({ description: 'Fail to find deal by Customer Id' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async findByCustomerId(@Param('id') id: string): Promise<DealVM[]> {
+    return await this.dealService.findByCustomerId(id);
+  }
+
   @Get('/stage/:id')
   @ApiOperation({ summary: 'Get an deal by stage' })
   @ApiOkResponse({ description: "Success return an deal's information" })

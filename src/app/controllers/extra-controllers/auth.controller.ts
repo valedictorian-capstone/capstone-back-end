@@ -41,7 +41,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Change password' })
   @ApiOkResponse({ description: 'Change password' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updatePassword(@Headers('requester') requester: AccountVM, @Body() data: { password: string }): Promise<AccountVM> {
+  public async updatePassword(@Headers('requester') requester: AccountVM, @Body() data: { password: string, old: string }): Promise<AccountVM> {
     return this.authenService.updatePassword(data, requester);
   }
 

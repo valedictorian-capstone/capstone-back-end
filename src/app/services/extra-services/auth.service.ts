@@ -9,6 +9,7 @@ import { sign } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { environment } from 'src/environments/environment';
 import { FirebaseService } from '.';
+import { InvalidException } from '../../exceptions/invalid-exception';
 
 @Injectable()
 export class AuthService {
@@ -47,7 +48,7 @@ export class AuthService {
   public readonly refresh = async (requester: AccountVM, device?: DeviceCM) => {
     if (device?.id && !requester.devices.find((e) => e.id === device.id)) {
       const newDevice = await this.deviceRepository.useHTTP()
-        .save({ ...device, account: {id: requester.id}, customer: undefined } as any).then((data) => this.mapper.map(data, DeviceVM, Device));
+        .save({ ...device, account: { id: requester.id }, customer: undefined } as any).then((data) => this.mapper.map(data, DeviceVM, Device));
       requester.devices.push(newDevice);
       return requester;
     }
@@ -61,8 +62,15 @@ export class AuthService {
       subject: 'se20fa27'
     });
   }
-  public readonly updatePassword = async (data: { password: string }, requester: AccountVM) => {
-    return await this.accountRepository.useHTTP().save({ id: requester.id, passwordHash: hashSync(data.password, 10) } as any).then(() => null);
+  public readonly updatePassword = async (data: { old: string, password: string }, requester: AccountVM) => {
+    const check = await this.accountRepository.useHTTP().findOne({ id: requester.id })
+      .then((res) => compareSync(data.old, res.passwordHash));
+    if (check) {
+      return await this.accountRepository.useHTTP().save({ id: requester.id, passwordHash: hashSync(data.password, 10) } as any).then(() => null);
+    } else {
+      throw new InvalidException('Your old password is wrong');
+    }
+
   }
   public readonly updateProfile = async (data: AccountVM, requester: AccountVM) => {
     const acc = { ...requester, ...data };
@@ -95,7 +103,7 @@ export class AuthService {
       frequency: 0,
       totalDeal: 0,
       totalSpending: 0,
-      groups: [{id: '3'}]
+      groups: [{ id: '3' }]
     } as any).then(async (res) => {
       return {
         accessToken: this.generateJWTCustomer(this.mapper.map(await this.customerRepository.useHTTP().findOne({ where: { id: res.id }, relations: ["devices"] }), CustomerVM, Customer)),
@@ -108,7 +116,7 @@ export class AuthService {
   public readonly refreshCustomer = async (requester: CustomerVM, device?: DeviceCM) => {
     if (device?.id && !requester.devices.find((e) => e.id === device.id)) {
       const newDevice = await this.deviceRepository.useHTTP()
-        .save({ ...device, account: undefined, customer: {id: requester} } as any).then((data) => this.mapper.map(data, DeviceVM, Device));
+        .save({ ...device, account: undefined, customer: { id: requester } } as any).then((data) => this.mapper.map(data, DeviceVM, Device));
       requester.devices.push(newDevice);
       return requester;
     }
