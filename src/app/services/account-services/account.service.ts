@@ -8,8 +8,8 @@ import { hashSync } from 'bcrypt';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
-import { EmailService, FirebaseService, SocketService } from '../extra-services';
 import { uuid } from 'uuidv4';
+import { EmailService, FirebaseService, SocketService } from '../extra-services';
 
 @Injectable()
 export class AccountService {
@@ -21,9 +21,14 @@ export class AccountService {
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
-  public readonly findAll = async (ids?: string[]): Promise<AccountVM[]> => {
+  public readonly findAll = async (requester?: AccountVM, ids?: string[]): Promise<AccountVM[]> => {
+    const level = requester ? Math.min(...requester.roles.map((e) => e.level)) : undefined;
+    const queryId = ids ? {
+      id: In(ids)
+    } : {};
     return await this.mapper.mapArray(await this.accountRepository.useHTTP()
-      .find({ where: (ids ? { id: In(ids) } : {}), relations: ["devices", "roles", "activitys"] }), AccountVM, Account);
+      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys"] }), AccountVM, Account)
+      .filter((account) => level != null && account.id !== requester?.id ? Math.min(...account.roles.map((e) => e.level)) > level : true);
   };
   public readonly findById = async (id: string): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["devices", "roles", "activitys"] })
@@ -58,7 +63,7 @@ export class AccountService {
             '<span>Password: </span> ' + acc.password
         });
       }
-      const rs = await this.findAll(accounts.map((e) => e.id));
+      const rs = await this.findAll(undefined, accounts.map((e) => e.id));
       this.socketService.with('accounts', rs, 'list');
       return rs;
     });
@@ -73,7 +78,7 @@ export class AccountService {
         info: account as any,
         subject: 'EMPLOYEE ACCOUNT FOR SYSTEM',
         content: '<span>Email: </span> ' + acc.email + '<br>' +
-        '<span>Password: </span> ' + acc.password
+          '<span>Password: </span> ' + acc.password
       });
       const rs = await this.findById(account.id)
       this.socketService.with('accounts', rs, 'create');
@@ -109,7 +114,7 @@ export class AccountService {
           );
         }
         return await this.accountRepository.useHTTP()
-          .save({ id, isDelete: true})
+          .save({ id, isDelete: true })
           .then(async () => {
             const rs = await this.findById(id)
             this.socketService.with('accounts', rs, 'update');

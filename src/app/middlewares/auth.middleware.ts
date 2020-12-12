@@ -16,9 +16,12 @@ export class AuthMiddleware implements NestMiddleware {
   ) { }
   async use(req: Request, res: Response, next: NextFunction) {
     const token = req.headers.authorization;
+    if (!token) {
+      throw new UnauthorizedException("You have no permission");
+    }
     const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
     const account = Object.assign(decoded.valueOf()).account;
-    if (!token || !account) {
+    if (!account) {
       throw new UnauthorizedException("You have no permission");
     }
     const requester = this.mapper.map(await this.accountRepository.useHTTP().findOne({ id: account.id }, { relations: ['devices', 'roles', 'notifications'] }), AccountVM, Account);

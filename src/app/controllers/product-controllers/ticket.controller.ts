@@ -42,6 +42,15 @@ import { AccountVM, CustomerVM, TicketCM, TicketUM, TicketVM } from '@view-model
     public findById(@Param('id') id: string): Promise<TicketVM> {
       return this.service.findById(id);
     }
+
+    @Get('/customer/:id')
+    @ApiOperation({ summary: 'Get an ticket by Customer Id' })
+    @ApiOkResponse({ description: "Success return an ticket's information" })
+    @ApiNotFoundResponse({ description: 'Fail to find ticket by Customer Id' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public async findByCustomerId(@Param('id') id: string): Promise<TicketVM[]> {
+      return await this.service.findByCustomerId(id);
+    }
   
     @Post()
     @ApiOperation({ summary: 'Insert new Ticket' })

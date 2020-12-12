@@ -251,6 +251,9 @@ export class RoleCM {
 
   @ApiProperty()
   public readonly description: string;
+
+  @ApiProperty()
+  public readonly accounts: AccountVM[];
 }
 
 export class RoleUM {
@@ -366,7 +369,9 @@ export class RoleUM {
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canRemoveEvent: boolean;
   
-  @AutoMap()
   @ApiProperty()
   public readonly description: string;
+
+  @ApiProperty()
+  public readonly accounts: AccountVM[];
 }

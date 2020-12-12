@@ -24,7 +24,7 @@ export class ActivityService {
       query['assignee'] = { id: requester.id };
     }
     return await this.activityRepository.useHTTP()
-      .find({where: query})
+      .find({where: query, relations: ['assignee', 'deal', 'assignBy']})
       .then((models) =>
         this.mapper.mapArray(models, ActivityVM, Activity)
       )

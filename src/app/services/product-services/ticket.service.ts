@@ -22,9 +22,11 @@ export class TicketService {
   public readonly findAll = async (requester: AccountVM): Promise<TicketVM[]> => {
     return await this.ticketRepository.useHTTP().find({ relations: ["customer", "assignee"] })
       .then(async (models) => {
-        if (requester.roles.filter((e) => e.canGetTicketDeal).length > 0 && requester.roles.filter((e) => e.canGetTicketSupport).length > 0) {
-        } else if (requester.roles.filter((e) => e.canGetTicketDeal).length === 0 && requester.roles.filter((e) => e.canGetTicketSupport).length === 0) {
-          models =  [];
+        const canGetTicketDeal = requester.roles.filter((e) => e.canGetTicketDeal).length > 0;
+        const canGetTicketSupport = requester.roles.filter((e) => e.canGetTicketSupport).length > 0;
+        if (canGetTicketDeal && canGetTicketSupport) {
+        } else if (!canGetTicketDeal && !canGetTicketSupport) {
+          models = [];
         } else {
           const types = [];
           if (requester.roles.filter((e) => e.canGetTicketDeal).length > 0) {
@@ -38,6 +40,12 @@ export class TicketService {
         return this.mapper.mapArray(models, TicketVM, Ticket);
       }).catch((err) => {
         throw new InvalidException(err);
+      });
+  };
+  public readonly findByCustomerId = async (id: string): Promise<TicketVM[]> => {
+    return await this.ticketRepository.useHTTP().find({ relations: ["customer", "assignee"], where: { customer: { id } } })
+      .then(async (models) => {
+        return this.mapper.mapArray(models, TicketVM, Ticket);
       });
   };
   public readonly findById = async (id: string): Promise<TicketVM> => {
@@ -64,7 +72,7 @@ export class TicketService {
           icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
           account: { id: account.id }
         }).then(async (notification) => {
-          this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({id: notification.id} , {relations: ['account']}), NotificationVM, Notification), 'create');
+          this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
           if (account.devices.length > 0) {
             await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
               notification: {

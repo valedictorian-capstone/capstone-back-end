@@ -26,7 +26,7 @@ export class DealService {
     if (requester.roles.filter((e) => e.canAccessDeal && e.canGetAllDeal).length === 0) {
       query['assignee'] = { id: requester.id };
     }
-    return await this.dealRepository.useHTTP().find({where: query ,relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments', 'assignee'] })
+    return await this.dealRepository.useHTTP().find({ where: query, relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments', 'assignee'] })
       .then(async (deals) => {
         for (let i = 0; i < deals.length; i++) {
           const deal = deals[i];
@@ -51,6 +51,19 @@ export class DealService {
           return this.mapper.map(model, DealVM, Deal)
         }
       })
+  }
+  public readonly findByCustomerId = async (id: string): Promise<DealVM[]> => {
+    return await this.dealRepository.useHTTP().find({ where: { customer: { id } }, relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments', 'assignee'] })
+      .then(async (deals) => {
+        for (let i = 0; i < deals.length; i++) {
+          const deal = deals[i];
+          if (deal.dealDetails.length > 0) {
+            deal.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(deal.dealDetails.map((e) => e.id)) }, relations: ['product'] });
+
+          }
+        }
+        return this.mapper.mapArray(deals, DealVM, Deal);
+      });
   }
   public readonly findByStage = async (id: string, requester: AccountVM): Promise<DealVM[]> => {
     const query = {};

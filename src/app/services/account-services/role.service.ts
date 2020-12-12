@@ -4,9 +4,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { RoleRepository } from '@repositories';
 import { SocketService } from '@services';
 import { ROLE_REPOSITORY, SOCKET_SERVICE } from '@types';
-import { RoleCM, RoleUM, RoleVM } from '@view-models';
+import { AccountVM, RoleCM, RoleUM, RoleVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { In } from 'typeorm';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class RoleService {
@@ -15,8 +15,9 @@ export class RoleService {
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
-  public readonly findAll = async (ids?: string[]): Promise<RoleVM[]> => {
-    return await this.roleRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ['accounts'] })
+  public readonly findAll = async (requester: AccountVM): Promise<RoleVM[]> => {
+    const level = Math.min(...requester.roles.map((e) => e.level));
+    return await this.roleRepository.useHTTP().find({ where: {level: MoreThan(level)}, relations: ['accounts'] })
       .then(async (models) => {
         return this.mapper.mapArray(models, RoleVM, Role)
       });
@@ -40,7 +41,7 @@ export class RoleService {
       })
   };
   public readonly insert = async (body: RoleCM): Promise<RoleVM> => {
-    return await this.roleRepository.useHTTP().save(body).then(async (role) => {
+    return await this.roleRepository.useHTTP().save(body as any).then(async (role) => {
       const rs = await this.findById(role.id)
       this.socketService.with('roles', rs, 'create');
       return rs;
@@ -54,7 +55,7 @@ export class RoleService {
             `Can not find ${body.id}`,
           );
         } else {
-          return await this.roleRepository.useHTTP().save(body).then(async (role) => {
+          return await this.roleRepository.useHTTP().save(body as any).then(async (role) => {
             const rs = await this.findById(role.id)
             this.socketService.with('roles', rs, 'update');
             return rs;
