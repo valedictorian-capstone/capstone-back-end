@@ -1,11 +1,12 @@
 import { Note } from "@models";
-import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { DealRepository, NoteRepository } from "@repositories";
-import { DEAL_REPOSITORY, NOTE_REPOSITORY } from "@types";
+import { DEAL_REPOSITORY, NOTE_REPOSITORY, SOCKET_SERVICE } from "@types";
 import { NoteCM, NoteUM, NoteVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
-
 import { In } from "typeorm";
+import { SocketService } from "../extra-services";
+
 
 @Injectable()
 export class NoteService {
@@ -13,7 +14,8 @@ export class NoteService {
   constructor(
     @Inject(NOTE_REPOSITORY) protected readonly noteRepository: NoteRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<NoteVM[]> => {
@@ -46,16 +48,20 @@ export class NoteService {
   public readonly insert = async (body: NoteCM): Promise<NoteVM> => {
 
     return await this.noteRepository.useHTTP().save(body)
-      .then((model) => {
-        return this.findById(model.id);
+      .then(async (model) => {
+        const rs = await this.findById(model.id);
+        this.socketService.with('notes', rs, 'create');
+        return rs;
       })
   }
 
   public readonly update = async (body: NoteUM): Promise<NoteVM> => {
     return await this.noteRepository.useHTTP()
       .save(body)
-      .then((model) => {
-        return this.findById(model.id);
+      .then(async (model) => {
+        const rs = await this.findById(model.id);
+        this.socketService.with('notes', rs, 'update');
+        return rs;
       })
   }
 
@@ -70,10 +76,9 @@ export class NoteService {
         return await this.noteRepository.useHTTP()
         .remove(model)
           .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+            const rs = this.mapper.map({...model, id} as Note, NoteVM, Note);
+            this.socketService.with('notes', rs, 'remove');
+            return rs;
           })
       });
   }

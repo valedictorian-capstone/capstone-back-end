@@ -1,28 +1,27 @@
 import { NotFoundException } from '@exceptions';
 import { Role } from '@models';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Inject, Injectable } from '@nestjs/common';
 import { RoleRepository } from '@repositories';
-import { ROLE_REPOSITORY } from '@types';
-import { RoleCM, RoleUM, RoleVM } from '@view-models';
+import { SocketService } from '@services';
+import { ROLE_REPOSITORY, SOCKET_SERVICE } from '@types';
+import { AccountVM, RoleCM, RoleUM, RoleVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { In } from 'typeorm';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class RoleService {
   constructor(
     @Inject(ROLE_REPOSITORY) protected readonly roleRepository: RoleRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
-    private readonly jwtService: JwtService
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
-
-  public readonly findAll = async (ids?: string[]): Promise<RoleVM[]> => {
-    return await this.roleRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ['accounts'] })
+  public readonly findAll = async (requester: AccountVM): Promise<RoleVM[]> => {
+    const level = Math.min(...requester.roles.map((e) => e.level));
+    return await this.roleRepository.useHTTP().find({ where: {level: MoreThan(level)}, relations: ['accounts'] })
       .then(async (models) => {
         return this.mapper.mapArray(models, RoleVM, Role)
       });
   };
-
   public readonly findById = async (id: string): Promise<RoleVM> => {
     return await this.roleRepository.useHTTP().findOne({ where: { id: id } })
       .then(async (model) => {
@@ -34,21 +33,20 @@ export class RoleService {
         );
       })
   };
-
   public readonly checkUnique = async (label: string, value: string): Promise<boolean> => {
     const query = { [label]: value };
     return this.roleRepository.useHTTP().findOne({ where: query })
       .then((model) => {
         return model ? true : false;
       })
-  }
-
+  };
   public readonly insert = async (body: RoleCM): Promise<RoleVM> => {
-    return await this.roleRepository.useHTTP().save(body).then(async (role) => {
-      return await this.findById(role.id);
+    return await this.roleRepository.useHTTP().save(body as any).then(async (role) => {
+      const rs = await this.findById(role.id)
+      this.socketService.with('roles', rs, 'create');
+      return rs;
     });
   };
-
   public readonly update = async (body: RoleUM): Promise<RoleVM> => {
     return await this.roleRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
@@ -57,13 +55,14 @@ export class RoleService {
             `Can not find ${body.id}`,
           );
         } else {
-          return await this.roleRepository.useHTTP().save(body).then(async (role) => {
-            return await this.findById(role.id);
+          return await this.roleRepository.useHTTP().save(body as any).then(async (role) => {
+            const rs = await this.findById(role.id)
+            this.socketService.with('roles', rs, 'update');
+            return rs;
           });
         }
       });
   };
-
   public readonly remove = async (id: string): Promise<RoleVM> => {
     return await this.roleRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
@@ -74,16 +73,14 @@ export class RoleService {
         }
         return await this.roleRepository.useHTTP()
           .save({ id, isDelete: true })
-          .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+          .then(async () => {
+            const rs = await this.findById(id)
+            this.socketService.with('roles', rs, 'update');
+            return rs;
           })
       });
   };
-
-  public readonly restore = async (id: string): Promise<RoleVM[]> => {
+  public readonly restore = async (id: string): Promise<RoleVM> => {
     return await this.roleRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -93,10 +90,10 @@ export class RoleService {
         }
         return await this.roleRepository.useHTTP()
           .save({ id, isDelete: false })
-          .then(() => {
-            const ids = [];
-            ids.push(model.id);
-            return this.findAll(ids);
+          .then(async () => {
+            const rs = await this.findById(id)
+            this.socketService.with('roles', rs, 'update');
+            return rs;
           })
       });
   };

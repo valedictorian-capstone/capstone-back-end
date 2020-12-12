@@ -1,10 +1,11 @@
 import { Pipeline } from "@models";
-import { Inject, Injectable, NotFoundException, HttpStatus, HttpException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PipelineRepository, StageRepository } from "@repositories";
-import { PIPELINE_REPOSITORY, STAGE_REPOSITORY } from "@types";
-import { PipelineCM, PipelineVM } from "@view-models";
+import { PIPELINE_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from "@types";
+import { PipelineCM, PipelineUM, PipelineVM } from '@view-models';
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { In } from "typeorm";
+import { SocketService } from "../extra-services";
 
 @Injectable()
 export class PipelineService {
@@ -12,7 +13,8 @@ export class PipelineService {
   constructor(
     @Inject(PIPELINE_REPOSITORY) protected readonly pipelineRepository: PipelineRepository,
     @Inject(STAGE_REPOSITORY) protected readonly stageRepository: StageRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<PipelineVM[]> => {
@@ -23,7 +25,6 @@ export class PipelineService {
         return this.mapper.mapArray(models, PipelineVM, Pipeline)
       });
   }
-
   public readonly findById = async (id: string): Promise<PipelineVM> => {
     return await this.pipelineRepository.useHTTP().findOne({ where: { id: id }, relations: ["stages"] })
       .then(async (model) => {
@@ -37,18 +38,17 @@ export class PipelineService {
         }
       })
   }
-
-
-  public readonly save = async (body: PipelineCM): Promise<PipelineVM> => {
+  public readonly save = async (body: PipelineCM | PipelineUM): Promise<PipelineVM> => {
     return await this.pipelineRepository.useHTTP().save(body)
       .then(async (model) => {
         await this.stageRepository.useHTTP().save(body.stages.map((stage) => ({ ...stage, pipeline: model })));
-        return await this.findById(model.id);
+        const rs = await this.findById(model.id);
+        this.socketService.with('pipelines', rs, (body as PipelineUM).id ? 'update' : 'create');
+        return rs;
       })
   }
-
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.pipelineRepository.useHTTP().findOne({ id: id }, {relations: ['stages']})
+    return await this.pipelineRepository.useHTTP().findOne({ id: id }, { relations: ['stages'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -61,16 +61,17 @@ export class PipelineService {
               ? this.pipelineRepository.useHTTP().remove(model)
               : this.pipelineRepository.useHTTP().save({ id, isDelete: true })
           )
-          .then(() => {
-            if (model.stages.length === 0) {
-              throw new HttpException(
-                `Remove information of ${id} successfully !!!`,
-                HttpStatus.NO_CONTENT,
-              );
-            } else {
-              return this.findById(id);
-            }
-          })
+            .then(async () => {
+              if (model.stages.length === 0) {
+                const rs = this.mapper.map({...model, id} as Pipeline, PipelineVM, Pipeline);
+                this.socketService.with('pipelines', rs, 'remove');
+                return rs;
+              } else {
+                const rs = await this.findById(model.id);
+                this.socketService.with('pipelines', rs, 'update');
+                return rs;
+              }
+            })
       });
   }
   public readonly restore = async (id: string): Promise<any> => {
@@ -83,8 +84,10 @@ export class PipelineService {
         }
         return await this.pipelineRepository.useHTTP()
           .save({ id, isDelete: false })
-          .then(() => {
-            return this.findById(id);
+          .then(async () => {
+            const rs = await this.findById(id);
+            this.socketService.with('pipelines', rs, 'update');
+            return rs;
           })
       });
   }

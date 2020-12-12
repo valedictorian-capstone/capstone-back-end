@@ -3,10 +3,10 @@ import {
     Controller,
     Delete,
     Get,
+    Headers,
     Param,
     Post,
-    Put,
-    Request
+    Put
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
@@ -15,10 +15,10 @@ import {
     ApiNotFoundResponse,
     ApiOkResponse,
     ApiOperation,
-    ApiTags,
+    ApiTags
 } from '@nestjs/swagger';
-import { ActivityCM, ActivityUM, ActivityVM } from '@view-models';
 import { ActivityService } from '@services';
+import { AccountVM, ActivityCM, ActivityUM, ActivityVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Activity')
@@ -32,8 +32,8 @@ export class ActivityController {
     @ApiOperation({ summary: 'Get all task' })
     @ApiOkResponse({ description: 'Success return all task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public findAll(): Promise<ActivityVM[]> {
-        return this.service.findAll();
+    public findAll(@Headers('requester') requester: AccountVM): Promise<ActivityVM[]> {
+        return this.service.findAll(requester);
     }
 
     @Get(':id')
@@ -49,8 +49,8 @@ export class ActivityController {
     @ApiOperation({ summary: 'Insert new task' })
     @ApiCreatedResponse({ description: 'Success create new task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Body() body: ActivityCM, @Request() req: any): Promise<ActivityVM> {
-        return this.service.insert(body, req.headers.authorization);
+    public insert(@Body() body: ActivityCM, @Headers('requester') requester: AccountVM): Promise<ActivityVM> {
+        return this.service.insert(body, requester);
     }
 
     @Put()

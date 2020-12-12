@@ -6,7 +6,7 @@ import {
   Param,
   Post,
   Put,
-  Query,
+  Query
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -15,10 +15,10 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
-import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { CustomerService } from '@services';
+import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Customer')

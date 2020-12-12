@@ -1,24 +1,22 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Post,
-    Put,
-  } from '@nestjs/common';
-  import {
-    ApiBadRequestResponse,
-    ApiBearerAuth,
-    ApiCreatedResponse,
-    ApiNotFoundResponse,
-    ApiOkResponse,
-    ApiOperation,
-    ApiTags,
-  } from '@nestjs/swagger';
-  import { TicketCM, TicketUM, TicketVM } from '@view-models';
-  import { TicketService } from '@services';
-import { Request } from '@nestjs/common';
+  Body,
+  Controller,
+  Delete,
+  Get, Headers, Param,
+  Post,
+  Put
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags
+} from '@nestjs/swagger';
+import { TicketService } from '@services';
+import { AccountVM, CustomerVM, TicketCM, TicketUM, TicketVM } from '@view-models';
   
   @ApiBearerAuth('JWT')
   @ApiTags('Ticket')
@@ -32,8 +30,8 @@ import { Request } from '@nestjs/common';
     @ApiOperation({ summary: 'Get all Tickets' })
     @ApiOkResponse({ description: 'Success return all Tickets' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public findAll(): Promise<TicketVM[]> {
-      return this.service.findAll();
+    public findAll(@Headers('requester') requester: AccountVM): Promise<TicketVM[]> {
+      return this.service.findAll(requester);
     }
   
     @Get(':id')
@@ -44,14 +42,22 @@ import { Request } from '@nestjs/common';
     public findById(@Param('id') id: string): Promise<TicketVM> {
       return this.service.findById(id);
     }
+
+    @Get('/customer/:id')
+    @ApiOperation({ summary: 'Get an ticket by Customer Id' })
+    @ApiOkResponse({ description: "Success return an ticket's information" })
+    @ApiNotFoundResponse({ description: 'Fail to find ticket by Customer Id' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public async findByCustomerId(@Param('id') id: string): Promise<TicketVM[]> {
+      return await this.service.findByCustomerId(id);
+    }
   
     @Post()
     @ApiOperation({ summary: 'Insert new Ticket' })
     @ApiCreatedResponse({ description: 'Success create new Ticket' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Request() req: any, @Body() body: TicketCM): Promise<TicketVM> {
-      const token = req.headers.authorization;
-      return this.service.insert(body, token);
+    public insert(@Headers('requester') requester: CustomerVM, @Body() body: TicketCM): Promise<TicketVM> {
+      return this.service.insert(body, requester);
     }
 
      
@@ -67,9 +73,8 @@ import { Request } from '@nestjs/common';
     @ApiOperation({ summary: 'Update an Ticket by Id' })
     @ApiCreatedResponse({ description: 'Success update new Ticket' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public update(@Request() req: any, @Body() body: TicketUM): Promise<TicketVM> {
-      const token = req.headers.authorization;
-      return this.service.update(body, token);
+    public update(@Body() body: TicketUM): Promise<TicketVM> {
+      return this.service.update(body);
     }
   
     @Delete(':id')

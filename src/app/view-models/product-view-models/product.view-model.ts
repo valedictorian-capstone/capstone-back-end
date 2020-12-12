@@ -7,97 +7,97 @@ import { DealDetailVM } from "../bpmn-view-models/deal-detail.view-model";
 export class ProductVM {
   
   @AutoMap()
-  public readonly id: string;
+  public id: string;
 
   @AutoMap()
-  public readonly code: string;
+  public code: string;
   
   @AutoMap()
-  public readonly name: string;
+  public name: string;
 
   @AutoMap()
-  public readonly type: string;
+  public type: string;
 
   @AutoMap()
-  public readonly price: number;
+  public price: number;
   
   @AutoMap()
-  public readonly description: string;
+  public description: string;
 
   @AutoMap()
-  public readonly image: string;
+  public image: string;
 
-  public readonly parameters: any;
+  public parameters: any;
 
-  public readonly category: CategoryVM;
+  public category: CategoryVM;
 
-  public readonly dealDetails: DealDetailVM[];
+  public dealDetails: DealDetailVM[];
 
-  public readonly comments: CommentVM[];
+  public comments: CommentVM[];
   
   @AutoMap()
-  public readonly isDelete: boolean;
+  public isDelete: boolean;
   
   @AutoMap()
-  public readonly createdBy: string;
+  public createdBy: string;
   
   @AutoMap()
-  public readonly updatedBy: string;
+  public updatedBy: string;
   
   @AutoMap()
-  public readonly createdAt: Date;
+  public createdAt: Date;
   
   @AutoMap()
-  public readonly updatedAt: Date;
+  public updatedAt: Date;
 }
 
 export class ProductCM {
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly code: string;
+  public code: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly name: string;
+  public name: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly brand: string;
+  public brand: string;
 
   @ApiProperty({ required: true, format: 'number' })
-  public readonly price: number;
+  public price: number;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly description: string;
+  public description: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly image: string;
+  public image: string;
 
-  public readonly category: CategoryVM;
+  public category: CategoryVM;
 
 }
 
 export class ProductUM {
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
-  public readonly id: string;
+  public id: string;
   
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly code: string;
+  public code: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly name: string;
+  public name: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly brand: string;
+  public brand: string;
 
   @ApiProperty({ required: true, format: 'number' })
-  public readonly price: number;
+  public price: number;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly description: string;
+  public description: string;
 
   @ApiProperty({ required: true, format: 'string', minLength: 2 })
-  public readonly image: string;
+  public image: string;
 
-  public readonly category: CategoryVM;
+  public category: CategoryVM;
 
 }

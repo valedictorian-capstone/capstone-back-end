@@ -10,7 +10,7 @@ import {
 import { FILTERS } from '@extras/filters';
 import { AppGateway } from '@extras/gateways';
 import { AppProvider } from '@extras/providers';
-import { MiddlewareConsumer, Module, NestModule, OnModuleInit, RequestMethod } from '@nestjs/common';
+import { HttpModule, MiddlewareConsumer, Module, NestModule, OnModuleInit, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { FirebaseAdminModule } from '@aginix/nestjs-firebase-admin'
@@ -64,6 +64,13 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    HttpModule.register({
+      headers: {
+        authorization: undefined,
+        customer: undefined,
+        account: undefined
+      } // object of headers you want to set
+    }),
     AutomapperModule.withMapper({
       throwError: true,
       skipUnmappedAssertion: true,
@@ -137,16 +144,97 @@ export class AppModule implements OnModuleInit, NestModule {
   }
   configure(consumer: MiddlewareConsumer) {
     consumer
-    .apply(AuthCustomerMiddleware)
-    .forRoutes(
-      { path: '/api/v1/Auth/Customer', method: RequestMethod.PUT },
-      // { path: '/api/v1/Account', method: RequestMethod.GET }
-    );
+      .apply(AuthCustomerMiddleware)
+      .forRoutes(
+        { path: '/api/v1/Auth/Customer', method: RequestMethod.PUT },
+        { path: '/api/v1/Auth/Customer/profile', method: RequestMethod.PUT },
+        { path: '/api/v1/Comment', method: RequestMethod.PUT },
+        { path: '/api/v1/Ticket', method: RequestMethod.POST },
+      );
     consumer
       .apply(AuthMiddleware)
       .forRoutes(
+        // Auth
         { path: '/api/v1/Auth', method: RequestMethod.PUT },
-        // { path: '/api/v1/Account', method: RequestMethod.GET }
-    );
+        { path: '/api/v1/Auth/profile', method: RequestMethod.PUT },
+        { path: '/api/v1/Auth/password', method: RequestMethod.PUT },
+        // Notification
+        { path: '/api/v1/Notification', method: RequestMethod.GET },
+        { path: '/api/v1/Notification/Seen/:id', method: RequestMethod.PUT },
+        { path: '/api/v1/Notification/Seen', method: RequestMethod.PUT },
+        // Activity
+        { path: '/api/v1/Activity', method: RequestMethod.GET },
+        { path: '/api/v1/Activity', method: RequestMethod.POST },
+        { path: '/api/v1/Activity', method: RequestMethod.PUT },
+        { path: '/api/v1/Activity/:id', method: RequestMethod.DELETE },
+        // Attachment
+        { path: '/api/v1/Attachment', method: RequestMethod.POST },
+        { path: '/api/v1/Attachment', method: RequestMethod.PUT },
+        { path: '/api/v1/Attachment/:id', method: RequestMethod.DELETE },
+        // DealDetail
+        { path: '/api/v1/DealDetail', method: RequestMethod.POST },
+        { path: '/api/v1/DealDetail', method: RequestMethod.PUT },
+        { path: '/api/v1/DealDetail/:id', method: RequestMethod.DELETE },
+        // Note
+        { path: '/api/v1/Note', method: RequestMethod.POST },
+        { path: '/api/v1/Note', method: RequestMethod.PUT },
+        { path: '/api/v1/Note/:id', method: RequestMethod.DELETE },
+        // Pipeline
+        { path: '/api/v1/Pipeline', method: RequestMethod.POST },
+        { path: '/api/v1/Pipeline', method: RequestMethod.PUT },
+        { path: '/api/v1/Pipeline/:id', method: RequestMethod.DELETE },
+        { path: '/api/v1/Pipeline/restore/:id', method: RequestMethod.PUT },
+        // Stage
+        { path: '/api/v1/Stage', method: RequestMethod.POST },
+        { path: '/api/v1/Stage', method: RequestMethod.PUT },
+        { path: '/api/v1/Stage/:id', method: RequestMethod.DELETE },
+        // Deal
+        { path: '/api/v1/Deal', method: RequestMethod.GET },
+        { path: '/api/v1/Deal/stage/:id', method: RequestMethod.GET },
+        { path: '/api/v1/Deal', method: RequestMethod.POST },
+        { path: '/api/v1/Deal', method: RequestMethod.PUT },
+        { path: '/api/v1/Deal/:id', method: RequestMethod.DELETE },
+        { path: '/api/v1/Deal/restore/:id', method: RequestMethod.PUT },
+        // Account
+        { path: '/api/v1/Account/import', method: RequestMethod.POST },
+        { path: '/api/v1/Account/:id', method: RequestMethod.DELETE },
+        { path: '/api/v1/Account', method: RequestMethod.GET },
+        { path: '/api/v1/Account', method: RequestMethod.POST },
+        { path: '/api/v1/Account', method: RequestMethod.PUT },
+        { path: '/api/v1/Account/restore/:id', method: RequestMethod.PUT },
+        // Customer
+        { path: '/api/v1/Customer/import', method: RequestMethod.POST },
+        { path: '/api/v1/Customer', method: RequestMethod.GET },
+        { path: '/api/v1/Customer/lead', method: RequestMethod.GET },
+        { path: '/api/v1/Customer', method: RequestMethod.POST },
+        { path: '/api/v1/Customer', method: RequestMethod.PUT },
+        { path: '/api/v1/Customer/restore/:id', method: RequestMethod.PUT },
+        { path: '/api/v1/Customer/:id', method: RequestMethod.DELETE },
+        // Role
+        { path: '/api/v1/Role', method: RequestMethod.GET },
+        { path: '/api/v1/Role', method: RequestMethod.POST },
+        { path: '/api/v1/Role', method: RequestMethod.PUT },
+        { path: '/api/v1/Role/restore/:id', method: RequestMethod.PUT },
+        { path: '/api/v1/Role/:id', method: RequestMethod.DELETE },
+        //notification
+        { path: '/api/v1/Notification/Seen', method: RequestMethod.PUT },
+        { path: '/api/v1/Notification/Seen/:id', method: RequestMethod.PUT },
+        // Product
+        { path: '/api/v1/Product/import', method: RequestMethod.POST },
+        { path: '/api/v1/Product', method: RequestMethod.POST },
+        { path: '/api/v1/Product', method: RequestMethod.PUT },
+        { path: '/api/v1/Product/restore/:id', method: RequestMethod.PUT },
+        { path: '/api/v1/Product/:id', method: RequestMethod.DELETE },
+        // Category
+        { path: '/api/v1/Category', method: RequestMethod.POST },
+        { path: '/api/v1/Category', method: RequestMethod.PUT },
+        { path: '/api/v1/Category/restore/:id', method: RequestMethod.PUT },
+        { path: '/api/v1/Category/:id', method: RequestMethod.DELETE },
+        // Ticket
+        { path: '/api/v1/Ticket', method: RequestMethod.GET },
+        { path: '/api/v1/Ticket', method: RequestMethod.PUT },
+        { path: '/api/v1/Ticket/:id', method: RequestMethod.DELETE },
+
+      );
   }
 }

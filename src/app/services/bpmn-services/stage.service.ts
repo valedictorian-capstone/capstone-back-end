@@ -1,11 +1,12 @@
 import { Stage } from "@models";
-import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { PipelineRepository, StageRepository } from "@repositories";
-import { PIPELINE_REPOSITORY } from "@types";
+import { PIPELINE_REPOSITORY, SOCKET_SERVICE } from "@types";
 import { StageCM, StageUM, StageVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { STAGE_REPOSITORY } from "src/app/types/bpmn-types/stage.type";
 import { In } from "typeorm";
+import { SocketService } from "../extra-services";
 
 @Injectable()
 export class StageService {
@@ -13,16 +14,15 @@ export class StageService {
   constructor(
     @Inject(STAGE_REPOSITORY) protected readonly stageRepository: StageRepository,
     @Inject(PIPELINE_REPOSITORY) protected readonly pipelineRepository: PipelineRepository,
-    @InjectMapper() protected readonly mapper: AutoMapper
+    @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
-
   public readonly findAll = async (ids?: string[]): Promise<StageVM[]> => {
     return await this.stageRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: [] })
       .then((models) => {
         return this.mapper.mapArray(models, StageVM, Stage)
       });
   }
-
   public readonly findById = async (id: string): Promise<StageVM> => {
     return await this.stageRepository.useHTTP().findOne({ where: { id: id }, relations: ['deals', 'pipeline'] })
       .then(async (model) => {
@@ -35,7 +35,6 @@ export class StageService {
         }
       })
   }
-
   public readonly findByPipeline = async (id: string): Promise<StageVM> => {
 
     return await this.stageRepository.useHTTP().findOne({ where: { pipeline: { id } }, relations: ['pipeline'] })
@@ -49,7 +48,6 @@ export class StageService {
         }
       })
   }
-
   public readonly checkUnique = async (label: string, value: string): Promise<boolean> => {
     const query = { [label]: value };
     return this.stageRepository.useHTTP().findOne({ where: query })
@@ -57,22 +55,23 @@ export class StageService {
         return model ? true : false;
       })
   }
-
   public readonly insert = async (body: StageCM): Promise<StageVM> => {
     return await this.stageRepository.useHTTP().save(body as any)
-      .then((model) => {
-        return this.findById(model.id);
+      .then(async (model) => {
+        const rs = await this.findById(model.id);
+        this.socketService.with('stages', rs, 'create');
+        return rs;
       })
   }
-
   public readonly update = async (body: StageUM): Promise<StageVM> => {
     return await this.stageRepository.useHTTP()
       .save(body as any)
-      .then((model) => {
-        return this.findById(model.id);
+      .then(async (model) => {
+        const rs = await this.findById(model.id);
+        this.socketService.with('stages', rs, 'update');
+        return rs;
       })
   }
-
   public readonly remove = async (id: string): Promise<any> => {
     return await this.stageRepository.useHTTP().findOne({ id: id }, { relations: ['deals'] })
       .then(async (model) => {
@@ -83,11 +82,10 @@ export class StageService {
         }
         return await this.stageRepository.useHTTP()
           .remove(model)
-          .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+          .then(async () => {
+            const rs = this.mapper.map({...model, id} as Stage, StageVM, Stage);
+            this.socketService.with('stages', rs, 'remove');
+            return rs;
           })
       });
   }

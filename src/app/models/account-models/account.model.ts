@@ -50,7 +50,7 @@ export class Account extends BaseEntity {
   @OneToMany(() => Ticket, tickets => tickets.feedbackAssignee)
   public feedbackTickets: Ticket[];
 
-  @OneToMany(() => Deal, deals => deals.feedbackAssignee)
+  @OneToMany(() => Deal, deals => deals.assignee)
   public deals: Deal[];
 
   @JoinTable()

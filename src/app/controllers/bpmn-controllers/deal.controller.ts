@@ -17,7 +17,8 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { DealService } from '@services';
-import { DealCM, DealUM, DealVM } from '@view-models';
+import { AccountVM, DealCM, DealUM, DealVM } from '@view-models';
+import { Headers } from '@nestjs/common';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Deal')
@@ -31,8 +32,8 @@ export class DealController {
   @ApiOperation({ summary: 'Get all deal' })
   @ApiOkResponse({ description: 'Success return all deal' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async findAll(): Promise<DealVM[]> {
-    return await this.dealService.findAll();
+  public async findAll(@Headers('requester') requester: AccountVM): Promise<DealVM[]> {
+    return await this.dealService.findAll(requester);
   }
 
   @Get(':id')
@@ -44,13 +45,22 @@ export class DealController {
     return await this.dealService.findById(id);
   }
 
+  @Get('/customer/:id')
+  @ApiOperation({ summary: 'Get an deal by Customer Id' })
+  @ApiOkResponse({ description: "Success return an deal's information" })
+  @ApiNotFoundResponse({ description: 'Fail to find deal by Customer Id' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async findByCustomerId(@Param('id') id: string): Promise<DealVM[]> {
+    return await this.dealService.findByCustomerId(id);
+  }
+
   @Get('/stage/:id')
   @ApiOperation({ summary: 'Get an deal by stage' })
   @ApiOkResponse({ description: "Success return an deal's information" })
   @ApiNotFoundResponse({ description: 'Fail to find deal by stage' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async findByStage(@Param('id') id: string): Promise<DealVM[]> {
-    return await this.dealService.findByStage(id);
+  public async findByStage(@Param('id') id: string, @Headers('requester') requester: AccountVM): Promise<DealVM[]> {
+    return await this.dealService.findByStage(id, requester);
   }
 
   @Post()
@@ -68,15 +78,6 @@ export class DealController {
   public async update(@Body() body: DealUM | DealUM[]): Promise<DealVM | DealVM[]> {
     return await this.dealService.update(body);
   }
-
-  @Put('/stage')
-  @ApiOperation({ summary: 'Update an deal by Id' })
-  @ApiCreatedResponse({ description: 'Success update new deal' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updateStage(@Body() body: DealUM): Promise<DealVM> {
-    return await this.dealService.updateStage(body);
-  }
-
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an deal by Id' })
   @ApiCreatedResponse({ description: 'Success delete new deal' })

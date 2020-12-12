@@ -1,8 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { ActivityRepository, AttachmentRepository, DealRepository, CustomerRepository } from "@repositories";
-import { ACTIVITY_REPOSITORY, ATTACHMENT_REPOSITORY, DEAL_REPOSITORY, CUSTOMER_REPOSITORY } from "@types";
-import { RoleVM } from "@view-models";
-import { verify } from "jsonwebtoken";
+import { ActivityRepository, AttachmentRepository, CustomerRepository, DealRepository } from "@repositories";
+import { ACTIVITY_REPOSITORY, ATTACHMENT_REPOSITORY, CUSTOMER_REPOSITORY, DEAL_REPOSITORY } from "@types";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 
 @Injectable()
@@ -14,7 +12,7 @@ export class SearchService {
     @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
   ) { }
-  public readonly search = async (value: string, token: string): Promise<any> => {
+  public readonly search = async (value: string): Promise<any> => {
     const rs = [];
       const deals = await this.dealRepository.useHTTP().find();
       const attachments = await this.attachmentRepository.useHTTP().find();

@@ -20,7 +20,7 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { AccountService } from '@services';
-import { AccountCM, AccountFilter, AccountUM, AccountVM } from '@view-models';
+import { AccountCM, AccountUM, AccountVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Account')
@@ -29,25 +29,14 @@ export class AccountController {
   constructor(
     protected service: AccountService,
   ) { }
-
   @Get()
   @ApiOperation({ summary: 'Get all Accounts' })
   @ApiOkResponse({ description: 'Success return all Accounts' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   @ApiQuery({ name: 'roleName', allowEmptyValue: true })
-  public findAll(@Query() accountFilter: AccountFilter): Promise<AccountVM[]> {
-    return this.service.findAll(accountFilter);
+  public findAll(@Headers('requester') requester: AccountVM): Promise<AccountVM[]> {
+    return this.service.findAll(requester);
   }
-
-  @Get('/jwt/')
-  @ApiOperation({ summary: 'Get an Account by JWT' })
-  @ApiOkResponse({ description: "Success return an Account's information" })
-  @ApiNotFoundResponse({ description: 'Fail to find Account by JWT' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public findByJWT(@Headers('Authorization') jwt: string): Promise<AccountVM> {
-    return this.service.findByJWT(jwt);
-  }
-
   @Get('/unique')
   @ApiOperation({ summary: 'Check duplicate data for phoneNumber, email, code' })
   @ApiOkResponse({ description: "Success return value is exist in database" })
@@ -55,7 +44,6 @@ export class AccountController {
   public checkEnique(@Query('label') label: string, @Query('value') value: string): Promise<boolean> {
     return this.service.checkUnique(label, value);
   }
-
   @Get(':id')
   @ApiOperation({ summary: 'Get an Account by Id' })
   @ApiOkResponse({ description: "Success return an Account's information" })
@@ -64,7 +52,6 @@ export class AccountController {
   public findById(@Param('id') id: string): Promise<AccountVM> {
     return this.service.findById(id);
   }
-
   @Post()
   @ApiOperation({ summary: 'Insert new Account' })
   @ApiCreatedResponse({ description: 'Success create new Account' })
@@ -72,7 +59,6 @@ export class AccountController {
   public insert(@Body() body: AccountCM): Promise<AccountVM> {
     return this.service.insert(body);
   }
-
   @Post('/import')
   @ApiOperation({ summary: 'Import List Account' })
   @ApiCreatedResponse({ description: 'Success insert list to database' })
@@ -88,7 +74,6 @@ export class AccountController {
   public update(@Body() body: AccountUM): Promise<AccountVM> {
     return this.service.update(body);
   }
-
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an Account by Id' })
   @ApiCreatedResponse({ description: 'Success delete new Account' })
@@ -96,7 +81,6 @@ export class AccountController {
   public remove(@Param('id') id: string): Promise<AccountVM> {
     return this.service.remove(id);
   }
-
   @Put('restore/:id')
   @ApiOperation({ summary: 'Restore an account by Id' })
   @ApiCreatedResponse({ description: 'Success active new Account' })
