@@ -18,7 +18,7 @@ export class DealDetailService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<DealDetailVM[]> => {
-    return await this.dealDetailRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: [] })
+    return await this.dealDetailRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ['product', 'deal'] })
       .then((models) => {
         return this.mapper.mapArray(models, DealDetailVM, DealDetail)
       });
