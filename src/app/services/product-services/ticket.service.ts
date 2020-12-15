@@ -90,6 +90,14 @@ export class TicketService {
       return rs;
     });
   };
+
+  public readonly botInsert = async (body: TicketCM): Promise<TicketVM> => {
+    const customer = await this.customerRepository.useHTTP().findOne({ where: { id: body.customer.id } });
+    return await this.ticketRepository.useHTTP().save({ ...body, status: 'waiting', customer }).then(async (model) => {
+      return await this.findById(model.id);
+    });
+  };
+
   public readonly update = async (body: TicketUM): Promise<TicketVM> => {
     return await this.ticketRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {

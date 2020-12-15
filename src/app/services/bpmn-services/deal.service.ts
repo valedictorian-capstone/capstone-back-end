@@ -40,14 +40,14 @@ export class DealService {
       )
   }
   public readonly findById = async (id: string): Promise<DealVM> => {
-    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments', 'assignee'] })
+    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'notes', 'attachments', 'assignee'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         } else {
-          model.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(model.dealDetails.map((e) => e.id)) }, relations: ['product'] });
+          // model.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(model.dealDetails.map((e) => e.id)) }, relations: ['product'] });
           return this.mapper.map(model, DealVM, Deal)
         }
       })
