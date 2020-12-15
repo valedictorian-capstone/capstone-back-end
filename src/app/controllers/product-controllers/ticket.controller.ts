@@ -65,7 +65,7 @@ import { AccountVM, CustomerVM, TicketCM, TicketUM, TicketVM } from '@view-model
     @ApiOperation({ summary: 'Bot Insert new Ticket' })
     @ApiCreatedResponse({ description: 'Success create new Ticket' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public botInsert(@Request() req: any, @Body() body: TicketCM): Promise<TicketVM> {
+    public botInsert( @Body() body: TicketCM): Promise<TicketVM> {
       return this.service.botInsert(body);
     }
   

@@ -97,10 +97,7 @@ export class TicketService {
       return await this.findById(model.id);
     });
   };
-
-  public readonly update = async (body: TicketUM, token: string): Promise<TicketVM> => {
-    const decoded = verify(token + "", 'vzicqoasanQhtZicTmeGsBpacNomny', { issuer: 'crm', subject: 'se20fa27' });
-    const account = await this.accountRepository.useHTTP().findOne({ where: { id: Object.assign(decoded.valueOf()).account.id } });
+  public readonly update = async (body: TicketUM): Promise<TicketVM> => {
     return await this.ticketRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
