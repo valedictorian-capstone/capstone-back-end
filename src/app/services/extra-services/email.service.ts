@@ -1,5 +1,5 @@
 
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Customer, Event } from '@models';
 import { CustomerRepository } from '@repositories';
 import { CUSTOMER_REPOSITORY } from '@types';
@@ -21,8 +21,8 @@ export class EmailService {
                 user: 'crmdynamic123@gmail.com',
                 clientId: '995040905872-25sb1bet01gs4i226qrv95q4baltjv76.apps.googleusercontent.com',
                 clientSecret: 'OS2Qongc4QZ1IX3uN_oamAV8',
-                accessToken: 'ya29.a0AfH6SMD3KuRSQWl-Q1A0fcAScB9PpMFapYU07glwuxNAmp9WiEgsk_oR6NmH2XkhugSIt07QqsLKxyOoZk08qkBqF5yp2JE4-xZZU6HTkel5pOlyZxSaFgj2FuI5gbY5f6mEg9OWkIFkDvJdppRKKkXGmWunn5ghFdVcyACizC4',
-                refreshToken: '1//04jSUt2bwIofQCgYIARAAGAQSNwF-L9IrXpS7NZ2ao7AZAmSySssKxj_NtdNz7mY21ozGYzpay0Ep1RY4mzZD1blp7EcwCcCMIoY',
+                accessToken: 'ya29.a0AfH6SMA7Z0ckO39CKExjhxBBjW2_PlqiW1A2PYlhZJ4SP69boWPDDtO6xacQQUJ07cIy8qiNuSgsGcRlyTblabPkg7N4I0MGDzW1sycHN24Mjc_S-taloMsIIWN9rfxpLeQ-ZptlfLinCJDHCrrAk1HYxXZBMpxJSx5L_ad7bKQ',
+                refreshToken: '1//04wBwp3PNF9i0CgYIARAAGAQSNwF-L9IrX4t4hedhBzXpzlEzdMsOXNhrzRxy0WVtlI0YXRYSFC4qPPQ31b6UXzMzmA1LLZOz1gE',
             }
         });
      }
@@ -48,9 +48,11 @@ export class EmailService {
                 }   
                 console.log(this.auth)
                 for (const model of models) {
-                    this.auth.sendMail(this.getDemoTemplate(model), (err, info) => {
-                        console.log('Message sent: ' + info);
-                        console.log('Message sent: ' + err);
+                    await this.auth.sendMail(this.getDemoTemplate(model), (err, info) => {
+                        if ( err ) {
+                            throw new InternalServerErrorException(err.message)
+                        }
+                        return "OK"
                     })
                 }
                 return "OK";
