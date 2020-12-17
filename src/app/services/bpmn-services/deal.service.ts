@@ -26,10 +26,12 @@ export class DealService {
     if (requester.roles.filter((e) => e.canAccessDeal && e.canGetAllDeal).length === 0) {
       query['assignee'] = { id: requester.id };
     }
-    return await this.dealRepository.useHTTP().find({ where: query, relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments', 'assignee'] })
+    return await this.dealRepository.useHTTP().find({ where: query, relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee'] })
       .then(async (deals) => {
         for (let i = 0; i < deals.length; i++) {
           const deal = deals[i];
+          const stages = deal.stage.pipeline.stages;
+          deal.stage.pipeline.stages = stages.sort((a, b) => a.position - b.position);
           if (deal.dealDetails.length > 0) {
             deal.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(deal.dealDetails.map((e) => e.id)) }, relations: ['product'] });
 
@@ -40,7 +42,7 @@ export class DealService {
       )
   }
   public readonly findById = async (id: string): Promise<DealVM> => {
-    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'notes', 'attachments', 'assignee'] })
+    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -48,6 +50,8 @@ export class DealService {
           );
         } else {
           // model.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(model.dealDetails.map((e) => e.id)) }, relations: ['product'] });
+          const stages = model.stage.pipeline.stages;
+          model.stage.pipeline.stages = stages.sort((a, b) => a.position - b.position);
           return this.mapper.map(model, DealVM, Deal)
         }
       })

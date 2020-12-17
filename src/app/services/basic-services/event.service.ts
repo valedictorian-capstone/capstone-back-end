@@ -24,6 +24,7 @@ export class EventService {
     return await this.repository.useHTTP().findOne({ where: { id: id }, relations: ['groups', 'triggers'] })
       .then((model) => {
         if (model) {
+          model.triggers = model.triggers.sort((a, b) => new Date(a.time) < new Date(b.time) ? -1 : 1);
           return this.mapper.map(model, EventVM, Event);
         }
         throw new NotFoundException(
@@ -45,17 +46,18 @@ export class EventService {
       })
   };
   public readonly remove = async (id: string): Promise<EventVM> => {
-    return await this.repository.useHTTP().findOne({ id: id })
+    return await this.repository.useHTTP().findOne({ id: id }, { relations: ['triggers'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
+        await this.triggerRepository.useHTTP().remove(model.triggers);
         return await this.repository.useHTTP()
           .remove(model)
           .then(() => {
-            const rs = this.mapper.map({...model, id} as Event, EventVM, Event);
+            const rs = this.mapper.map({ ...model, id } as Event, EventVM, Event);
             this.socketService.with('events', rs, 'remove');
             return rs;
           })

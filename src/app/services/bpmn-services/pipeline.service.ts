@@ -19,10 +19,13 @@ export class PipelineService {
 
   public readonly findAll = async (ids?: string[]): Promise<PipelineVM[]> => {
     return await this.pipelineRepository.useHTTP().find({
-      where: ids ? { id: In(ids) } : {}, relations: []
+      where: ids ? { id: In(ids) } : {}, relations: ['stages']
     })
       .then((models) => {
-        return this.mapper.mapArray(models, PipelineVM, Pipeline)
+        return this.mapper.mapArray(models.map((model) => ({
+          ...model,
+          stages: model.stages.sort((a, b) => a.position - b.position)
+        })), PipelineVM, Pipeline)
       });
   }
   public readonly findById = async (id: string): Promise<PipelineVM> => {
