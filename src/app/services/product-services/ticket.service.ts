@@ -60,10 +60,10 @@ export class TicketService {
   };
   public readonly insert = async (body: TicketCM, requester: CustomerVM): Promise<TicketVM> => {
     return await this.ticketRepository.useHTTP().save({ ...body, status: 'waiting', customer: { id: requester.id } } as any).then(async (model) => {
-      const accounts = (await this.accountRepository.useHTTP().find({ relations: ['devices'] }));
+      const accounts = (await this.accountRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
       for (const account of accounts) {
         await this.notificationRepository.useHTTP().save({
-          body: `New ticket ${model.name} need to resolve`,
+          body: `New ticket need to resolve`,
           title: "Have a new ticket",
           type: 'create',
           name: 'ticket',
@@ -73,14 +73,28 @@ export class TicketService {
         }).then(async (notification) => {
           this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
           if (account.devices.length > 0) {
-            await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
-              notification: {
-                body: `New ticket ${model.name} need to resolve`,
-                title: "Have a new ticket",
-                icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
-              },
-              // data: (await this.findById(model.id)) as any
-            });
+            const canGetTicketDeal = account.roles.filter((e) => e.canGetTicketDeal).length > 0;
+            const canGetTicketSupport = account.roles.filter((e) => e.canGetTicketSupport).length > 0;
+            if (model.type === 'deal' && canGetTicketDeal) {
+              await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+                notification: {
+                  body: `New ticket need to resolve`,
+                  title: "Have a new ticket",
+                  icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
+                },
+                // data: (await this.findById(model.id)) as any
+              });
+            }
+            if (model.type === 'other' && canGetTicketSupport) {
+              await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+                notification: {
+                  body: `New ticket need to resolve`,
+                  title: "Have a new ticket",
+                  icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
+                },
+                // data: (await this.findById(model.id)) as any
+              });
+            }
           }
         })
       }
@@ -93,7 +107,47 @@ export class TicketService {
   public readonly botInsert = async (body: TicketCM): Promise<TicketVM> => {
     const customer = await this.customerRepository.useHTTP().findOne({ where: { id: body.customer.id } });
     return await this.ticketRepository.useHTTP().save({ ...body, status: 'waiting', customer }).then(async (model) => {
-      return await this.findById(model.id);
+      const accounts = (await this.accountRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
+      for (const account of accounts) {
+        await this.notificationRepository.useHTTP().save({
+          body: `New ticket need to resolve`,
+          title: "Have a new ticket",
+          type: 'create',
+          name: 'ticket',
+          data: (await this.findById(model.id)),
+          icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
+          account: { id: account.id }
+        }).then(async (notification) => {
+          this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
+          if (account.devices.length > 0) {
+            const canGetTicketDeal = account.roles.filter((e) => e.canGetTicketDeal).length > 0;
+            const canGetTicketSupport = account.roles.filter((e) => e.canGetTicketSupport).length > 0;
+            if (model.type === 'deal' && canGetTicketDeal) {
+              await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+                notification: {
+                  body: `New ticket need to resolve`,
+                  title: "Have a new ticket",
+                  icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
+                },
+                // data: (await this.findById(model.id)) as any
+              });
+            }
+            if (model.type === 'other' && canGetTicketSupport) {
+              await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+                notification: {
+                  body: `New ticket need to resolve`,
+                  title: "Have a new ticket",
+                  icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
+                },
+                // data: (await this.findById(model.id)) as any
+              });
+            }
+          }
+        })
+      }
+      const rs = await this.findById(model.id)
+      this.socketService.with('tickets', rs, 'create');
+      return rs;
     });
   };
   public readonly update = async (body: TicketUM): Promise<TicketVM> => {
