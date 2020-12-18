@@ -20,6 +20,12 @@ export class RoleVM {
   public readonly canGetAllDeal: boolean;
 
   @AutoMap()
+  public readonly canGetFeedbackDeal: boolean;
+
+  @AutoMap()
+  public readonly canGetAssignDeal: boolean;
+
+  @AutoMap()
   public readonly canAssignDeal: boolean;
 
   @AutoMap()
@@ -154,6 +160,12 @@ export class RoleCM {
   public readonly canGetAllDeal: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
+  public readonly canGetFeedbackDeal: boolean;
+
+  @ApiProperty({ required: true, format: 'boolean' })
+  public readonly canGetAssignDeal: boolean;
+
+  @ApiProperty({ required: true, format: 'boolean' })
   public readonly canAssignDeal: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
@@ -272,6 +284,12 @@ export class RoleUM {
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canGetAllDeal: boolean;
+
+  @ApiProperty({ required: true, format: 'boolean' })
+  public readonly canGetAssignDeal: boolean;
+
+  @ApiProperty({ required: true, format: 'boolean' })
+  public readonly canGetFeedbackDeal: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canAssignDeal: boolean;

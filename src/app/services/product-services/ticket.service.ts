@@ -28,14 +28,13 @@ export class TicketService {
         } else if (!canGetTicketDeal && !canGetTicketSupport) {
           models = [];
         } else {
-          const types = [];
-          if (requester.roles.filter((e) => e.canGetTicketDeal).length > 0) {
-            types.push('deal');
+          if (canGetTicketDeal) {
+            models = models.filter((e) => e.type === 'deal' && (e.assignee ? (e.assignee?.id === requester.id) : true));
           }
-          if (requester.roles.filter((e) => e.canGetTicketSupport).length > 0) {
-            types.push('orther');
+          if (canGetTicketSupport) {
+            models = models.filter((e) => e.type === 'other' && (e.assignee ? (e.assignee?.id === requester.id) : true));
           }
-          models = models.filter((e) => types.findIndex((type) => type === e.type) > -1 && (e.assignee?.id === requester.id || e.assignee == null));
+
         }
         return this.mapper.mapArray(models, TicketVM, Ticket);
       }).catch((err) => {
