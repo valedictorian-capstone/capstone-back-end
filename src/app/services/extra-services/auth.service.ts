@@ -48,7 +48,9 @@ export class AuthService {
   public readonly refresh = async (requester: AccountVM, device?: DeviceCM) => {
     if (device?.id && !requester.devices.find((e) => e.id === device.id)) {
       const newDevice = await this.deviceRepository.useHTTP()
-        .save({ ...device, account: { id: requester.id }, customer: undefined } as any).then((data) => this.mapper.map(data, DeviceVM, Device));
+        .save({ ...device, account: { id: requester.id }, customer: undefined } as any).then(async (data) => {
+          return this.mapper.map(await this.deviceRepository.useHTTP().findOne({ id: data.id }, { relations: ['account'] }), DeviceVM, Device);
+        });
       requester.devices.push(newDevice);
       return requester;
     }
@@ -116,7 +118,9 @@ export class AuthService {
   public readonly refreshCustomer = async (requester: CustomerVM, device?: DeviceCM) => {
     if (device?.id && !requester.devices.find((e) => e.id === device.id)) {
       const newDevice = await this.deviceRepository.useHTTP()
-        .save({ ...device, account: undefined, customer: { id: requester } } as any).then((data) => this.mapper.map(data, DeviceVM, Device));
+        .save({ ...device, account: undefined, customer: { id: requester.id} } as any).then(async (data) => {
+          return this.mapper.map(await this.deviceRepository.useHTTP().findOne({ id: data.id }, { relations: ['customer'] }), DeviceVM, Device);
+        });
       requester.devices.push(newDevice);
       return requester;
     }

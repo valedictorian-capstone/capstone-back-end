@@ -22,12 +22,23 @@ export class DealService {
   ) { }
 
   public readonly findAll = async (requester: AccountVM): Promise<DealVM[]> => {
-    const query = {};
-    if (requester.roles.filter((e) => e.canAccessDeal && e.canGetAllDeal).length === 0) {
-      query['assignee'] = { id: requester.id };
-    }
-    return await this.dealRepository.useHTTP().find({ where: query, relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee'] })
+    return await this.dealRepository.useHTTP().find({relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee'] })
       .then(async (deals) => {
+        const canGetAllDeal = requester.roles.filter((e) => e.canGetAllDeal).length > 0;
+        const canGetFeedbackDeal = requester.roles.filter((e) => e.canGetFeedbackDeal).length > 0;
+        const canGetAssignDeal = requester.roles.filter((e) => e.canGetAssignDeal).length > 0;
+        if (!canGetAllDeal) {
+          if (!canGetFeedbackDeal && !canGetAssignDeal) {
+            deals = [];
+          } else if (canGetFeedbackDeal || canGetAssignDeal){
+            if (canGetFeedbackDeal) {
+              deals = deals.filter((deal) => deal.status === 'won');
+            }
+            if (canGetAssignDeal) {
+              deals = deals.filter((deal) => deal.assignee.id === requester.id);
+            }
+          }
+        }
         for (let i = 0; i < deals.length; i++) {
           const deal = deals[i];
           const stages = deal.stage.pipeline.stages;

@@ -26,6 +26,14 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
+  public readonly canGetFeedbackDeal: boolean;
+
+  @AutoMap()
+  @Column({ default: true })
+  public readonly canGetAssignDeal: boolean;
+
+  @AutoMap()
+  @Column({ default: true })
   public readonly canAssignDeal: boolean;
 
   @AutoMap()
