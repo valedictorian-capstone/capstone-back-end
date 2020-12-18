@@ -72,7 +72,7 @@ export class CustomerService {
 
       const paramArray = [];
       for (let i = 0; i < notOfLead.length; i++) {
-        paramArray.push([notOfLead[i].totalDeal, notOfLead[i].totalSpending, notOfLead[i].frequency])
+        paramArray.push([notOfLead[i].totalDeal, notOfLead[i].totalSpending/100000, notOfLead[i].frequency])
       }
 
       let classificationGroups = await this.callClassification(paramArray);
@@ -114,7 +114,8 @@ export class CustomerService {
         await this.cusomterRepository.useHTTP().save({ ...data, groups: [leadGroup] })
       } else {
         const paramArray = [];
-        paramArray.push([customer.totalDeal, customer.totalSpending, customer.frequency])
+        console.log("abcxyz" + customer.totalSpending/100000);
+        paramArray.push([customer.totalDeal, customer.totalSpending/100000, customer.frequency])
         let classificationGroups = await this.callClassification(paramArray);
         classificationGroups = JSON.parse(classificationGroups.replace(' ', ','));
         if (classificationGroups == '0') {
