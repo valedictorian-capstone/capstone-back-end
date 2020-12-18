@@ -1,5 +1,5 @@
 import { Account, Customer, Device } from '@models';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRepository, CustomerRepository, DeviceRepository } from '@repositories';
 import { ACCOUNT_REPOSITORY, CUSTOMER_REPOSITORY, DEVICE_REPOSITORY, FIREBASE_SERVICE } from '@types';
@@ -153,10 +153,10 @@ export class AuthService {
     return await this.accountRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "activitys", "devices"] }).then(
       async account => {
         if (!account) {
-          throw new UnauthorizedException("Invalid email or phone", "Invalid email or phone");
+          throw new BadRequestException("Invalid email or phone", "Invalid email or phone");
         }
         if (!compareSync(password, account?.passwordHash)) {
-          throw new UnauthorizedException("Invalid Password", "Invalid Password");
+          throw new BadRequestException("Invalid Password", "Invalid Password");
         }
         return this.mapper.map(account, AccountVM, Account);
       }
