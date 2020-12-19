@@ -90,7 +90,7 @@ export class ActivityService {
         if (!data) {
           throw new NotFoundException(`activity id ${body.id} not found`)
         }
-        return await this.activityRepository.useHTTP().save(body as any).then(async (model) => {
+        return await this.activityRepository.useHTTP().save(body as any).then(async () => {
           const rs = await this.findById(body.id);
           this.saveLog({
             description: 'Update an activity ' + rs.name,
