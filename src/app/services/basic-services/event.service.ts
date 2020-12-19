@@ -48,35 +48,38 @@ export class EventService {
           const triggers = await this.triggerRepository.useHTTP().find({ where: { event: model } });
           await this.triggerRepository.useHTTP().remove(triggers);
         } else {
-          await this.customerRepository.useHTTP()
-          .find({ relations: ['devices'] }).then(
-            async (customers) => {
-              for (let i = 0; i < customers.length; i++) {
-                const customer = customers[i];
-                await this.notificationRepository.useHTTP().save({
-                  body: `New event ${model.name} created ! See now`,
-                  title: "You have a new notification",
-                  type: 'create',
-                  name: 'event',
-                  data: (await this.findById(model.id)),
-                  icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
-                  customer: { id: customer.id }
-                }).then(async (notification) => {
-                  this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['customer'] }), NotificationVM, Notification), 'create');
-                  if (customer.devices.length > 0) {
-                    await this.firebaseService.useSendToDevice(customer.devices.map((e) => e.id), {
-                      notification: {
-                        body: `New event ${model.name} created ! See now`,
-                        title: "You have a new notification",
-                        icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
-                      },
-                      // data: (await this.findById(model.id)) as any
-                    });
-                  }
-                })
+          if (model.groups.length > 0) {
+            await this.customerRepository.useHTTP()
+            .find({ relations: ['devices', 'groups']}).then(
+              async (customers) => {
+                customers = customers.filter((customer) => customer.groups.filter((group) => model.groups.filter((g) => g.id === group.id).length > 0).length > 0);
+                for (let i = 0; i < customers.length; i++) {
+                  const customer = customers[i];
+                  await this.notificationRepository.useHTTP().save({
+                    body: `New event ${model.name} created ! See now`,
+                    title: "You have a new notification",
+                    type: 'create',
+                    name: 'event',
+                    data: (await this.findById(model.id)),
+                    icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
+                    customer: { id: customer.id }
+                  }).then(async (notification) => {
+                    this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['customer'] }), NotificationVM, Notification), 'create');
+                    if (customer.devices.length > 0) {
+                      await this.firebaseService.useSendToDevice(customer.devices.map((e) => e.id), {
+                        notification: {
+                          body: `New event ${model.name} created ! See now`,
+                          title: "You have a new notification",
+                          icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
+                        },
+                        // data: (await this.findById(model.id)) as any
+                      });
+                    }
+                  })
+                }
               }
-            }
-          )
+            )
+          }
         }
 
         await this.triggerRepository.useHTTP().save(event.triggers.map((trigger) => ({ ...trigger, event: model })));

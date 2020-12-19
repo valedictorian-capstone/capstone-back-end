@@ -8,6 +8,7 @@ export class NotificationVM {
   public readonly id: string;
   public readonly data: any;
   public readonly account: AccountVM;
+  public readonly customer: CustomerVM;
   @AutoMap()
   public readonly type: string;
   @AutoMap()

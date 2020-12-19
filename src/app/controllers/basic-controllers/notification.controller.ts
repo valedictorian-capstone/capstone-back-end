@@ -16,7 +16,7 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { NotificationService } from '@services';
-import { AccountVM, NotificationVM } from '@view-models';
+import { AccountVM, CustomerVM, NotificationVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Notification')
@@ -31,6 +31,13 @@ export class NotificationController {
   @ApiOkResponse({ description: 'Success return all Notifications' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public findAll(@Headers('requester') requester: AccountVM): NotificationVM[] {
+    return requester.notifications;
+  }
+  @Get('/Customer')
+  @ApiOperation({ summary: 'Get all Notifications' })
+  @ApiOkResponse({ description: 'Success return all Notifications' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public findAllByCustomer(@Headers('requester') requester: CustomerVM): NotificationVM[] {
     return requester.notifications;
   }
   @Put('/Seen')
