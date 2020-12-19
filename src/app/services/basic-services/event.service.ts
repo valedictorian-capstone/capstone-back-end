@@ -2,11 +2,13 @@ import { NotFoundException } from '@exceptions';
 import { Event } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
 import { EventRepository, TriggerRepository } from '@repositories';
-import { EVENT_REPOSITORY, SOCKET_SERVICE, TRIGGER_REPOSITORY } from '@types';
+import { EVENT_REPOSITORY, FIREBASE_SERVICE, SOCKET_SERVICE, TRIGGER_REPOSITORY } from '@types';
 import { EventUM, EventVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
-import { SocketService } from '../extra-services';
+import { FirebaseService, SocketService } from '../extra-services';
+import { uuid } from 'uuidv4';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class EventService {
@@ -14,6 +16,7 @@ export class EventService {
     @Inject(EVENT_REPOSITORY) protected readonly repository: EventRepository,
     @Inject(TRIGGER_REPOSITORY) protected readonly triggerRepository: TriggerRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
   public readonly findAll = async (ids?: string[]): Promise<EventVM[]> => {
@@ -33,15 +36,19 @@ export class EventService {
       })
   };
   public readonly save = async (body: EventUM): Promise<EventVM> => {
-    return await this.repository.useHTTP().save(body)
+    const event = { ...body };
+    if (event.image && event.image.includes(';base64')) {
+      event.image = await this.solveImage(event.image) as any;
+    }
+    return await this.repository.useHTTP().save(event)
       .then(async (model) => {
-        if (body.id == null) {
+        if (event.id == null) {
           const triggers = await this.triggerRepository.useHTTP().find({ where: { event: model } });
           await this.triggerRepository.useHTTP().remove(triggers);
         }
-        await this.triggerRepository.useHTTP().save(body.triggers.map((trigger) => ({ ...trigger, event: model })));
+        await this.triggerRepository.useHTTP().save(event.triggers.map((trigger) => ({ ...trigger, event: model })));
         const rs = await this.findById(model.id);
-        this.socketService.with('events', rs, body.id ? 'update' : 'create');
+        this.socketService.with('events', rs, event.id ? 'update' : 'create');
         return rs;
       })
   };
@@ -64,4 +71,9 @@ export class EventService {
       });
   };
 
+  private readonly solveImage = async (image: string) => {
+    const id = uuid();
+    await this.firebaseService.useUploadFileBase64("event/images/" + id + "." + image.substring(image.indexOf("data:image/") + 11, image.indexOf(";base64")), image, image.substring(image.indexOf("data:image/") + 5, image.indexOf(";base64")));
+    return environment.firebase.linkDownloadFile + "event/images/" + id + "." + image.substring(image.indexOf("data:image/") + 11, image.indexOf(";base64"));
+  }
 }

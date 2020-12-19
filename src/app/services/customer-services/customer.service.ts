@@ -52,7 +52,7 @@ export class CustomerService {
   public readonly import = async (body: CustomerCM[]): Promise<any> => {
     for (const customer of body) {
       if (customer.avatar && customer.avatar.includes(';base64')) {
-        customer.avatar = this.solveImage(customer.avatar) as any;
+        customer.avatar = await this.solveImage(customer.avatar) as any;
       }
     }
     return await this.cusomterRepository.useHTTP().save(body).then(async (customers) => {
@@ -106,7 +106,7 @@ export class CustomerService {
   public readonly insert = async (body: CustomerCM): Promise<any> => {
     const customer = { ...body };
     if (customer.avatar && customer.avatar.includes(';base64')) {
-      customer.avatar = this.solveImage(customer.avatar) as any;
+      customer.avatar = await this.solveImage(customer.avatar) as any;
     }
     return await this.cusomterRepository.useHTTP().save({ ...customer }).then(async (data) => {
       if (customer.totalDeal == 0 && customer.totalSpending == 0 && customer.frequency == 0) {
@@ -143,7 +143,7 @@ export class CustomerService {
         } else {
           const customer = { ...body };
           if (customer.avatar && customer.avatar.includes(';base64')) {
-            customer.avatar = this.solveImage(customer.avatar) as any;
+            customer.avatar = await this.solveImage(customer.avatar) as any;
           }
           return await this.cusomterRepository.useHTTP().save(customer).then(async (customer) => {
             const rs = await this.findById(customer.id)
@@ -188,7 +188,8 @@ export class CustomerService {
       });
   };
   private readonly solveImage = async (avatar: string) => {
-    await this.firebaseService.useUploadFileBase64("customer/avatars/" + uuid() + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
-    return environment.firebase.linkDownloadFile + "customer/avatars/" + uuid() + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
+    const id = uuid();
+    await this.firebaseService.useUploadFileBase64("customer/avatars/" + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
+    return environment.firebase.linkDownloadFile + "customer/avatars/" + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
   }
 }

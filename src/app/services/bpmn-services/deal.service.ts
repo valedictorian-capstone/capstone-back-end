@@ -22,7 +22,7 @@ export class DealService {
   ) { }
 
   public readonly findAll = async (requester: AccountVM): Promise<DealVM[]> => {
-    return await this.dealRepository.useHTTP().find({relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee'] })
+    return await this.dealRepository.useHTTP().find({ relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee'] })
       .then(async (deals) => {
         const canGetAllDeal = requester.roles.filter((e) => e.canGetAllDeal).length > 0;
         const canGetFeedbackDeal = requester.roles.filter((e) => e.canGetFeedbackDeal).length > 0;
@@ -30,7 +30,7 @@ export class DealService {
         if (!canGetAllDeal) {
           if (!canGetFeedbackDeal && !canGetAssignDeal) {
             deals = [];
-          } else if (canGetFeedbackDeal || canGetAssignDeal){
+          } else if (canGetFeedbackDeal || canGetAssignDeal) {
             if (canGetFeedbackDeal) {
               deals = deals.filter((deal) => deal.status === 'won');
             }
@@ -161,7 +161,9 @@ export class DealService {
       description: description,
       deal: updateDeal
     }
-    await this.logRepository.useHTTP().save(log);
+    await this.logRepository.useHTTP().save(log).then(async (res) => {
+      this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal'] }), 'create');
+    });
   }
   public readonly remove = async (id: string): Promise<any> => {
     return await this.dealRepository.useHTTP().findOne({ id: id })

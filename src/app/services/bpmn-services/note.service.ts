@@ -1,7 +1,7 @@
 import { Note } from "@models";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { DealRepository, NoteRepository } from "@repositories";
-import { DEAL_REPOSITORY, NOTE_REPOSITORY, SOCKET_SERVICE } from "@types";
+import { DealRepository, NoteRepository, LogRepository } from "@repositories";
+import { DEAL_REPOSITORY, NOTE_REPOSITORY, SOCKET_SERVICE, LOG_REPOSITORY } from "@types";
 import { NoteCM, NoteUM, NoteVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { In } from "typeorm";
@@ -15,7 +15,8 @@ export class NoteService {
     @Inject(NOTE_REPOSITORY) protected readonly noteRepository: NoteRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
-    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
+    @Inject(LOG_REPOSITORY) protected readonly logRepository: LogRepository,
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<NoteVM[]> => {
@@ -49,6 +50,10 @@ export class NoteService {
 
     return await this.noteRepository.useHTTP().save(body)
       .then(async (model) => {
+        this.saveLog({
+          description: 'Create new note',
+          deal: { id: model.deal.id }
+        });
         const rs = await this.findById(model.id);
         this.socketService.with('notes', rs, 'create');
         return rs;
@@ -59,6 +64,10 @@ export class NoteService {
     return await this.noteRepository.useHTTP()
       .save(body)
       .then(async (model) => {
+        this.saveLog({
+          description: 'Update an note',
+          deal: { id: model.deal.id }
+        });
         const rs = await this.findById(model.id);
         this.socketService.with('notes', rs, 'update');
         return rs;
@@ -76,10 +85,19 @@ export class NoteService {
         return await this.noteRepository.useHTTP()
         .remove(model)
           .then(() => {
+            this.saveLog({
+              description: 'Remove an note',
+              deal: { id: model.deal.id }
+            });
             const rs = this.mapper.map({...model, id} as Note, NoteVM, Note);
             this.socketService.with('notes', rs, 'remove');
             return rs;
           })
       });
+  }
+  private readonly saveLog = async (data: { description: string, deal: { id: string } }) => {
+    await this.logRepository.useHTTP().save(data as any).then(async (res) => {
+      this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal'] }), 'create');
+    });
   }
 }
