@@ -10,6 +10,7 @@ import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { environment } from 'src/environments/environment';
 import { FirebaseService } from '.';
 import { InvalidException } from '../../exceptions/invalid-exception';
+import { uuid } from 'uuidv4';
 
 @Injectable()
 export class AuthService {
@@ -77,7 +78,7 @@ export class AuthService {
   public readonly updateProfile = async (data: AccountVM, requester: AccountVM) => {
     const acc = { ...requester, ...data };
     if (acc.avatar && acc.avatar.includes(';base64')) {
-      acc.avatar = this.solveImage(acc.avatar, acc.id, 'employee/avatars') as any;
+      acc.avatar = await (acc.avatar, acc.id, 'employee/avatars') as any;
     }
     const account = await this.accountRepository.useHTTP().save(acc as any);
     return this.mapper.map(account, AccountVM, Account);
@@ -136,15 +137,16 @@ export class AuthService {
   public readonly updateCustomerProfile = async (data: CustomerVM, requester: CustomerVM) => {
     const cus = { ...requester, ...data };
     if (cus.avatar && cus.avatar.includes(';base64')) {
-      cus.avatar = this.solveImage(cus.avatar, cus.id, 'customer/avatars') as any;
+      cus.avatar = await this.solveImage(cus.avatar, cus.id, 'customer/avatars') as any;
     }
     const customer = await this.customerRepository.useHTTP().save(cus as any);
     return this.mapper.map(customer, CustomerVM, Customer);
   }
 
   private readonly solveImage = async (avatar: string, triggerName: string, path: string) => {
-    await this.firebaseService.useUploadFileBase64(path + triggerName + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
-    return environment.firebase.linkDownloadFile + path + triggerName + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
+    const id = uuid();
+    await this.firebaseService.useUploadFileBase64(path + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
+    return environment.firebase.linkDownloadFile + path + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
   }
   protected readonly validateAccount = async (emailOrPhone: string, password: string): Promise<AccountVM> => {
     const option = isNaN(+emailOrPhone) ?

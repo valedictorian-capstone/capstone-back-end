@@ -49,7 +49,7 @@ export class ProductService {
   public readonly insert = async (body: ProductCM): Promise<any> => {
     const product = { ...body };
     if (product.image && product.image.includes(';base64')) {
-      product.image = this.solveImage(product.image) as any;
+      product.image = await this.solveImage(product.image) as any;
     }
     return await this.productRepository.useHTTP().save(product as any).then(async (product) => {
       const rs = await this.findById(product.id)
@@ -60,7 +60,7 @@ export class ProductService {
   public readonly import = async (body: ProductCM[]): Promise<any> => {
     for (const product of body) {
       if (product.image && product.image.includes(';base64')) {
-        product.image = this.solveImage(product.image) as any;
+        product.image = await this.solveImage(product.image) as any;
       }
     }
     return await this.productRepository.useHTTP().save(body as any).then(async (products) => {
@@ -79,7 +79,7 @@ export class ProductService {
         } else {
           const product = { ...body };
           if (product.image && product.image.includes(';base64')) {
-            product.image = this.solveImage(product.image) as any;
+            product.image = await this.solveImage(product.image) as any;
           }
           return await this.productRepository.useHTTP().save(product as any).then(async (product) => {
             const rs = await this.findById(product.id)
@@ -124,7 +124,8 @@ export class ProductService {
       });
   };
   private readonly solveImage = async (image: string) => {
-    await this.firebaseService.useUploadFileBase64("product/images/" + uuid() + "." + image.substring(image.indexOf("data:image/") + 11, image.indexOf(";base64")), image, image.substring(image.indexOf("data:image/") + 5, image.indexOf(";base64")));
-    return environment.firebase.linkDownloadFile + "product/images/" + uuid() + "." + image.substring(image.indexOf("data:image/") + 11, image.indexOf(";base64"));
+    const id = uuid();
+    await this.firebaseService.useUploadFileBase64("product/images/" + id + "." + image.substring(image.indexOf("data:image/") + 11, image.indexOf(";base64")), image, image.substring(image.indexOf("data:image/") + 5, image.indexOf(";base64")));
+    return environment.firebase.linkDownloadFile + "product/images/" + id + "." + image.substring(image.indexOf("data:image/") + 11, image.indexOf(";base64"));
   }
 }

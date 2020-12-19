@@ -1,9 +1,9 @@
 import { NotFoundException } from '@exceptions';
 import { Activity, Notification } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
-import { AccountRepository, ActivityRepository, NotificationRepository } from '@repositories';
+import { AccountRepository, ActivityRepository, LogRepository, NotificationRepository } from '@repositories';
 import { FirebaseService, SocketService } from '@services';
-import { ACCOUNT_REPOSITORY, ACTIVITY_REPOSITORY, FIREBASE_SERVICE, NOTIFICATION_REPOSITORY, SOCKET_SERVICE } from '@types';
+import { ACCOUNT_REPOSITORY, ACTIVITY_REPOSITORY, FIREBASE_SERVICE, LOG_REPOSITORY, NOTIFICATION_REPOSITORY, SOCKET_SERVICE } from '@types';
 import { AccountVM, ActivityCM, ActivityUM, ActivityVM, NotificationVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 
@@ -16,7 +16,8 @@ export class ActivityService {
     @Inject(NOTIFICATION_REPOSITORY) protected readonly notificationRepository: NotificationRepository,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     @InjectMapper() protected readonly mapper: AutoMapper,
-    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
+    @Inject(LOG_REPOSITORY) protected readonly logRepository: LogRepository,
   ) { }
   public readonly findAll = async (requester: AccountVM): Promise<ActivityVM[]> => {
     const query = {};
@@ -24,7 +25,7 @@ export class ActivityService {
       query['assignee'] = { id: requester.id };
     }
     return await this.activityRepository.useHTTP()
-      .find({where: query, relations: ['assignee', 'deal', 'assignBy']})
+      .find({ where: query, relations: ['assignee', 'deal', 'assignBy'] })
       .then((models) =>
         this.mapper.mapArray(models, ActivityVM, Activity)
       )
@@ -48,6 +49,10 @@ export class ActivityService {
   public readonly insert = async (body: ActivityCM, requester: AccountVM): Promise<ActivityVM> => {
     return await this.activityRepository.useHTTP().save({ ...body, assignBy: { id: requester.id } } as any)
       .then(async (model) => {
+        this.saveLog({
+          description: 'Create new activity ' + model.name,
+          deal: { id: model.deal.id }
+        });
         await this.accountRepository.useHTTP()
           .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
             async (employee) => {
@@ -85,8 +90,12 @@ export class ActivityService {
         if (!data) {
           throw new NotFoundException(`activity id ${body.id} not found`)
         }
-        return await this.activityRepository.useHTTP().save(body as any).then(async () => {
+        return await this.activityRepository.useHTTP().save(body as any).then(async (model) => {
           const rs = await this.findById(body.id);
+          this.saveLog({
+            description: 'Update an activity ' + rs.name,
+            deal: { id: rs.deal.id }
+          });
           this.socketService.with('activitys', rs, 'update');
           return rs;
         })
@@ -103,11 +112,20 @@ export class ActivityService {
         return await this.activityRepository.useHTTP()
           .remove(model)
           .then(() => {
+            this.saveLog({
+              description: 'Remove an activity ' + model.name,
+              deal: { id: model.deal.id }
+            });
             const rs = this.mapper.map({ ...model, id } as Activity, ActivityVM, Activity);
             this.socketService.with('activitys', rs, 'remove');
             return rs;
           })
       });
   };
+  private readonly saveLog = async (data: { description: string, deal: { id: string } }) => {
+    await this.logRepository.useHTTP().save(data as any).then(async (res) => {
+      this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal'] }), 'create');
+    });
+  }
 
 }

@@ -12,6 +12,9 @@ export class EventVM {
     
     @AutoMap()
     public readonly description: string;
+    
+    @AutoMap()
+    public readonly image: string;
   
     @AutoMap()
     public readonly dateStart: Date;
@@ -54,7 +57,10 @@ export class EventCM{
     public readonly dateStart: Date;
 
     @ApiProperty({ required: true })
-    public readonly groups: {id: string}[];
+    public readonly groups: { id: string }[];
+    
+    @ApiProperty({ required: true, format: 'string', minLength: 2 })
+    public image: string;
 
     @ApiProperty({ required: true })
     public readonly triggers: TriggerCM[];
@@ -80,7 +86,10 @@ export class EventUM{
     public readonly dateStart: Date;
 
     @ApiProperty({ required: true })
-    public readonly groups: {id: string}[];
+    public readonly groups: { id: string }[];
+    
+    @ApiProperty({ required: true, format: 'string', minLength: 2 })
+    public image: string;
 
     @ApiProperty({ required: true })
     public readonly triggers: TriggerCM[];

@@ -1,8 +1,8 @@
 import { Attachment } from "@models";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { AttachmentRepository } from "@repositories";
+import { AttachmentRepository, LogRepository } from "@repositories";
 import { FirebaseService, SocketService } from "@services";
-import { ATTACHMENT_REPOSITORY, FIREBASE_SERVICE, SOCKET_SERVICE } from "@types";
+import { ATTACHMENT_REPOSITORY, FIREBASE_SERVICE, LOG_REPOSITORY, SOCKET_SERVICE } from "@types";
 import { AttachmentCM, AttachmentUM, AttachmentVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { environment } from "src/environments/environment";
@@ -15,7 +15,8 @@ export class AttachmentService {
     @Inject(ATTACHMENT_REPOSITORY) protected readonly attachmentRepository: AttachmentRepository,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     @InjectMapper() protected readonly mapper: AutoMapper,
-    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
+    @Inject(LOG_REPOSITORY) protected readonly logRepository: LogRepository,
   ) { }
   public readonly findAll = async (ids?: string[]): Promise<AttachmentVM[]> => {
     return await this.attachmentRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ['deal'] })
@@ -55,6 +56,10 @@ export class AttachmentService {
     return await this.attachmentRepository.useHTTP()
       .save(attachments as any)
       .then(async (models: Attachment[]) => {
+        this.saveLog({
+          description: 'Insert multiple attachment',
+          deal: { id: deal.id }
+        });
         const rs = await this.findAll(models.map((e) => e.id));
         this.socketService.with('attachments', rs, 'list');
         return rs
@@ -64,6 +69,10 @@ export class AttachmentService {
     return await this.attachmentRepository.useHTTP()
       .save(body as any)
       .then(async (model) => {
+        this.saveLog({
+          description: 'Update an attachment ' + model.name,
+          deal: { id: model.deal.id }
+        });
         const rs = await this.findById(model.id);
         this.socketService.with('attachments', rs, 'update');
         return rs
@@ -80,10 +89,19 @@ export class AttachmentService {
         return await this.attachmentRepository.useHTTP()
         .remove(model)
           .then(() => {
+            this.saveLog({
+              description: 'Remove an attachment ' + model.name,
+              deal: { id: model.deal.id }
+            });
             const rs = this.mapper.map({...model, id} as Attachment, AttachmentVM, Attachment);
             this.socketService.with('attachments', rs, 'remove');
             return rs;
           })
       });
+  }
+  private readonly saveLog = async (data: { description: string, deal: { id: string } }) => {
+    await this.logRepository.useHTTP().save(data as any).then(async (res) => {
+      this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal'] }), 'create');
+    });
   }
 }
