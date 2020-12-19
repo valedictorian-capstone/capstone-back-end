@@ -1,9 +1,9 @@
 import { NotFoundException } from '@exceptions';
-import { Event } from '@models';
+import { Event, Notification } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
-import { EventRepository, TriggerRepository } from '@repositories';
-import { EVENT_REPOSITORY, FIREBASE_SERVICE, SOCKET_SERVICE, TRIGGER_REPOSITORY } from '@types';
-import { EventUM, EventVM } from '@view-models';
+import { CustomerRepository, EventRepository, NotificationRepository, TriggerRepository } from '@repositories';
+import { CUSTOMER_REPOSITORY, EVENT_REPOSITORY, FIREBASE_SERVICE, NOTIFICATION_REPOSITORY, SOCKET_SERVICE, TRIGGER_REPOSITORY } from '@types';
+import { EventUM, EventVM, NotificationVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
 import { FirebaseService, SocketService } from '../extra-services';
@@ -14,9 +14,11 @@ import { environment } from 'src/environments/environment';
 export class EventService {
   constructor(
     @Inject(EVENT_REPOSITORY) protected readonly repository: EventRepository,
+    @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
     @Inject(TRIGGER_REPOSITORY) protected readonly triggerRepository: TriggerRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
+    @Inject(NOTIFICATION_REPOSITORY) protected readonly notificationRepository: NotificationRepository,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
   public readonly findAll = async (ids?: string[]): Promise<EventVM[]> => {
@@ -42,10 +44,41 @@ export class EventService {
     }
     return await this.repository.useHTTP().save(event)
       .then(async (model) => {
-        if (event.id == null) {
+        if (body.id) {
           const triggers = await this.triggerRepository.useHTTP().find({ where: { event: model } });
           await this.triggerRepository.useHTTP().remove(triggers);
+        } else {
+          await this.customerRepository.useHTTP()
+          .find({ relations: ['devices'] }).then(
+            async (customers) => {
+              for (let i = 0; i < customers.length; i++) {
+                const customer = customers[i];
+                await this.notificationRepository.useHTTP().save({
+                  body: `New event ${model.name} created ! See now`,
+                  title: "You have a new notification",
+                  type: 'create',
+                  name: 'event',
+                  data: (await this.findById(model.id)),
+                  icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
+                  customer: { id: customer.id }
+                }).then(async (notification) => {
+                  this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['customer'] }), NotificationVM, Notification), 'create');
+                  if (customer.devices.length > 0) {
+                    await this.firebaseService.useSendToDevice(customer.devices.map((e) => e.id), {
+                      notification: {
+                        body: `New event ${model.name} created ! See now`,
+                        title: "You have a new notification",
+                        icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
+                      },
+                      // data: (await this.findById(model.id)) as any
+                    });
+                  }
+                })
+              }
+            }
+          )
         }
+
         await this.triggerRepository.useHTTP().save(event.triggers.map((trigger) => ({ ...trigger, event: model })));
         const rs = await this.findById(model.id);
         this.socketService.with('events', rs, event.id ? 'update' : 'create');
