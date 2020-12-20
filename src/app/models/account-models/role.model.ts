@@ -70,11 +70,7 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canAssignCustomer: boolean;
-
-  @AutoMap()
-  @Column({ default: true })
-  public readonly canGetAllCustomer: boolean;
+  public readonly canAssignTicket: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -103,10 +99,15 @@ export class Role extends BaseEntity {
   @AutoMap()
   @Column({ default: true })
   public readonly canGetAllActivity: boolean;
+  
 
   @AutoMap()
   @Column({ default: true })
   public readonly canAccessTicket: boolean;
+
+  @AutoMap()
+  @Column({ default: true })
+  public readonly canGetFeedbackTicket: boolean;
 
   @AutoMap()
   @Column({ default: true })

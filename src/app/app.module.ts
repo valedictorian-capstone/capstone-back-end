@@ -163,8 +163,6 @@ export class AppModule implements OnModuleInit, NestModule {
         { path: '/api/v1/Auth/password', method: RequestMethod.PUT },
         // Notification
         { path: '/api/v1/Notification', method: RequestMethod.GET },
-        { path: '/api/v1/Notification/Seen/:id', method: RequestMethod.PUT },
-        { path: '/api/v1/Notification/Seen', method: RequestMethod.PUT },
         // Activity
         { path: '/api/v1/Activity', method: RequestMethod.GET },
         { path: '/api/v1/Activity', method: RequestMethod.POST },
@@ -219,9 +217,6 @@ export class AppModule implements OnModuleInit, NestModule {
         { path: '/api/v1/Role', method: RequestMethod.PUT },
         { path: '/api/v1/Role/restore/:id', method: RequestMethod.PUT },
         { path: '/api/v1/Role/:id', method: RequestMethod.DELETE },
-        //notification
-        { path: '/api/v1/Notification/Seen', method: RequestMethod.PUT },
-        { path: '/api/v1/Notification/Seen/:id', method: RequestMethod.PUT },
         // Product
         { path: '/api/v1/Product/import', method: RequestMethod.POST },
         { path: '/api/v1/Product', method: RequestMethod.POST },
