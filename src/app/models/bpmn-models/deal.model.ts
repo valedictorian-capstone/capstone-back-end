@@ -56,6 +56,10 @@ export class Deal extends BaseEntity {
   public feedbackRating: number;
 
   @AutoMap()
+  @Column({ default: 1 })
+  public feedbackAssigneeRating: number;
+
+  @AutoMap()
   @Column({ default: false })
   public feedbackStatus: boolean;
 
