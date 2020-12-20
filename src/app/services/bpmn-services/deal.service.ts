@@ -32,7 +32,7 @@ export class DealService {
             deals = [];
           } else if (canGetFeedbackDeal || canGetAssignDeal) {
             if (canGetFeedbackDeal) {
-              deals = deals.filter((deal) => deal.status === 'won');
+              deals = deals.filter((deal) => deal.status === 'won' || deal.status === 'lost');
             }
             if (canGetAssignDeal) {
               deals = deals.filter((deal) => deal.assignee.id === requester.id);

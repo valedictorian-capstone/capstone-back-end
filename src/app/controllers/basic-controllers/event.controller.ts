@@ -17,7 +17,8 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { EventService } from '@services';
-import { EventUM, EventVM } from '@view-models';
+import { EventUM, EventVM, CustomerVM } from '@view-models';
+import { Headers } from '@nestjs/common';
   
   @ApiBearerAuth('JWT')
   @ApiTags('Event')
@@ -33,6 +34,14 @@ import { EventUM, EventVM } from '@view-models';
     @ApiBadRequestResponse({ description: 'Have error in run time' })
     public findAll(): Promise<EventVM[]> {
       return this.service.findAll();
+    }
+
+    @Get('/Customer')
+    @ApiOperation({ summary: 'Get all Events' })
+    @ApiOkResponse({ description: 'Success return all Events' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public findAllByCustomer(@Headers('requester') requester: CustomerVM): Promise<EventVM[]> {
+      return this.service.findAll(requester);
     }
   
     @Get(':id')

@@ -3,12 +3,11 @@ import { Event, Notification } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
 import { CustomerRepository, EventRepository, NotificationRepository, TriggerRepository } from '@repositories';
 import { CUSTOMER_REPOSITORY, EVENT_REPOSITORY, FIREBASE_SERVICE, NOTIFICATION_REPOSITORY, SOCKET_SERVICE, TRIGGER_REPOSITORY } from '@types';
-import { EventUM, EventVM, NotificationVM } from '@view-models';
+import { CustomerVM, EventUM, EventVM, NotificationVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { In } from 'typeorm';
-import { FirebaseService, SocketService } from '../extra-services';
-import { uuid } from 'uuidv4';
 import { environment } from 'src/environments/environment';
+import { uuid } from 'uuidv4';
+import { FirebaseService, SocketService } from '../extra-services';
 
 @Injectable()
 export class EventService {
@@ -21,9 +20,14 @@ export class EventService {
     @Inject(NOTIFICATION_REPOSITORY) protected readonly notificationRepository: NotificationRepository,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
-  public readonly findAll = async (ids?: string[]): Promise<EventVM[]> => {
-    return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ["groups", "triggers"] })
-      .then((models) => this.mapper.mapArray(models, EventVM, Event))
+  public readonly findAll = async (requester?: CustomerVM): Promise<EventVM[]> => {
+    return await this.repository.useHTTP().find({  relations: ["groups", "triggers"] })
+      .then((models) => {
+        if (requester) {
+          models = models.filter((event) => event.groups.filter((group) => requester.groups.filter((g) => g.id === group.id).length > 0).length > 0);
+        }
+        return this.mapper.mapArray(models, EventVM, Event);
+      })
   };
   public readonly findById = async (id: string): Promise<EventVM> => {
     return await this.repository.useHTTP().findOne({ where: { id: id }, relations: ['groups', 'triggers'] })
