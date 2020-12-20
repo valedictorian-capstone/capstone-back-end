@@ -20,19 +20,32 @@ export class TicketService {
   ) { }
 
   public readonly findAll = async (requester: AccountVM): Promise<TicketVM[]> => {
-    return await this.ticketRepository.useHTTP().find({ relations: ["customer", "assignee"] })
+    return await this.ticketRepository.useHTTP().find({ relations: ["customer", "assignee", "feedbackAssignee"] })
       .then(async (models) => {
         const canGetTicketDeal = requester.roles.filter((e) => e.canGetTicketDeal).length > 0;
         const canGetTicketSupport = requester.roles.filter((e) => e.canGetTicketSupport).length > 0;
+        const canGetFeedbackTicket = requester.roles.filter((e) => e.canGetFeedbackTicket).length > 0;
         if (canGetTicketDeal && canGetTicketSupport) {
         } else if (!canGetTicketDeal && !canGetTicketSupport) {
-          models = [];
+          if (canGetFeedbackTicket) {
+            models = models.filter((e) => e.status === 'resolve' && (e.feedbackAssignee ? (e.feedbackAssignee?.id === requester.id) : true));
+          } else {
+            models = [];
+          }
         } else {
           if (canGetTicketDeal) {
-            models = models.filter((e) => e.type === 'deal' && (e.assignee ? (e.assignee?.id === requester.id) : true));
+            if (canGetFeedbackTicket) {
+              models = models.filter((e) => (e.status === 'resolve' && (e.feedbackAssignee ? (e.feedbackAssignee?.id === requester.id) : true) || (e.type === 'deal' && (e.assignee ? (e.assignee?.id === requester.id) : true))));
+            } else {
+              models = models.filter((e) => e.type === 'deal' && (e.assignee ? (e.assignee?.id === requester.id) : true));
+            }
           }
           if (canGetTicketSupport) {
-            models = models.filter((e) => e.type === 'other' && (e.assignee ? (e.assignee?.id === requester.id) : true));
+            if (canGetFeedbackTicket) {
+              models = models.filter((e) => (e.status === 'resolve' && (e.feedbackAssignee ? (e.feedbackAssignee?.id === requester.id) : true) || (e.type === 'other' && (e.assignee ? (e.assignee?.id === requester.id) : true))));
+            } else {
+              models = models.filter((e) => e.type === 'other' && (e.assignee ? (e.assignee?.id === requester.id) : true));
+            }
           }
 
         }
@@ -42,13 +55,13 @@ export class TicketService {
       });
   };
   public readonly findByCustomerId = async (id: string): Promise<TicketVM[]> => {
-    return await this.ticketRepository.useHTTP().find({ relations: ["customer", "assignee"], where: { customer: { id } } })
+    return await this.ticketRepository.useHTTP().find({ relations: ["customer", "assignee", "feedbackAssignee"], where: { customer: { id } } })
       .then(async (models) => {
         return this.mapper.mapArray(models, TicketVM, Ticket);
       });
   };
   public readonly findById = async (id: string): Promise<TicketVM> => {
-    return await this.ticketRepository.useHTTP().findOne({ where: { id: id }, relations: ["customer", "assignee"] })
+    return await this.ticketRepository.useHTTP().findOne({ where: { id: id }, relations: ["customer", "assignee", "feedbackAssignee"] })
       .then(async (model) => {
         if (model) {
           return this.mapper.map(model, TicketVM, Ticket);

@@ -23,7 +23,7 @@ export class AuthCustomerMiddleware implements NestMiddleware {
     if (!customer) {
       throw new UnauthorizedException("You have no permission");
     }
-    const requester = this.mapper.map(await this.customerRepository.useHTTP().findOne({ id: customer.id }, {relations: ['devices', 'notifications']}), CustomerVM, Customer);
+    const requester = this.mapper.map(await this.customerRepository.useHTTP().findOne({ id: customer.id }, {relations: ['devices', 'notifications', 'groups']}), CustomerVM, Customer);
     req.headers['requester'] = requester as any;
     next();
   }
