@@ -28,7 +28,7 @@ export class DealVM {
   public readonly status: string;
 
   @AutoMap()
-  public readonly currentStep: number;
+  public readonly service: string;
 
   @AutoMap()
   public readonly feedbackMessage: string;
@@ -93,8 +93,8 @@ export class DealCM {
   public readonly status: string;
 
   @AutoMap()
-  @ApiProperty({ required: true, format: 'number' })
-  public readonly currentStep: number;
+  @ApiProperty({ required: true, format: 'string' })
+  public readonly service: string;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string' })
@@ -147,8 +147,8 @@ export class DealUM {
   public readonly status: string;
 
   @AutoMap()
-  @ApiProperty({ required: true, format: 'number' })
-  public readonly currentStep: number;
+  @ApiProperty({ required: true, format: 'string' })
+  public readonly service: string;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string' })
