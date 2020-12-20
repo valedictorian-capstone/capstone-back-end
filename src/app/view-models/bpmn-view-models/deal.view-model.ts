@@ -37,6 +37,9 @@ export class DealVM {
   public readonly feedbackRating: number;
 
   @AutoMap()
+  public readonly feedbackAssigneeRating: number;
+
+  @AutoMap()
   public readonly feedbackStatus: boolean;
 
   public readonly assignee: AccountVM;
@@ -102,6 +105,10 @@ export class DealCM {
   public readonly feedbackRating: number;
 
   @AutoMap()
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly feedbackAssingeeRating: number;
+
+  @AutoMap()
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly feedbackStatus: boolean;
 
@@ -150,6 +157,10 @@ export class DealUM {
   @AutoMap()
   @ApiProperty({ required: true, format: 'number' })
   public readonly feedbackRating: number;
+
+  @AutoMap()
+  @ApiProperty({ required: true, format: 'number' })
+  public readonly feedbackAssingeeRating: number;
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'boolean' })
