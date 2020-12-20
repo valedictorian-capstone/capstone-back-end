@@ -38,8 +38,8 @@ export class Deal extends BaseEntity {
   public status: string;
 
   @AutoMap()
-  @Column({ default: 1 })
-  public currentStep: number;
+  @Column({ default: null })
+  public service: string;
 
   @ManyToOne(() => Stage, stage => stage.deals)
   public stage: Stage;
