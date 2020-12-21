@@ -114,14 +114,14 @@ export class AccountService {
           );
         }
         return await this.accountRepository.useHTTP()
-          .save({ id, isDelete: true })
-          .then(async () => {
-            const rs = await this.findById(id)
-            this.socketService.with('accounts', rs, 'update');
+        .remove(model)
+          .then(() => {
+            const rs = this.mapper.map({...model, id} as Account, AccountVM, Account);
+            this.socketService.with('accounts', rs, 'remove');
             return rs;
           })
       });
-  };
+  }
   public readonly restore = async (id: string): Promise<AccountVM> => {
     return await this.accountRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
