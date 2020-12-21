@@ -23,9 +23,7 @@ export class StatisticService {
         const vm = this.mapper.map(group, GroupVM, Group);
         const data = vm.customers.filter((customer) => {
           const createdAt = new Date(customer.createdAt);
-          const createdYear = createdAt.getFullYear();
-          const createdMonth = createdAt.getMonth();
-          return createdYear == year && createdMonth == month;
+          return createdAt.getFullYear() == year && (createdAt.getMonth() + 1) == month;
         });
         this.socketService.with('customer-in-month', {
           id: vm.id,
@@ -46,7 +44,7 @@ export class StatisticService {
         const vm = this.mapper.map(group, GroupVM, Group);
         const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month) => vm.customers.filter((customer) => {
           const createdAt = new Date(customer.createdAt);
-          return createdAt.getFullYear() == year && createdAt.getMonth() == month;
+          return createdAt.getFullYear() == year && (createdAt.getMonth() + 1) == month;
         }));
         this.socketService.with('customer-in-year', {
           id: vm.id,
@@ -67,7 +65,7 @@ export class StatisticService {
       return ['Processing', 'Won', 'Lost'].map((status) => {
         const data = vms.filter((deal) => {
           const createdAt = new Date(deal.createdAt);
-          return createdAt.getFullYear() == year && createdAt.getMonth() == month && deal.status.toLowerCase() === status.toLowerCase();
+          return createdAt.getFullYear() == year && (createdAt.getMonth() + 1) == month && deal.status.toLowerCase() === status.toLowerCase();
         });
         this.socketService.with('deal-in-month', {
           status,
@@ -86,7 +84,7 @@ export class StatisticService {
       return ['Processing', 'Won', 'Lost'].map((status) => {
         const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month) => vms.filter((deal) => {
           const createdAt = new Date(deal.createdAt);
-          return createdAt.getFullYear() == year && createdAt.getMonth() == month && deal.status.toLowerCase() === status.toLowerCase();
+          return createdAt.getFullYear() == year && (createdAt.getMonth() + 1) == month && deal.status.toLowerCase() === status.toLowerCase();
         }));
         this.socketService.with('deal-in-year', {
           status,
