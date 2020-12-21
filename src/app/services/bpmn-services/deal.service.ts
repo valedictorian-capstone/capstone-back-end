@@ -169,18 +169,22 @@ export class DealService {
           }
         }
         customer.totalSpending = customer.totalSpending + totalPrice;
+        console.log("total deal after finish of won" + customer.totalDeal);
+        await this.customerService.reClassify(customer);
       }
       if (deal.status === 'lost') {
         const customer = deal.customer;
         customer.totalDeal = customer.totalDeal + 1;
-        this.customerService.reClassify(customer);
+        console.log("total deal after finish of lost" + customer.totalDeal);
+        await this.customerService.reClassify(customer);
       }
     })
   }
 
-  private readonly updateCustomerGroupWhenReOpen = async (deal: Deal) => {
+  private readonly updateCustomerGroupWhenReOpen = async (deal: Deal, oldStatus: string) => {
     return await this.dealRepository.useHTTP().findOne({ id: deal.id }, { relations: ['customer', 'dealDetails'] }).then(async (deal) => {
-      if (deal.status === 'won') {
+      
+      if (oldStatus === 'won') {
         const customer = deal.customer;
         customer.totalDeal = customer.totalDeal - 1;
         customer.frequency = (customer.frequency * 365 - 1) / 365;
@@ -193,16 +197,20 @@ export class DealService {
           }
         }
         customer.totalSpending = customer.totalSpending - totalPrice;
+        console.log("total deal after reopen of won" + customer.totalDeal);
+        await this.customerService.reClassify(customer);
       }
-      if (deal.status === 'lost') {
+      if (oldStatus === 'lost') {
         const customer = deal.customer;
         customer.totalDeal = customer.totalDeal - 1;
-        this.customerService.reClassify(customer);
+        console.log("total deal after reopen of lost" + customer.totalDeal);
+        await this.customerService.reClassify(customer);
       }
     })
   }
 
   private readonly saveLog = async (oldDeal: Deal, updateDeal: Deal) => {
+    console.log("test save log beggin");
     let description = "";
     if (oldDeal.stage.id != updateDeal.stage.id && oldDeal.stage && updateDeal.stage) {
       const oldStage = await this.stageRepository.useHTTP().findOne({ id: oldDeal.stage.id });
@@ -214,7 +222,8 @@ export class DealService {
       if (oldDeal.status === 'processing') {
         this.updateCustomerGroupWhenDone(updateDeal);
       } else {
-        this.updateCustomerGroupWhenReOpen(updateDeal);
+        console.log("test reOpen");
+        this.updateCustomerGroupWhenReOpen(updateDeal, oldDeal.status);
       }
     }
     const log = {
