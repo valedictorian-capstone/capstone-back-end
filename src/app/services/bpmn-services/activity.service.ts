@@ -49,15 +49,11 @@ export class ActivityService {
   public readonly insert = async (body: ActivityCM, requester: AccountVM): Promise<ActivityVM> => {
     return await this.activityRepository.useHTTP().save({ ...body, assignBy: { id: requester.id } } as any)
       .then(async (model) => {
-        this.saveLog({
-          description: 'Create new activity ' + model.name,
-          deal: { id: model.deal.id }
-        });
         await this.accountRepository.useHTTP()
-          .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
-            async (employee) => {
-              await this.notificationRepository.useHTTP().save({
-                body: `New activity ${model.name} created for you`,
+        .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
+          async (employee) => {
+            await this.notificationRepository.useHTTP().save({
+              body: `New activity ${model.name} created for you`,
                 title: "You have a new activity",
                 type: 'create',
                 name: 'activity',
@@ -80,6 +76,10 @@ export class ActivityService {
             }
           )
         const rs = await this.findById(model.id);
+        this.saveLog({
+          description: 'Create new activity ' + model.name,
+          deal: { id: rs.deal.id }
+        });
         this.socketService.with('activitys', rs, 'create');
         return rs;
       })
@@ -112,11 +112,11 @@ export class ActivityService {
         return await this.activityRepository.useHTTP()
           .remove(model)
           .then(() => {
+            const rs = this.mapper.map({ ...model, id } as Activity, ActivityVM, Activity);
             this.saveLog({
               description: 'Remove an activity ' + model.name,
-              deal: { id: model.deal.id }
+              deal: { id: rs.deal.id }
             });
-            const rs = this.mapper.map({ ...model, id } as Activity, ActivityVM, Activity);
             this.socketService.with('activitys', rs, 'remove');
             return rs;
           })
