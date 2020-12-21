@@ -21,9 +21,7 @@ export class EmailService {
                 user: 'crmdynamic123@gmail.com',
                 clientId: '995040905872-25sb1bet01gs4i226qrv95q4baltjv76.apps.googleusercontent.com',
                 clientSecret: 'OS2Qongc4QZ1IX3uN_oamAV8',
-                accessToken: 'ya29.a0AfH6SMA7Z0ckO39CKExjhxBBjW2_PlqiW1A2PYlhZJ4SP69boWPDDtO6xacQQUJ07cIy8qiNuSgsGcRlyTblabPkg7N4I0MGDzW1sycHN24Mjc_S-taloMsIIWN9rfxpLeQ-ZptlfLinCJDHCrrAk1HYxXZBMpxJSx5L_ad7bKQ',
-                refreshToken: '1//04wBwp3PNF9i0CgYIARAAGAQSNwF-L9IrX4t4hedhBzXpzlEzdMsOXNhrzRxy0WVtlI0YXRYSFC4qPPQ31b6UXzMzmA1LLZOz1gE',
-                expires: 1624256304399,
+                refreshToken: '1//04UP-0J_KmYKbCgYIARAAGAQSNwF-L9IrzdQ7xUZM0bpe8V2kBR7zk0OyJEJ2xuiuaApLjqGqBgNN1m9-QEuzGHzwh5Geo_FXyuI',
             }
         });
      }
@@ -36,7 +34,7 @@ export class EmailService {
             clientId: '995040905872-25sb1bet01gs4i226qrv95q4baltjv76.apps.googleusercontent.com',
             clientSecret: 'OS2Qongc4QZ1IX3uN_oamAV8',
             // accessToken: 'ya29.a0AfH6SMCdHOVcRdNcNcV39v-bsYcOdxZnwBpLUbguA4BCOFkWQAd9-rmJCb_XB1Sj0hESnDpfzf6g0JLc4Mh-Pz48Z8KQcgmGlRPQKdO29lje6EE2bAzXo0CoLguCS8VMjfpGlQSpZdaRnZgfgRGmkz9Nb_PH1mIlLcFldnNPGak',
-            // refreshToken: '1//04v9fUEqiyQKoCgYIARAAGAQSNwF-L9IrUqqav5cXcP6RW9o9S5pL0LOhidOBTrrCG8x-hkBsxQbrEFRv5QXK_zbN2nVxUiAellg'
+            refreshToken: '1//04v9fUEqiyQKoCgYIARAAGAQSNwF-L9IrUqqav5cXcP6RW9o9S5pL0LOhidOBTrrCG8x-hkBsxQbrEFRv5QXK_zbN2nVxUiAellg'
         }
     });
 
