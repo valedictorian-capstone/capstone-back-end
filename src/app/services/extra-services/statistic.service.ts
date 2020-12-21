@@ -23,7 +23,9 @@ export class StatisticService {
         const vm = this.mapper.map(group, GroupVM, Group);
         const data = vm.customers.filter((customer) => {
           const createdAt = new Date(customer.createdAt);
-          return createdAt.getFullYear() == year && createdAt.getMonth() == month;
+          const createdYear = createdAt.getFullYear();
+          const createdMonth = createdAt.getMonth();
+          return createdYear == year && createdMonth == month;
         });
         this.socketService.with('customer-in-month', {
           id: vm.id,
