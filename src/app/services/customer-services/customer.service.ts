@@ -6,6 +6,7 @@ import { FirebaseService, SocketService } from '@services';
 import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY, SOCKET_SERVICE } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { async } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
 import { uuid } from 'uuidv4';
@@ -28,7 +29,7 @@ export class CustomerService {
       .then(async (models) => this.mapper.mapArray(models, CustomerVM, Customer));
   };
   public readonly findAllByLead = async (): Promise<CustomerVM[]> => {
-    return await this.cusomterRepository.useHTTP().find({relations: ['groups'] })
+    return await this.cusomterRepository.useHTTP().find({ relations: ['groups'] })
       .then((customers) => this.mapper.mapArray(customers.filter((customer) => customer.groups.filter((group) => group.id == '3').length > 0), CustomerVM, Customer));
   }
   public readonly findById = async (id: string): Promise<CustomerVM> => {
@@ -72,7 +73,7 @@ export class CustomerService {
 
       const paramArray = [];
       for (let i = 0; i < notOfLead.length; i++) {
-        paramArray.push([notOfLead[i].totalDeal, notOfLead[i].totalSpending/100000, notOfLead[i].frequency])
+        paramArray.push([notOfLead[i].totalDeal, notOfLead[i].totalSpending / 100000, notOfLead[i].frequency])
       }
 
       let classificationGroups = await this.callClassification(paramArray);
@@ -114,8 +115,7 @@ export class CustomerService {
         await this.cusomterRepository.useHTTP().save({ ...data, groups: [leadGroup] })
       } else {
         const paramArray = [];
-        console.log("abcxyz" + customer.totalSpending/100000);
-        paramArray.push([customer.totalDeal, customer.totalSpending/100000, customer.frequency])
+        paramArray.push([customer.totalDeal, customer.totalSpending / 100000, customer.frequency])
         let classificationGroups = await this.callClassification(paramArray);
         classificationGroups = JSON.parse(classificationGroups.replace(' ', ','));
         if (classificationGroups == '0') {
@@ -134,6 +134,29 @@ export class CustomerService {
       return rs;
     });
   };
+
+  public readonly reClassify = async (customer: Customer): Promise<any> => {
+    if (customer.totalDeal == 0 && customer.totalSpending == 0 && customer.frequency == 0) {
+      const leadGroup = await this.groupRepository.useHTTP().findOne({ where: { id: 3 } });
+      await this.cusomterRepository.useHTTP().save({ ...customer, groups: [leadGroup] })
+    } else {
+      const paramArray = [];
+      paramArray.push([customer.totalDeal, customer.totalSpending / 100000, customer.frequency])
+      let classificationGroups = await this.callClassification(paramArray);
+      classificationGroups = JSON.parse(classificationGroups.replace(' ', ','));
+      if (classificationGroups == '0') {
+        const group1 = await this.groupRepository.useHTTP().findOne({ where: { id: 0 } });
+        await this.cusomterRepository.useHTTP().save({ ...customer, groups: [group1] });
+      } else if (classificationGroups == '1') {
+        const group2 = await this.groupRepository.useHTTP().findOne({ where: { id: 1 } });
+        await this.cusomterRepository.useHTTP().save({ ...customer, groups: [group2] });
+      } else {
+        const group3 = await this.groupRepository.useHTTP().findOne({ where: { id: 2 } });
+        await this.cusomterRepository.useHTTP().save({ ...customer, groups: [group3] });
+      }
+    }
+  }
+
   public readonly update = async (body: CustomerUM): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
@@ -147,7 +170,8 @@ export class CustomerService {
             customer.avatar = await this.solveImage(customer.avatar) as any;
           }
           return await this.cusomterRepository.useHTTP().save(customer).then(async (customer) => {
-            const rs = await this.findById(customer.id)
+            await this.reClassify(customer);
+            const rs = await this.findById(customer.id);
             this.socketService.with('customers', rs, 'update');
             return rs;
           }).catch(err => err);
