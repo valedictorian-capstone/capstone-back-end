@@ -136,7 +136,7 @@ export class CustomerService {
   };
 
   public readonly reClassify = async (customer: Customer): Promise<any> => {
-    if (customer.totalDeal == 0 && customer.totalSpending == 0 && customer.frequency == 0) {
+    if (customer.totalDeal == 0 && customer.totalSpending == 0) {
       const leadGroup = await this.groupRepository.useHTTP().findOne({ where: { id: 3 } });
       await this.cusomterRepository.useHTTP().save({ ...customer, groups: [leadGroup] })
     } else {
