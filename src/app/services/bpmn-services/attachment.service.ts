@@ -69,11 +69,11 @@ export class AttachmentService {
     return await this.attachmentRepository.useHTTP()
       .save(body as any)
       .then(async (model) => {
+        const rs = await this.findById(model.id);
         this.saveLog({
           description: 'Update an attachment ' + model.name,
-          deal: { id: model.deal.id }
+          deal: { id: rs.deal.id }
         });
-        const rs = await this.findById(model.id);
         this.socketService.with('attachments', rs, 'update');
         return rs
       })
@@ -89,11 +89,11 @@ export class AttachmentService {
         return await this.attachmentRepository.useHTTP()
         .remove(model)
           .then(() => {
+            const rs = this.mapper.map({...model, id} as Attachment, AttachmentVM, Attachment);
             this.saveLog({
               description: 'Remove an attachment ' + model.name,
-              deal: { id: model.deal.id }
+              deal: { id: rs.deal.id }
             });
-            const rs = this.mapper.map({...model, id} as Attachment, AttachmentVM, Attachment);
             this.socketService.with('attachments', rs, 'remove');
             return rs;
           })

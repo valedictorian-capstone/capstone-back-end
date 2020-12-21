@@ -50,11 +50,11 @@ export class NoteService {
 
     return await this.noteRepository.useHTTP().save(body)
       .then(async (model) => {
+        const rs = await this.findById(model.id);
         this.saveLog({
           description: 'Create new note',
-          deal: { id: model.deal.id }
+          deal: { id: rs.deal.id }
         });
-        const rs = await this.findById(model.id);
         this.socketService.with('notes', rs, 'create');
         return rs;
       })
@@ -64,11 +64,11 @@ export class NoteService {
     return await this.noteRepository.useHTTP()
       .save(body)
       .then(async (model) => {
+        const rs = await this.findById(model.id);
         this.saveLog({
           description: 'Update an note',
-          deal: { id: model.deal.id }
+          deal: { id: rs.deal.id }
         });
-        const rs = await this.findById(model.id);
         this.socketService.with('notes', rs, 'update');
         return rs;
       })
@@ -85,11 +85,11 @@ export class NoteService {
         return await this.noteRepository.useHTTP()
         .remove(model)
           .then(() => {
+            const rs = this.mapper.map({...model, id} as Note, NoteVM, Note);
             this.saveLog({
               description: 'Remove an note',
-              deal: { id: model.deal.id }
+              deal: { id: rs.deal.id }
             });
-            const rs = this.mapper.map({...model, id} as Note, NoteVM, Note);
             this.socketService.with('notes', rs, 'remove');
             return rs;
           })

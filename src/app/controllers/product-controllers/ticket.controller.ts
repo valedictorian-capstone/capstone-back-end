@@ -68,6 +68,14 @@ import { AccountVM, CustomerVM, TicketCM, TicketUM, TicketVM } from '@view-model
     public botInsert( @Body() body: TicketCM): Promise<TicketVM> {
       return this.service.botInsert(body);
     }
+
+    @Post('/Unauthorized')
+    @ApiOperation({ summary: 'Bot Insert new Ticket' })
+    @ApiCreatedResponse({ description: 'Success create new Ticket' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public unAuthorizedInsert( @Body() body: TicketCM): Promise<TicketVM> {
+      return this.service.unAuthorizedInsert(body);
+    }
   
     @Put()
     @ApiOperation({ summary: 'Update an Ticket by Id' })
