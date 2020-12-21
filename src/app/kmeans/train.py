@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 import xlrd
 
-loc = ("./Customers_dataset.xlsx")
+loc = ("./Customers_dataset_2.xlsx")
 
 wb = xlrd.open_workbook(loc)
 sheet = wb.sheet_by_index(0)

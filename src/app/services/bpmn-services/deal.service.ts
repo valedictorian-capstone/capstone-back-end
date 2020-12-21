@@ -1,11 +1,14 @@
 import { Deal } from "@models";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { ActivityRepository, DealDetailRepository, DealRepository, LogRepository, ProductRepository, StageRepository } from "@repositories";
-import { ACTIVITY_REPOSITORY, DEAL_DETAIL_REPOSITORY, DEAL_REPOSITORY, LOG_REPOSITORY, PRODUCT_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from "@types";
+import { ActivityRepository, CustomerRepository, DealDetailRepository, DealRepository, LogRepository, ProductRepository, StageRepository } from "@repositories";
+import { ACTIVITY_REPOSITORY, CUSTOMER_REPOSITORY, DEAL_DETAIL_REPOSITORY, DEAL_REPOSITORY, LOG_REPOSITORY, PRODUCT_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from "@types";
 import { AccountVM, DealCM, DealUM, DealVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
+import { async } from "rxjs";
+import { count } from "rxjs/operators";
 import { In } from 'typeorm';
 import { SocketService } from "../extra-services";
+import { CustomerService } from '../customer-services'
 
 @Injectable()
 export class DealService {
@@ -16,9 +19,11 @@ export class DealService {
     @Inject(ACTIVITY_REPOSITORY) protected readonly activityRepository: ActivityRepository,
     @Inject(DEAL_DETAIL_REPOSITORY) protected readonly dealDetailRepository: DealDetailRepository,
     @Inject(PRODUCT_REPOSITORY) protected readonly productRepository: ProductRepository,
+    @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
     @Inject(LOG_REPOSITORY) protected readonly logRepository: LogRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
-    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
+    protected readonly customerService: CustomerService
   ) { }
 
   public readonly findAll = async (requester: AccountVM): Promise<DealVM[]> => {
@@ -113,6 +118,7 @@ export class DealService {
         return rs;
       })
   }
+
   public readonly update = async (body: DealUM | DealUM[]): Promise<DealVM | DealVM[]> => {
     if ((body as DealUM[]).length) {
       const rs = [];
@@ -147,15 +153,69 @@ export class DealService {
         });
     }
   }
+
+  private readonly updateCustomerGroupWhenDone = async (deal: Deal) => {
+    return await this.dealRepository.useHTTP().findOne({ id: deal.id }, { relations: ['customer', 'dealDetails'] }).then(async (deal) => {
+      if (deal.status === 'won') {
+        const customer = deal.customer;
+        customer.totalDeal = customer.totalDeal + 1;
+        customer.frequency = (customer.frequency * 365 + 1) / 365;
+        let totalPrice = 0
+        if (deal.dealDetails.length > 0) {
+          deal.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(deal.dealDetails.map((e) => e.id)) }, relations: ['product'] });
+          for (let i = 0; i < deal.dealDetails.length; i++) {
+            const dealDetail = deal.dealDetails[i];
+            totalPrice = totalPrice + (dealDetail.quantity * dealDetail.product.price);
+          }
+        }
+        customer.totalSpending = customer.totalSpending + totalPrice;
+      }
+      if (deal.status === 'lost') {
+        const customer = deal.customer;
+        customer.totalDeal = customer.totalDeal + 1;
+        this.customerService.reClassify(customer);
+      }
+    })
+  }
+
+  private readonly updateCustomerGroupWhenReOpen = async (deal: Deal) => {
+    return await this.dealRepository.useHTTP().findOne({ id: deal.id }, { relations: ['customer', 'dealDetails'] }).then(async (deal) => {
+      if (deal.status === 'won') {
+        const customer = deal.customer;
+        customer.totalDeal = customer.totalDeal - 1;
+        customer.frequency = (customer.frequency * 365 - 1) / 365;
+        let totalPrice = 0
+        if (deal.dealDetails.length > 0) {
+          deal.dealDetails = await this.dealDetailRepository.useHTTP().find({ where: { id: In(deal.dealDetails.map((e) => e.id)) }, relations: ['product'] });
+          for (let i = 0; i < deal.dealDetails.length; i++) {
+            const dealDetail = deal.dealDetails[i];
+            totalPrice = totalPrice + (dealDetail.quantity * dealDetail.product.price);
+          }
+        }
+        customer.totalSpending = customer.totalSpending - totalPrice;
+      }
+      if (deal.status === 'lost') {
+        const customer = deal.customer;
+        customer.totalDeal = customer.totalDeal - 1;
+        this.customerService.reClassify(customer);
+      }
+    })
+  }
+
   private readonly saveLog = async (oldDeal: Deal, updateDeal: Deal) => {
     let description = "";
-    if (oldDeal.stage != updateDeal.stage && oldDeal.stage && updateDeal.stage) {
+    if (oldDeal.stage.id != updateDeal.stage.id && oldDeal.stage && updateDeal.stage) {
       const oldStage = await this.stageRepository.useHTTP().findOne({ id: oldDeal.stage.id });
       const updateStage = await this.stageRepository.useHTTP().findOne({ id: updateDeal.stage.id });
       description = "Stage: " + oldStage.name + ' -> ' + updateStage.name;
     }
     if (oldDeal.status != updateDeal.status) {
       description = "Status: " + oldDeal.status + ' -> ' + updateDeal.status;
+      if (oldDeal.status === 'processing') {
+        this.updateCustomerGroupWhenDone(updateDeal);
+      } else {
+        this.updateCustomerGroupWhenReOpen(updateDeal);
+      }
     }
     const log = {
       description: description,
@@ -165,6 +225,7 @@ export class DealService {
       this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal'] }), 'create');
     });
   }
+
   public readonly remove = async (id: string): Promise<any> => {
     return await this.dealRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
