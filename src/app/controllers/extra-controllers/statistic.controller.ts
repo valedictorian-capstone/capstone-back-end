@@ -43,4 +43,12 @@ export class StatisticController {
     return this.statisticService.getDealInYear(year);
   }
 
+  @Get('/TotalInYear')
+  @ApiOperation({ summary: 'DealInYear' })
+  @ApiOkResponse({ description: 'DealInYear' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async getTotalInYear(@Query('year') year: number): Promise<number[]> {
+    return this.statisticService.getTotalInYear(year);
+  }
+
 }

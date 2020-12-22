@@ -127,4 +127,20 @@ export class StatisticService {
       return this.mapper.mapArray(rs.length > 9 ? rs.slice(0, 9) : rs, ProductVM, Product);
     });
   }
+  public readonly getTotalInYear = async (year: number): Promise<number[]> => {
+    return await this.dealRepository.useHTTP().find({ relations: ['dealDetails', 'dealDetails.product'], where: { status: 'won' } }).then((deals) => {
+      const vms = this.mapper.mapArray(deals, DealVM, Deal);
+      return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month) => {
+        return vms
+          .filter((e) => {
+            return (new Date(e.createdAt).getMonth() + 1) == month && new Date(e.createdAt).getFullYear() == year;
+          })
+          .map((e) => {
+            const total = e.dealDetails.map((e) => e.quantity * e.product.price).reduce((a, b) => a + b, 0);
+            return total;
+          })
+          .reduce((a, b) => a + b, 0);
+      });
+    });
+  }
 }

@@ -77,7 +77,7 @@ export class TicketService {
       for (const account of accounts) {
         const canGetTicketDeal = account.roles.filter((e) => e.canGetTicketDeal).length > 0;
         const canGetTicketSupport = account.roles.filter((e) => e.canGetTicketSupport).length > 0;
-        if (canGetTicketDeal || canGetTicketSupport) {
+        if ((model.type === 'deal' && canGetTicketDeal) || (model.type === 'other' && canGetTicketSupport)) {
           await this.notificationRepository.useHTTP().save({
             body: `New ticket need to resolve`,
             title: "Have a new ticket",
@@ -88,29 +88,17 @@ export class TicketService {
             account: { id: account.id }
           }).then(async (notification) => {
             this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
-            if (account.devices.length > 0) {
-              if (model.type === 'deal' && canGetTicketDeal) {
-                await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
-                  notification: {
-                    body: `New ticket need to resolve`,
-                    title: "Have a new ticket",
-                    icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
-                  },
-                  // data: (await this.findById(model.id)) as any
-                });
-              }
-              if (model.type === 'other' && canGetTicketSupport) {
-                await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
-                  notification: {
-                    body: `New ticket need to resolve`,
-                    title: "Have a new ticket",
-                    icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
-                  },
-                  // data: (await this.findById(model.id)) as any
-                });
-              }
-            }
           })
+          if (account.devices.length > 0) {
+            await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+              notification: {
+                body: `New ticket need to resolve`,
+                title: "Have a new ticket",
+                icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
+              },
+              // data: (await this.findById(model.id)) as any
+            });
+          }
         }
       }
       const rs = await this.findById(model.id)
@@ -125,7 +113,7 @@ export class TicketService {
       for (const account of accounts) {
         const canGetTicketDeal = account.roles.filter((e) => e.canGetTicketDeal).length > 0;
         const canGetTicketSupport = account.roles.filter((e) => e.canGetTicketSupport).length > 0;
-        if (canGetTicketDeal || canGetTicketSupport) {
+        if ((model.type === 'deal' && canGetTicketDeal) || (model.type === 'other' && canGetTicketSupport)) {
           await this.notificationRepository.useHTTP().save({
             body: `New ticket need to resolve`,
             title: "Have a new ticket",
@@ -136,29 +124,17 @@ export class TicketService {
             account: { id: account.id }
           }).then(async (notification) => {
             this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
-            if (account.devices.length > 0) {
-              if (model.type === 'deal' && canGetTicketDeal) {
-                await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
-                  notification: {
-                    body: `New ticket need to resolve`,
-                    title: "Have a new ticket",
-                    icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
-                  },
-                  // data: (await this.findById(model.id)) as any
-                });
-              }
-              if (model.type === 'other' && canGetTicketSupport) {
-                await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
-                  notification: {
-                    body: `New ticket need to resolve`,
-                    title: "Have a new ticket",
-                    icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
-                  },
-                  // data: (await this.findById(model.id)) as any
-                });
-              }
-            }
           })
+          if (account.devices.length > 0) {
+            await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+              notification: {
+                body: `New ticket need to resolve`,
+                title: "Have a new ticket",
+                icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
+              },
+              // data: (await this.findById(model.id)) as any
+            });
+          }
         }
       }
       const rs = await this.findById(model.id)
@@ -174,7 +150,7 @@ export class TicketService {
       for (const account of accounts) {
         const canGetTicketDeal = account.roles.filter((e) => e.canGetTicketDeal).length > 0;
         const canGetTicketSupport = account.roles.filter((e) => e.canGetTicketSupport).length > 0;
-        if (canGetTicketDeal || canGetTicketSupport) {
+        if ((model.type === 'deal' && canGetTicketDeal) || (model.type === 'other' && canGetTicketSupport)) {
           await this.notificationRepository.useHTTP().save({
             body: `New ticket need to resolve`,
             title: "Have a new ticket",
@@ -185,29 +161,17 @@ export class TicketService {
             account: { id: account.id }
           }).then(async (notification) => {
             this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
-            if (account.devices.length > 0) {
-              if (model.type === 'deal' && canGetTicketDeal) {
-                await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
-                  notification: {
-                    body: `New ticket need to resolve`,
-                    title: "Have a new ticket",
-                    icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
-                  },
-                  // data: (await this.findById(model.id)) as any
-                });
-              }
-              if (model.type === 'other' && canGetTicketSupport) {
-                await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
-                  notification: {
-                    body: `New ticket need to resolve`,
-                    title: "Have a new ticket",
-                    icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
-                  },
-                  // data: (await this.findById(model.id)) as any
-                });
-              }
-            }
           })
+          if (account.devices.length > 0) {
+            await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+              notification: {
+                body: `New ticket need to resolve`,
+                title: "Have a new ticket",
+                icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png'
+              },
+              // data: (await this.findById(model.id)) as any
+            });
+          }
         }
       }
       const rs = await this.findById(model.id)
