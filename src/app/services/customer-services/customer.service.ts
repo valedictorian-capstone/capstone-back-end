@@ -76,8 +76,8 @@ export class CustomerService {
         paramArray.push([notOfLead[i].totalDeal, notOfLead[i].totalSpending / 100000, notOfLead[i].frequency])
       }
 
-      let classificationGroups = await this.callClassification(paramArray);
-      classificationGroups = JSON.parse(classificationGroups.replace(' ', ','));
+      let classificationGroups = (await this.callClassification(paramArray)).split(' ').join(',');
+      classificationGroups = JSON.parse(classificationGroups);
       for (let i = 0; i < classificationGroups.length; i++) {
         console.log(classificationGroups[i]);
         if (classificationGroups[i] == '0') {
@@ -117,7 +117,7 @@ export class CustomerService {
         const paramArray = [];
         paramArray.push([customer.totalDeal, customer.totalSpending / 100000, customer.frequency])
         let classificationGroups = await this.callClassification(paramArray);
-        classificationGroups = JSON.parse(classificationGroups.replace(' ', ','));
+        classificationGroups = JSON.parse(classificationGroups.replace(' ', ',').replace(' ', ','));
         if (classificationGroups == '0') {
           const group1 = await this.groupRepository.useHTTP().findOne({ where: { id: 0 } });
           await this.cusomterRepository.useHTTP().save({ ...data, groups: [group1] });
