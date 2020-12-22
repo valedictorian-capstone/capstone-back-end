@@ -65,7 +65,7 @@ export class DealDetailService {
   }
 
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.dealDetailRepository.useHTTP().findOne({ id: id })
+    return await this.dealDetailRepository.useHTTP().findOne({ id: id }, {relations: ['deal']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(

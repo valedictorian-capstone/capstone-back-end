@@ -102,7 +102,7 @@ export class ActivityService {
       });
   };
   public readonly remove = async (id: string): Promise<ActivityVM> => {
-    return await this.activityRepository.useHTTP().findOne({ id: id })
+    return await this.activityRepository.useHTTP().findOne({ id: id }, {relations: ['deal']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
