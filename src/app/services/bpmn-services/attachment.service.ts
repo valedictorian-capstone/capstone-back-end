@@ -79,7 +79,7 @@ export class AttachmentService {
       })
   }
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.attachmentRepository.useHTTP().findOne({ id: id })
+    return await this.attachmentRepository.useHTTP().findOne({ id: id }, {relations: ['deal']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
