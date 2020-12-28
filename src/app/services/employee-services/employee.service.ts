@@ -1,9 +1,9 @@
 import { NotFoundException } from '@exceptions';
-import { Account } from '@models';
+import { Employee } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
-import { AccountRepository, RoleRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY, FIREBASE_SERVICE, ROLE_REPOSITORY, SOCKET_SERVICE } from '@types';
-import { AccountCM, AccountUM, AccountVM } from '@view-models';
+import { EmployeeRepository, RoleRepository } from '@repositories';
+import { EMPLOYEE_REPOSITORY, FIREBASE_SERVICE, ROLE_REPOSITORY, SOCKET_SERVICE } from '@types';
+import { EmployeeCM, EmployeeUM, EmployeeVM } from '@view-models';
 import { hashSync } from 'bcrypt';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { environment } from 'src/environments/environment';
@@ -12,29 +12,29 @@ import { uuid } from 'uuidv4';
 import { EmailService, FirebaseService, SocketService } from '../extra-services';
 
 @Injectable()
-export class AccountService {
+export class EmployeeService {
   constructor(
-    @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
+    @Inject(EMPLOYEE_REPOSITORY) protected readonly employeeRepository: EmployeeRepository,
     @Inject(ROLE_REPOSITORY) protected readonly roleRepository: RoleRepository,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     protected readonly emailService: EmailService,
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
-  public readonly findAll = async (requester?: AccountVM, ids?: string[]): Promise<AccountVM[]> => {
+  public readonly findAll = async (requester?: EmployeeVM, ids?: string[]): Promise<EmployeeVM[]> => {
     const level = requester ? Math.min(...requester.roles.map((e) => e.level)) : undefined;
     const queryId = ids ? {
       id: In(ids)
     } : {};
-    return await this.mapper.mapArray(await this.accountRepository.useHTTP()
-      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys"] }), AccountVM, Account)
-      .filter((account) => level != null && account.id !== requester?.id ? Math.min(...account.roles.map((e) => e.level)) > level : true);
+    return await this.mapper.mapArray(await this.employeeRepository.useHTTP()
+      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys"] }), EmployeeVM, Employee)
+      .filter((employee) => level != null && employee.id !== requester?.id ? Math.min(...employee.roles.map((e) => e.level)) > level : true);
   };
-  public readonly findById = async (id: string): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().findOne({ where: { id: id }, relations: ["devices", "roles", "activitys"] })
+  public readonly findById = async (id: string): Promise<EmployeeVM> => {
+    return await this.employeeRepository.useHTTP().findOne({ where: { id: id }, relations: ["devices", "roles", "activitys"] })
       .then(async (model) => {
         if (model) {
-          return this.mapper.map(model, AccountVM, Account);
+          return this.mapper.map(model, EmployeeVM, Employee);
         }
         throw new NotFoundException(
           `Can not find ${id}`,
@@ -43,50 +43,50 @@ export class AccountService {
   };
   public readonly checkUnique = async (label: string, value: string): Promise<boolean> => {
     const query = { [label]: value };
-    return this.accountRepository.useHTTP().findOne({ where: query })
+    return this.employeeRepository.useHTTP().findOne({ where: query })
       .then((model) => {
         return model ? true : false;
       })
   }
-  public readonly import = async (body: AccountCM[]): Promise<any> => {
-    for (const account of body) {
-      if (account.avatar && account.avatar.includes(';base64')) {
-        account.avatar = await this.solveImage(account.avatar) as any;
+  public readonly import = async (body: EmployeeCM[]): Promise<any> => {
+    for (const employee of body) {
+      if (employee.avatar && employee.avatar.includes(';base64')) {
+        employee.avatar = await this.solveImage(employee.avatar) as any;
       }
     }
-    return await this.accountRepository.useHTTP().save(body as any).then(async (accounts: Account[]) => {
+    return await this.employeeRepository.useHTTP().save(body as any).then(async (employees: Employee[]) => {
       for (const acc of body) {
         await this.emailService.sendManualEmailCustomer({
           info: acc as any,
-          subject: 'EMPLOYEE ACCOUNT FOR SYSTEM',
+          subject: 'EMPLOYEE EMPLOYEE FOR SYSTEM',
           content: '<span>Email: </span> ' + acc.email + '<br>' +
             '<span>Password: </span> ' + acc.password
         });
       }
-      const rs = await this.findAll(undefined, accounts.map((e) => e.id));
-      this.socketService.with('accounts', rs, 'list');
+      const rs = await this.findAll(undefined, employees.map((e) => e.id));
+      this.socketService.with('employees', rs, 'list');
       return rs;
     });
   };
-  public readonly insert = async (body: AccountCM): Promise<AccountVM> => {
+  public readonly insert = async (body: EmployeeCM): Promise<EmployeeVM> => {
     const acc = { ...body };
     if (acc.avatar && acc.avatar.includes(';base64')) {
       acc.avatar = await this.solveImage(acc.avatar) as any;
     }
-    return await this.accountRepository.useHTTP().save({ ...acc, passwordHash: hashSync(acc.password, 10) } as any).then(async (account) => {
+    return await this.employeeRepository.useHTTP().save({ ...acc, passwordHash: hashSync(acc.password, 10) } as any).then(async (employee) => {
       await this.emailService.sendManualEmailCustomer({
-        info: account as any,
-        subject: 'EMPLOYEE ACCOUNT FOR SYSTEM',
+        info: employee as any,
+        subject: 'EMPLOYEE EMPLOYEE FOR SYSTEM',
         content: '<span>Email: </span> ' + acc.email + '<br>' +
           '<span>Password: </span> ' + acc.password
       });
-      const rs = await this.findById(account.id)
-      this.socketService.with('accounts', rs, 'create');
+      const rs = await this.findById(employee.id)
+      this.socketService.with('employees', rs, 'create');
       return rs;
     });
   };
-  public readonly update = async (body: AccountUM): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().findOne({ id: body.id })
+  public readonly update = async (body: EmployeeUM): Promise<EmployeeVM> => {
+    return await this.employeeRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -97,44 +97,44 @@ export class AccountService {
           if (acc.avatar && acc.avatar.includes(';base64')) {
             acc.avatar = await this.solveImage(acc.avatar) as any;
           }
-          return await this.accountRepository.useHTTP().save(body as any).then(async (account) => {
-            const rs = await this.findById(account.id)
-            this.socketService.with('accounts', rs, 'update');
+          return await this.employeeRepository.useHTTP().save(body as any).then(async (employee) => {
+            const rs = await this.findById(employee.id)
+            this.socketService.with('employees', rs, 'update');
             return rs;
           })
         }
       });
   };
-  public readonly remove = async (id: string): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().findOne({ id: id })
+  public readonly remove = async (id: string): Promise<EmployeeVM> => {
+    return await this.employeeRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await this.accountRepository.useHTTP()
+        return await this.employeeRepository.useHTTP()
         .remove(model)
           .then(() => {
-            const rs = this.mapper.map({...model, id} as Account, AccountVM, Account);
-            this.socketService.with('accounts', rs, 'remove');
+            const rs = this.mapper.map({...model, id} as Employee, EmployeeVM, Employee);
+            this.socketService.with('employees', rs, 'remove');
             return rs;
           })
       });
   }
-  public readonly restore = async (id: string): Promise<AccountVM> => {
-    return await this.accountRepository.useHTTP().findOne({ id: id })
+  public readonly restore = async (id: string): Promise<EmployeeVM> => {
+    return await this.employeeRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
-        return await this.accountRepository.useHTTP()
+        return await this.employeeRepository.useHTTP()
           .save({ id, isDelete: false })
           .then(async () => {
             const rs = await this.findById(id)
-            this.socketService.with('accounts', rs, 'update');
+            this.socketService.with('employees', rs, 'update');
             return rs;
           })
       });

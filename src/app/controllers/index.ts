@@ -1,4 +1,4 @@
-export * from './account-controllers';
+export * from './employee-controllers';
 export * from './customer-controllers';
 export * from './product-controllers';
 export * from './bpmn-controllers';

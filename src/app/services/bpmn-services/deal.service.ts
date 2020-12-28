@@ -2,7 +2,7 @@ import { Deal } from "@models";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ActivityRepository, CustomerRepository, DealDetailRepository, DealRepository, LogRepository, ProductRepository, StageRepository } from "@repositories";
 import { ACTIVITY_REPOSITORY, CUSTOMER_REPOSITORY, DEAL_DETAIL_REPOSITORY, DEAL_REPOSITORY, LOG_REPOSITORY, PRODUCT_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from "@types";
-import { AccountVM, DealCM, DealUM, DealVM } from "@view-models";
+import { EmployeeVM, DealCM, DealUM, DealVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { async } from "rxjs";
 import { count } from "rxjs/operators";
@@ -26,7 +26,7 @@ export class DealService {
     protected readonly customerService: CustomerService
   ) { }
 
-  public readonly findAll = async (requester: AccountVM): Promise<DealVM[]> => {
+  public readonly findAll = async (requester: EmployeeVM): Promise<DealVM[]> => {
     return await this.dealRepository.useHTTP().find({ relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee'] })
       .then(async (deals) => {
         const canGetAllDeal = requester.roles.filter((e) => e.canGetAllDeal).length > 0;
@@ -85,7 +85,7 @@ export class DealService {
         return this.mapper.mapArray(deals, DealVM, Deal);
       });
   }
-  public readonly findByStage = async (id: string, requester: AccountVM): Promise<DealVM[]> => {
+  public readonly findByStage = async (id: string, requester: EmployeeVM): Promise<DealVM[]> => {
     const query = {};
     if (requester.roles.filter((e) => e.canAccessDeal && e.canGetAllDeal).length === 0) {
       query['assignee'] = { id: requester.id };

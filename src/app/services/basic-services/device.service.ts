@@ -17,7 +17,7 @@ export class DeviceService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<DeviceVM[]> => {
-    return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ['account'] })
+    return await this.repository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ['employee'] })
       .then((models) => this.mapper.mapArray(models, DeviceVM, Device))
   };
   public readonly remove = async (id: string): Promise<DeviceVM> => {

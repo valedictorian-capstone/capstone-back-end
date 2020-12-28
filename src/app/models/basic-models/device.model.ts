@@ -1,6 +1,6 @@
 import { AutoMap } from 'nestjsx-automapper';
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
-import { Account } from '../account-models';
+import { Employee } from '../employee-models';
 import { Customer } from '../customer-models';
 
 @Entity()
@@ -38,8 +38,8 @@ export class Device extends BaseEntity {
   @Column({ default: 'desktop' })
   public env: string;
 
-  @ManyToOne(() => Account, account => account.devices)
-  public account: Account;
+  @ManyToOne(() => Employee, employee => employee.devices)
+  public employee: Employee;
 
   @ManyToOne(() => Customer, customer => customer.devices)
   public customer: Customer;

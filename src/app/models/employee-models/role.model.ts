@@ -1,6 +1,6 @@
 import { AutoMap } from "nestjsx-automapper";
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Account } from "./account.model";
+import { Employee } from "./employee.model";
 
 @Entity()
 export class Role extends BaseEntity {
@@ -165,8 +165,8 @@ export class Role extends BaseEntity {
   @Column({ nullable: false, default: '' })
   public description: string;
 
-  @ManyToMany(() => Account, account => account.roles)
-  public accounts: Account[];
+  @ManyToMany(() => Employee, employee => employee.roles)
+  public employees: Employee[];
 
   @AutoMap()
   @Column({ default: 'admin' })

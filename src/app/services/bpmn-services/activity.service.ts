@@ -1,10 +1,10 @@
 import { NotFoundException } from '@exceptions';
 import { Activity, Notification } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
-import { AccountRepository, ActivityRepository, LogRepository, NotificationRepository } from '@repositories';
+import { EmployeeRepository, ActivityRepository, LogRepository, NotificationRepository } from '@repositories';
 import { FirebaseService, SocketService } from '@services';
-import { ACCOUNT_REPOSITORY, ACTIVITY_REPOSITORY, FIREBASE_SERVICE, LOG_REPOSITORY, NOTIFICATION_REPOSITORY, SOCKET_SERVICE } from '@types';
-import { AccountVM, ActivityCM, ActivityUM, ActivityVM, NotificationVM } from '@view-models';
+import { EMPLOYEE_REPOSITORY, ACTIVITY_REPOSITORY, FIREBASE_SERVICE, LOG_REPOSITORY, NOTIFICATION_REPOSITORY, SOCKET_SERVICE } from '@types';
+import { EmployeeVM, ActivityCM, ActivityUM, ActivityVM, NotificationVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 
 @Injectable()
@@ -12,14 +12,14 @@ export class ActivityService {
 
   constructor(
     @Inject(ACTIVITY_REPOSITORY) protected readonly activityRepository: ActivityRepository,
-    @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
+    @Inject(EMPLOYEE_REPOSITORY) protected readonly employeeRepository: EmployeeRepository,
     @Inject(NOTIFICATION_REPOSITORY) protected readonly notificationRepository: NotificationRepository,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
     @Inject(LOG_REPOSITORY) protected readonly logRepository: LogRepository,
   ) { }
-  public readonly findAll = async (requester: AccountVM): Promise<ActivityVM[]> => {
+  public readonly findAll = async (requester: EmployeeVM): Promise<ActivityVM[]> => {
     const query = {};
     if (requester.roles.filter((e) => e.canAccessDeal && e.canGetAllActivity).length === 0) {
       query['assignee'] = { id: requester.id };
@@ -46,10 +46,10 @@ export class ActivityService {
         );
       })
   };
-  public readonly insert = async (body: ActivityCM, requester: AccountVM): Promise<ActivityVM> => {
+  public readonly insert = async (body: ActivityCM, requester: EmployeeVM): Promise<ActivityVM> => {
     return await this.activityRepository.useHTTP().save({ ...body, assignBy: { id: requester.id } } as any)
       .then(async (model) => {
-        await this.accountRepository.useHTTP()
+        await this.employeeRepository.useHTTP()
         .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
           async (employee) => {
             await this.notificationRepository.useHTTP().save({
@@ -59,9 +59,9 @@ export class ActivityService {
                 name: 'activity',
                 data: (await this.findById(model.id)),
                 icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
-                account: { id: employee.id }
+                employee: { id: employee.id }
               }).then(async (notification) => {
-                this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
+                this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['employee'] }), NotificationVM, Notification), 'create');
                 if (employee.devices.length > 0) {
                   await this.firebaseService.useSendToDevice(employee.devices.map((e) => e.id), {
                     notification: {

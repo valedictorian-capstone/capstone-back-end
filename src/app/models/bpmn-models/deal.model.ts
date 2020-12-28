@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Account } from '../account-models';
+import { Employee } from '../employee-models';
 import { Customer } from '../customer-models/customer.model';
 import { Activity } from './activity.model';
 import { Attachment } from './attachment.model';
@@ -72,8 +72,8 @@ export class Deal extends BaseEntity {
   @OneToMany(() => Note, notes => notes.deal)
   public notes: Note[];
 
-  @ManyToOne(() => Account, account => account.deals)
-  public assignee: Account;
+  @ManyToOne(() => Employee, employee => employee.deals)
+  public assignee: Employee;
 
   @OneToMany(() => Log, logs => logs.deal)
   public logs: Log[];

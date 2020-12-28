@@ -1,12 +1,12 @@
 import { CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { AccountService } from "@services";
+import { EmployeeService } from "@services";
 import { Observable } from "rxjs";
 
 export class RolesGuard implements CanActivate {
   constructor(
     private reflecter: Reflector,
-    private accountService: AccountService
+    private employeeService: EmployeeService
   ) { }
 
   canActivate(ctx: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
@@ -16,7 +16,7 @@ export class RolesGuard implements CanActivate {
     }
     const request = ctx.switchToHttp().getRequest();
     console.log(request)
-    const account = request.account;
+    const employee = request.employee;
     return true;
   }
 }

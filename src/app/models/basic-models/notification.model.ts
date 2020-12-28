@@ -1,6 +1,6 @@
 import { AutoMap } from "nestjsx-automapper";
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Account } from "../account-models";
+import { Employee } from "../employee-models";
 import { Customer } from "../customer-models";
 
 @Entity()
@@ -39,8 +39,8 @@ export class Notification extends BaseEntity {
   @Column({ default: false })
   public isSeen: boolean;
 
-  @ManyToOne(() => Account, account => account.notifications)
-  public account: Account;
+  @ManyToOne(() => Employee, employee => employee.notifications)
+  public employee: Employee;
 
   @ManyToOne(() => Customer, customer => customer.notifications)
   public customer: Customer;

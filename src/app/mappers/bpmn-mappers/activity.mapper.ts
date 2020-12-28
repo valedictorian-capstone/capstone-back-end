@@ -1,6 +1,6 @@
 import { Activity } from "@models";
 import { AutoMapper, mapWith, ProfileBase } from "@nartc/automapper";
-import { AccountVM, ActivityUM, ActivityVM, DealVM } from "@view-models";
+import { EmployeeVM, ActivityUM, ActivityVM, DealVM } from "@view-models";
 
 export class ActivityMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -8,7 +8,7 @@ export class ActivityMapper extends ProfileBase {
     mapper.createMap(Activity, ActivityVM)
       .forMember(
         d => d.assignee,
-        mapWith(AccountVM, s => s.assignee)
+        mapWith(EmployeeVM, s => s.assignee)
       )
       .forMember(
         d => d.deal,
@@ -16,7 +16,7 @@ export class ActivityMapper extends ProfileBase {
       )
       .forMember(
         d => d.assignBy,
-        mapWith(AccountVM, s => s.assignBy)
+        mapWith(EmployeeVM, s => s.assignBy)
       );
     mapper.createMap(ActivityUM, ActivityVM);
   }

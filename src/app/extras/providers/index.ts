@@ -1,4 +1,4 @@
-import { ACCOUNT_MODELS, BASIC_MODELS, BPMN_MODELS, CUSTOMER_MODELS, PRODUCT_MODELS } from '@models';
+import { EMPLOYEE_MODELS, BASIC_MODELS, BPMN_MODELS, CUSTOMER_MODELS, PRODUCT_MODELS } from '@models';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { createConnection } from 'typeorm';
 import { uuid } from 'uuidv4';
@@ -29,7 +29,7 @@ export class AppProvider {
             username: process.env.GGCLOUD_SQL_USERNAME,
             password: process.env.GGCLOUD_SQL_PASS,
             database: process.env.GGCLOUD_SQL_DATABASE,
-            entities: [...BASIC_MODELS, ...BPMN_MODELS, ...CUSTOMER_MODELS, ...ACCOUNT_MODELS, ...PRODUCT_MODELS],
+            entities: [...BASIC_MODELS, ...BPMN_MODELS, ...CUSTOMER_MODELS, ...EMPLOYEE_MODELS, ...PRODUCT_MODELS],
             synchronize: true,
             logging: true,
 

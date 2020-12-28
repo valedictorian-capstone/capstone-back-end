@@ -1,4 +1,4 @@
-export * from './account-types';
+export * from './employee-types';
 export * from './customer-types';
 export * from './product-types';
 export * from './bpmn-types';

@@ -117,7 +117,7 @@ export class Customer extends BaseEntity {
   @OneToMany(() => Deal, deals => deals.customer)
   public deals: Deal[];
 
-  @OneToMany(() => Device, devices => devices.account)
+  @OneToMany(() => Device, devices => devices.employee)
   public devices: Device[];
 
   @OneToMany(() => Ticket, tickets => tickets.customer)

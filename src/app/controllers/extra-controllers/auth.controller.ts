@@ -1,7 +1,7 @@
 import { Body, Controller, Headers, Post, Put } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '@services';
-import { AccountVM, CustomerCM, CustomerVM, DeviceCM } from '@view-models';
+import { EmployeeVM, CustomerCM, CustomerVM, DeviceCM } from '@view-models';
 
 class LoginGM {
   @ApiProperty({ required: true })
@@ -25,7 +25,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async auth(@Headers('requester') requester: AccountVM, @Body() device: DeviceCM): Promise<AccountVM> {
+  public async auth(@Headers('requester') requester: EmployeeVM, @Body() device: DeviceCM): Promise<EmployeeVM> {
     return this.authenService.refresh(requester, device);
   }
 
@@ -41,7 +41,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Change password' })
   @ApiOkResponse({ description: 'Change password' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updatePassword(@Headers('requester') requester: AccountVM, @Body() data: { password: string, old: string }): Promise<AccountVM> {
+  public async updatePassword(@Headers('requester') requester: EmployeeVM, @Body() data: { password: string, old: string }): Promise<EmployeeVM> {
     return this.authenService.updatePassword(data, requester);
   }
 
@@ -49,8 +49,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Authorized' })
   @ApiOkResponse({ description: 'Authorized' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async updateProfile(@Headers('requester') requester: AccountVM, @Body() account: AccountVM): Promise<AccountVM> {
-    return this.authenService.updateProfile(account, requester);
+  public async updateProfile(@Headers('requester') requester: EmployeeVM, @Body() employee: EmployeeVM): Promise<EmployeeVM> {
+    return this.authenService.updateProfile(employee, requester);
   }
 
   @Put('/Customer/profile')

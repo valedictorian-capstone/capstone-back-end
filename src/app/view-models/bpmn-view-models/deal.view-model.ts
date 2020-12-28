@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from 'nestjsx-automapper';
 import { AttachmentVM } from ".";
-import { AccountVM } from "../account-view-models";
+import { EmployeeVM } from "../employee-view-models";
 import { CustomerVM } from "../customer-view-models";
 import { ActivityVM } from "./activity.view-model";
 import { DealDetailVM } from "./deal-detail.view-model";
@@ -42,7 +42,7 @@ export class DealVM {
   @AutoMap()
   public readonly feedbackStatus: boolean;
 
-  public readonly assignee: AccountVM;
+  public readonly assignee: EmployeeVM;
 
   public readonly activitys: ActivityVM;
 

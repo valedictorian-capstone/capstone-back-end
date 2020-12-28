@@ -5,7 +5,7 @@ import { DeviceVM, NotificationVM } from '../basic-view-models';
 import { ActivityVM } from '../bpmn-view-models';
 import { TicketVM } from '../product-view-models';
 
-export class AccountVM {
+export class EmployeeVM {
 
   @AutoMap()
   public id: string;
@@ -60,7 +60,7 @@ export class AccountVM {
   public updatedAt: Date;
 }
 
-export class AccountCM {
+export class EmployeeCM {
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string', minLength: 10, pattern: "(\(\d{2,4}\)\s{0,1}\d{6,9})$|^\d{8,13}$|^\d{3,5}\s?\d{3}\s?\d{3,4}$|^[\d\(\)\s\-\/]{6,}" })
@@ -98,7 +98,7 @@ export class AccountCM {
 
 }
 
-export class AccountUM {
+export class EmployeeUM {
 
   @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
   public id: string;
@@ -128,7 +128,7 @@ export class AccountUM {
   
 }
 
-export class AccountAuthVM {
+export class EmployeeAuthVM {
 
   @AutoMap()
   public id: string;
@@ -164,7 +164,7 @@ export class AccountAuthVM {
   public deviceId: string;
 }
 
-export class AccountFilter {
+export class EmployeeFilter {
   public roleName?: string;
   public ids?: string[];
   public departmentId: string;
