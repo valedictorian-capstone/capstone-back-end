@@ -1,15 +1,15 @@
 import { AutoMapper, ProfileBase } from '@nartc/automapper';
-import { AccountVM, RoleUM, RoleVM } from "@view-models";
+import { EmployeeVM, RoleUM, RoleVM } from "@view-models";
 import { preCondition, mapWith } from 'nestjsx-automapper';
-import { Role } from "src/app/models/account-models/role.model";
+import { Role } from "src/app/models/employee-models/role.model";
 
 export class RoleMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
     super();
     mapper.createMap(Role, RoleVM)
-    .forMember(d => d.accounts,
-      preCondition((s) => s.accounts != null, []),
-      mapWith(AccountVM, s => s.accounts)
+    .forMember(d => d.employees,
+      preCondition((s) => s.employees != null, []),
+      mapWith(EmployeeVM, s => s.employees)
     );
     mapper.createMap(RoleUM, RoleVM);
   }

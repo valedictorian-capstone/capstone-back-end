@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { AccountVM } from "../account-view-models";
+import { EmployeeVM } from "../employee-view-models";
 import { CustomerVM } from "../customer-view-models";
 
 export class DeviceVM {
@@ -26,7 +26,7 @@ export class DeviceVM {
   @AutoMap()
   public readonly env: string;
 
-  public readonly account: AccountVM;
+  public readonly employee: EmployeeVM;
 
   public readonly customer: CustomerVM;
 
@@ -70,7 +70,7 @@ export class DeviceCM {
   @ApiProperty()
   public readonly env: string;
 
-  public readonly account: AccountVM;
+  public readonly employee: EmployeeVM;
 
   public readonly customer: CustomerVM;
 
@@ -100,7 +100,7 @@ export class DeviceUM {
   @ApiProperty()
   public readonly env: string;
 
-  public readonly account: AccountVM;
+  public readonly employee: EmployeeVM;
 
   public readonly customer: CustomerVM;
 

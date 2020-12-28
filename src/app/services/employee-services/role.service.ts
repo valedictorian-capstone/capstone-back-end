@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { RoleRepository } from '@repositories';
 import { SocketService } from '@services';
 import { ROLE_REPOSITORY, SOCKET_SERVICE } from '@types';
-import { AccountVM, RoleCM, RoleUM, RoleVM } from '@view-models';
+import { EmployeeVM, RoleCM, RoleUM, RoleVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { MoreThan } from 'typeorm';
 
@@ -15,9 +15,9 @@ export class RoleService {
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
-  public readonly findAll = async (requester: AccountVM): Promise<RoleVM[]> => {
+  public readonly findAll = async (requester: EmployeeVM): Promise<RoleVM[]> => {
     const level = Math.min(...requester.roles.map((e) => e.level));
-    return await this.roleRepository.useHTTP().find({ where: {level: MoreThan(level)}, relations: ['accounts'] })
+    return await this.roleRepository.useHTTP().find({ where: {level: MoreThan(level)}, relations: ['employees'] })
       .then(async (models) => {
         return this.mapper.mapArray(models, RoleVM, Role)
       });

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { AccountVM } from ".";
+import { EmployeeVM } from ".";
 
 export class RoleVM {
 
@@ -124,7 +124,7 @@ export class RoleVM {
   @AutoMap()
   public readonly description: string;
 
-  public readonly accounts: AccountVM[];
+  public readonly employees: EmployeeVM[];
 
   @AutoMap()
   public readonly isDelete: boolean;
@@ -265,7 +265,7 @@ export class RoleCM {
   public readonly description: string;
 
   @ApiProperty()
-  public readonly accounts: AccountVM[];
+  public readonly employees: EmployeeVM[];
 }
 
 export class RoleUM {
@@ -392,5 +392,5 @@ export class RoleUM {
   public readonly description: string;
 
   @ApiProperty()
-  public readonly accounts: AccountVM[];
+  public readonly employees: EmployeeVM[];
 }

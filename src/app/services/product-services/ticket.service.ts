@@ -1,10 +1,10 @@
 import { InvalidException, NotFoundException } from '@exceptions';
 import { Notification, Ticket } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
-import { AccountRepository, CustomerRepository, NotificationRepository, TicketRepository } from '@repositories';
+import { EmployeeRepository, CustomerRepository, NotificationRepository, TicketRepository } from '@repositories';
 import { FirebaseService, SocketService } from '@services';
-import { ACCOUNT_REPOSITORY, CUSTOMER_REPOSITORY, FIREBASE_SERVICE, NOTIFICATION_REPOSITORY, SOCKET_SERVICE, TICKET_REPOSITORY } from '@types';
-import { AccountVM, CustomerVM, NotificationVM, TicketCM, TicketUM, TicketVM } from '@view-models';
+import { EMPLOYEE_REPOSITORY, CUSTOMER_REPOSITORY, FIREBASE_SERVICE, NOTIFICATION_REPOSITORY, SOCKET_SERVICE, TICKET_REPOSITORY } from '@types';
+import { EmployeeVM, CustomerVM, NotificationVM, TicketCM, TicketUM, TicketVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 
 @Injectable()
@@ -12,14 +12,14 @@ export class TicketService {
   constructor(
     @Inject(TICKET_REPOSITORY) protected readonly ticketRepository: TicketRepository,
     @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
-    @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
+    @Inject(EMPLOYEE_REPOSITORY) protected readonly employeeRepository: EmployeeRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(NOTIFICATION_REPOSITORY) protected readonly notificationRepository: NotificationRepository,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
 
-  public readonly findAll = async (requester: AccountVM): Promise<TicketVM[]> => {
+  public readonly findAll = async (requester: EmployeeVM): Promise<TicketVM[]> => {
     return await this.ticketRepository.useHTTP().find({ relations: ["customer", "assignee", "feedbackAssignee"] })
       .then(async (models) => {
         const canGetTicketDeal = requester.roles.filter((e) => e.canGetTicketDeal).length > 0;
@@ -73,10 +73,10 @@ export class TicketService {
   };
   public readonly insert = async (body: TicketCM, requester: CustomerVM): Promise<TicketVM> => {
     return await this.ticketRepository.useHTTP().save({ ...body, status: 'waiting', customer: { id: requester.id } } as any).then(async (model) => {
-      const accounts = (await this.accountRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
-      for (const account of accounts) {
-        const canGetTicketDeal = account.roles.filter((e) => e.canGetTicketDeal).length > 0;
-        const canGetTicketSupport = account.roles.filter((e) => e.canGetTicketSupport).length > 0;
+      const employees = (await this.employeeRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
+      for (const employee of employees) {
+        const canGetTicketDeal = employee.roles.filter((e) => e.canGetTicketDeal).length > 0;
+        const canGetTicketSupport = employee.roles.filter((e) => e.canGetTicketSupport).length > 0;
         if ((model.type === 'deal' && canGetTicketDeal) || (model.type === 'other' && canGetTicketSupport)) {
           await this.notificationRepository.useHTTP().save({
             body: `New ticket need to resolve`,
@@ -85,12 +85,12 @@ export class TicketService {
             name: 'ticket',
             data: (await this.findById(model.id)),
             icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
-            account: { id: account.id }
+            employee: { id: employee.id }
           }).then(async (notification) => {
-            this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
+            this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['employee'] }), NotificationVM, Notification), 'create');
           })
-          if (account.devices.length > 0) {
-            await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+          if (employee.devices.length > 0) {
+            await this.firebaseService.useSendToDevice(employee.devices.map((e) => e.id), {
               notification: {
                 body: `New ticket need to resolve`,
                 title: "Have a new ticket",
@@ -109,10 +109,10 @@ export class TicketService {
 
   public readonly unAuthorizedInsert = async (body: TicketCM): Promise<TicketVM> => {
     return await this.ticketRepository.useHTTP().save({ ...body, status: 'waiting' }).then(async (model) => {
-      const accounts = (await this.accountRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
-      for (const account of accounts) {
-        const canGetTicketDeal = account.roles.filter((e) => e.canGetTicketDeal).length > 0;
-        const canGetTicketSupport = account.roles.filter((e) => e.canGetTicketSupport).length > 0;
+      const employees = (await this.employeeRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
+      for (const employee of employees) {
+        const canGetTicketDeal = employee.roles.filter((e) => e.canGetTicketDeal).length > 0;
+        const canGetTicketSupport = employee.roles.filter((e) => e.canGetTicketSupport).length > 0;
         if ((model.type === 'deal' && canGetTicketDeal) || (model.type === 'other' && canGetTicketSupport)) {
           await this.notificationRepository.useHTTP().save({
             body: `New ticket need to resolve`,
@@ -121,12 +121,12 @@ export class TicketService {
             name: 'ticket',
             data: (await this.findById(model.id)),
             icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
-            account: { id: account.id }
+            employee: { id: employee.id }
           }).then(async (notification) => {
-            this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
+            this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['employee'] }), NotificationVM, Notification), 'create');
           })
-          if (account.devices.length > 0) {
-            await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+          if (employee.devices.length > 0) {
+            await this.firebaseService.useSendToDevice(employee.devices.map((e) => e.id), {
               notification: {
                 body: `New ticket need to resolve`,
                 title: "Have a new ticket",
@@ -146,10 +146,10 @@ export class TicketService {
   public readonly botInsert = async (body: TicketCM): Promise<TicketVM> => {
     const customer = await this.customerRepository.useHTTP().findOne({ where: { id: body.customer.id } });
     return await this.ticketRepository.useHTTP().save({ ...body, status: 'waiting', customer }).then(async (model) => {
-      const accounts = (await this.accountRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
-      for (const account of accounts) {
-        const canGetTicketDeal = account.roles.filter((e) => e.canGetTicketDeal).length > 0;
-        const canGetTicketSupport = account.roles.filter((e) => e.canGetTicketSupport).length > 0;
+      const employees = (await this.employeeRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
+      for (const employee of employees) {
+        const canGetTicketDeal = employee.roles.filter((e) => e.canGetTicketDeal).length > 0;
+        const canGetTicketSupport = employee.roles.filter((e) => e.canGetTicketSupport).length > 0;
         if ((model.type === 'deal' && canGetTicketDeal) || (model.type === 'other' && canGetTicketSupport)) {
           await this.notificationRepository.useHTTP().save({
             body: `New ticket need to resolve`,
@@ -158,12 +158,12 @@ export class TicketService {
             name: 'ticket',
             data: (await this.findById(model.id)),
             icon: 'https://storage.googleapis.com/m-crm-company.appspot.com/logo-black.png',
-            account: { id: account.id }
+            employee: { id: employee.id }
           }).then(async (notification) => {
-            this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['account'] }), NotificationVM, Notification), 'create');
+            this.socketService.with('notifications', this.mapper.map(await this.notificationRepository.useHTTP().findOne({ id: notification.id }, { relations: ['employee'] }), NotificationVM, Notification), 'create');
           })
-          if (account.devices.length > 0) {
-            await this.firebaseService.useSendToDevice(account.devices.map((e) => e.id), {
+          if (employee.devices.length > 0) {
+            await this.firebaseService.useSendToDevice(employee.devices.map((e) => e.id), {
               notification: {
                 body: `New ticket need to resolve`,
                 title: "Have a new ticket",

@@ -19,7 +19,7 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { RoleService } from '@services';
-import { AccountVM, RoleCM, RoleUM, RoleVM } from '@view-models';
+import { EmployeeVM, RoleCM, RoleUM, RoleVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Role')
@@ -33,7 +33,7 @@ export class RoleController {
   @ApiOperation({ summary: 'Get all Roles' })
   @ApiOkResponse({ description: 'Success return all Roles' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public findAll(@Headers('requester') requester: AccountVM): Promise<RoleVM[]> {
+  public findAll(@Headers('requester') requester: EmployeeVM): Promise<RoleVM[]> {
     return this.service.findAll(requester);
   }
 

@@ -4,7 +4,7 @@ import {
   BPMN_CONTROLLERS,
   CUSTOMER_CONTROLLERS,
   EXTRA_CONTROLLERS,
-  ACCOUNT_CONTROLLERS,
+  EMPLOYEE_CONTROLLERS,
   SERVICE_CONTROLLERS,
 } from '@controllers';
 import { FILTERS } from '@extras/filters';
@@ -15,14 +15,14 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { FirebaseAdminModule } from '@aginix/nestjs-firebase-admin'
 import {
-  ACCOUNT_REPOSITORIES,
+  EMPLOYEE_REPOSITORIES,
   BASIC_REPOSITORIES,
   BPMN_REPOSITORIES,
   CUSTOMER_REPOSITORIES,
   PRODUCT_REPOSITORIES,
 } from '@repositories';
 import {
-  ACCOUNT_SERVICES,
+  EMPLOYEE_SERVICES,
   BASIC_SERVICES,
   BPMN_SERVICES,
   CUSTOMER_SERVICES,
@@ -32,7 +32,7 @@ import {
 } from '@services';
 import { AutoMapper, AutomapperModule, InjectMapper } from 'nestjsx-automapper';
 import {
-  AccountMapper,
+  EmployeeMapper,
   CustomerMapper,
   GroupMapper,
   ProductMapper,
@@ -96,17 +96,17 @@ import { ScheduleModule } from '@nestjs/schedule';
     ...EXTRA_CONTROLLERS,
     ...BPMN_CONTROLLERS,
     ...CUSTOMER_CONTROLLERS,
-    ...ACCOUNT_CONTROLLERS,
+    ...EMPLOYEE_CONTROLLERS,
     ...SERVICE_CONTROLLERS
   ],
   providers: [
     ...BASIC_SERVICES,
-    ...ACCOUNT_SERVICES,
+    ...EMPLOYEE_SERVICES,
     ...BPMN_SERVICES,
     ...CUSTOMER_SERVICES,
     ...SERVICE_SERVICES,
     ...EXTRA_SERVICES,
-    ...ACCOUNT_REPOSITORIES,
+    ...EMPLOYEE_REPOSITORIES,
     ...BASIC_REPOSITORIES,
     ...BPMN_REPOSITORIES,
     ...CUSTOMER_REPOSITORIES,
@@ -121,7 +121,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 export class AppModule implements OnModuleInit, NestModule {
   constructor(@InjectMapper() protected readonly mapper: AutoMapper) { }
   onModuleInit() {
-    this.mapper.addProfile(AccountMapper);
+    this.mapper.addProfile(EmployeeMapper);
     this.mapper.addProfile(CustomerMapper);
     this.mapper.addProfile(GroupMapper);
     this.mapper.addProfile(ProductMapper);
@@ -196,13 +196,13 @@ export class AppModule implements OnModuleInit, NestModule {
         { path: '/api/v1/Deal', method: RequestMethod.PUT },
         { path: '/api/v1/Deal/:id', method: RequestMethod.DELETE },
         { path: '/api/v1/Deal/restore/:id', method: RequestMethod.PUT },
-        // Account
-        { path: '/api/v1/Account/import', method: RequestMethod.POST },
-        { path: '/api/v1/Account/:id', method: RequestMethod.DELETE },
-        { path: '/api/v1/Account', method: RequestMethod.GET },
-        { path: '/api/v1/Account', method: RequestMethod.POST },
-        { path: '/api/v1/Account', method: RequestMethod.PUT },
-        { path: '/api/v1/Account/restore/:id', method: RequestMethod.PUT },
+        // Employee
+        { path: '/api/v1/Employee/import', method: RequestMethod.POST },
+        { path: '/api/v1/Employee/:id', method: RequestMethod.DELETE },
+        { path: '/api/v1/Employee', method: RequestMethod.GET },
+        { path: '/api/v1/Employee', method: RequestMethod.POST },
+        { path: '/api/v1/Employee', method: RequestMethod.PUT },
+        { path: '/api/v1/Employee/restore/:id', method: RequestMethod.PUT },
         // Customer
         { path: '/api/v1/Customer/import', method: RequestMethod.POST },
         { path: '/api/v1/Customer', method: RequestMethod.GET },

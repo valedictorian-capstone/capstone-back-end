@@ -16,7 +16,7 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { TicketService } from '@services';
-import { AccountVM, CustomerVM, TicketCM, TicketUM, TicketVM } from '@view-models';
+import { EmployeeVM, CustomerVM, TicketCM, TicketUM, TicketVM } from '@view-models';
   
   @ApiBearerAuth('JWT')
   @ApiTags('Ticket')
@@ -30,7 +30,7 @@ import { AccountVM, CustomerVM, TicketCM, TicketUM, TicketVM } from '@view-model
     @ApiOperation({ summary: 'Get all Tickets' })
     @ApiOkResponse({ description: 'Success return all Tickets' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public findAll(@Headers('requester') requester: AccountVM): Promise<TicketVM[]> {
+    public findAll(@Headers('requester') requester: EmployeeVM): Promise<TicketVM[]> {
       return this.service.findAll(requester);
     }
   

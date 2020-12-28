@@ -1,6 +1,6 @@
 import { AutoMap } from "nestjsx-automapper";
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Account } from "../account-models";
+import { Employee } from "../employee-models";
 import { Deal } from "./deal.model";
 
 @Entity()
@@ -25,11 +25,11 @@ export class Activity extends BaseEntity {
   @Column({ default: null, length: 10000 })
   public description: string;
   
-  @ManyToOne(() => Account, account => account)
-  public assignee: Account;
+  @ManyToOne(() => Employee, employee => employee)
+  public assignee: Employee;
 
-  @ManyToOne(() => Account, account => account)
-  public assignBy: Account;
+  @ManyToOne(() => Employee, employee => employee)
+  public assignBy: Employee;
 
   @ManyToOne(() => Deal, deal => deal.activitys)
   public deal: Deal;

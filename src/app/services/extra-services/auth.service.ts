@@ -1,9 +1,9 @@
-import { Account, Customer, Device } from '@models';
+import { Employee, Customer, Device } from '@models';
 import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AccountRepository, CustomerRepository, DeviceRepository } from '@repositories';
-import { ACCOUNT_REPOSITORY, CUSTOMER_REPOSITORY, DEVICE_REPOSITORY, FIREBASE_SERVICE } from '@types';
-import { AccountVM, CustomerCM, CustomerVM, DeviceCM, DeviceVM } from '@view-models';
+import { EmployeeRepository, CustomerRepository, DeviceRepository } from '@repositories';
+import { EMPLOYEE_REPOSITORY, CUSTOMER_REPOSITORY, DEVICE_REPOSITORY, FIREBASE_SERVICE } from '@types';
+import { EmployeeVM, CustomerCM, CustomerVM, DeviceCM, DeviceVM } from '@view-models';
 import { compareSync, hashSync } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
@@ -15,7 +15,7 @@ import { uuid } from 'uuidv4';
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(ACCOUNT_REPOSITORY) protected readonly accountRepository: AccountRepository,
+    @Inject(EMPLOYEE_REPOSITORY) protected readonly employeeRepository: EmployeeRepository,
     @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
     @Inject(DEVICE_REPOSITORY) protected readonly deviceRepository: DeviceRepository,
     private readonly jwtService: JwtService,
@@ -23,65 +23,65 @@ export class AuthService {
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
   ) { }
 
-  // Account
+  // Employee
   public readonly login = async (emailOrPhone: string, password: string,): Promise<any> => {
-    return await this.validateAccount(emailOrPhone, password).then(
-      async (account) => {
-        if (account) {
+    return await this.validateEmployee(emailOrPhone, password).then(
+      async (employee) => {
+        if (employee) {
           return {
             expiresIn: '24h',
             accessToken: this.generateJWT({
-              fullname: account.fullname,
-              id: account.id,
-              email: account.email,
-              phone: account.phone,
+              fullname: employee.fullname,
+              id: employee.id,
+              email: employee.email,
+              phone: employee.phone,
             } as any),
-            devices: account.devices,
-            roles: account.roles,
-            fullname: account.fullname,
-            avatar: account.avatar,
-            id: account.id,
+            devices: employee.devices,
+            roles: employee.roles,
+            fullname: employee.fullname,
+            avatar: employee.avatar,
+            id: employee.id,
           };
         }
       }
     )
   }
-  public readonly refresh = async (requester: AccountVM, device?: DeviceCM) => {
+  public readonly refresh = async (requester: EmployeeVM, device?: DeviceCM) => {
     if (device?.id && !requester.devices.find((e) => e.id === device.id)) {
       const newDevice = await this.deviceRepository.useHTTP()
-        .save({ ...device, account: { id: requester.id }, customer: undefined } as any).then(async (data) => {
-          return this.mapper.map(await this.deviceRepository.useHTTP().findOne({ id: data.id }, { relations: ['account'] }), DeviceVM, Device);
+        .save({ ...device, employee: { id: requester.id }, customer: undefined } as any).then(async (data) => {
+          return this.mapper.map(await this.deviceRepository.useHTTP().findOne({ id: data.id }, { relations: ['employee'] }), DeviceVM, Device);
         });
       requester.devices.push(newDevice);
       return requester;
     }
     return requester;
   }
-  protected readonly generateJWT = (account: AccountVM): string => {
-    return sign({ account }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
+  protected readonly generateJWT = (employee: EmployeeVM): string => {
+    return sign({ employee }, 'vzicqoasanQhtZicTmeGsBpacNomny', {
       expiresIn: '24h',
-      audience: account.email,
+      audience: employee.email,
       issuer: 'crm',
       subject: 'se20fa27'
     });
   }
-  public readonly updatePassword = async (data: { old: string, password: string }, requester: AccountVM) => {
-    const check = await this.accountRepository.useHTTP().findOne({ id: requester.id })
+  public readonly updatePassword = async (data: { old: string, password: string }, requester: EmployeeVM) => {
+    const check = await this.employeeRepository.useHTTP().findOne({ id: requester.id })
       .then((res) => compareSync(data.old, res.passwordHash));
     if (check) {
-      return await this.accountRepository.useHTTP().save({ id: requester.id, passwordHash: hashSync(data.password, 10) } as any).then(() => null);
+      return await this.employeeRepository.useHTTP().save({ id: requester.id, passwordHash: hashSync(data.password, 10) } as any).then(() => null);
     } else {
       throw new InvalidException('Your old password is wrong');
     }
 
   }
-  public readonly updateProfile = async (data: AccountVM, requester: AccountVM) => {
+  public readonly updateProfile = async (data: EmployeeVM, requester: EmployeeVM) => {
     const acc = { ...requester, ...data };
     if (acc.avatar && acc.avatar.includes(';base64')) {
       acc.avatar = await (acc.avatar, acc.id, 'employee/avatars') as any;
     }
-    const account = await this.accountRepository.useHTTP().save(acc as any);
-    return this.mapper.map(account, AccountVM, Account);
+    const employee = await this.employeeRepository.useHTTP().save(acc as any);
+    return this.mapper.map(employee, EmployeeVM, Employee);
   }
 
   // Customer
@@ -119,7 +119,7 @@ export class AuthService {
   public readonly refreshCustomer = async (requester: CustomerVM, device?: DeviceCM) => {
     if (device?.id && !requester.devices.find((e) => e.id === device.id)) {
       const newDevice = await this.deviceRepository.useHTTP()
-        .save({ ...device, account: undefined, customer: { id: requester.id} } as any).then(async (data) => {
+        .save({ ...device, employee: undefined, customer: { id: requester.id} } as any).then(async (data) => {
           return this.mapper.map(await this.deviceRepository.useHTTP().findOne({ id: data.id }, { relations: ['customer'] }), DeviceVM, Device);
         });
       requester.devices.push(newDevice);
@@ -148,19 +148,19 @@ export class AuthService {
     await this.firebaseService.useUploadFileBase64(path + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
     return environment.firebase.linkDownloadFile + path + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
   }
-  protected readonly validateAccount = async (emailOrPhone: string, password: string): Promise<AccountVM> => {
+  protected readonly validateEmployee = async (emailOrPhone: string, password: string): Promise<EmployeeVM> => {
     const option = isNaN(+emailOrPhone) ?
       { email: emailOrPhone }
       : { phone: emailOrPhone }
-    return await this.accountRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "activitys", "devices"] }).then(
-      async account => {
-        if (!account) {
+    return await this.employeeRepository.useHTTP().findOne({ where: { ...option }, relations: ["roles", "activitys", "devices"] }).then(
+      async employee => {
+        if (!employee) {
           throw new BadRequestException("Invalid email or phone", "Invalid email or phone");
         }
-        if (!compareSync(password, account?.passwordHash)) {
+        if (!compareSync(password, employee?.passwordHash)) {
           throw new BadRequestException("Invalid Password", "Invalid Password");
         }
-        return this.mapper.map(account, AccountVM, Account);
+        return this.mapper.map(employee, EmployeeVM, Employee);
       }
     )
   }

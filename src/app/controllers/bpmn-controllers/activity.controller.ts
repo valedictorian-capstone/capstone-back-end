@@ -18,7 +18,7 @@ import {
     ApiTags
 } from '@nestjs/swagger';
 import { ActivityService } from '@services';
-import { AccountVM, ActivityCM, ActivityUM, ActivityVM } from '@view-models';
+import { EmployeeVM, ActivityCM, ActivityUM, ActivityVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Activity')
@@ -32,7 +32,7 @@ export class ActivityController {
     @ApiOperation({ summary: 'Get all task' })
     @ApiOkResponse({ description: 'Success return all task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public findAll(@Headers('requester') requester: AccountVM): Promise<ActivityVM[]> {
+    public findAll(@Headers('requester') requester: EmployeeVM): Promise<ActivityVM[]> {
         return this.service.findAll(requester);
     }
 
@@ -49,7 +49,7 @@ export class ActivityController {
     @ApiOperation({ summary: 'Insert new task' })
     @ApiCreatedResponse({ description: 'Success create new task' })
     @ApiBadRequestResponse({ description: 'Have error in run time' })
-    public insert(@Body() body: ActivityCM, @Headers('requester') requester: AccountVM): Promise<ActivityVM> {
+    public insert(@Body() body: ActivityCM, @Headers('requester') requester: EmployeeVM): Promise<ActivityVM> {
         return this.service.insert(body, requester);
     }
 

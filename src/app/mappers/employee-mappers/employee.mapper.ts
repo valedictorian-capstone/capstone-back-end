@@ -1,11 +1,11 @@
-import { Account } from "@models";
+import { Employee } from "@models";
 import { AutoMapper, mapWith, preCondition, ProfileBase } from '@nartc/automapper';
-import { AccountUM, AccountVM, ActivityVM, DeviceVM, NotificationVM, RoleVM, TicketVM } from "@view-models";
+import { EmployeeUM, EmployeeVM, ActivityVM, DeviceVM, NotificationVM, RoleVM, TicketVM } from "@view-models";
 
-export class AccountMapper extends ProfileBase {
+export class EmployeeMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
     super();
-    mapper.createMap(Account, AccountVM)
+    mapper.createMap(Employee, EmployeeVM)
       .forMember(d => d.roles,
         preCondition((s) => s.roles != null, []),
         mapWith(RoleVM, s => s.roles)
@@ -30,6 +30,6 @@ export class AccountMapper extends ProfileBase {
         preCondition((s) => s.devices != null, []),
         mapWith(DeviceVM, s => s.devices)
       );
-    mapper.createMap(AccountUM, AccountVM);
+    mapper.createMap(EmployeeUM, EmployeeVM);
   }
 }

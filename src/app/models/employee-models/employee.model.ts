@@ -5,7 +5,7 @@ import { Activity, Deal } from '../bpmn-models';
 import { Ticket } from '../product-models';
 import { Role } from './role.model';
 @Entity()
-export class Account extends BaseEntity {
+export class Employee extends BaseEntity {
 
   @AutoMap()
   @PrimaryGeneratedColumn('uuid')
@@ -31,14 +31,14 @@ export class Account extends BaseEntity {
   @Column({ nullable: true })
   public avatar: string;
 
-  @AutoMap()
+  @AutoMap()x
   @Column({ nullable: false, default: '1' })
   public passwordHash: string;
 
-  @OneToMany(() => Device, devices => devices.account)
+  @OneToMany(() => Device, devices => devices.employee)
   public devices: Device[];
 
-  @OneToMany(() => Notification, notification => notification.account)
+  @OneToMany(() => Notification, notification => notification.employee)
   public notifications: Notification[];
 
   @OneToMany(() => Activity, activitys => activitys.assignee)
@@ -54,7 +54,7 @@ export class Account extends BaseEntity {
   public deals: Deal[];
 
   @JoinTable()
-  @ManyToMany(() => Role, role => role.accounts)
+  @ManyToMany(() => Role, role => role.employees)
   public roles: Role[]
 
   @AutoMap()

@@ -15,7 +15,7 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { DeviceService } from '@services';
-import { AccountVM, DeviceVM } from '@view-models';
+import { EmployeeVM, DeviceVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Device')
@@ -29,7 +29,7 @@ export class DeviceController{
   @ApiOperation({ summary: 'Get all Devices' })
   @ApiOkResponse({ description: 'Success return all Devices' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public findAll(@Headers('requester') requester: AccountVM): DeviceVM[] {
+  public findAll(@Headers('requester') requester: EmployeeVM): DeviceVM[] {
     return requester.devices;
   }
 

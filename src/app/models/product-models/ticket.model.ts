@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Account } from '../account-models';
+import { Employee } from '../employee-models';
 import { Customer } from '../customer-models/customer.model';
 
 @Entity()
@@ -37,8 +37,8 @@ export class Ticket extends BaseEntity {
     @ManyToOne(() => Customer, customer => customer.tickets)
     public customer: Customer;
     
-    @ManyToOne(() => Account, assignee => assignee.tickets)
-    public assignee: Account;
+    @ManyToOne(() => Employee, assignee => assignee.tickets)
+    public assignee: Employee;
 
     @AutoMap()
     @Column({ default: null })
@@ -56,8 +56,8 @@ export class Ticket extends BaseEntity {
     @Column({ default: false })
     public feedbackStatus: boolean;
 
-    @ManyToOne(() => Account, assignee => assignee.feedbackTickets)
-    public feedbackAssignee: Account;
+    @ManyToOne(() => Employee, assignee => assignee.feedbackTickets)
+    public feedbackAssignee: Employee;
 
     @AutoMap()
     @Column({ default: null })

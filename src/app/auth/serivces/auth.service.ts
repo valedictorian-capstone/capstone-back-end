@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AccountService } from '@services';
+import { EmployeeService } from '@services';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private accountService: AccountService,
+    private employeeService: EmployeeService,
     private jwtService: JwtService
   ) { }
 
@@ -16,7 +16,7 @@ export class AuthService {
   //   } else{
   //     option['email'] = emailOrPhone;
   //   }
-  //   const user = await this.accountService.findOne(option);
+  //   const user = await this.employeeService.findOne(option);
   //   if (user && user.password === pass) {
   //     const { password, ...result } = user;
   //     return result;
