@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Campaign } from './campaign.model';
 
 import { Deal } from './deal.model';
 
@@ -29,6 +30,9 @@ export class Note extends BaseEntity {
 
   @ManyToOne(() => Deal, deal => deal.notes)
   public deal: Deal;
+
+  @ManyToOne(() => Campaign, campaign => campaign.notes)
+  public campaign: Campaign;
 
   @AutoMap()
   @Column({ default: null })

@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
+import { CampaignVM } from "../bpmn-view-models";
 import { CustomerVM } from "../customer-view-models";
 import { EventVM } from "./event.view-model";
-import { TriggerVM } from "./trigger.view-model";
 
 export class GroupVM {
   
@@ -21,6 +21,8 @@ export class GroupVM {
   public readonly customers: CustomerVM[];
 
   public readonly events: EventVM[];
+
+  public readonly campaigns: CampaignVM[];
   
   @AutoMap()
   public readonly isDelete: boolean;

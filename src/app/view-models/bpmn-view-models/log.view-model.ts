@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from 'nestjsx-automapper';
+import { CampaignVM } from "./campaign.view-model";
 import { DealVM } from "./deal.view-model";
 
 export class LogVM {
@@ -11,6 +12,8 @@ export class LogVM {
   public readonly description: string;
 
   public readonly deal: DealVM;
+
+  public readonly campaign: CampaignVM;
 
   @AutoMap()
   public readonly isDelete: boolean;
@@ -33,10 +36,12 @@ export class LogCM {
   @ApiProperty()
   public readonly deal: {id : string};
 
+  @ApiProperty()
+  public readonly campaign: {id : string};
+
   @AutoMap()
   @ApiProperty({ required: true, format: 'string'})
   public readonly description: string;
-
 
 }
 
@@ -47,6 +52,9 @@ export class LogUM {
 
   @ApiProperty()
   public readonly deal: {id : string};
+
+  @ApiProperty()
+  public readonly campaign: {id : string};
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'string'})

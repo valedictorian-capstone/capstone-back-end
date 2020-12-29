@@ -1,20 +1,22 @@
-import { Deal } from "@models";
+import { Campaign, Deal } from "@models";
 import { ApiProperty } from "@nestjs/swagger";
 import { EmployeeVM, StageVM } from "@view-models";
 import { AutoMap } from "nestjsx-automapper";
+import { CampaignVM } from "./campaign.view-model";
 import { DealVM } from "./deal.view-model";
-
-
 export class ActivityVM {
   @AutoMap()
   public readonly id: string;
 
   @AutoMap()
   public readonly name: string;
+
   @AutoMap()
   public readonly type: string;
+
   @AutoMap()
   public readonly description: string;
+
   @AutoMap()
   public readonly location: string;
 
@@ -23,6 +25,8 @@ export class ActivityVM {
   public readonly assignBy: EmployeeVM;
 
   public readonly deal: Deal;
+
+  public readonly campaign: Campaign;
 
   @AutoMap()
   public readonly status: string;
@@ -72,6 +76,8 @@ export class ActivityCM {
   public readonly assignBy: EmployeeVM;
 
   public readonly deal: DealVM;
+
+  public readonly campaign: CampaignVM;
 }
 
 export class ActivityUM {
@@ -104,4 +110,6 @@ export class ActivityUM {
   public readonly assignBy: EmployeeVM;
 
   public readonly deal: DealVM;
+
+  public readonly campaign: CampaignVM;
 }
