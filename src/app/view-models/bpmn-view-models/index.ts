@@ -7,3 +7,4 @@ export * from './pipeline.view-model';
 export * from './deal-detail.view-model';
 export * from './note.view-model';
 export * from './log.view-model';
+export * from './campaign.view-model';

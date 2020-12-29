@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Campaign } from './campaign.model';
 
 import { Deal } from './deal.model';
-
 
 @Entity()
 export class Attachment extends BaseEntity {
@@ -37,6 +37,9 @@ export class Attachment extends BaseEntity {
 
   @ManyToOne(() => Deal, deal => deal.attachments)
   public deal: Deal;
+
+  @ManyToOne(() => Campaign, campaign => campaign.attachments)
+  public campaign: Campaign;
 
   @AutoMap()
   @Column({ length: 1000, default: null })

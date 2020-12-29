@@ -7,3 +7,4 @@ export * from './activity.types';
 export * from './pipeline.type';
 export * from './note.type';
 export * from './log.type';
+export * from './campaign.type';

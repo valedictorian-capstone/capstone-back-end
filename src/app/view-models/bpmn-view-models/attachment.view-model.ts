@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
+import { CampaignVM } from "./campaign.view-model";
 import { DealVM } from "./deal.view-model";
 
 
@@ -24,6 +25,8 @@ export class AttachmentVM {
 
   public readonly deal: DealVM;
 
+  public readonly campaign: CampaignVM;
+
   @AutoMap()
   public readonly createdBy: string;
 
@@ -43,30 +46,44 @@ export class AttachmentVM {
 export class AttachmentCM {
   @ApiProperty()
   public readonly name: string;
+
   @ApiProperty()
   public readonly extension: string;
+
   @ApiProperty()
   public readonly description: string;
+
   @ApiProperty()
   public readonly url: string;
+
   @ApiProperty()
   public readonly size: number;
 
   public readonly deal: DealVM;
+
+  public readonly campaign: CampaignVM;
 }
 
 export class AttachmentUM {
   @ApiProperty()
   public readonly id: string;
+
   @ApiProperty()
   public readonly name: string;
+
   @ApiProperty()
   public readonly extension: string;
+
   @ApiProperty()
   public readonly description: string;
+
   @ApiProperty()
   public readonly url: string;
+
   @ApiProperty()
   public readonly size: number;
+
   public readonly deal: DealVM;
+
+  public readonly campaign: CampaignVM;
 }
