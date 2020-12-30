@@ -1,5 +1,5 @@
 
-import { DealRepository, StageRepository, ActivityRepository, PipelineRepository, DealDetailRepository, AttachmentRepository, NoteRepository, LogRepository } from '.';
+import { DealRepository, StageRepository, ActivityRepository, PipelineRepository, DealDetailRepository, AttachmentRepository, NoteRepository, LogRepository,CampaignRepository } from '.';
 
 export * from './stage.repository';
 export * from './deal.repository';
@@ -9,6 +9,7 @@ export * from './deal-detail.repository';
 export * from './note.repository';
 export * from './log.repository';
 export * from './attachment.repository';
+export * from './campaign.repository';
 
 export const BPMN_REPOSITORIES = [
   StageRepository.inject,
@@ -18,5 +19,6 @@ export const BPMN_REPOSITORIES = [
   DealDetailRepository.inject, 
   NoteRepository.inject,
   AttachmentRepository.inject,
-  LogRepository.inject
+  LogRepository.inject,
+  CampaignRepository.inject
 ];
