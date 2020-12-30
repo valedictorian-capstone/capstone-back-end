@@ -4,6 +4,7 @@ import { AttachmentRepository, LogRepository } from "@repositories";
 import { FirebaseService, SocketService } from "@services";
 import { ATTACHMENT_REPOSITORY, FIREBASE_SERVICE, LOG_REPOSITORY, SOCKET_SERVICE } from "@types";
 import { AttachmentCM, AttachmentUM, AttachmentVM } from "@view-models";
+import { any } from "bluebird";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { environment } from "src/environments/environment";
 import { In } from "typeorm";
@@ -46,6 +47,7 @@ export class AttachmentService {
         "attachments/" + deal.id + '/' + time + (file as any).originalname, file);
       attachments.push({
         deal: deal as any,
+        campaign: null,
         name: time + (file as any).originalname,
         extension: (file as any).mimetype,
         url: environment.firebase.linkDownloadFile + "attachments/" + deal.id + '/' + time + (file as any).originalname,
