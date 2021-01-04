@@ -1,12 +1,14 @@
 
+import { inject } from '@extras/functions';
+import { Campaign, Customer, Event } from '@models';
 import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { Customer, Event } from '@models';
 import { CustomerRepository } from '@repositories';
-import { CUSTOMER_REPOSITORY } from '@types';
-import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { In } from 'typeorm';
-import { createTransport } from 'nodemailer';
+import { CUSTOMER_REPOSITORY, EMAIL_SERVICE, LOG_SERVICE } from '@types';
 import { EmailManual } from '@view-models';
+import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { createTransport } from 'nodemailer';
+import { In } from 'typeorm';
+import { LogService } from '../bpmn-services';
 
 @Injectable()
 export class EmailService {
@@ -24,8 +26,10 @@ export class EmailService {
                 refreshToken: '1//04UP-0J_KmYKbCgYIARAAGAQSNwF-L9IrzdQ7xUZM0bpe8V2kBR7zk0OyJEJ2xuiuaApLjqGqBgNN1m9-QEuzGHzwh5Geo_FXyuI',
             }
         });
-     }
-    
+    }
+
+    // public static readonly inject = inject(EMAIL_SERVICE, EmailService);
+
     private auth = createTransport({ // config mail server
         service: 'Gmail',
         auth: {
@@ -44,17 +48,31 @@ export class EmailService {
             .then(async (models) => {
                 if (models.length == 0) {
                     throw new NotFoundException("cant found id");
-                }   
+                }
                 console.log(this.auth)
                 for (const model of models) {
                     await this.auth.sendMail(this.getDemoTemplate(model), (err, info) => {
-                        if ( err ) {
+                        if (err) {
                             throw new InternalServerErrorException(err.message)
                         }
                         return "OK"
                     })
                 }
                 return "OK";
+            });
+    }
+
+    public readonly sendEmailToCustomerByCustomerId = async (customerId: string, emailContent: string) => {
+        return await this.cusomterRepository.useHTTP().findOne(customerId)
+            .then(async (customer) => {
+                if (!customer) {
+                    throw new NotFoundException("Can't not found Customer Id: " + customerId);
+                }
+                await this.auth.sendMail(this.getDemoTemplate(customer), (err, info) => {
+                    if (err) {
+                        throw new InternalServerErrorException(err.message)
+                    }
+                })
             });
     }
 
@@ -73,6 +91,24 @@ export class EmailService {
         };
         return "OK";
     }
+
+    public readonly sendCampaignToCustomerGroup = async (customers: Customer[], campaign: Campaign): Promise<any> => {
+        // const transporter = this.auth
+        // DOM
+        // for (let index = 0; index < customers.length; index++) {
+        //     const customer = customers[index];
+        //     transporter.sendMail(this.getEventTemplate(customer, campaign), (err, info) => {
+        //         if (err) {
+        //             console.log(err);
+        //         } else {
+        //             console.log('Message sent: ' + info.response);
+        //         }
+        //     })
+
+        // };
+        // return "OK";
+    }
+
 
     public readonly sendManualEmailCustomer = async (emailManual: EmailManual): Promise<any> => {
         const transporter = this.auth

@@ -3,10 +3,17 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+
+
+  HttpStatus,
+
+
   Param,
   Post,
   Put,
-  Query
+  Query,
+  Res
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -19,6 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { CustomerService } from '@services';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
+import { Response } from 'express';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Customer')
@@ -97,5 +105,15 @@ export class CustomerController{
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public restore(@Param('id') id: string): Promise<CustomerVM> {
     return this.service.restore(id);
+  }
+
+  @Post('contact/:customerId/:campaignId')
+  @ApiOperation({ summary: 'mark CustomerAs Contact by Customer Id and Campaign' })
+  public markCustomerAsContact(@Param('customerId') customerId: string, 
+  @Param('campaignId') campaingId: string,
+  @Res() res: Response) {
+    return this.service.maskCustomerAsContactGroup(campaingId, customerId).then(
+      () => res.status(HttpStatus.NO_CONTENT).send()
+    )
   }
 }

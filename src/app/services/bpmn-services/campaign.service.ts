@@ -4,22 +4,26 @@
 
 import { Campaign } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { DealRepository, CampaignRepository } from "@repositories";
-import { DEAL_REPOSITORY, CAMPAIGN_REPOSITORY, SOCKET_SERVICE } from "@types";
+import { CampaignRepository, DealRepository, GroupRepository } from "@repositories";
+import { CAMPAIGN_REPOSITORY, DEAL_REPOSITORY, EMAIL_SERVICE, GROUP_REPOSITORY, SOCKET_SERVICE } from "@types";
 import { CampaignCM, CampaignUM, CampaignVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
-
 import { In } from "typeorm";
-import { SocketService } from "../extra-services";
+import { EmailService, SocketService } from "../extra-services";
+
 
 @Injectable()
 export class CampaignService {
+
+  private readonly MARK_ASK_CONTACT_BUTTON_ID = "mask-contact-button";
 
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) protected readonly campaignRepository: CampaignRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
-    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
+    @Inject(GROUP_REPOSITORY) protected readonly groupRepository: GroupRepository,
+    protected readonly emailService: EmailService, cl
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CampaignVM[]> => {
@@ -82,5 +86,60 @@ export class CampaignService {
             );
           })
       });
+  }
+
+  public readonly sendCampaign = async (campaignId: string, groupIds: string[], emailTemplate: string) => {
+    let result = {
+      success: 0,
+      fail: 0,
+      errors: []
+    }
+    //As default send to all group of campagin
+    //Check exists campaignId 
+    const campaign = await this.campaignRepository.useHTTP().findOne(campaignId);
+    if (!campaign) {
+      throw new NotFoundException("CampaignId '" + campaignId + "' is not exits ");
+    }
+
+    emailTemplate = emailTemplate != null ? emailTemplate : campaign.emailTemplate;
+    if (!emailTemplate) {
+      throw new NotFoundException("Can't find Email Template in body request or Campagin Data");
+    }
+
+    let emailTemplateDOM = new DOMParser().parseFromString(emailTemplate, "text/html");
+    const maskContactButton = emailTemplateDOM.getElementById(this.MARK_ASK_CONTACT_BUTTON_ID);
+    if (!maskContactButton) {
+      throw new NotFoundException("Can't element has id: "+ this.MARK_ASK_CONTACT_BUTTON_ID+ " in template.");
+    }
+
+
+    const groups = await this.groupRepository.useHTTP().findByIds(groupIds, { relations: ["customers"] });
+    if (groups.length == 0) {
+      throw new NotFoundException("All Group Ids is not found.");
+    }
+
+    for await (const group of groups) {
+      for await (const customer of group.customers) {
+        try {
+          //set email template
+          const buttonPath = await this.maskContactURLBuilder(campaignId, customer.id);
+          maskContactButton.setAttribute("href", buttonPath);
+
+          const emailContent = new XMLSerializer().serializeToString(emailTemplateDOM);
+          //send email
+          await this.emailService.sendEmailToCustomerByCustomerId(customer.id, emailContent);
+          result.success = result.success + 1;
+        } catch (error) {
+          result.fail = result.fail + 1;
+          result.errors.push(error)
+        }
+      }
+    }
+    groupIds.filter(item => groups.find(group => group.id == item))
+    return result;
+  }
+
+  private readonly maskContactURLBuilder = async (campaignId: string, userId: string): Promise<string> => {
+    return process.env.CRM_WS_HOST + "/contact/" + userId + "/" + campaignId;
   }
 }
