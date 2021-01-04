@@ -1,12 +1,13 @@
 
-import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { Customer, Event } from '@models';
+import { Inject, Injectable, InternalServerErrorException, NotFoundException, OnModuleDestroy } from '@nestjs/common';
+import { Campaign, Customer, Event } from '@models';
 import { CustomerRepository } from '@repositories';
 import { CUSTOMER_REPOSITORY } from '@types';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { In } from 'typeorm';
 import { createTransport } from 'nodemailer';
 import { EmailManual } from '@view-models';
+import { OnModuleInit } from '@nestjs/common/interfaces/hooks/on-init.interface';
 
 @Injectable()
 export class EmailService {
@@ -73,6 +74,24 @@ export class EmailService {
         };
         return "OK";
     }
+
+    public readonly sendCampaignToCustomerGroup = async (customers: Customer[], campaign: Campaign): Promise<any> => {
+        // const transporter = this.auth
+        // DOM
+        // for (let index = 0; index < customers.length; index++) {
+        //     const customer = customers[index];
+        //     transporter.sendMail(this.getEventTemplate(customer, campaign), (err, info) => {
+        //         if (err) {
+        //             console.log(err);
+        //         } else {
+        //             console.log('Message sent: ' + info.response);
+        //         }
+        //     })
+
+        // };
+        // return "OK";
+    }
+
 
     public readonly sendManualEmailCustomer = async (emailManual: EmailManual): Promise<any> => {
         const transporter = this.auth

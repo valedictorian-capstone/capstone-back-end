@@ -1,9 +1,9 @@
 import { NotFoundException } from '@exceptions';
-import { Customer } from '@models';
+import { Customer, Group } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
-import { CustomerRepository, GroupRepository } from '@repositories';
+import { CampaignRepository, CustomerRepository, GroupRepository } from '@repositories';
 import { FirebaseService, SocketService } from '@services';
-import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY, SOCKET_SERVICE } from '@types';
+import { CAMPAIGN_REPOSITORY, CUSTOMER_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY, SOCKET_SERVICE } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
 import { async } from 'rxjs';
@@ -17,9 +17,14 @@ export class CustomerService {
     @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
     @Inject(GROUP_REPOSITORY) protected readonly groupRepository: GroupRepository,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
+    @Inject(CAMPAIGN_REPOSITORY) protected readonly campaignRepository: CampaignRepository,
+    @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
   ) { }
+
+  private readonly DEFAULT_CONTACT_GROUP_ID = "1";
+
   public readonly findAll = async (ids?: string[]): Promise<CustomerVM[]> => {
     const query = {};
     if (ids) {
@@ -28,10 +33,12 @@ export class CustomerService {
     return await this.cusomterRepository.useHTTP().find({ where: query, relations: ["groups"] })
       .then(async (models) => this.mapper.mapArray(models, CustomerVM, Customer));
   };
+
   public readonly findAllByLead = async (): Promise<CustomerVM[]> => {
     return await this.cusomterRepository.useHTTP().find({ relations: ['groups'] })
       .then((customers) => this.mapper.mapArray(customers.filter((customer) => customer.groups.filter((group) => group.id == '3').length > 0), CustomerVM, Customer));
   }
+
   public readonly findById = async (id: string): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "deals", "devices", "tickets"] })
       .then(async (model) => {
@@ -43,6 +50,7 @@ export class CustomerService {
         );
       })
   };
+
   public readonly checkUnique = async (label: string, value: string): Promise<string> => {
     const query = { [label]: value };
     return this.cusomterRepository.useHTTP().findOne({ where: query })
@@ -50,6 +58,7 @@ export class CustomerService {
         return model ? true : false;
       }).catch(err => err);
   }
+
   public readonly import = async (body: CustomerCM[]): Promise<any> => {
     for (const customer of body) {
       if (customer.avatar && customer.avatar.includes(';base64')) {
@@ -93,6 +102,7 @@ export class CustomerService {
       return rs;
     });
   };
+
   private readonly callClassification = async (customerParam: [][]): Promise<string> => {
     return new Promise(async (resolve) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -104,6 +114,7 @@ export class CustomerService {
       });
     });
   };
+
   public readonly insert = async (body: CustomerCM): Promise<any> => {
     const customer = { ...body };
     if (customer.avatar && customer.avatar.includes(';base64')) {
@@ -174,10 +185,11 @@ export class CustomerService {
             const rs = await this.findById(customer.id);
             this.socketService.with('customers', rs, 'update');
             return rs;
-          }).catch(err => err);
+          });
         }
       });
   };
+
   public readonly remove = async (id: string): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
@@ -195,6 +207,7 @@ export class CustomerService {
           })
       });
   };
+
   public readonly restore = async (id: string): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
@@ -212,9 +225,35 @@ export class CustomerService {
           })
       });
   };
+
   private readonly solveImage = async (avatar: string) => {
     const id = uuid();
     await this.firebaseService.useUploadFileBase64("customer/avatars/" + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
     return environment.firebase.linkDownloadFile + "customer/avatars/" + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
+  }
+
+  
+  public readonly markCustomerAsContactGroup = async (campaignId: string, customerId: string) =>  {
+    //check campain Id
+    const campaign = await this.campaignRepository.useHTTP().findOne(campaignId);
+    if (!campaign) {
+      throw new NotFoundException("Campain Id"+ campaignId +" is not found");
+    }
+    //check exits group
+    const group = await this.groupRepository.useHTTP().findOne(this.DEFAULT_CONTACT_GROUP_ID);
+    if (!group) {
+      throw new NotFoundException("ERROR default group Id is not exits"+ this.DEFAULT_CONTACT_GROUP_ID);
+    }
+    //check exits user
+    let customer = await this.customerRepository.useHTTP().findOne({where :{id: customerId}, relations: ["groups"]});
+    console.log(customer)
+    if (!customer) {
+      throw new NotFoundException("CustomerId is not found");
+    }
+    //markCustomerAsContactgroup
+    const additionGroup = new Group();
+    additionGroup.id = this.DEFAULT_CONTACT_GROUP_ID;
+    customer.groups = [...customer.groups, additionGroup];
+    return await this.customerRepository.useHTTP().save(customer);
   }
 }
