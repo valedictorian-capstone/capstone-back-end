@@ -112,7 +112,7 @@ export class CustomerController{
   public markCustomerAsContact(@Param('customerId') customerId: string, 
   @Param('campaignId') campaingId: string,
   @Res() res: Response) {
-    return this.service.markCustomerAsContactGroup(campaingId, customerId).then(
+    return this.service.maskCustomerAsContactGroup(campaingId, customerId).then(
       () => res.status(HttpStatus.NO_CONTENT).send()
     )
   }

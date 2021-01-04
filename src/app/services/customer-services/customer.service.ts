@@ -233,7 +233,7 @@ export class CustomerService {
   }
 
   
-  public readonly markCustomerAsContactGroup = async (campaignId: string, customerId: string) =>  {
+  public readonly maskCustomerAsContactGroup = async (campaignId: string, customerId: string) =>  {
     //check campain Id
     const campaign = await this.campaignRepository.useHTTP().findOne(campaignId);
     if (!campaign) {
