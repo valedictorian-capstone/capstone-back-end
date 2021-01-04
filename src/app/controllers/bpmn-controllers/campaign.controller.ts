@@ -75,4 +75,15 @@ export class CampaignController {
   public async remove(@Param('id') id: string): Promise<CampaignVM> {
     return await this.CampaignService.remove(id);
   }
+
+
+  @Post('/send-campagin')
+  @ApiOperation({ summary: 'Delete an Campaign by Id' })
+  @ApiCreatedResponse({ description: 'Success delete new Campaign' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async sendCampaignEmail() {
+    // return await thi
+  }
+
+
 }

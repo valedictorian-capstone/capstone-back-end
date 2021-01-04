@@ -39,6 +39,8 @@ export class CampaignVM {
     @AutoMap()
     public readonly updatedAt: Date;
 
+    @AutoMap()
+    public readonly emailTemplate: String;
 }
 
 export class CampaignCM {
@@ -67,6 +69,8 @@ export class CampaignCM {
     @ApiProperty()
     public readonly groups: {id : string};
 
+    @AutoMap()
+    public readonly emailTemplate: String;
 }
 
 export class CampaignUM {
@@ -98,5 +102,8 @@ export class CampaignUM {
     @AutoMap()
     @ApiProperty()
     public readonly groups: {id : string};
+
+    @AutoMap()
+    public readonly emailTemplate: String;
     
 }

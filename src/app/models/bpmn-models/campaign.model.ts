@@ -59,6 +59,10 @@ export class Campaign extends BaseEntity {
 
     @AutoMap()
     @Column({ default: null })
+    public emailTemplate: string;
+
+    @AutoMap()
+    @Column({ default: null })
     public createdBy: string;
   
     @AutoMap()

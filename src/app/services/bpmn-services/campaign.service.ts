@@ -4,13 +4,13 @@
 
 import { Campaign } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { DealRepository, CampaignRepository } from "@repositories";
-import { DEAL_REPOSITORY, CAMPAIGN_REPOSITORY, SOCKET_SERVICE } from "@types";
+import { DealRepository, CampaignRepository, GroupRepository } from "@repositories";
+import { DEAL_REPOSITORY, CAMPAIGN_REPOSITORY, SOCKET_SERVICE, GROUP_REPOSITORY, GROUP_SERVICE, EMAIL_SERVICE } from "@types";
 import { CampaignCM, CampaignUM, CampaignVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 
 import { In } from "typeorm";
-import { SocketService } from "../extra-services";
+import { EmailService, SocketService } from "../extra-services";
 
 @Injectable()
 export class CampaignService {
@@ -19,7 +19,9 @@ export class CampaignService {
     @Inject(CAMPAIGN_REPOSITORY) protected readonly campaignRepository: CampaignRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
-    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
+    @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
+    @Inject(GROUP_REPOSITORY) protected readonly groupRepository: GroupRepository,
+    @Inject(EMAIL_SERVICE) protected readonly emailService: EmailService,
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CampaignVM[]> => {
@@ -82,5 +84,30 @@ export class CampaignService {
             );
           })
       });
+  }
+
+  public readonly sendCampaign = async (campaignId: string, groupIds: string[], emailTemplate: string) => {
+    //As default send to all group of campagin
+    //Check exists campaignId 
+    const campaign = await this.campaignRepository.useHTTP().findOne(campaignId);
+    if (!campaign) {
+      throw new NotFoundException("CampaignId '"+ campaignId +"' is not exits ");
+    }
+    
+    emailTemplate = emailTemplate != null? emailTemplate: campaign.emailTemplate;
+    if (!emailTemplate) {
+      throw new NotFoundException("Can't find Email Template in body request or Campagin Data");
+    }
+
+    const groups = await this.groupRepository.useHTTP().findByIds(groupIds, {relations: });
+    if (groups.length == 0) {
+      throw new NotFoundException("All Group Ids is not found.");
+    }
+
+    for (const group in groups) {
+      
+    }
+    //Check exits groupId
+
   }
 }
