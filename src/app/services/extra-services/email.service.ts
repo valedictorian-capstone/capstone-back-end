@@ -68,7 +68,7 @@ export class EmailService {
                 if (!customer) {
                     throw new NotFoundException("Can't not found Customer Id: " + customerId);
                 }
-                await this.auth.sendMail(this.getDemoTemplate(customer), (err, info) => {
+                await this.auth.sendMail(this.emailTemplatebuilder(customer, emailContent), (err, info) => {
                     if (err) {
                         throw new InternalServerErrorException(err.message)
                     }
@@ -148,6 +148,16 @@ export class EmailService {
             html: '<p>Dear ' + customer.fullname + ',</p></b><p>Best regard,</p></b><p>CRM</p>'
         }
     };
+
+    private emailTemplatebuilder = (customer: Customer, emailContent: string) => {
+        return {
+            from: 'CRM Capstone',
+            to: customer.email,
+            subject: 'Tri ân khách hàng',
+            text: 'You recieved message from ',
+            html: emailContent
+        }
+    }
 
     private getManualMailTemplate(to: string, subject: string, content: string) {
         return {

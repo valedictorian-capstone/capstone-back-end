@@ -1,7 +1,4 @@
-
-
-
-
+import { BucketActionToHTTPMethod } from "@google-cloud/storage/build/src/bucket";
 import { Campaign } from "@models";
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { CampaignRepository, DealRepository, GroupRepository } from "@repositories";
@@ -11,7 +8,8 @@ import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { In } from "typeorm";
 import { EmailService, SocketService } from "../extra-services";
 
-
+const jsdom = require('jsdom');
+const {JSDOM} = jsdom;
 @Injectable()
 export class CampaignService {
 
@@ -106,11 +104,14 @@ export class CampaignService {
       throw new NotFoundException("Can't find Email Template in body request or Campagin Data");
     }
 
-    let emailTemplateDOM = new DOMParser().parseFromString(emailTemplate, "text/html");
-    const maskContactButton = emailTemplateDOM.getElementById(this.MARK_ASK_CONTACT_BUTTON_ID);
-    if (!maskContactButton) {
-      throw new NotFoundException("Can't element has id: "+ this.MARK_ASK_CONTACT_BUTTON_ID+ " in template.");
-    }
+    // let emailTemplateDOM = new DOMParser().parseFromString(emailTemplate, "text/html");
+    // const maskContactButton = emailTemplateDOM.getElementById(this.MARK_ASK_CONTACT_BUTTON_ID);
+    // if (!maskContactButton) {
+    //   throw new NotFoundException("Can't element has id: "+ this.MARK_ASK_CONTACT_BUTTON_ID+ " in template.");
+    // }
+
+    let emailTemplateDOM = new JSDOM(emailTemplate);
+    let maskContactButton = emailTemplateDOM.window.document.querySelector("#"+this.MARK_ASK_CONTACT_BUTTON_ID);
 
 
     const groups = await this.groupRepository.useHTTP().findByIds(groupIds, { relations: ["customers"] });
@@ -125,11 +126,11 @@ export class CampaignService {
           const buttonPath = await this.maskContactURLBuilder(campaignId, customer.id);
           maskContactButton.setAttribute("href", buttonPath);
 
-          const emailContent = new XMLSerializer().serializeToString(emailTemplateDOM);
           //send email
-          await this.emailService.sendEmailToCustomerByCustomerId(customer.id, emailContent);
+          await this.emailService.sendEmailToCustomerByCustomerId(customer.id, emailTemplateDOM.serialize());
           result.success = result.success + 1;
         } catch (error) {
+          console.log(error)
           result.fail = result.fail + 1;
           result.errors.push(error)
         }
