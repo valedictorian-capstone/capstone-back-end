@@ -43,6 +43,7 @@
         "firebase": "^8.0.0",
         "firebase-admin": "^9.2.0",
         "fs": "0.0.1-security",
+        "jsdom": "^16.4.0",
         "jsonwebtoken": "^8.5.1",
         "mysql2": "^2.1.0",
         "nestjsx-automapper": "^3.1.2",
