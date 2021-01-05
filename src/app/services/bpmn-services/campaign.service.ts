@@ -104,12 +104,6 @@ export class CampaignService {
       throw new NotFoundException("Can't find Email Template in body request or Campagin Data");
     }
 
-    // let emailTemplateDOM = new DOMParser().parseFromString(emailTemplate, "text/html");
-    // const maskContactButton = emailTemplateDOM.getElementById(this.MARK_ASK_CONTACT_BUTTON_ID);
-    // if (!maskContactButton) {
-    //   throw new NotFoundException("Can't element has id: "+ this.MARK_ASK_CONTACT_BUTTON_ID+ " in template.");
-    // }
-
     let emailTemplateDOM = new JSDOM(emailTemplate);
     let maskContactButton = emailTemplateDOM.window.document.querySelector("#"+this.MARK_ASK_CONTACT_BUTTON_ID);
 
