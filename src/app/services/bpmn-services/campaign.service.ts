@@ -23,7 +23,7 @@ export class CampaignService {
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
     @Inject(GROUP_REPOSITORY) protected readonly groupRepository: GroupRepository,
-    protected readonly emailService: EmailService, cl
+    protected readonly emailService: EmailService,
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CampaignVM[]> => {
