@@ -8,6 +8,7 @@ import { DealDetailVM } from "./deal-detail.view-model";
 import { LogVM } from "./log.view-model";
 import { NoteVM } from "./note.view-model";
 import { StageVM } from "./stage.view-model";
+import { CampaignVM } from "./campaign.view-model";
 
 export class DealVM {
 
@@ -49,6 +50,8 @@ export class DealVM {
   public readonly dealDetails: DealDetailVM[];
 
   public readonly notes: NoteVM[];
+
+  public readonly campaign: CampaignVM;
 
   public readonly logs: LogVM[];
   
@@ -116,6 +119,9 @@ export class DealCM {
   public readonly feedbackAssignee: {id : string};
 
   @ApiProperty()
+  public readonly campaign: {id : string};
+
+  @ApiProperty()
   public readonly activitys: { id: string }[];
   
   public readonly dealDetails: DealDetailVM[];
@@ -171,6 +177,9 @@ export class DealUM {
 
   @ApiProperty()
   public readonly activitys: {id : string}[];
+
+  @ApiProperty()
+  public readonly campaign: {id : string};
 }
 
 export class DealFilter {

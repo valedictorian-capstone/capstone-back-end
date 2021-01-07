@@ -1,6 +1,12 @@
+import { Pipeline } from "@models";
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
 import { GroupVM } from "../basic-view-models";
+import { ActivityVM } from "./activity.view-model";
+import { AttachmentVM } from "./attachment.view-model";
+import { DealVM } from "./deal.view-model";
+import { LogVM } from "./log.view-model";
+import { NoteVM } from "./note.view-model";
 
 export class CampaignVM {
 
@@ -23,6 +29,18 @@ export class CampaignVM {
     public readonly dateEnd: Date;
 
     public readonly groups: GroupVM[];
+
+    public readonly logs: LogVM[];
+
+    public readonly notes: NoteVM[];
+
+    public readonly attachments: AttachmentVM[];
+
+    public readonly activitys: ActivityVM[];
+
+    public readonly deals: DealVM[];
+
+    public readonly pipeline: Pipeline;
 
     @AutoMap()
     public readonly isDelete: boolean;
@@ -62,10 +80,14 @@ export class CampaignCM {
     @AutoMap()
     @ApiProperty({ required: true, format: 'Date'})
     public dateEnd: Date;
+
+    @AutoMap()
+    @ApiProperty()
+    public readonly pipeline: {id : string};
     
     @AutoMap()
     @ApiProperty()
-    public readonly groups: {id : string};
+    public readonly groups: {id : string}[];
 
 }
 
@@ -94,6 +116,10 @@ export class CampaignUM {
     @AutoMap()
     @ApiProperty({ required: true, format: 'Date'})
     public dateEnd: Date;
+
+    @AutoMap()
+    @ApiProperty()
+    public readonly pipeline: {id : string};
     
     @AutoMap()
     @ApiProperty()

@@ -6,7 +6,6 @@ import { FirebaseService, SocketService } from '@services';
 import { CUSTOMER_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY, SOCKET_SERVICE } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { async } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
 import { uuid } from 'uuidv4';
