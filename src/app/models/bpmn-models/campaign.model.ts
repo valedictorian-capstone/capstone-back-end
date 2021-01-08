@@ -64,7 +64,11 @@ export class Campaign extends BaseEntity {
   public deals: Deal[];
 
   @ManyToOne(() => Pipeline, pipeline => pipeline.campaigns)
-  public pipeline: Pipeline
+  public pipeline: Pipeline;
+  
+  @AutoMap()
+  @Column({ default: null })
+  public emailTemplate: string;
 
   @AutoMap()
   @Column({ default: null })
@@ -85,5 +89,7 @@ export class Campaign extends BaseEntity {
   @AutoMap()
   @UpdateDateColumn()
   public updatedAt: Date;
+  
   length: number;
+
 }

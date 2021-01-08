@@ -17,14 +17,14 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { CampaignService } from '@services';
-import { CampaignCM, CampaignUM, CampaignVM } from '@view-models';
+import { CampaignCM, CampaignSendEmailRequest, CampaignUM, CampaignVM } from '@view-models';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Campaign')
 @Controller('/api/v1/Campaign')
 export class CampaignController {
   constructor(
-    protected readonly CampaignService: CampaignService,
+    protected readonly campaignService: CampaignService,
   ) { }
 
   @Get()
@@ -32,7 +32,7 @@ export class CampaignController {
   @ApiOkResponse({ description: 'Success return all Campaign' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findAll(): Promise<CampaignVM[]> {
-    return await this.CampaignService.findAll();
+    return await this.campaignService.findAll();
   }
 
   @Get('/deal/:id')
@@ -40,7 +40,7 @@ export class CampaignController {
   @ApiOkResponse({ description: 'Success return all Campaign' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findByDeal(@Param('id') id: string): Promise<CampaignVM[]> {
-    return await this.CampaignService.findByDeal(id);
+    return await this.campaignService.findByDeal(id);
   }
 
   @Get(':id')
@@ -49,7 +49,7 @@ export class CampaignController {
   @ApiNotFoundResponse({ description: 'Fail to find Campaign by Id' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findById(@Param('id') id: string): Promise<CampaignVM> {
-    return await this.CampaignService.findById(id);
+    return await this.campaignService.findById(id);
   }
 
   @Post()
@@ -57,7 +57,7 @@ export class CampaignController {
   @ApiCreatedResponse({ description: 'Success create new Campaign' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async insert(@Body() body: CampaignCM): Promise<CampaignVM> {
-    return await this.CampaignService.insert(body);
+    return await this.campaignService.insert(body);
   }
 
   @Put()
@@ -65,7 +65,7 @@ export class CampaignController {
   @ApiCreatedResponse({ description: 'Success update new Campaign' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async update(@Body() body: CampaignUM): Promise<CampaignVM> {
-    return await this.CampaignService.update(body);
+    return await this.campaignService.update(body);
   }
 
   @Delete(':id')
@@ -73,6 +73,17 @@ export class CampaignController {
   @ApiCreatedResponse({ description: 'Success delete new Campaign' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async remove(@Param('id') id: string): Promise<CampaignVM> {
-    return await this.CampaignService.remove(id);
+    return await this.campaignService.remove(id);
   }
+
+
+  @Post('/send-campagin')
+  @ApiOperation({ summary: 'sendCampaignEmail by ' })
+  @ApiCreatedResponse({ description: 'Success delete new Campaign' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async sendCampaignEmail(@Body() body: CampaignSendEmailRequest) {
+    return this.campaignService.sendCampaign(body.campaignId, body.groupIds, body.emailTemplate);
+  }
+
+
 }

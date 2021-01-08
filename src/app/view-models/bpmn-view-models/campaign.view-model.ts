@@ -12,7 +12,7 @@ export class CampaignVM {
 
     @AutoMap()
     public readonly id: string;
-  
+
     @AutoMap()
     public readonly name: string;
 
@@ -44,19 +44,21 @@ export class CampaignVM {
 
     @AutoMap()
     public readonly isDelete: boolean;
-  
+
     @AutoMap()
     public readonly createdBy: string;
-  
+
     @AutoMap()
     public readonly updatedBy: string;
-  
+
     @AutoMap()
     public readonly createdAt: Date;
-    
+
     @AutoMap()
     public readonly updatedAt: Date;
 
+    @AutoMap()
+    public readonly emailTemplate: String;
 }
 
 export class CampaignCM {
@@ -74,11 +76,11 @@ export class CampaignCM {
     public type: string;
 
     @AutoMap()
-    @ApiProperty({ required: true, format: 'Date'})
+    @ApiProperty({ required: true, format: 'Date' })
     public dateStart: Date;
-    
+
     @AutoMap()
-    @ApiProperty({ required: true, format: 'Date'})
+    @ApiProperty({ required: true, format: 'Date' })
     public dateEnd: Date;
 
     @AutoMap()
@@ -89,6 +91,8 @@ export class CampaignCM {
     @ApiProperty()
     public readonly groups: {id : string}[];
 
+    @AutoMap()
+    public readonly emailTemplate: String;
 }
 
 export class CampaignUM {
@@ -110,19 +114,31 @@ export class CampaignUM {
     public type: string;
 
     @AutoMap()
-    @ApiProperty({ required: true, format: 'Date'})
+    @ApiProperty({ required: true, format: 'Date' })
     public dateStart: Date;
-    
-    @AutoMap()
-    @ApiProperty({ required: true, format: 'Date'})
-    public dateEnd: Date;
 
+    @AutoMap()
+    @ApiProperty({ required: true, format: 'Date' })
+    public dateEnd: Date;
+  
     @AutoMap()
     @ApiProperty()
     public readonly pipeline: {id : string};
     
     @AutoMap()
     @ApiProperty()
-    public readonly groups: {id : string};
-    
+    public readonly groups: {id : string}[];
+
+    @AutoMap()
+    public readonly emailTemplate: String;
+
+}
+
+export class CampaignSendEmailRequest {
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly campaignId: string;
+    @ApiProperty({ type: [String], required: true })
+    public readonly groupIds: string[];
+    @ApiProperty({ required: false, format: 'string', example: "This field is optional" })
+    public readonly emailTemplate: string;
 }
