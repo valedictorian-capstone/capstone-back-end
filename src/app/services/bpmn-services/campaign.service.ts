@@ -11,7 +11,7 @@ import { In } from "typeorm";
 import { EmailService, SocketService } from "../extra-services";
 
 const jsdom = require('jsdom');
-const {JSDOM} = jsdom;
+const { JSDOM } = jsdom;
 @Injectable()
 export class CampaignService {
 
@@ -23,7 +23,7 @@ export class CampaignService {
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
     @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
-    @Inject(STAGE_REPOSITORY) protected readonly stageRepository: StageRepository
+    @Inject(STAGE_REPOSITORY) protected readonly stageRepository: StageRepository,
     @Inject(GROUP_REPOSITORY) protected readonly groupRepository: GroupRepository,
     protected readonly emailService: EmailService
   ) { }
@@ -99,7 +99,7 @@ export class CampaignService {
       for (let index = 0; index < campaigns.length; index++) {
         const campaign = campaigns[index];
         if (campaign.groups != null) {
-          const stage = await this.stageRepository.useHTTP().findOne({ where: {position: 1, pipeline: campaign.pipeline }});
+          const stage = await this.stageRepository.useHTTP().findOne({ where: { position: 1, pipeline: campaign.pipeline } });
           for (let index1 = 0; index1 < campaign.groups.length; index1++) {
             const group = campaign.groups[index1];
             for (let index2 = 0; index2 < group.customers.length; index2++) {
@@ -128,23 +128,24 @@ export class CampaignService {
       for (let index = 0; index < campaigns.length; index++) {
         const campaign = campaigns[index];
         if (campaign.groups != null) {
-          const deals = await this.dealRepository.useHTTP().find({ where: { campaign: campaign }});
-          if(deals.length != 0){
-            const dealsUpdate= [];
+          const deals = await this.dealRepository.useHTTP().find({ where: { campaign: campaign } });
+          if (deals.length != 0) {
+            const dealsUpdate = [];
             for (let index1 = 0; index1 < deals.length; index1++) {
               const deal = deals[index1];
-              if( deal.status != "win" && deal.status != "lost" ){
+              if (deal.status != "win" && deal.status != "lost") {
                 deal.status = "expired";
                 dealsUpdate.push(deal);
-              }              
+              }
             }
-            if(dealsUpdate.length != 0){
+            if (dealsUpdate.length != 0) {
               await this.dealRepository.useHTTP().save(dealsUpdate);
             }
           }
         }
       }
     }
+  }
 
   public readonly sendCampaign = async (campaignId: string, groupIds: string[], emailTemplate: string) => {
     let result = {
@@ -165,7 +166,7 @@ export class CampaignService {
     }
 
     let emailTemplateDOM = new JSDOM(emailTemplate);
-    let maskContactButton = emailTemplateDOM.window.document.querySelector("#"+this.MARK_ASK_CONTACT_BUTTON_ID);
+    let maskContactButton = emailTemplateDOM.window.document.querySelector("#" + this.MARK_ASK_CONTACT_BUTTON_ID);
 
 
     const groups = await this.groupRepository.useHTTP().findByIds(groupIds, { relations: ["customers"] });
