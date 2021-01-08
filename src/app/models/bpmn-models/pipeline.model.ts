@@ -8,6 +8,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm';
+import { Campaign } from './campaign.model';
 import { Stage } from './stage.model';
 
 @Entity()
@@ -23,6 +24,9 @@ export class Pipeline extends BaseEntity {
 
     @OneToMany(() => Stage, stages => stages.pipeline)
     public stages: Stage[];
+
+    @OneToMany(() => Campaign, campaigns => campaigns.pipeline)
+    public campaigns: Campaign[];
 
     @AutoMap()
     @Column({ default: null })

@@ -17,6 +17,7 @@ import { DealDetail } from './deal-detail.model';
 import { Log } from './log.model';
 import { Note } from './note.model';
 import { Stage } from './stage.model'
+import { Campaign } from './campaign.model';
 
 @Entity()
 export class Deal extends BaseEntity {
@@ -74,6 +75,9 @@ export class Deal extends BaseEntity {
 
   @ManyToOne(() => Employee, employee => employee.deals)
   public assignee: Employee;
+
+  @ManyToOne(() => Campaign, campaign => campaign.deals)
+  public campaign: Campaign;
 
   @OneToMany(() => Log, logs => logs.deal)
   public logs: Log[];

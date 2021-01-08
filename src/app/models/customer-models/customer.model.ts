@@ -14,7 +14,6 @@ import { Comment, Device, Group, Notification } from '../basic-models';
 import { Deal } from '../bpmn-models';
 import { Ticket } from '../product-models';
 
-
 @Entity()
 export class Customer extends BaseEntity {
 
