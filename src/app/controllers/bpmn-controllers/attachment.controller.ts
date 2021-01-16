@@ -23,6 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { AttachmentService } from '@services';
 import { AttachmentUM, AttachmentVM } from '@view-models';
+import { Query } from '@nestjs/common';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Attachment')
@@ -39,7 +40,14 @@ export class AttachmentController {
   public findAll(): Promise<AttachmentVM[]> {
     return this.service.findAll();
   }
-
+  @Get('/query')
+  @ApiOperation({ summary: 'Get an task by Id' })
+  @ApiOkResponse({ description: "Success return an task's information" })
+  @ApiNotFoundResponse({ description: 'Fail to find task by Id' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public query(@Query('key') key: string, @Query('id') id: string): Promise<AttachmentVM[]> {
+    return this.service.query(key, id);
+  }
   @Get(':id')
   @ApiOperation({ summary: 'Get an task by Id' })
   @ApiOkResponse({ description: "Success return an task's information" })

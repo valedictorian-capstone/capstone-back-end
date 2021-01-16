@@ -25,7 +25,7 @@ export class ActivityService {
       query['assignee'] = { id: requester.id };
     }
     return await this.activityRepository.useHTTP()
-      .find({ where: query, relations: ['assignee', 'deal', 'assignBy'] })
+      .find({ where: query, relations: ['assignee', 'deal', 'assignBy', 'campaign'] })
       .then((models) =>
         this.mapper.mapArray(models, ActivityVM, Activity)
       )
@@ -35,7 +35,7 @@ export class ActivityService {
       where: {
         id: id
       },
-      relations: ["assignee", "assignBy", 'deal'],
+      relations: ["assignee", "assignBy", 'deal', 'campaign'],
     })
       .then((model) => {
         if (model) {
@@ -46,14 +46,25 @@ export class ActivityService {
         );
       })
   };
+  public readonly query = async (key: string, id: string): Promise<ActivityVM[]> => {
+    return await this.activityRepository.useHTTP().find({
+      where: key && id ? {
+        [key]: { id }
+      } : {},
+      relations: ["assignee", "assignBy", 'deal', 'campaign'],
+    })
+      .then((models) => {
+        return this.mapper.mapArray(models, ActivityVM, Activity);
+      })
+  };
   public readonly insert = async (body: ActivityCM, requester: EmployeeVM): Promise<ActivityVM> => {
     return await this.activityRepository.useHTTP().save({ ...body, assignBy: { id: requester.id } } as any)
       .then(async (model) => {
         await this.employeeRepository.useHTTP()
-        .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
-          async (employee) => {
-            await this.notificationRepository.useHTTP().save({
-              body: `New activity ${model.name} created for you`,
+          .findOne({ id: body.assignee.id }, { relations: ['devices'] }).then(
+            async (employee) => {
+              await this.notificationRepository.useHTTP().save({
+                body: `New activity ${model.name} created for you`,
                 title: "You have a new activity",
                 type: 'create',
                 name: 'activity',
@@ -78,7 +89,8 @@ export class ActivityService {
         const rs = await this.findById(model.id);
         this.saveLog({
           description: 'Create new activity ' + model.name,
-          deal: { id: rs.deal.id }
+          deal: rs.deal ? { id: rs.deal.id } : undefined,
+          campaign: rs.campaign ? { id: rs.campaign.id } : undefined,
         });
         this.socketService.with('activitys', rs, 'create');
         return rs;
@@ -94,7 +106,8 @@ export class ActivityService {
           const rs = await this.findById(body.id);
           this.saveLog({
             description: 'Update an activity ' + rs.name,
-            deal: { id: rs.deal.id }
+            deal: rs.deal ? { id: rs.deal.id } : undefined,
+            campaign: rs.campaign ? { id: rs.campaign.id } : undefined,
           });
           this.socketService.with('activitys', rs, 'update');
           return rs;
@@ -102,7 +115,7 @@ export class ActivityService {
       });
   };
   public readonly remove = async (id: string): Promise<ActivityVM> => {
-    return await this.activityRepository.useHTTP().findOne({ id: id }, {relations: ['deal']})
+    return await this.activityRepository.useHTTP().findOne({ id: id }, { relations: ['deal', 'campaign'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -114,17 +127,18 @@ export class ActivityService {
           .then(() => {
             const rs = this.mapper.map({ ...model, id } as Activity, ActivityVM, Activity);
             this.saveLog({
-              description: 'Remove an activity ' + model.name,
-              deal: { id: rs.deal.id }
+              description: 'Remove an activity ' + rs.name,
+              deal: rs.deal ? { id: rs.deal.id } : undefined,
+              campaign: rs.campaign ? { id: rs.campaign.id } : undefined,
             });
             this.socketService.with('activitys', rs, 'remove');
             return rs;
           })
       });
   };
-  private readonly saveLog = async (data: { description: string, deal: { id: string } }) => {
+  private readonly saveLog = async (data: { description: string, deal?: { id: string }, campaign?: { id: string } }) => {
     await this.logRepository.useHTTP().save(data as any).then(async (res) => {
-      this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal'] }), 'create');
+      this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal', 'campaign'] }), 'create');
     });
   }
 

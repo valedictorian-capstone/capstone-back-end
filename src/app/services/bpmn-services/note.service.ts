@@ -20,21 +20,19 @@ export class NoteService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<NoteVM[]> => {
-    return await this.noteRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ['deal'] })
+    return await this.noteRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ['deal', 'campaign'] })
       .then((models) => {
         return this.mapper.mapArray(models, NoteVM, Note)
       });
   }
-
   public readonly findByDeal = async (id: string): Promise<NoteVM[]> => {
-    return await this.noteRepository.useHTTP().find({ where: { deal: { id } }, relations: ['deal'] })
+    return await this.noteRepository.useHTTP().find({ where: { deal: { id } }, relations: ['deal', 'campaign'] })
       .then((models) => {
         return this.mapper.mapArray(models, NoteVM, Note)
       });
   }
-
   public readonly findById = async (id: string): Promise<NoteVM> => {
-    return await this.noteRepository.useHTTP().findOne({ where: { id: id }, relations: ['deal'] })
+    return await this.noteRepository.useHTTP().findOne({ where: { id: id }, relations: ['deal', 'campaign'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -45,7 +43,17 @@ export class NoteService {
         }
       })
   }
-
+  public readonly query = async (key: string, id: string): Promise<NoteVM[]> => {
+    return await this.noteRepository.useHTTP().find({
+      where: key && id ? {
+        [key]: { id }
+      } : {},
+      relations: ['deal', 'campaign'],
+    })
+      .then((models) => {
+        return this.mapper.mapArray(models, NoteVM, Note);
+      })
+  };
   public readonly insert = async (body: NoteCM): Promise<NoteVM> => {
 
     return await this.noteRepository.useHTTP().save(body)
@@ -53,13 +61,13 @@ export class NoteService {
         const rs = await this.findById(model.id);
         this.saveLog({
           description: 'Create new note',
-          deal: { id: rs.deal.id }
+          deal: rs.deal ? { id: rs.deal.id } : undefined,
+          campaign: rs.campaign ? { id: rs.campaign.id } : undefined,
         });
         this.socketService.with('notes', rs, 'create');
         return rs;
       })
   }
-
   public readonly update = async (body: NoteUM): Promise<NoteVM> => {
     return await this.noteRepository.useHTTP()
       .save(body)
@@ -67,15 +75,15 @@ export class NoteService {
         const rs = await this.findById(model.id);
         this.saveLog({
           description: 'Update an note',
-          deal: { id: rs.deal.id }
+          deal: rs.deal ? { id: rs.deal.id } : undefined,
+          campaign: rs.campaign ? { id: rs.campaign.id } : undefined,
         });
         this.socketService.with('notes', rs, 'update');
         return rs;
       })
   }
-
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.noteRepository.useHTTP().findOne({ id: id }, {relations: ['deal']})
+    return await this.noteRepository.useHTTP().findOne({ id: id }, { relations: ['deal', 'campaign'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -83,19 +91,20 @@ export class NoteService {
           );
         }
         return await this.noteRepository.useHTTP()
-        .remove(model)
+          .remove(model)
           .then(() => {
-            const rs = this.mapper.map({...model, id} as Note, NoteVM, Note);
+            const rs = this.mapper.map({ ...model, id } as Note, NoteVM, Note);
             this.saveLog({
               description: 'Remove an note',
-              deal: { id: rs.deal.id }
+              deal: rs.deal ? { id: rs.deal.id } : undefined,
+              campaign: rs.campaign ? { id: rs.campaign.id } : undefined,
             });
             this.socketService.with('notes', rs, 'remove');
             return rs;
           })
       });
   }
-  private readonly saveLog = async (data: { description: string, deal: { id: string } }) => {
+  private readonly saveLog = async (data: { description: string, deal?: { id: string }, campaign?: { id: string } }) => {
     await this.logRepository.useHTTP().save(data as any).then(async (res) => {
       this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal'] }), 'create');
     });

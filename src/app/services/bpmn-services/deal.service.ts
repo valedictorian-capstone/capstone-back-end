@@ -25,9 +25,8 @@ export class DealService {
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
     protected readonly customerService: CustomerService
   ) { }
-
   public readonly findAll = async (requester: EmployeeVM): Promise<DealVM[]> => {
-    return await this.dealRepository.useHTTP().find({ relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee'] })
+    return await this.dealRepository.useHTTP().find({ relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee', 'campaign'] })
       .then(async (deals) => {
         const canGetAllDeal = requester.roles.filter((e) => e.canGetAllDeal).length > 0;
         const canGetFeedbackDeal = requester.roles.filter((e) => e.canGetFeedbackDeal).length > 0;
@@ -58,7 +57,7 @@ export class DealService {
       )
   }
   public readonly findById = async (id: string): Promise<DealVM> => {
-    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee'] })
+    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee', 'campaign'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -72,8 +71,19 @@ export class DealService {
         }
       })
   }
+  public readonly query = async (key: string, id: string): Promise<DealVM[]> => {
+    return await this.dealRepository.useHTTP().find({
+      where: key && id ? {
+        [key]:  { id }
+      } : {},
+      relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee', 'campaign'],
+    })
+      .then((models) => {
+        return this.mapper.mapArray(models, DealVM, Deal);
+      })
+  };
   public readonly findByCustomerId = async (id: string): Promise<DealVM[]> => {
-    return await this.dealRepository.useHTTP().find({ where: { customer: { id } }, relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments', 'assignee'] })
+    return await this.dealRepository.useHTTP().find({ where: { customer: { id } }, relations: ['stage', 'customer', 'dealDetails', 'logs', 'activitys', 'notes', 'attachments', 'assignee', 'campaign'] })
       .then(async (deals) => {
         for (let i = 0; i < deals.length; i++) {
           const deal = deals[i];
@@ -90,7 +100,7 @@ export class DealService {
     if (requester.roles.filter((e) => e.canAccessDeal && e.canGetAllDeal).length === 0) {
       query['assignee'] = { id: requester.id };
     }
-    return await this.dealRepository.useHTTP().find({ where: { stage: { id }, ...query }, relations: ['stage', 'customer', 'dealDetails', 'assignee'] })
+    return await this.dealRepository.useHTTP().find({ where: { stage: { id }, ...query }, relations: ['stage', 'customer', 'dealDetails', 'assignee', 'campaign'] })
       .then(async (deals) => {
         for (let i = 0; i < deals.length; i++) {
           const deal = deals[i];
@@ -112,13 +122,11 @@ export class DealService {
           deal: model
         }
         await this.logRepository.useHTTP().save(log);
-        await this.dealDetailRepository.useHTTP().save(body.dealDetails.map((e) => ({ ...e, deal: model })) as any);
         const rs = await this.findById(model.id);
         this.socketService.with('deals', rs, 'create');
         return rs;
       })
   }
-
   public readonly update = async (body: DealUM | DealUM[]): Promise<DealVM | DealVM[]> => {
     if ((body as DealUM[]).length) {
       const rs = [];
@@ -153,7 +161,6 @@ export class DealService {
         });
     }
   }
-
   private readonly updateCustomerGroupWhenDone = async (deal: Deal) => {
     return await this.dealRepository.useHTTP().findOne({ id: deal.id }, { relations: ['customer', 'dealDetails'] }).then(async (deal) => {
       if (deal.status === 'won') {
@@ -180,10 +187,9 @@ export class DealService {
       }
     })
   }
-
   private readonly updateCustomerGroupWhenReOpen = async (deal: Deal, oldStatus: string) => {
     return await this.dealRepository.useHTTP().findOne({ id: deal.id }, { relations: ['customer', 'dealDetails'] }).then(async (deal) => {
-      
+
       if (oldStatus === 'won') {
         const customer = deal.customer;
         customer.totalDeal = customer.totalDeal - 1;
@@ -208,7 +214,6 @@ export class DealService {
       }
     })
   }
-
   private readonly saveLog = async (oldDeal: Deal, updateDeal: Deal) => {
     console.log("test save log beggin");
     let description = "";
@@ -234,7 +239,6 @@ export class DealService {
       this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal'] }), 'create');
     });
   }
-
   public readonly remove = async (id: string): Promise<any> => {
     return await this.dealRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {

@@ -37,20 +37,32 @@ export class AttachmentService {
         }
       })
   }
+  public readonly query = async (key: string, id: string): Promise<AttachmentVM[]> => {
+    return await this.attachmentRepository.useHTTP().find({
+      where: key && id ? {
+        [key]: { id }
+      } : {},
+      relations: ['deal', 'campaign'],
+    })
+      .then((models) => {
+        return this.mapper.mapArray(models, AttachmentVM, Attachment);
+      })
+  };
   public readonly insert = async (body: any, files: File[]): Promise<AttachmentVM[]> => {
-    const deal = { id: body.deal[0] };
+    const deal = body.deal ? { id: body.deal[0] } : undefined;
+    const campaign = body.campaign ? { id: body.campaign[0] } : undefined;
     const attachments: AttachmentCM[] = [];
     for (let i = 0; i < files.length / 2; i++) {
       const file = files[i];
       const time = new Date().getTime();
       await this.firebaseService.useUploadFile(
-        "attachments/" + deal.id + '/' + time + (file as any).originalname, file);
+        "attachments/" + (deal ? deal.id : campaign.id) + '/' + time + (file as any).originalname, file);
       attachments.push({
         deal: deal as any,
-        campaign: null,
+        campaign: campaign as any,
         name: time + (file as any).originalname,
         extension: (file as any).mimetype,
-        url: environment.firebase.linkDownloadFile + "attachments/" + deal.id + '/' + time + (file as any).originalname,
+        url: environment.firebase.linkDownloadFile + "attachments/" + (deal ? deal.id : campaign.id) + '/' + time + (file as any).originalname,
         size: (file as any).size,
         description: ''
       });
@@ -60,7 +72,8 @@ export class AttachmentService {
       .then(async (models: Attachment[]) => {
         this.saveLog({
           description: 'Insert multiple attachment',
-          deal: { id: deal.id }
+          deal: deal ? { id: deal.id } : undefined,
+          campaign: campaign ? { id: campaign.id } : undefined,
         });
         const rs = await this.findAll(models.map((e) => e.id));
         this.socketService.with('attachments', rs, 'list');
@@ -74,14 +87,15 @@ export class AttachmentService {
         const rs = await this.findById(model.id);
         this.saveLog({
           description: 'Update an attachment ' + model.name,
-          deal: { id: rs.deal.id }
+          deal: rs.deal ? { id: rs.deal.id } : undefined,
+          campaign: rs.campaign ? { id: rs.campaign.id } : undefined,
         });
         this.socketService.with('attachments', rs, 'update');
         return rs
       })
   }
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.attachmentRepository.useHTTP().findOne({ id: id }, {relations: ['deal']})
+    return await this.attachmentRepository.useHTTP().findOne({ id: id }, { relations: ['deal'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -89,19 +103,20 @@ export class AttachmentService {
           );
         }
         return await this.attachmentRepository.useHTTP()
-        .remove(model)
+          .remove(model)
           .then(() => {
-            const rs = this.mapper.map({...model, id} as Attachment, AttachmentVM, Attachment);
+            const rs = this.mapper.map({ ...model, id } as Attachment, AttachmentVM, Attachment);
             this.saveLog({
               description: 'Remove an attachment ' + model.name,
-              deal: { id: rs.deal.id }
+              deal: rs.deal ? { id: rs.deal.id } : undefined,
+              campaign: rs.campaign ? { id: rs.campaign.id } : undefined,
             });
             this.socketService.with('attachments', rs, 'remove');
             return rs;
           })
       });
   }
-  private readonly saveLog = async (data: { description: string, deal: { id: string } }) => {
+  private readonly saveLog = async (data: { description: string, deal?: { id: string }, campaign?: { id: string } }) => {
     await this.logRepository.useHTTP().save(data as any).then(async (res) => {
       this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal'] }), 'create');
     });
