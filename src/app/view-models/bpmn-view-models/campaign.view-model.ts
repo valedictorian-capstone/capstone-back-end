@@ -58,7 +58,7 @@ export class CampaignVM {
     public readonly updatedAt: Date;
 
     @AutoMap()
-    public readonly emailTemplate: String;
+    public readonly emailTemplate: string;
 }
 
 export class CampaignCM {
@@ -92,7 +92,7 @@ export class CampaignCM {
     public readonly groups: {id : string}[];
 
     @AutoMap()
-    public readonly emailTemplate: String;
+    public readonly emailTemplate: string;
 }
 
 export class CampaignUM {
@@ -130,7 +130,7 @@ export class CampaignUM {
     public readonly groups: {id : string}[];
 
     @AutoMap()
-    public readonly emailTemplate: String;
+    public readonly emailTemplate: string;
 
 }
 
