@@ -102,6 +102,9 @@ export class CampaignCM {
 
     @AutoMap()
     public readonly status: string;
+
+    @AutoMap()
+    public readonly emailTemplate: string;
 }
 
 export class CampaignUM {
@@ -144,6 +147,8 @@ export class CampaignUM {
     @AutoMap()
     public readonly status: string;
 
+    @AutoMap()
+    public readonly emailTemplate: string;
 }
 
 export class CampaignSendEmailRequest {
