@@ -8,3 +8,4 @@ export * from './pipeline.type';
 export * from './note.type';
 export * from './log.type';
 export * from './campaign.type';
+export * from './campaign-group.type';

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { CampaignVM } from "../bpmn-view-models";
+import { CampaignGroupVM, CampaignVM } from "../bpmn-view-models";
 import { CustomerVM } from "../customer-view-models";
 import { EventVM } from "./event.view-model";
 
@@ -22,7 +22,9 @@ export class GroupVM {
 
   public readonly events: EventVM[];
 
-  public readonly campaigns: CampaignVM[];
+  // public readonly campaigns: CampaignVM[];
+
+  public readonly campaignGroups: CampaignGroupVM[];
   
   @AutoMap()
   public readonly isDelete: boolean;

@@ -10,6 +10,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { In } from "typeorm";
 import { EmailService, SocketService } from "../extra-services";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 @Injectable()
@@ -90,64 +91,67 @@ export class CampaignService {
       });
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
-  async handleCronTriggerStartTime() {
-    const listCamp = await this.campaignRepository.useHTTP().query('SELECT id FROM crm.campaign WHERE YEAR(dateStart) = YEAR(NOW()) AND MONTH(dateStart) = MONTH(NOW()) AND DAY(dateStart) = DAY(NOW()) AND HOUR(dateStart) = HOUR(NOW()) AND MINUTE(dateStart) = MINUTE(NOW())');
-    const ids = listCamp.map((e) => e.id);
-    if (ids.length != 0) {
-      const campaigns = await this.campaignRepository.useHTTP().find({ where: { id: In(ids) }, relations: ["groups", "pipeline", "groups.customers"] });
-      for (let index = 0; index < campaigns.length; index++) {
-        const campaign = campaigns[index];
-        if (campaign.groups != null) {
-          const stage = await this.stageRepository.useHTTP().findOne({ where: { position: 1, pipeline: campaign.pipeline } });
-          for (let index1 = 0; index1 < campaign.groups.length; index1++) {
-            const group = campaign.groups[index1];
-            for (let index2 = 0; index2 < group.customers.length; index2++) {
-              const customer = group.customers[index2];
-              const deal = {
-                customer: customer,
-                campaign: campaign,
-                title: customer.fullname + "_" + campaign.name,
-                stage: stage,
-                status: "processing"
-              }
-              await this.dealRepository.useHTTP().save({ ...deal });
-            }
-          }
-        }
-      }
-    }
-  }
+  // @Cron(CronExpression.EVERY_MINUTE)
+  // async handleCronTriggerStartTime() {
+  //   const listCamp = await this.campaignRepository.useHTTP().query("SELECT id FROM crm.campaign WHERE YEAR(dateStart) = YEAR(NOW()) AND MONTH(dateStart) = MONTH(NOW()) AND DAY(dateStart) = DAY(NOW()) AND HOUR(dateStart) = HOUR(NOW()) AND MINUTE(dateStart) = MINUTE(NOW()) AND status = 'planning'");
+  //   const ids = listCamp.map((e) => e.id);
+  //   if (ids.length != 0) {
+  //     const campaigns = await this.campaignRepository.useHTTP().find({ where: { id: In(ids) }, relations: ["campaignGroups", "pipeline", "campaignGroups.group.customers"] });
+  //     console.log("campaigns");
+  //     console.log(campaigns);
+  //     // for (let index = 0; index < campaigns.length; index++) {
+  //     //   const campaign = campaigns[index];
+  //     //   if (campaign.groups != null) {
+  //     //     const stage = await this.stageRepository.useHTTP().findOne({ where: { position: 1, pipeline: campaign.pipeline } });
+  //     //     for (let index1 = 0; index1 < campaign.groups.length; index1++) {l
+  //     //       const group = campaign.groups[index1];
+  //     //       for (let index2 = 0; index2 < group.customers.length; index2++) {
+  //     //         const customer = group.customers[index2];
+  //     //         const deal = {
+  //     //           customer: customer,
+  //     //           campaign: campaign,
+  //     //           title: customer.fullname + "_" + campaign.name,
+  //     //           stage: stage,
+  //     //           status: "processing"
+  //     //         }
+  //     //         await this.dealRepository.useHTTP().save({ ...deal });
+  //     //       }
+  //     //     }
+  //     //   }
+  //     // }
+  //   }
+  // }
 
-  @Cron(CronExpression.EVERY_MINUTE)
-  async handleCronTriggerEndTime() {
-    const listCamp = await this.campaignRepository.useHTTP().query('SELECT id FROM crm.campaign WHERE YEAR(dateEnd) = YEAR(NOW()) AND MONTH(dateEnd) = MONTH(NOW()) AND DAY(dateEnd) = DAY(NOW()) AND HOUR(dateEnd) = HOUR(NOW()) AND MINUTE(dateEnd) = MINUTE(NOW())');
-    const ids = listCamp.map((e) => e.id);
-    if (ids.length != 0) {
-      const campaigns = await this.campaignRepository.useHTTP().find({ where: { id: In(ids) }, relations: ["groups", "pipeline", "groups.customers"] });
-      for (let index = 0; index < campaigns.length; index++) {
-        const campaign = campaigns[index];
-        if (campaign.groups != null) {
-          const deals = await this.dealRepository.useHTTP().find({ where: { campaign: campaign } });
-          if (deals.length != 0) {
-            const dealsUpdate = [];
-            for (let index1 = 0; index1 < deals.length; index1++) {
-              const deal = deals[index1];
-              if (deal.status != "win" && deal.status != "lost") {
-                deal.status = "expired";
-                dealsUpdate.push(deal);
-              }
-            }
-            if (dealsUpdate.length != 0) {
-              await this.dealRepository.useHTTP().save(dealsUpdate);
-            }
-          }
-        }
-      }
-    }
-  }
+  // @Cron(CronExpression.EVERY_MINUTE)
+  // async handleCronTriggerEndTime() {
+  //   const listCamp = await this.campaignRepository.useHTTP().query('SELECT id FROM crm.campaign WHERE YEAR(dateEnd) = YEAR(NOW()) AND MONTH(dateEnd) = MONTH(NOW()) AND DAY(dateEnd) = DAY(NOW()) AND HOUR(dateEnd) = HOUR(NOW()) AND MINUTE(dateEnd) = MINUTE(NOW())');
+  //   const ids = listCamp.map((e) => e.id);
+  //   if (ids.length != 0) {
+  //     const campaigns = await this.campaignRepository.useHTTP().find({ where: { id: In(ids) }, relations: ["groups", "pipeline", "groups.customers"] });
+  //     for (let index = 0; index < campaigns.length; index++) {
+  //       const campaign = campaigns[index];
+  //       if (campaign.groups != null) {
+  //         const deals = await this.dealRepository.useHTTP().find({ where: { campaign: campaign } });
+  //         if (deals.length != 0) {
+  //           const dealsUpdate = [];
+  //           for (let index1 = 0; index1 < deals.length; index1++) {
+  //             const deal = deals[index1];
+  //             if (deal.status != "win" && deal.status != "lost") {
+  //               deal.status = "expired";
+  //               dealsUpdate.push(deal);
+  //             }
+  //           }
+  //           if (dealsUpdate.length != 0) {
+  //             await this.dealRepository.useHTTP().save(dealsUpdate);
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   public readonly sendCampaign = async (campaignId: string, groupIds: string[], emailTemplate: string) => {
+    // eslint-disable-next-line prefer-const
     let result = {
       success: 0,
       fail: 0,
@@ -165,7 +169,9 @@ export class CampaignService {
       throw new NotFoundException("Can't find Email Template in body request or Campagin Data");
     }
 
+    // eslint-disable-next-line prefer-const
     let emailTemplateDOM = new JSDOM(emailTemplate);
+    // eslint-disable-next-line prefer-const
     let maskContactButton = emailTemplateDOM.window.document.querySelector("#" + this.MARK_ASK_CONTACT_BUTTON_ID);
 
 

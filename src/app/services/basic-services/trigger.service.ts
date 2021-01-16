@@ -16,19 +16,19 @@ export class TriggerService {
     protected emailService: EmailService,
   ) { }
 
-  @Cron(CronExpression.EVERY_MINUTE)
-  async handleCron() {
-    const triggers = await this.repository.useHTTP().query('SELECT * FROM crm.trigger WHERE YEAR(time) = YEAR(NOW()) AND MONTH(time) = MONTH(NOW()) AND DAY(time) = DAY(NOW()) AND HOUR(time) = HOUR(NOW()) AND MINUTE(time) = MINUTE(NOW())');
-    for (let index = 0; index < triggers.length; index++) {
-      const trigger = triggers[index];
-      const event = await this.eventRepository.useHTTP().findOne({ where: { id: trigger.eventId }, relations: ['groups'] });
-      console.log(event);
-      for (let j = 0; j < event.groups.length; j++) {
-        let group = event.groups[j];
-        group = await this.groupRepository.useHTTP().findOne({ where: { id: group.id }, relations: ['customers'] });
-        console.log(group);
-        await this.emailService.sendEventCustomer(group.customers, event);
-      }
-    }
-  }
+  // @Cron(CronExpression.EVERY_MINUTE)
+  // async handleCron() {
+  //   const triggers = await this.repository.useHTTP().query('SELECT * FROM crm.trigger WHERE YEAR(time) = YEAR(NOW()) AND MONTH(time) = MONTH(NOW()) AND DAY(time) = DAY(NOW()) AND HOUR(time) = HOUR(NOW()) AND MINUTE(time) = MINUTE(NOW())');
+  //   for (let index = 0; index < triggers.length; index++) {
+  //     const trigger = triggers[index];
+  //     const event = await this.eventRepository.useHTTP().findOne({ where: { id: trigger.eventId }, relations: ['groups'] });
+  //     console.log(event);
+  //     for (let j = 0; j < event.groups.length; j++) {
+  //       let group = event.groups[j];
+  //       group = await this.groupRepository.useHTTP().findOne({ where: { id: group.id }, relations: ['customers'] });
+  //       console.log(group);
+  //       await this.emailService.sendEventCustomer(group.customers, event);
+  //     }
+  //   }
+  // }
 }
