@@ -1,5 +1,5 @@
 
-import { Stage, Activity, Deal, Pipeline, DealDetail, Note, Attachment, Log, Campaign } from '.';
+import { Stage, Activity, Deal, Pipeline, DealDetail, Note, Attachment, Log, Campaign, CampaignGroup } from '.';
 
 export * from './deal.model';
 export * from './stage.model';
@@ -10,5 +10,6 @@ export * from './deal-detail.model';
 export * from './note.model';
 export * from './log.model';
 export * from './campaign.model';
+export * from './campaign-group.model';
 
-export const BPMN_MODELS = [ Stage, Activity, Deal, Pipeline, DealDetail, Note, Attachment, Log, Campaign ];
+export const BPMN_MODELS = [ Stage, Activity, Deal, Pipeline, DealDetail, Note, Attachment, Log, Campaign, CampaignGroup ];

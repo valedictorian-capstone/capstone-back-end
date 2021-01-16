@@ -4,6 +4,7 @@ import { AutoMap } from "nestjsx-automapper";
 import { GroupVM } from "../basic-view-models";
 import { ActivityVM } from "./activity.view-model";
 import { AttachmentVM } from "./attachment.view-model";
+import { CampaignGroupVM } from "./campaign-group.view-model";
 import { DealVM } from "./deal.view-model";
 import { LogVM } from "./log.view-model";
 import { NoteVM } from "./note.view-model";
@@ -28,7 +29,12 @@ export class CampaignVM {
     @AutoMap()
     public readonly dateEnd: Date;
 
-    public readonly groups: GroupVM[];
+    @AutoMap()
+    public readonly status: string;
+
+    // public readonly groups: GroupVM[];
+
+    public readonly campaignGroups: CampaignGroupVM;
 
     public readonly logs: LogVM[];
 
@@ -89,7 +95,13 @@ export class CampaignCM {
     
     @AutoMap()
     @ApiProperty()
-    public readonly groups: {id : string}[];
+    public readonly campaignGroups: {id : string}[];
+
+    @AutoMap()
+    public readonly emailTemplate: string;
+
+    @AutoMap()
+    public readonly status: string;
 
     @AutoMap()
     public readonly emailTemplate: string;
@@ -127,11 +139,16 @@ export class CampaignUM {
     
     @AutoMap()
     @ApiProperty()
-    public readonly groups: {id : string}[];
+    public readonly campaignGroups: {id : string}[];
 
     @AutoMap()
     public readonly emailTemplate: string;
 
+    @AutoMap()
+    public readonly status: string;
+
+    @AutoMap()
+    public readonly emailTemplate: string;
 }
 
 export class CampaignSendEmailRequest {

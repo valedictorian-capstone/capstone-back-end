@@ -6,10 +6,11 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Campaign } from '../bpmn-models';
+import { CampaignGroup } from '../bpmn-models';
 import { Customer } from '../customer-models';
 import { Event } from './event.model';
 
@@ -38,9 +39,12 @@ export class Group extends BaseEntity {
   @JoinTable()
   public events: Event[];
   
-  @ManyToMany(() => Campaign, campaigns => campaigns.groups)
-  @JoinTable()
-  public campaigns: Campaign[];
+  // @ManyToMany(() => Campaign, campaigns => campaigns.groups)
+  // @JoinTable()
+  // public campaigns: Campaign[];
+
+  @OneToMany(() => CampaignGroup, campaignGroups => campaignGroups.campaign)
+  public campaignGroups: CampaignGroup[];
 
   @AutoMap()
   @Column({ default: null })
