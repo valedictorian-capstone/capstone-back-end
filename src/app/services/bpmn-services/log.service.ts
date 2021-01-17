@@ -25,6 +25,18 @@ export class LogService {
       });
   }
 
+  public readonly query = async (key: string, id: string): Promise<LogVM[]> => {
+    return await this.logRepository.useHTTP().find({
+      where: key && id ? {
+        [key]: { id }
+      } : {},
+      relations: ['deal', 'campaign'],
+    })
+      .then((models) => {
+        return this.mapper.mapArray(models, LogVM, Log);
+      })
+  };
+
   public readonly findByDeal = async (id: string): Promise<LogVM[]> => {
 
     return await this.logRepository.useHTTP().find({ where: { deal: { id } }, relations: ['deal', 'campaign'] })
