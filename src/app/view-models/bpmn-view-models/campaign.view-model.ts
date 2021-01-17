@@ -143,7 +143,6 @@ export class CampaignUM {
 
     @AutoMap()
     public readonly status: string;
-
 }
 
 export class CampaignSendEmailRequest {

@@ -6,7 +6,8 @@ import {
     Headers,
     Param,
     Post,
-    Put
+    Put,
+    Query
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
@@ -35,7 +36,14 @@ export class ActivityController {
     public findAll(@Headers('requester') requester: EmployeeVM): Promise<ActivityVM[]> {
         return this.service.findAll(requester);
     }
-
+    @Get('/query')
+    @ApiOperation({ summary: 'Get an task by Id' })
+    @ApiOkResponse({ description: "Success return an task's information" })
+    @ApiNotFoundResponse({ description: 'Fail to find task by Id' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public query(@Query('key') key: string, @Query('id') id: string): Promise<ActivityVM[]> {
+        return this.service.query(key, id);
+    }
     @Get(':id')
     @ApiOperation({ summary: 'Get an task by Id' })
     @ApiOkResponse({ description: "Success return an task's information" })
@@ -44,7 +52,6 @@ export class ActivityController {
     public findById(@Param('id') id: string): Promise<ActivityVM> {
         return this.service.findById(id);
     }
-
     @Post()
     @ApiOperation({ summary: 'Insert new task' })
     @ApiCreatedResponse({ description: 'Success create new task' })

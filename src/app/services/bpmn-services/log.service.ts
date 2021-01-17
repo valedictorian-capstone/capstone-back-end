@@ -19,22 +19,34 @@ export class LogService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<LogVM[]> => {
-    return await this.logRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: [] })
+    return await this.logRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ['deal', 'campaign'] })
       .then((models) => {
         return this.mapper.mapArray(models, LogVM, Log)
       });
   }
 
+  public readonly query = async (key: string, id: string): Promise<LogVM[]> => {
+    return await this.logRepository.useHTTP().find({
+      where: key && id ? {
+        [key]: { id }
+      } : {},
+      relations: ['deal', 'campaign'],
+    })
+      .then((models) => {
+        return this.mapper.mapArray(models, LogVM, Log);
+      })
+  };
+
   public readonly findByDeal = async (id: string): Promise<LogVM[]> => {
 
-    return await this.logRepository.useHTTP().find({ where: { deal: { id } }, relations: ['deal'] })
+    return await this.logRepository.useHTTP().find({ where: { deal: { id } }, relations: ['deal', 'campaign'] })
       .then((models) => {
         return this.mapper.mapArray(models, LogVM, Log)
       });
   }
 
   public readonly findById = async (id: string): Promise<LogVM> => {
-    return await this.logRepository.useHTTP().findOne({ where: { id: id }, relations: [] })
+    return await this.logRepository.useHTTP().findOne({ where: { id: id }, relations: ['deal', 'campaign'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(

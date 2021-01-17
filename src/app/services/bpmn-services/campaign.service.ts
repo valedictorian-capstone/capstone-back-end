@@ -1,12 +1,11 @@
 
-import { BucketActionToHTTPMethod } from "@google-cloud/storage/build/src/bucket";
-import { Campaign, Deal } from "@models";
+import { Campaign } from "@models";
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { DealRepository, CampaignRepository, CustomerRepository, StageRepository, GroupRepository } from "@repositories";
 import { DEAL_REPOSITORY, CAMPAIGN_REPOSITORY, SOCKET_SERVICE, CUSTOMER_REPOSITORY, STAGE_REPOSITORY, EMAIL_SERVICE, GROUP_REPOSITORY, CAMPAIGN_GROUP_REPOSITORY } from "@types";
 import { CampaignCM, CampaignUM, CampaignVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { In } from "typeorm";
 import { EmailService, SocketService } from "../extra-services";
 
@@ -30,8 +29,13 @@ export class CampaignService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CampaignVM[]> => {
-    return await this.campaignRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ["campaignGroups"] })
+    return await this.campaignRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ["campaignGroups", "pipeline", "pipeline.stages"] })
       .then((models) => {
+        for (let i = 0; i < models.length; i++) {
+          const model = models[i];
+          const stages = model.pipeline.stages;
+          model.pipeline.stages = stages.sort((a, b) => a.position - b.position);
+        }
         return this.mapper.mapArray(models, CampaignVM, Campaign)
       });
   }
@@ -45,30 +49,51 @@ export class CampaignService {
   }
 
   public readonly findById = async (id: string): Promise<CampaignVM> => {
-    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ["campaignGroups"] })
+    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ["campaignGroups", "pipeline", "pipeline.stages"] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         } else {
+          const stages = model.pipeline.stages;
+          model.pipeline.stages = stages.sort((a, b) => a.position - b.position);
           return this.mapper.map(model, CampaignVM, Campaign)
         }
       })
   }
-
+  public readonly query = async (key: string, id: string): Promise<CampaignVM[]> => {
+    return await this.campaignRepository.useHTTP().find({
+      where: key && id ? {
+        [key]:  { id }
+      } : {},
+      relations: ["groups", "pipeline", "pipeline.stages"],
+    })
+      .then((models) => {
+        for (let i = 0; i < models.length; i++) {
+          const model = models[i];
+          const stages = model.pipeline.stages;
+          model.pipeline.stages = stages.sort((a, b) => a.position - b.position);
+        }
+        return this.mapper.mapArray(models, CampaignVM, Campaign);
+      })
+  };
   public readonly insert = async (body: CampaignCM): Promise<CampaignVM> => {
     return await this.campaignRepository.useHTTP().save(body as any)
-      .then((model) => {
-        return this.findById(model.id);
+      .then(async (model) => {
+        const rs = await this.findById(model.id);
+        this.socketService.with('campaigns', rs, 'create');
+        return rs;
       })
   }
 
   public readonly update = async (body: CampaignUM): Promise<CampaignVM> => {
     return await this.campaignRepository.useHTTP()
       .save(body as any)
-      .then((model) => {
-        return this.findById(model.id);
+      .then(async (model) => {
+        const rs = await this.findById(model.id);
+        this.socketService.with('campaigns', rs, 'update');
+        return rs;
       })
   }
 
@@ -83,10 +108,9 @@ export class CampaignService {
         return await this.campaignRepository.useHTTP()
           .remove(model)
           .then(() => {
-            throw new HttpException(
-              `Remove information of ${id} successfully !!!`,
-              HttpStatus.NO_CONTENT,
-            );
+            const rs = this.mapper.map({ ...model, id } as Campaign, CampaignVM, Campaign);
+            this.socketService.with('campaigns', rs, 'remove');
+            return rs;
           })
       });
   }
@@ -153,8 +177,7 @@ export class CampaignService {
   }
 
   public readonly sendCampaign = async (campaignId: string, groupIds: string[], emailTemplate: string) => {
-    // eslint-disable-next-line prefer-const
-    let result = {
+    const result = {
       success: 0,
       fail: 0,
       errors: []
@@ -171,11 +194,8 @@ export class CampaignService {
       throw new NotFoundException("Can't find Email Template in body request or Campagin Data");
     }
 
-    // eslint-disable-next-line prefer-const
-    let emailTemplateDOM = new JSDOM(emailTemplate);
-    // eslint-disable-next-line prefer-const
-    let maskContactButton = emailTemplateDOM.window.document.querySelector("#" + this.MARK_ASK_CONTACT_BUTTON_ID);
-
+    const emailTemplateDOM = new JSDOM(emailTemplate);
+    const maskContactButton = emailTemplateDOM.window.document.querySelector("#" + this.MARK_ASK_CONTACT_BUTTON_ID);
 
     const groups = await this.groupRepository.useHTTP().findByIds(groupIds, { relations: ["customers"] });
     if (groups.length == 0) {
