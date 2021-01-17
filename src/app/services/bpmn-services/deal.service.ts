@@ -9,6 +9,7 @@ import { count } from "rxjs/operators";
 import { In } from 'typeorm';
 import { SocketService } from "../extra-services";
 import { CustomerService } from '../customer-services'
+import { where } from "sequelize";
 
 @Injectable()
 export class DealService {
@@ -74,7 +75,7 @@ export class DealService {
   public readonly query = async (key: string, id: string): Promise<DealVM[]> => {
     return await this.dealRepository.useHTTP().find({
       where: key && id ? {
-        [key]:  { id }
+        [key]: { id }
       } : {},
       relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee', 'campaign'],
     })
@@ -272,5 +273,38 @@ export class DealService {
             return rs;
           })
       });
+  }
+
+  public readonly createDealsForGroup = async (groupId: string, dealCM: DealCM) => {
+    let result = {
+      success: 0,
+      fail: 0,
+      total: 0
+    }
+
+    const customerList = await this.customerRepository.useHTTP()
+      .createQueryBuilder("customer")
+      .innerJoinAndSelect("customer", "customerGroup", "customerGroup.id = :groupId", { groupId: groupId })
+      .getMany()
+    
+    
+    result.total = customerList.length
+    
+    for await (const customer of customerList) {
+      const deal = dealCM;
+      deal.customer.id = customer.id
+      this.dealRepository.useHTTP().save(deal as any).then(
+        () => {
+          result.success++;
+        }
+      ).catch(
+        (error) => {
+          console.log(error)
+          result.fail++;
+        }
+      );
+    }
+
+    return result;
   }
 }

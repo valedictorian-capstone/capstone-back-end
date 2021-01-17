@@ -103,4 +103,13 @@ export class DealController {
   public async restore(@Param('id') id: string): Promise<DealVM> {
     return await this.service.restore(id);
   }
+
+  @Post('group/:groupId')
+  @ApiOperation({ summary: 'create deals by groupId' })
+  @ApiCreatedResponse({ description: 'Success restore new deals' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public async createDealsByGroupId(@Param('groupId') groupId: string, @Body() dealCM: DealCM) {
+    console.log("groupId:" , groupId)
+    return await this.service.createDealsForGroup(groupId, dealCM);
+  }
 }
