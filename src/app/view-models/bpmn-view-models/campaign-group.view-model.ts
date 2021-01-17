@@ -8,8 +8,7 @@ export class CampaignGroupVM {
     @AutoMap()
     public readonly id: string;
 
-    @AutoMap()
-    public readonly discount: string;
+    public readonly parameters: any;
 
     public readonly group: GroupVM;
 
@@ -34,8 +33,8 @@ export class CampaignGroupVM {
 export class CampaignGroupCM {
     
     @AutoMap()
-    @ApiProperty({ required: true, format: 'string', minLength: 2 })
-    public readonly discount: string;
+    @ApiProperty({ required: true, format: 'any', minLength: 2 })
+    public readonly parameters: any;
         
     @AutoMap()
     @ApiProperty()
@@ -47,6 +46,7 @@ export class CampaignGroupUM {
     @ApiProperty({ required: true, format: 'uuid', minLength: 36 })
     public readonly id: string;
 
-    @ApiProperty({ required: true, format: 'string', minLength: 2 })
-    public readonly discount: string;
+    @AutoMap()
+    @ApiProperty({ required: true, format: 'any', minLength: 2 })
+    public readonly parameters: any;
 }

@@ -73,8 +73,12 @@ export class Campaign extends BaseEntity {
   public emailTemplate: string;
 
   @AutoMap()
-  @Column({ default: null })
+  @Column({ default: 'planning' })
   public status: string;
+
+  @AutoMap()
+  @Column({ default: 1 })
+  public autoCreateDeal: boolean;
 
   @AutoMap()
   @Column({ default: null })
@@ -95,7 +99,5 @@ export class Campaign extends BaseEntity {
   @AutoMap()
   @UpdateDateColumn()
   public updatedAt: Date;
-  
-  length: number;
 
 }
