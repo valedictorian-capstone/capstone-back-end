@@ -18,9 +18,8 @@ export class CampaignGroup extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
-    @AutoMap()
-    @Column({ default: 0 })
-    public discount: string;
+    @Column("json", { default: null })
+    public parameters: any;
 
     @ManyToOne(() => Group, groups => groups.campaignGroups)
     public group: Group;

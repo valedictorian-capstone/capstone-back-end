@@ -1,6 +1,6 @@
 import { CampaignGroup } from "@models";
 import { CampaignGroupUM, CampaignGroupVM, CampaignVM, GroupVM } from "@view-models";
-import { AutoMapper, mapWith, preCondition, ProfileBase } from "nestjsx-automapper";
+import { AutoMapper, mapFrom, mapWith, preCondition, ProfileBase } from "nestjsx-automapper";
 
 export class CampaignGroupMapper extends ProfileBase {
     constructor(mapper: AutoMapper) {
@@ -12,7 +12,7 @@ export class CampaignGroupMapper extends ProfileBase {
           ).forMember(d => d.group,
             preCondition((s) => s.group != null),
             mapWith(GroupVM, s => s.group)
-          );
+          ).forMember(d => d.parameters, mapFrom(s => s.parameters));
         mapper.createMap(CampaignGroupUM, CampaignGroupVM);
       }
 }
