@@ -1,9 +1,11 @@
+import { Customer } from '@models';
 import { AutoMap } from 'nestjsx-automapper';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -67,6 +69,9 @@ export class Campaign extends BaseEntity {
 
   @ManyToOne(() => Pipeline, pipeline => pipeline.campaigns)
   public pipeline: Pipeline;
+
+  @ManyToMany(()=> Customer, customer => customer.followingCampaigns)
+  public followers: Customer[]
   
   @AutoMap()
   @Column({ default: null })

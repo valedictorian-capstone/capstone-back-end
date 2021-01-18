@@ -29,7 +29,7 @@ export class CampaignService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CampaignVM[]> => {
-    return await this.campaignRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ["groups", "pipeline", "pipeline.stages"] })
+    return await this.campaignRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ["campaignGroups", "pipeline", "pipeline.stages"] })
       .then((models) => {
         for (let i = 0; i < models.length; i++) {
           const model = models[i];
@@ -49,7 +49,7 @@ export class CampaignService {
   }
 
   public readonly findById = async (id: string): Promise<CampaignVM> => {
-    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "pipeline", "pipeline.stages"] })
+    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ["campaignGroups", "pipeline", "pipeline.stages"] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -67,7 +67,7 @@ export class CampaignService {
       where: key && id ? {
         [key]:  { id }
       } : {},
-      relations: ["groups", "pipeline", "pipeline.stages"],
+      relations: ["campaignGroups", "pipeline", "pipeline.stages"],
     })
       .then((models) => {
         for (let i = 0; i < models.length; i++) {
@@ -175,11 +175,6 @@ export class CampaignService {
   // }
 
   public readonly sendCampaign = async (campaignId: string, groupIds: string[], emailTemplate: string) => {
-    const result = {
-      success: 0,
-      fail: 0,
-      errors: []
-    }
     //As default send to all group of campagin
     //Check exists campaignId 
     const campaign = await this.campaignRepository.useHTTP().findOne(campaignId);
@@ -202,23 +197,15 @@ export class CampaignService {
 
     for await (const group of groups) {
       for await (const customer of group.customers) {
-        try {
           //set email template
           const buttonPath = await this.maskContactURLBuilder(campaignId, customer.id);
           maskContactButton.setAttribute("href", buttonPath);
 
           //send email
           await this.emailService.sendEmailToCustomerByCustomerId(customer.id, emailTemplateDOM.serialize());
-          result.success = result.success + 1;
-        } catch (error) {
-          console.log(error)
-          result.fail = result.fail + 1;
-          result.errors.push(error)
-        }
       }
     }
-    groupIds.filter(item => groups.find(group => group.id == item))
-    return result;
+
   }
 
   private readonly maskContactURLBuilder = async (campaignId: string, userId: string): Promise<string> => {
