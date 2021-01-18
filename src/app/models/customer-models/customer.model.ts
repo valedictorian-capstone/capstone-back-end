@@ -8,10 +8,11 @@ import {
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
   UpdateDateColumn
 } from 'typeorm';
 import { Comment, Device, Group, Notification } from '../basic-models';
-import { Deal } from '../bpmn-models';
+import { Campaign, Deal } from '../bpmn-models';
 import { Ticket } from '../product-models';
 
 @Entity()
@@ -127,6 +128,13 @@ export class Customer extends BaseEntity {
 
   @OneToMany(() => Comment, comments => comments.customer)
   public comments: Comment[];
+
+  @ManyToMany(() => Campaign, campaign => campaign.followers)
+  @JoinTable()
+  public followingCampaigns: Campaign[];
+
+  @RelationId((customer: Customer) => customer.followingCampaigns)
+  public followingCampagingsIds: string[]
 
   @AutoMap()
   @Column({ default: null })

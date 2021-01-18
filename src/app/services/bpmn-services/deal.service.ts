@@ -286,15 +286,14 @@ export class DealService {
       .createQueryBuilder("customer")
       .innerJoinAndSelect("customer", "customerGroup", "customerGroup.id = :groupId", { groupId: groupId })
       .getMany()
-    
-    
     result.total = customerList.length
-    
     for await (const customer of customerList) {
-      const deal = dealCM;
-      deal.customer.id = customer.id
+      let deal = new Deal();
+      await Object.assign(deal, dealCM)
+      deal.customer = customer
+
       this.dealRepository.useHTTP().save(deal as any).then(
-        () => {
+        async () => {
           result.success++;
         }
       ).catch(
@@ -304,7 +303,6 @@ export class DealService {
         }
       );
     }
-
     return result;
   }
 }

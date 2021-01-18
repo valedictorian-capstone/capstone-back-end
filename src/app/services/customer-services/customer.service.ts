@@ -236,23 +236,15 @@ export class CustomerService {
     //check campain Id
     const campaign = await this.campaignRepository.useHTTP().findOne(campaignId);
     if (!campaign) {
-      throw new NotFoundException("Campain Id"+ campaignId +" is not found");
-    }
-    //check exits group
-    const group = await this.groupRepository.useHTTP().findOne(this.DEFAULT_CONTACT_GROUP_ID);
-    if (!group) {
-      throw new NotFoundException("ERROR default group Id is not exits"+ this.DEFAULT_CONTACT_GROUP_ID);
+      throw new NotFoundException("Campain Id "+ campaignId +" is not found");
     }
     //check exits user
     let customer = await this.customerRepository.useHTTP().findOne({where :{id: customerId}, relations: ["groups"]});
-    console.log(customer)
     if (!customer) {
       throw new NotFoundException("CustomerId is not found");
     }
-    //markCustomerAsContactgroup
-    const additionGroup = new Group();
-    additionGroup.id = this.DEFAULT_CONTACT_GROUP_ID;
-    customer.groups = [...customer.groups, additionGroup];
-    return await this.customerRepository.useHTTP().save(customer);
+    //mark customer into follower of campaign
+    customer.followingCampagingsIds.push(campaignId);
+    return customer.save();
   }
 }
