@@ -59,7 +59,14 @@ export class CustomerController{
   public checkEnique(@Query('label') label: string, @Query('value') value: string): Promise<string> {
     return this.service.checkUnique(label, value);
   }
-
+  @Get('/query')
+  @ApiOperation({ summary: 'Get an task by Id' })
+  @ApiOkResponse({ description: "Success return an task's information" })
+  @ApiNotFoundResponse({ description: 'Fail to find task by Id' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public query(@Query('id') id: string): Promise<CustomerVM[]> {
+      return this.service.query(id);
+  }
   @Get(':id')
   @ApiOperation({ summary: 'Get an Customer by Id' })
   @ApiOkResponse({ description: "Success return an Customer's information" })

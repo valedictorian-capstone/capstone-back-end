@@ -1,7 +1,6 @@
 import { Pipeline } from "@models";
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "nestjsx-automapper";
-import { GroupVM } from "../basic-view-models";
 import { ActivityVM } from "./activity.view-model";
 import { AttachmentVM } from "./attachment.view-model";
 import { CampaignGroupVM } from "./campaign-group.view-model";
@@ -22,6 +21,9 @@ export class CampaignVM {
 
     @AutoMap()
     public readonly type: string;
+
+    @AutoMap()
+    public readonly autoCreateDeal: boolean;
 
     @AutoMap()
     public readonly dateStart: Date;

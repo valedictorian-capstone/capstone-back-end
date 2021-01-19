@@ -37,7 +37,17 @@ export class CustomerService {
     return await this.cusomterRepository.useHTTP().find({ relations: ['groups'] })
       .then((customers) => this.mapper.mapArray(customers.filter((customer) => customer.groups.filter((group) => group.id == '3').length > 0), CustomerVM, Customer));
   }
-
+  public readonly query = async (id: string): Promise<CustomerVM[]> => {
+    return await this.cusomterRepository.useHTTP().find({
+      where: id ? {
+        groups: [{id}]
+      } : {},
+      relations: ["groups"],
+    })
+      .then((models) => {
+        return this.mapper.mapArray(models, CustomerVM, Customer);
+      })
+  };
   public readonly findById = async (id: string): Promise<CustomerVM> => {
     return await this.cusomterRepository.useHTTP().findOne({ where: { id: id }, relations: ["groups", "deals", "devices", "tickets"] })
       .then(async (model) => {

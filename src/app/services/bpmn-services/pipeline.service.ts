@@ -29,7 +29,7 @@ export class PipelineService {
       });
   }
   public readonly findById = async (id: string): Promise<PipelineVM> => {
-    return await this.pipelineRepository.useHTTP().findOne({ where: { id: id }, relations: ["stages"] })
+    return await this.pipelineRepository.useHTTP().findOne({ where: { id: id }, relations: ["stages", "stages.deals"] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(

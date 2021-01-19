@@ -65,7 +65,13 @@ export class AttachmentController {
   public insert(@Body() body: any, @UploadedFiles() files: File[]): Promise<AttachmentVM[]> {
     return this.service.insert(body, files);
   }
-
+  @Put('/many')
+  @ApiOperation({ summary: 'Delete an task by Id' })
+  @ApiCreatedResponse({ description: 'Success delete new task' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public removeMany(@Body() body: AttachmentVM[]): Promise<AttachmentVM[]> {
+      return this.service.removeMany(body);
+  }
   @Put()
   @ApiOperation({ summary: 'Update an task by Id' })
   @ApiCreatedResponse({ description: 'Success update new task' })

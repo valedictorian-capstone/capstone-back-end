@@ -29,7 +29,7 @@ export class CampaignService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<CampaignVM[]> => {
-    return await this.campaignRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ["campaignGroups", "pipeline", "pipeline.stages"] })
+    return await this.campaignRepository.useHTTP().find({ where: ids ? { id: In(ids) } : {}, relations: ["campaignGroups", "campaignGroups.group", "pipeline", "pipeline.stages"] })
       .then((models) => {
         for (let i = 0; i < models.length; i++) {
           const model = models[i];
@@ -49,7 +49,7 @@ export class CampaignService {
   }
 
   public readonly findById = async (id: string): Promise<CampaignVM> => {
-    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ["campaignGroups", "pipeline", "pipeline.stages"] })
+    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ["campaignGroups", "pipeline", "campaignGroups.group", "pipeline.stages"] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(

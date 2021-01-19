@@ -37,6 +37,18 @@ export class LogService {
       })
   };
 
+  public readonly removeMany = async (body: LogVM[]): Promise<LogVM[]> => {
+    return await this.logRepository.useHTTP()
+    .remove(body.map((e) => ({id: e.id})) as any)
+      .then(async () => {
+      for (let i = 0; i < body.length; i++) {
+        const model = body[i];
+        this.socketService.with('logs', model, 'remove');
+      }
+      return body;
+    })
+  };
+
   public readonly findByDeal = async (id: string): Promise<LogVM[]> => {
 
     return await this.logRepository.useHTTP().find({ where: { deal: { id } }, relations: ['deal', 'campaign'] })

@@ -48,6 +48,17 @@ export class EmployeeService {
         return model ? true : false;
       })
   }
+  public readonly query = async (id: string): Promise<EmployeeVM[]> => {
+    return await this.employeeRepository.useHTTP().find({
+      where: id ? {
+        roles: [{id}]
+      } : {},
+      relations: ["devices", "roles", "activitys"],
+    })
+      .then((models) => {
+        return this.mapper.mapArray(models, EmployeeVM, Employee);
+      })
+  };
   public readonly import = async (body: EmployeeCM[]): Promise<any> => {
     for (const employee of body) {
       if (employee.avatar && employee.avatar.includes(';base64')) {

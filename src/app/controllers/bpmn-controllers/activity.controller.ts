@@ -67,7 +67,13 @@ export class ActivityController {
     public update(@Body() body: ActivityUM): Promise<ActivityVM> {
         return this.service.update(body);
     }
-
+    @Put('/many')
+    @ApiOperation({ summary: 'Delete an task by Id' })
+    @ApiCreatedResponse({ description: 'Success delete new task' })
+    @ApiBadRequestResponse({ description: 'Have error in run time' })
+    public removeMany(@Body() body: ActivityVM[]): Promise<ActivityVM[]> {
+        return this.service.removeMany(body);
+    }
     @Delete(':id')
     @ApiOperation({ summary: 'Delete an task by Id' })
     @ApiCreatedResponse({ description: 'Success delete new task' })
