@@ -44,6 +44,14 @@ export class EmployeeController {
   public checkEnique(@Query('label') label: string, @Query('value') value: string): Promise<boolean> {
     return this.service.checkUnique(label, value);
   }
+  @Get('/query')
+  @ApiOperation({ summary: 'Get an task by Id' })
+  @ApiOkResponse({ description: "Success return an task's information" })
+  @ApiNotFoundResponse({ description: 'Fail to find task by Id' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public query(@Query('id') id: string): Promise<EmployeeVM[]> {
+      return this.service.query(id);
+  }
   @Get(':id')
   @ApiOperation({ summary: 'Get an Employee by Id' })
   @ApiOkResponse({ description: "Success return an Employee's information" })

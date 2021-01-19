@@ -13,7 +13,8 @@ import {
 } from '@nestjs/swagger';
 import { LogService } from '@services';
 import { LogVM } from '@view-models';
-import { Query } from '@nestjs/common';
+import { Query, Put, Body } from '@nestjs/common';
+import { ApiCreatedResponse } from '@nestjs/swagger';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Log')
@@ -37,6 +38,14 @@ export class LogController {
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public async findByDeal(@Param('id') id: string): Promise<LogVM[]> {
     return await this.service.findByDeal(id);
+  }
+
+  @Put('/many')
+  @ApiOperation({ summary: 'Delete an task by Id' })
+  @ApiCreatedResponse({ description: 'Success delete new task' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public removeMany(@Body() body: LogVM[]): Promise<LogVM[]> {
+      return this.service.removeMany(body);
   }
 
   @Get(':id')

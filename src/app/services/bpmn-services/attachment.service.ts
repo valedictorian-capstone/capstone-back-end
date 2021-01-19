@@ -4,7 +4,6 @@ import { AttachmentRepository, LogRepository } from "@repositories";
 import { FirebaseService, SocketService } from "@services";
 import { ATTACHMENT_REPOSITORY, FIREBASE_SERVICE, LOG_REPOSITORY, SOCKET_SERVICE } from "@types";
 import { AttachmentCM, AttachmentUM, AttachmentVM } from "@view-models";
-import { any } from "bluebird";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { environment } from "src/environments/environment";
 import { In } from "typeorm";
@@ -47,6 +46,22 @@ export class AttachmentService {
       .then((models) => {
         return this.mapper.mapArray(models, AttachmentVM, Attachment);
       })
+  };
+  public readonly removeMany = async (body: AttachmentVM[]): Promise<AttachmentVM[]> => {
+    return await this.attachmentRepository.useHTTP()
+    .remove(body.map((e) => ({id: e.id})) as any)
+      .then(async () => {
+      for (let i = 0; i < body.length; i++) {
+        const model = body[i];
+        await this.saveLog({
+          description: 'Remove an attachment ' + model.name,
+          deal: model.deal ? { id: model.deal.id } : undefined,
+          campaign: model.campaign ? { id: model.campaign.id } : undefined,
+        });
+        this.socketService.with('attachments', model, 'remove');
+      }
+      return body;
+    })
   };
   public readonly insert = async (body: any, files: File[]): Promise<AttachmentVM[]> => {
     const deal = body.deal ? { id: body.deal[0] } : undefined;

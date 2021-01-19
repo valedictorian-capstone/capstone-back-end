@@ -136,6 +136,22 @@ export class ActivityService {
           })
       });
   };
+  public readonly removeMany = async (body: ActivityVM[]): Promise<ActivityVM[]> => {
+    return await this.activityRepository.useHTTP()
+    .remove(body.map((e) => ({id: e.id})) as any)
+      .then(async () => {
+      for (let i = 0; i < body.length; i++) {
+        const model = body[i];
+        await this.saveLog({
+          description: 'Remove an activity ' + model.name,
+          deal: model.deal ? { id: model.deal.id } : undefined,
+          campaign: model.campaign ? { id: model.campaign.id } : undefined,
+        });
+        this.socketService.with('activitys', model, 'remove');
+      }
+      return body;
+    })
+  };
   private readonly saveLog = async (data: { description: string, deal?: { id: string }, campaign?: { id: string } }) => {
     await this.logRepository.useHTTP().save(data as any).then(async (res) => {
       this.socketService.with('logs', await this.logRepository.useHTTP().findOne({ id: res.id }, { relations: ['deal', 'campaign'] }), 'create');
