@@ -8,6 +8,9 @@ export class DeviceMapper extends ProfileBase {
     mapper.createMap(Device, DeviceVM)
       .forMember(d => d.employee, mapWith(EmployeeVM, s => s.employee))
       .forMember(d => d.customer, mapWith(CustomerVM, s => s.customer))
+    mapper.createMap(DeviceVM, DeviceVM)
+    .forMember(d => d.employee, mapWith(EmployeeVM, s => s.employee))
+    .forMember(d => d.customer, mapWith(CustomerVM, s => s.customer));
     mapper.createMap(DeviceUM, DeviceVM);
   }
 }

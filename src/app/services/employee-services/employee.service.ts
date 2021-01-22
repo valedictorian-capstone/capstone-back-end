@@ -28,7 +28,7 @@ export class EmployeeService {
     } : {};
     return await this.mapper.mapArray(await this.employeeRepository.useHTTP()
       .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys"] }), EmployeeVM, Employee)
-      .filter((employee) => level != null && employee.id !== requester?.id ? Math.min(...employee.roles.map((e) => e.level)) > level : true);
+      .filter((employee) => level != null && Math.min(...employee.roles.map((e) => e.level)) > level);
   };
   public readonly findById = async (id: string): Promise<EmployeeVM> => {
     return await this.employeeRepository.useHTTP().findOne({ where: { id: id }, relations: ["devices", "roles", "activitys"] })

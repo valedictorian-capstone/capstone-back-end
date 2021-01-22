@@ -50,6 +50,10 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
+  public readonly canAccessProcess: boolean;
+
+  @AutoMap()
+  @Column({ default: true })
   public readonly canCreateProcess: boolean;
 
   @AutoMap()
@@ -111,11 +115,11 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canGetTicketDeal: boolean;
+  public readonly canGetDealTicket: boolean;
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canGetTicketSupport: boolean;
+  public readonly canGetSupportTicket: boolean;
 
   @AutoMap()
   @Column({ default: true })
@@ -147,19 +151,19 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canAccessEvent: boolean;
+  public readonly canAccessCampaign: boolean;
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canCreateEvent: boolean;
+  public readonly canCreateCampaign: boolean;
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canUpdateEvent: boolean;
+  public readonly canUpdateCampaign: boolean;
 
   @AutoMap()
   @Column({ default: true })
-  public readonly canRemoveEvent: boolean;
+  public readonly canRemoveCampaign: boolean;
 
   @AutoMap()
   @Column({ nullable: false, default: '' })

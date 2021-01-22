@@ -41,6 +41,9 @@ export class RoleVM {
   public readonly canRemoveDeal: boolean;
 
   @AutoMap()
+  public readonly canAccessProcess: boolean;
+
+  @AutoMap()
   public readonly canCreateProcess: boolean;
 
   @AutoMap()
@@ -80,10 +83,10 @@ export class RoleVM {
   public readonly canAccessTicket: boolean;
 
   @AutoMap()
-  public readonly canGetTicketDeal: boolean;
+  public readonly canGetDealTicket: boolean;
 
   @AutoMap()
-  public readonly canGetTicketSupport: boolean;
+  public readonly canGetSupportTicket: boolean;
 
   @AutoMap()
   public readonly canUpdateTicket: boolean;
@@ -110,16 +113,16 @@ export class RoleVM {
   public readonly canImportProduct: boolean;
 
   @AutoMap()
-  public readonly canAccessEvent: boolean;
+  public readonly canAccessCampaign: boolean;
 
   @AutoMap()
-  public readonly canCreateEvent: boolean;
+  public readonly canCreateCampaign: boolean;
 
   @AutoMap()
-  public readonly canUpdateEvent: boolean;
+  public readonly canUpdateCampaign: boolean;
 
   @AutoMap()
-  public readonly canRemoveEvent: boolean;
+  public readonly canRemoveCampaign: boolean;
 
   @AutoMap()
   public readonly description: string;
@@ -187,6 +190,9 @@ export class RoleCM {
   public readonly canImportEmployee: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
+  public readonly canAccessProcess: boolean;
+
+  @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateProcess: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
@@ -223,10 +229,10 @@ export class RoleCM {
   public readonly canAccessTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canGetTicketDeal: boolean;
+  public readonly canGetDealTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canGetTicketSupport: boolean;
+  public readonly canGetSupportTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canUpdateTicket: boolean;
@@ -250,16 +256,16 @@ export class RoleCM {
   public readonly canImportProduct: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canAccessEvent: boolean;
+  public readonly canAccessCampaign: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canCreateEvent: boolean;
+  public readonly canCreateCampaign: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canUpdateEvent: boolean;
+  public readonly canUpdateCampaign: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canRemoveEvent: boolean;
+  public readonly canRemoveCampaign: boolean;
 
   @ApiProperty()
   public readonly description: string;
@@ -310,6 +316,9 @@ export class RoleUM {
   public readonly canRemoveDeal: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
+  public readonly canAccessProcess: boolean;
+  
+  @ApiProperty({ required: true, format: 'boolean' })
   public readonly canCreateProcess: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
@@ -350,10 +359,10 @@ export class RoleUM {
   public readonly canAccessTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canGetTicketDeal: boolean;
+  public readonly canGetDealTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canGetTicketSupport: boolean;
+  public readonly canGetSupportTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canUpdateTicket: boolean;
@@ -377,16 +386,16 @@ export class RoleUM {
   public readonly canImportProduct: boolean
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canAccessEvent: boolean;
+  public readonly canAccessCampaign: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canCreateEvent: boolean;
+  public readonly canCreateCampaign: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canUpdateEvent: boolean;
+  public readonly canUpdateCampaign: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly canRemoveEvent: boolean;
+  public readonly canRemoveCampaign: boolean;
   
   @ApiProperty()
   public readonly description: string;
