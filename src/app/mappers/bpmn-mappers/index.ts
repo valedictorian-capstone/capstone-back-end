@@ -8,3 +8,4 @@ export * from './note.mapper';
 export * from './log.mapper';
 export * from './attachment.mapper';
 export * from './campaign.mapper';
+export * from './campaign-group.mapper';

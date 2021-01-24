@@ -1,5 +1,5 @@
 
-import { ActivityService, DealService, StageService, PipelineService, DealDetailService, NoteService, LogService, AttachmentService, CampaignService } from '.';
+import { ActivityService, DealService, StageService, PipelineService, DealDetailService, NoteService, LogService, AttachmentService, CampaignService, CampaignGroupService } from '.';
 export * from './deal.service';
 export * from './stage.service';
 export * from './activity.service';
@@ -9,6 +9,7 @@ export * from './deal-detail.service';
 export * from './note.service';
 export * from './log.service';
 export * from './campaign.service';
+export * from './campaign-group.service';
 export const BPMN_SERVICES = [
   ActivityService,
   DealService, 
@@ -18,5 +19,6 @@ export const BPMN_SERVICES = [
   NoteService,
   LogService,
   AttachmentService,
-  CampaignService
+  CampaignService,
+  CampaignGroupService
 ];

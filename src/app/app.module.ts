@@ -52,7 +52,8 @@ import {
   CategoryMapper,
   AttachmentMapper,
   CommentMapper,
-  CampaignMapper
+  CampaignMapper,
+  CampaignGroupMapper
 } from './mappers';
 import { environment } from 'src/environments/environment';
 import {
@@ -143,6 +144,7 @@ export class AppModule implements OnModuleInit, NestModule {
     this.mapper.addProfile(CategoryMapper);
     this.mapper.addProfile(CommentMapper);
     this.mapper.addProfile(CampaignMapper);
+    this.mapper.addProfile(CampaignGroupMapper);
   }
   configure(consumer: MiddlewareConsumer) {
     consumer

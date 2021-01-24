@@ -39,6 +39,10 @@ export class CampaignGroupCM {
     @AutoMap()
     @ApiProperty()
     public readonly group: {id : string};
+
+    @AutoMap()
+    @ApiProperty()
+    public readonly campaign: {id : string};
 }
 
 export class CampaignGroupUM {
@@ -49,4 +53,12 @@ export class CampaignGroupUM {
     @AutoMap()
     @ApiProperty({ required: true, format: 'any', minLength: 2 })
     public readonly parameters: any;
+
+    @AutoMap()
+    @ApiProperty()
+    public readonly group: {id : string};
+
+    @AutoMap()
+    @ApiProperty()
+    public readonly campaign: {id : string};
 }
