@@ -38,10 +38,6 @@ export class Group extends BaseEntity {
   @ManyToMany(() => Event, events => events.groups)
   @JoinTable()
   public events: Event[];
-  
-  // @ManyToMany(() => Campaign, campaigns => campaigns.groups)
-  // @JoinTable()
-  // public campaigns: Campaign[];
 
   @OneToMany(() => CampaignGroup, campaignGroups => campaignGroups.campaign)
   public campaignGroups: CampaignGroup[];

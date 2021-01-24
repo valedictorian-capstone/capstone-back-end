@@ -46,9 +46,6 @@ export class Campaign extends BaseEntity {
   @Column({ nullable: false })
   public dateEnd: Date;
 
-  // @ManyToMany(() => Group, groups => groups.campaigns)
-  // public groups: Group[];
-
   @OneToMany(() => CampaignGroup, campaignGroups => campaignGroups.campaign)
   public campaignGroups: CampaignGroup[];
 
