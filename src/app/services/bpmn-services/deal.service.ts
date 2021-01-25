@@ -2,14 +2,11 @@ import { Deal } from "@models";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ActivityRepository, CustomerRepository, DealDetailRepository, DealRepository, LogRepository, ProductRepository, StageRepository } from "@repositories";
 import { ACTIVITY_REPOSITORY, CUSTOMER_REPOSITORY, DEAL_DETAIL_REPOSITORY, DEAL_REPOSITORY, LOG_REPOSITORY, PRODUCT_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from "@types";
-import { EmployeeVM, DealCM, DealUM, DealVM } from "@view-models";
+import { DealCM, DealUM, DealVM, EmployeeVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
-import { async } from "rxjs";
-import { count } from "rxjs/operators";
 import { In } from 'typeorm';
+import { CustomerService } from '../customer-services';
 import { SocketService } from "../extra-services";
-import { CustomerService } from '../customer-services'
-import { where } from "sequelize";
 
 @Injectable()
 export class DealService {

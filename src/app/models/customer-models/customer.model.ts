@@ -129,12 +129,12 @@ export class Customer extends BaseEntity {
   @OneToMany(() => Comment, comments => comments.customer)
   public comments: Comment[];
 
-  @ManyToMany(() => Campaign, campaign => campaign.followers)
-  @JoinTable()
-  public followingCampaigns: Campaign[];
-
   @RelationId((customer: Customer) => customer.followingCampaigns)
   public followingCampagingsIds: string[]
+
+  @ManyToMany(() => Campaign, campaign => campaign.followers,  { cascade: true })
+  @JoinTable()
+  public followingCampaigns: Campaign[];
 
   @AutoMap()
   @Column({ default: null })

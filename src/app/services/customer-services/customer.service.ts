@@ -43,7 +43,7 @@ export class CustomerService {
   public readonly query = async (id: string): Promise<CustomerVM[]> => {
     return await this.cusomterRepository.useHTTP().find({
       where: id ? {
-        groups: [{id}]
+        groups: [{ id }]
       } : {},
       relations: ["groups"],
     })
@@ -174,9 +174,9 @@ export class CustomerService {
             const cus = customers[index2];
             for (let index3 = 0; index3 < cus.groups.length; index3++) {
               const groupOfCus = cus.groups[index3];
-              if(groupOfCus.id === groupOfCamp.id){
+              if (groupOfCus.id === groupOfCamp.id) {
                 const deal = {
-                  customer: {id: cus.id},
+                  customer: { id: cus.id },
                   campaign: campaign,
                   title: cus.fullname + "_" + campaign.name,
                   stage: stage,
@@ -190,7 +190,7 @@ export class CustomerService {
       }
     }
   }
-  
+
 
   public readonly reClassify = async (customer: Customer): Promise<any> => {
     if (customer.totalDeal == 0 && customer.totalSpending == 0) {
@@ -278,19 +278,19 @@ export class CustomerService {
     return environment.firebase.linkDownloadFile + "customer/avatars/" + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
   }
 
-  public readonly maskCustomerAsContactGroup = async (campaignId: string, customerId: string) =>  {
+  public readonly maskCustomerAsContactGroup = async (campaignId: string, customerId: string) => {
     //check campain Id
     const campaign = await this.campaignRepository.useHTTP().findOne(campaignId);
     if (!campaign) {
-      throw new NotFoundException("Campain Id "+ campaignId +" is not found");
+      throw new NotFoundException("Campain Id " + campaignId + " is not found");
     }
     //check exits user
-    let customer = await this.customerRepository.useHTTP().findOne({where :{id: customerId}, relations: ["groups"]});
-    if (!customer) {
-      throw new NotFoundException("CustomerId is not found");
-    }
-    //mark customer into follower of campaign
-    customer.followingCampagingsIds.push(campaignId);
-    return customer.save();
+    let customer = await this.customerRepository.useHTTP().findOne({ where: { id: customerId }, relations: ["groups", "followingCampaigns"] })
+      if (!customer) {
+        throw new NotFoundException("CustomerId is not found");
+      }
+    const campaignRelation = { id: campaign.id };
+    customer.followingCampaigns.push(campaignRelation as any);
+    await this.customerRepository.useHTTP().save(customer);
   }
 }

@@ -31,10 +31,10 @@ import { Response } from 'express';
 @ApiBearerAuth('JWT')
 @ApiTags('Customer')
 @Controller('/api/v1/Customer')
-export class CustomerController{
+export class CustomerController {
   constructor(
     protected service: CustomerService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all Customers' })
@@ -65,7 +65,7 @@ export class CustomerController{
   @ApiNotFoundResponse({ description: 'Fail to find task by Id' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public query(@Query('id') id: string): Promise<CustomerVM[]> {
-      return this.service.query(id);
+    return this.service.query(id);
   }
   @Get(':id')
   @ApiOperation({ summary: 'Get an Customer by Id' })
@@ -116,10 +116,10 @@ export class CustomerController{
 
   @Post('contact/:customerId/:campaignId')
   @ApiOperation({ summary: 'mark CustomerAs Contact by Customer Id and Campaign' })
-  public markCustomerAsContact(@Param('customerId') customerId: string, 
-  @Param('campaignId') campaingId: string,
-  @Res() res: Response) {
-    return this.service.maskCustomerAsContactGroup(campaingId, customerId).then(
+  public markCustomerAsContact(@Param('customerId') customerId: string,
+    @Param('campaignId') campaingId: string,
+    @Res() res: Response) {
+    this.service.maskCustomerAsContactGroup(campaingId, customerId).then(
       () => res.status(HttpStatus.NO_CONTENT).send()
     )
   }
