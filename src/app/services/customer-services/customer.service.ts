@@ -1,11 +1,12 @@
 import { NotFoundException } from '@exceptions';
 import { Customer, Group } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
-import { CampaignRepository, CustomerRepository, GroupRepository } from '@repositories';
+import { CampaignRepository, CustomerRepository, DealRepository, GroupRepository, StageRepository } from '@repositories';
 import { FirebaseService, SocketService } from '@services';
-import { CAMPAIGN_REPOSITORY, CUSTOMER_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY, SOCKET_SERVICE } from '@types';
+import { CAMPAIGN_REPOSITORY, CUSTOMER_REPOSITORY, DEAL_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
+import { async } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
 import { uuid } from 'uuidv4';
@@ -19,6 +20,8 @@ export class CustomerService {
     @Inject(CAMPAIGN_REPOSITORY) protected readonly campaignRepository: CampaignRepository,
     @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
+    @Inject(STAGE_REPOSITORY) protected readonly stageRepository: StageRepository,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
   ) { }
 
@@ -107,6 +110,7 @@ export class CustomerService {
         }
       }
       const rs = await this.findAll(customers.map((e) => e.id));
+      await this.createDeal(rs);
       this.socketService.with('customers', rs, 'list');
       return rs;
     });
@@ -149,11 +153,44 @@ export class CustomerService {
           await this.cusomterRepository.useHTTP().save({ ...data, groups: [group3] });
         }
       }
-      const rs = await this.findById(data.id)
+      const rs = await this.findById(data.id);
+      await this.createDeal([rs]);
       this.socketService.with('customers', rs, 'create');
       return rs;
     });
   };
+
+  private readonly createDeal = async (customers: CustomerVM[]) => {
+    const listCamp = await this.campaignRepository.useHTTP().query("SELECT id FROM crm.campaign WHERE dateStart < NOW() AND dateEnd > NOW() AND status = 'active'");
+    const ids = listCamp.map((e) => e.id);
+    if (ids.length != 0) {
+      const campaigns = await this.campaignRepository.useHTTP().find({ where: { id: In(ids) }, relations: ["campaignGroups", "pipeline", "campaignGroups.group"] });
+      for (let index = 0; index < campaigns.length; index++) {
+        const campaign = campaigns[index];
+        const stage = await this.stageRepository.useHTTP().findOne({ where: { position: 1, pipeline: campaign.pipeline } });
+        for (let index1 = 0; index1 < campaign.campaignGroups.length; index1++) {
+          const groupOfCamp = campaign.campaignGroups[index1].group;
+          for (let index2 = 0; index2 < customers.length; index2++) {
+            const cus = customers[index2];
+            for (let index3 = 0; index3 < cus.groups.length; index3++) {
+              const groupOfCus = cus.groups[index3];
+              if(groupOfCus.id === groupOfCamp.id){
+                const deal = {
+                  customer: {id: cus.id},
+                  campaign: campaign,
+                  title: cus.fullname + "_" + campaign.name,
+                  stage: stage,
+                  status: "processing"
+                }
+                await this.dealRepository.useHTTP().save({ ...deal });
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
 
   public readonly reClassify = async (customer: Customer): Promise<any> => {
     if (customer.totalDeal == 0 && customer.totalSpending == 0) {
@@ -241,7 +278,6 @@ export class CustomerService {
     return environment.firebase.linkDownloadFile + "customer/avatars/" + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64"));
   }
 
-  
   public readonly maskCustomerAsContactGroup = async (campaignId: string, customerId: string) =>  {
     //check campain Id
     const campaign = await this.campaignRepository.useHTTP().findOne(campaignId);
