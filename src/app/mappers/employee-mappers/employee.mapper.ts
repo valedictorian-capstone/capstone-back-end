@@ -29,7 +29,15 @@ export class EmployeeMapper extends ProfileBase {
       .forMember(d => d.devices,
         preCondition((s) => s.devices != null, []),
         mapWith(DeviceVM, s => s.devices)
-      );
+      )
+      .forMember(
+        d => d.wonDealCount,
+        mapWith(EmployeeVM, s => s.deals.filter(deal => deal.status === 'won').length)
+      )
+      .forMember(
+        d => d.lostDealCount,
+        mapWith(EmployeeVM, s => s.deals.filter(deal => deal.status === 'lost').length)
+      );;
     mapper.createMap(EmployeeUM, EmployeeVM);
   }
 }

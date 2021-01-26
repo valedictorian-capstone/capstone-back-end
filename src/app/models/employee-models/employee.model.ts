@@ -31,7 +31,7 @@ export class Employee extends BaseEntity {
   @Column({ nullable: true })
   public avatar: string;
 
-  @AutoMap()x
+  @AutoMap()
   @Column({ nullable: false, default: '1' })
   public passwordHash: string;
 

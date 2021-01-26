@@ -98,4 +98,12 @@ export class EmployeeController {
   public restore(@Param('id') id: string): Promise<EmployeeVM> {
     return this.service.restore(id);
   }
+
+  @Post(':id/assign')
+  @ApiOperation({ summary: 'Restore an employee by Id' })
+  @ApiCreatedResponse({ description: 'Success active new Employee' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public assignDealForEmployee(@Param('id') employeeId: string, @Body() dealIds: string[]) {
+    return this.service.assignDealForEmployees(employeeId, dealIds);
+  }
 }
