@@ -21,7 +21,7 @@ export class EmployeeService {
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
-  public readonly findAll = async (requester?: EmployeeVM, ids?: string[]): Promise<EmployeeVM[]> => {
+  public readonly findAll = async (requester?: EmployeeVM, ids?: string[]): Promise<any> => {
     const level = requester ? Math.min(...requester.roles.map((e) => e.level)) : undefined;
     const queryId = ids ? {
       id: In(ids)
