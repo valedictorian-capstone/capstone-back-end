@@ -26,9 +26,15 @@ export class EmployeeService {
     const queryId = ids ? {
       id: In(ids)
     } : {};
-    return await this.mapper.mapArray(await this.employeeRepository.useHTTP()
-      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys"] }), EmployeeVM, Employee)
-      .filter((employee) => level != null && Math.min(...employee.roles.map((e) => e.level)) > level);
+    await this.employeeRepository.useHTTP().find({ where: { ...queryId }, relations: ["devices", "roles", "activitys"] })
+      .then(async results => {
+        return results.map(employee => {
+          const wonDealCount = employee.deals.filter(deal => deal.status === 'won').length;
+          const loseDealCount = employee.deals.filter(deal => deal.status === 'lose').length;
+          return { ...employee, wonDealCount: wonDealCount, loseDealCount: loseDealCount };
+        })
+          .filter((employee) => level != null && Math.min(...employee.roles.map((e) => e.level)) > level);
+      });
   };
   public readonly findById = async (id: string): Promise<EmployeeVM> => {
     return await this.employeeRepository.useHTTP().findOne({ where: { id: id }, relations: ["devices", "roles", "activitys"] })
@@ -51,7 +57,7 @@ export class EmployeeService {
   public readonly query = async (id: string): Promise<EmployeeVM[]> => {
     return await this.employeeRepository.useHTTP().find({
       where: id ? {
-        roles: [{id}]
+        roles: [{ id }]
       } : {},
       relations: ["devices", "roles", "activitys"],
     })
@@ -125,9 +131,9 @@ export class EmployeeService {
           );
         }
         return await this.employeeRepository.useHTTP()
-        .remove(model)
+          .remove(model)
           .then(() => {
-            const rs = this.mapper.map({...model, id} as Employee, EmployeeVM, Employee);
+            const rs = this.mapper.map({ ...model, id } as Employee, EmployeeVM, Employee);
             this.socketService.with('employees', rs, 'remove');
             return rs;
           })
