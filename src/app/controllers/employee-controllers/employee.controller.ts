@@ -100,9 +100,9 @@ export class EmployeeController {
   }
 
   @Post(':id/assign')
-  @ApiOperation({ summary: 'Restore an employee by Id' })
-  @ApiCreatedResponse({ description: 'Success active new Employee' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  @ApiOperation({ summary: 'assign deals an employee deals' })
+  @ApiCreatedResponse({ description: 'Success assign deals an employee deals' })
+  @ApiBadRequestResponse({ description: 'Have assign deals an employee deals' })
   public assignDealForEmployee(@Param('id') employeeId: string, @Body() dealIds: string[]) {
     return this.service.assignDealForEmployees(employeeId, dealIds);
   }

@@ -22,13 +22,13 @@ export class EmployeeService {
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
 
-   public readonly findAll = async (requester?: EmployeeVM, ids?: string[]): Promise<EmployeeVM[]> => {
+  public readonly findAll = async (requester?: EmployeeVM, ids?: string[]): Promise<EmployeeVM[]> => {
     const level = requester ? Math.min(...requester.roles.map((e) => e.level)) : undefined;
     const queryId = ids ? {
       id: In(ids)
     } : {};
     return await this.mapper.mapArray(await this.employeeRepository.useHTTP()
-      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys"] }), EmployeeVM, Employee)
+      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys","deals"] }), EmployeeVM, Employee)
       .filter((employee) => level != null && Math.min(...employee.roles.map((e) => e.level)) > level);
   };
 
@@ -164,14 +164,14 @@ export class EmployeeService {
     //check exist employees
     const employee = await this.employeeRepository.useHTTP().findOne({
       where: { id: employeeID },
-      relations: ["devices", "roles", "activitys"],
+      relations: ["devices", "roles", "activitys", "deals"],
     })
 
     if (!employee) {
       throw new NotFoundException('Employee id ' + employeeID + ' is not found.');
     }
     employee.deals.push(dealIds as any);
-    return await employee.save();
+    return await this.employeeRepository.useHTTP().save(employee);
   }
 
   private readonly solveImage = async (avatar: string) => {

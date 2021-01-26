@@ -46,6 +46,8 @@ export class EmployeeVM {
   public wonDealCount: number;
 
   public lostDealCount: number;
+
+  public processingDealCount: number;
   
   @AutoMap()
   public isDelete: boolean;

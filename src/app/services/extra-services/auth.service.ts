@@ -27,6 +27,7 @@ export class AuthService {
   public readonly login = async (emailOrPhone: string, password: string,): Promise<any> => {
     return await this.validateEmployee(emailOrPhone, password).then(
       async (employee) => {
+        console.log(employee)
         if (employee) {
           return {
             expiresIn: '24h',
