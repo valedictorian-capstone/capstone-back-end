@@ -21,6 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { EmployeeService } from '@services';
 import { EmployeeCM, EmployeeUM, EmployeeVM } from '@view-models';
+import { request } from 'http';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Employee')
@@ -35,6 +36,7 @@ export class EmployeeController {
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   @ApiQuery({ name: 'roleName', allowEmptyValue: true })
   public findAll(@Headers('requester') requester: EmployeeVM): Promise<EmployeeVM[]> {
+    console.log(this.service.findAll(requester))
     return this.service.findAll(requester);
   }
   @Get('/unique')
