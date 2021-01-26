@@ -42,8 +42,13 @@ export class EmployeeVM {
   public tickets: TicketVM[];
 
   public feedbackTickets: TicketVM[];
-  
 
+  public wonDealCount: number;
+
+  public lostDealCount: number;
+
+  public processingDealCount: number;
+  
   @AutoMap()
   public isDelete: boolean;
 

@@ -21,6 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { EmployeeService } from '@services';
 import { EmployeeCM, EmployeeUM, EmployeeVM } from '@view-models';
+import { request } from 'http';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Employee')
@@ -35,6 +36,7 @@ export class EmployeeController {
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   @ApiQuery({ name: 'roleName', allowEmptyValue: true })
   public findAll(@Headers('requester') requester: EmployeeVM): Promise<EmployeeVM[]> {
+    console.log(this.service.findAll(requester))
     return this.service.findAll(requester);
   }
   @Get('/unique')
@@ -95,5 +97,13 @@ export class EmployeeController {
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public restore(@Param('id') id: string): Promise<EmployeeVM> {
     return this.service.restore(id);
+  }
+
+  @Post(':id/assign')
+  @ApiOperation({ summary: 'assign deals an employee deals' })
+  @ApiCreatedResponse({ description: 'Success assign deals an employee deals' })
+  @ApiBadRequestResponse({ description: 'Have assign deals an employee deals' })
+  public assignDealForEmployee(@Param('id') employeeId: string, @Body() dealIds: string[]) {
+    return this.service.assignDealForEmployees(employeeId, dealIds);
   }
 }

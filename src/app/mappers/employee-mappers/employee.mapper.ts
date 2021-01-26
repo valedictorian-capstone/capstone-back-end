@@ -1,5 +1,5 @@
 import { Employee } from "@models";
-import { AutoMapper, mapWith, preCondition, ProfileBase } from '@nartc/automapper';
+import { AutoMapper, mapDefer, mapWith, preCondition, ProfileBase } from '@nartc/automapper';
 import { EmployeeUM, EmployeeVM, ActivityVM, DeviceVM, NotificationVM, RoleVM, TicketVM } from "@view-models";
 
 export class EmployeeMapper extends ProfileBase {
@@ -9,11 +9,11 @@ export class EmployeeMapper extends ProfileBase {
       .forMember(d => d.roles,
         preCondition((s) => s.roles != null, []),
         mapWith(RoleVM, s => s.roles)
-    )
-    .forMember(d => d.notifications,
-      preCondition((s) => s.notifications != null, []),
-      mapWith(NotificationVM, s => s.notifications)
-    )
+      )
+      .forMember(d => d.notifications,
+        preCondition((s) => s.notifications != null, []),
+        mapWith(NotificationVM, s => s.notifications)
+      )
       .forMember(d => d.activitys,
         preCondition((s) => s.activitys != null, []),
         mapWith(ActivityVM, s => s.activitys)
@@ -29,6 +29,27 @@ export class EmployeeMapper extends ProfileBase {
       .forMember(d => d.devices,
         preCondition((s) => s.devices != null, []),
         mapWith(DeviceVM, s => s.devices)
+      )
+      .forMember(
+        d => d.wonDealCount,
+        preCondition((s) => s.deals != null, []),
+        mapWith(EmployeeVM, s => {
+          s.deals.filter(deal => deal.status === 'won').length
+        })
+      )
+      .forMember(
+        d => d.lostDealCount,
+        preCondition((s) => s.deals != null, []),
+        mapWith(EmployeeVM, s => {
+          console.log(s.deals.filter(deal => deal.status === 'lost').length)
+          return s.deals.filter(deal => deal.status === 'lost').length
+        }, () => Employee
+        )
+      )
+      .forMember(
+        d => d.processingDealCount,
+        preCondition((s) => s.deals != null, []),
+        mapWith(EmployeeVM, s => s.deals.filter(deal => deal.status === 'processing').length)
       );
     mapper.createMap(EmployeeUM, EmployeeVM);
   }

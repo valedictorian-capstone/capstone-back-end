@@ -21,21 +21,17 @@ export class EmployeeService {
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService
   ) { }
-  public readonly findAll = async (requester?: EmployeeVM, ids?: string[]): Promise<any> => {
+  
+  public readonly findAll = async (requester?: EmployeeVM, ids?: string[]): Promise<EmployeeVM[]> => {
     const level = requester ? Math.min(...requester.roles.map((e) => e.level)) : undefined;
     const queryId = ids ? {
       id: In(ids)
     } : {};
-    await this.employeeRepository.useHTTP().find({ where: { ...queryId }, relations: ["devices", "roles", "activitys"] })
-      .then(async results => {
-        return results.map(employee => {
-          const wonDealCount = employee.deals.filter(deal => deal.status === 'won').length;
-          const loseDealCount = employee.deals.filter(deal => deal.status === 'lose').length;
-          return { ...employee, wonDealCount: wonDealCount, loseDealCount: loseDealCount };
-        })
-          .filter((employee) => level != null && Math.min(...employee.roles.map((e) => e.level)) > level);
-      });
+    return await this.mapper.mapArray(await this.employeeRepository.useHTTP()
+      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys","deals"] }), EmployeeVM, Employee)
+      .filter((employee) => level != null && Math.min(...employee.roles.map((e) => e.level)) > level);
   };
+
   public readonly findById = async (id: string): Promise<EmployeeVM> => {
     return await this.employeeRepository.useHTTP().findOne({ where: { id: id }, relations: ["devices", "roles", "activitys"] })
       .then(async (model) => {
@@ -47,6 +43,7 @@ export class EmployeeService {
         );
       })
   };
+
   public readonly checkUnique = async (label: string, value: string): Promise<boolean> => {
     const query = { [label]: value };
     return this.employeeRepository.useHTTP().findOne({ where: query })
@@ -54,6 +51,7 @@ export class EmployeeService {
         return model ? true : false;
       })
   }
+
   public readonly query = async (id: string): Promise<EmployeeVM[]> => {
     return await this.employeeRepository.useHTTP().find({
       where: id ? {
@@ -65,6 +63,7 @@ export class EmployeeService {
         return this.mapper.mapArray(models, EmployeeVM, Employee);
       })
   };
+
   public readonly import = async (body: EmployeeCM[]): Promise<any> => {
     for (const employee of body) {
       if (employee.avatar && employee.avatar.includes(';base64')) {
@@ -85,6 +84,7 @@ export class EmployeeService {
       return rs;
     });
   };
+
   public readonly insert = async (body: EmployeeCM): Promise<EmployeeVM> => {
     const acc = { ...body };
     if (acc.avatar && acc.avatar.includes(';base64')) {
@@ -102,6 +102,7 @@ export class EmployeeService {
       return rs;
     });
   };
+
   public readonly update = async (body: EmployeeUM): Promise<EmployeeVM> => {
     return await this.employeeRepository.useHTTP().findOne({ id: body.id })
       .then(async (model) => {
@@ -122,6 +123,7 @@ export class EmployeeService {
         }
       });
   };
+
   public readonly remove = async (id: string): Promise<EmployeeVM> => {
     return await this.employeeRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
@@ -139,6 +141,7 @@ export class EmployeeService {
           })
       });
   }
+
   public readonly restore = async (id: string): Promise<EmployeeVM> => {
     return await this.employeeRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
@@ -156,6 +159,21 @@ export class EmployeeService {
           })
       });
   };
+
+  public readonly assignDealForEmployees = async (employeeID: string, dealIds: string[]): Promise<any> => {
+    //check exist employees
+    const employee = await this.employeeRepository.useHTTP().findOne({
+      where: { id: employeeID },
+      relations: ["devices", "roles", "activitys", "deals"],
+    })
+
+    if (!employee) {
+      throw new NotFoundException('Employee id ' + employeeID + ' is not found.');
+    }
+    employee.deals.push(dealIds as any);
+    return await this.employeeRepository.useHTTP().save(employee);
+  }
+
   private readonly solveImage = async (avatar: string) => {
     const id = uuid();
     await this.firebaseService.useUploadFileBase64("employee/avatars/" + id + "." + avatar.substring(avatar.indexOf("data:image/") + 11, avatar.indexOf(";base64")), avatar, avatar.substring(avatar.indexOf("data:image/") + 5, avatar.indexOf(";base64")));
