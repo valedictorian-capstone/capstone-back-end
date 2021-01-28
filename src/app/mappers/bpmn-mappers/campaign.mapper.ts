@@ -1,6 +1,6 @@
 import { Campaign } from "@models";
 import { AutoMapper, mapWith, preCondition, ProfileBase } from "@nartc/automapper";
-import { ActivityVM, AttachmentVM, CampaignUM, CampaignVM, DealVM, CampaignGroupVM, LogVM, NoteVM, PipelineVM} from "@view-models";
+import { ActivityVM, AttachmentVM, CampaignUM, CampaignVM, DealVM, CampaignGroupVM, LogVM, NoteVM, PipelineVM, CustomerVM } from '@view-models';
 
 export class CampaignMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -25,7 +25,11 @@ export class CampaignMapper extends ProfileBase {
       .forMember(d => d.activitys,
         preCondition((s) => s.activitys != null, []),
         mapWith(ActivityVM, s => s.activitys)
-      )
+    )
+    .forMember(d => d.followers,
+      preCondition((s) => s.followers != null, []),
+      mapWith(CustomerVM, s => s.followers)
+    )
       .forMember(d => d.deals,
         preCondition((s) => s.deals != null, []),
         mapWith(DealVM, s => s.deals)
