@@ -78,7 +78,7 @@ export class DealController {
   @ApiOperation({ summary: 'Insert new deal' })
   @ApiCreatedResponse({ description: 'Success create new deal' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public async insert(@Body() body: DealCM): Promise<DealVM> {
+  public async insert(@Body() body: DealCM | DealCM[]): Promise<DealVM | DealVM[]> {
     return await this.service.insert(body);
   }
 

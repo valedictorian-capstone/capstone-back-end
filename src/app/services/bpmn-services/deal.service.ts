@@ -110,7 +110,29 @@ export class DealService {
         return await this.mapper.mapArray(deals, DealVM, Deal);
       });
   }
-  public readonly insert = async (body: DealCM): Promise<DealVM> => {
+  public readonly insert = async (body: DealCM | DealCM[]): Promise<DealVM | DealVM[]> => {
+    if ((body as DealCM[]).length) {
+      const rs = [];
+      for (let i = 0; i < (body as DealCM[]).length; i++) {
+        const deal = body[i];
+        rs.push(
+          await this.dealRepository.useHTTP()
+            .save(deal as any)
+            .then(async (model) => {
+
+              const log = {
+                description: "Deal created",
+                deal: model
+              }
+              await this.logRepository.useHTTP().save(log);
+              const rs = await this.findById(model.id);
+              return rs;
+            })
+        )
+      }
+      this.socketService.with('deals', rs, 'list');
+      return rs;
+    }
     return await this.dealRepository.useHTTP()
       .save(body as any)
       .then(async (model) => {

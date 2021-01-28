@@ -1,12 +1,11 @@
 import { NotFoundException } from '@exceptions';
-import { Customer, Group } from '@models';
+import { Customer } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
 import { CampaignRepository, CustomerRepository, DealRepository, GroupRepository, StageRepository } from '@repositories';
 import { FirebaseService, SocketService } from '@services';
 import { CAMPAIGN_REPOSITORY, CUSTOMER_REPOSITORY, DEAL_REPOSITORY, FIREBASE_SERVICE, GROUP_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from '@types';
 import { CustomerCM, CustomerUM, CustomerVM } from '@view-models';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
-import { async } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { In } from 'typeorm';
 import { uuid } from 'uuidv4';
@@ -285,7 +284,7 @@ export class CustomerService {
       throw new NotFoundException("Campain Id " + campaignId + " is not found");
     }
     //check exits user
-    let customer = await this.customerRepository.useHTTP().findOne({ where: { id: customerId }, relations: ["groups", "followingCampaigns"] })
+    const customer = await this.customerRepository.useHTTP().findOne({ where: { id: customerId }, relations: ["groups", "followingCampaigns"] })
       if (!customer) {
         throw new NotFoundException("CustomerId is not found");
       }
