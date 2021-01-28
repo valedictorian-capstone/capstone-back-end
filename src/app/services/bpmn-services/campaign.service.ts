@@ -1,9 +1,9 @@
 
 import { Campaign, Deal } from '@models';
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { DealRepository, CampaignRepository, CustomerRepository, StageRepository, GroupRepository, CampaignGroupRepository } from "@repositories";
-import { DEAL_REPOSITORY, CAMPAIGN_REPOSITORY, SOCKET_SERVICE, CUSTOMER_REPOSITORY, STAGE_REPOSITORY, EMAIL_SERVICE, GROUP_REPOSITORY, CAMPAIGN_GROUP_REPOSITORY } from "@types";
+import { CampaignGroupRepository, CampaignRepository, CustomerRepository, DealRepository, GroupRepository, StageRepository } from "@repositories";
+import { CAMPAIGN_GROUP_REPOSITORY, CAMPAIGN_REPOSITORY, CUSTOMER_REPOSITORY, DEAL_REPOSITORY, GROUP_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from "@types";
 import { CampaignCM, CampaignUM, CampaignVM, DealVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { In } from "typeorm";
@@ -50,7 +50,7 @@ export class CampaignService {
   }
 
   public readonly findById = async (id: string): Promise<CampaignVM> => {
-    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ["campaignGroups", "pipeline", "campaignGroups.group", "pipeline.stages"] })
+    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ["campaignGroups", "pipeline", "campaignGroups.group", "pipeline.stages", 'followers', 'followers.groups'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -64,7 +64,7 @@ export class CampaignService {
       })
   }
   public readonly statistical = async (id: string): Promise<any> => {
-    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ['deals', 'deals.customers', 'deals.customers.group', 'deals.dealDetails', 'deals.dealDetails.product', 'followers', 'campaignGroups', 'campaignGroups.group', 'campaignGroups.group.customers', 'campaignGroups.group.customers.group'] })
+    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ['deals', 'deals.customer', 'deals.customer.groups', 'deals.dealDetails', 'deals.dealDetails.product', 'followers', 'campaignGroups', 'campaignGroups.group', 'campaignGroups.group.customers', 'campaignGroups.group.customers.groups'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -72,24 +72,24 @@ export class CampaignService {
           );
         } else {
           return {
-            total: [model.deals.filter((e) => e.status === 'processing'), model.deals.filter((e) => e.status === 'won'), model.deals.filter((e) => e.status === 'lost'), model.deals.filter((e) => e.status === 'other')],
-            totalValue: new Intl.NumberFormat('en', {
-              minimumFractionDigits: 0
-            }).format(Number(model.deals.length > 0 ? model.deals.filter((e) => e.status === 'won' && e.feedbackStatus === 'resolve')
-              .map((deal) => (deal.dealDetails.length > 0 ? deal.dealDetails
-                .map((e) => e.quantity * e.product.price)
-                .reduce((p, c) => (p + c)) : 0))
-              .reduce((p, c) => (p + c)) : 0)),
-            totalGroupValues: model.campaignGroups.map((campaignGroup) => new Intl.NumberFormat('en', {
-              minimumFractionDigits: 0
-            }).format(Number(model.deals.length > 0 ? model.deals.filter((e) => e.status === 'won' && e.feedbackStatus === 'resolve' && e.customer.groups.filter((gr) => gr.id === campaignGroup.group.id).length > 0)
-              .map((deal) => (deal.dealDetails.length > 0 ? deal.dealDetails
-                .map((e) => e.quantity * e.product.price)
-                .reduce((p, c) => (p + c)) : 0))
-              .reduce((p, c) => (p + c)) : 0)))
+            total: [model.deals.filter((e) => e.status === 'processing'), model.deals.filter((e) => e.status === 'won'), model.deals.filter((e) => e.status === 'lost'), model.deals.filter((e) => e.status === 'expired')],
+            totalValue: this.transform(model.deals.filter((e) => e.status === 'won' && e.feedbackStatus === 'resolve')),
+            totalGroupValues: model.campaignGroups.map((campaignGroup) => ({
+              name: campaignGroup.group.name,
+              value: this.transform(model.deals.filter((e) => e.status === 'won' && e.feedbackStatus === 'resolve' && e.customer.groups.filter((gr) => gr.id === campaignGroup.group.id).length > 0)),
+            }))
           };
         }
       })
+  }
+  private readonly transform = (value: Deal[]) => {
+    return new Intl.NumberFormat('en', {
+      minimumFractionDigits: 0
+    }).format(Number(value && value.length > 0 ? value
+      .map((deal) => (deal.dealDetails.length > 0 ? deal.dealDetails
+        .map((e) => e.quantity * e.product.price)
+        .reduce((p, c) => (p + c)) : 0))
+      .reduce((p, c) => (p + c)) : 0));
   }
   public readonly query = async (key: string, id: string): Promise<CampaignVM[]> => {
     return await this.campaignRepository.useHTTP().find({
@@ -167,7 +167,7 @@ export class CampaignService {
         const campaign = campaigns[index];
         await this.campaignRepository.useHTTP().save({ ...campaign, status: "active" });
         if (campaign.campaignGroups != null && campaign.autoCreateDeal == true) {
-          const stage = await this.stageRepository.useHTTP().findOne({ where: { position: 1, pipeline: campaign.pipeline } });
+          const stage = await this.stageRepository.useHTTP().findOne({ where: { position: 0, pipeline: campaign.pipeline } });
           console.log("campaign.campaignGroups");
           console.log(campaign.campaignGroups);
           const groupIds = campaign.campaignGroups.map(item => item.id);
