@@ -261,6 +261,6 @@ export class CampaignService {
   }
 
   private readonly maskContactURLBuilder = async (campaignId: string, userId: string): Promise<string> => {
-    return process.env.CRM_WS_HOST + "/thank-you/" + userId + "/" + campaignId;
+    return process.env.CRM_WS_HOST + "#/core/thank-you/" + userId + "/" + campaignId;
   }
 }
