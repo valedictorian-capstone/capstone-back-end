@@ -22,6 +22,7 @@ export class CampaignService {
     @Inject(CAMPAIGN_GROUP_REPOSITORY) protected readonly campaignGroupRepository: CampaignGroupRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
+    @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
     @Inject(CUSTOMER_REPOSITORY) protected readonly cusomterRepository: CustomerRepository,
     @Inject(STAGE_REPOSITORY) protected readonly stageRepository: StageRepository,
@@ -184,7 +185,7 @@ export class CampaignService {
                 status: "processing"
               }
               const dealCreated = await this.dealRepository.useHTTP().save({ ...deal });
-              rs.push(this.mapper.map(dealCreated, DealVM, Deal));
+              rs.push(this.mapper.map(await this.dealRepository.useHTTP().findOne({ where: { id: dealCreated.id }, relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee', 'feedbackAssignee', 'campaign'] }), DealVM, Deal));
             }
           }
         }
@@ -216,7 +217,7 @@ export class CampaignService {
             }
             if (dealsUpdate.length != 0) {
               const dealUpdated = await this.dealRepository.useHTTP().save(dealsUpdate as any) as Deal;
-              rs.push(this.mapper.map(dealUpdated, DealVM, Deal));
+              rs.push(this.mapper.map(await this.dealRepository.useHTTP().findOne({ where: { id: dealUpdated.id }, relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee', 'feedbackAssignee', 'campaign'] }), DealVM, Deal));
             }
           }
         }
@@ -261,6 +262,23 @@ export class CampaignService {
   }
 
   private readonly maskContactURLBuilder = async (campaignId: string, userId: string): Promise<string> => {
-    return process.env.CRM_WS_HOST + "/thank-you/" + userId + "/" + campaignId;
+    return process.env.CRM_WS_HOST + "/#/core/thank-you/" + userId + "/" + campaignId;
+  }
+
+  public readonly maskCustomerAsContactGroup = async (campaignId: string, customerId: string) => {
+    //check campain Id
+    const campaign = await this.campaignRepository.useHTTP().findOne(campaignId);
+    if (!campaign) {
+      throw new NotFoundException("Campain Id " + campaignId + " is not found");
+    }
+    //check exits user
+    const customer = await this.customerRepository.useHTTP().findOne({ where: { id: customerId }, relations: ["groups", "followingCampaigns"] })
+      if (!customer) {
+        throw new NotFoundException("CustomerId is not found");
+      }
+    const campaignRelation = { id: campaign.id };
+    customer.followingCampaigns.push(campaignRelation as any);
+    await this.customerRepository.useHTTP().save(customer);
+    this.socketService.with('campaigns', await this.findById(campaignId), 'update');
   }
 }
