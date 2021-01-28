@@ -170,7 +170,7 @@ export class CampaignService {
           const stage = await this.stageRepository.useHTTP().findOne({ where: { position: 0, pipeline: campaign.pipeline } });
           console.log("campaign.campaignGroups");
           console.log(campaign.campaignGroups);
-          const groupIds = campaign.campaignGroups.map(item => item.id);
+          const groupIds = campaign.campaignGroups.map(item => item.group.id);
           this.sendCampaign(campaign.id, groupIds, null);
           for (let index1 = 0; index1 < campaign.campaignGroups.length; index1++) {
             const group = campaign.campaignGroups[index1].group;
@@ -250,16 +250,17 @@ export class CampaignService {
       for await (const customer of group.customers) {
         //set email template
         const buttonPath = await this.maskContactURLBuilder(campaignId, customer.id);
-        maskContactButton.setAttribute("href", buttonPath);
-
+        if (maskContactButton) {
+          maskContactButton.setAttribute("href", buttonPath);
+        }
         //send email
+        console.log('Send email campagin for customer id: '+ customer.id + ' campaign Id: ' + campaignId)
         await this.emailService.sendEmailToCustomerByCustomerId(customer.id, emailTemplateDOM.serialize());
       }
     }
-
   }
 
   private readonly maskContactURLBuilder = async (campaignId: string, userId: string): Promise<string> => {
-    return process.env.CRM_WS_HOST + "/contact/" + userId + "/" + campaignId;
+    return process.env.CRM_WS_HOST + "/thank-you/" + userId + "/" + campaignId;
   }
 }
