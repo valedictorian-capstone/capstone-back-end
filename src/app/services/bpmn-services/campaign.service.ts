@@ -238,7 +238,7 @@ export class CampaignService {
     if (!emailTemplate) {
       throw new NotFoundException("Can't find Email Template in body request or Campagin Data");
     }
-
+    emailTemplate += "<div style='width: 100%; height: auto'><a id='mask-contact-button' style='text-decoration: none; border-radius: 5px; border: 1px solid #e5e5e5; padding: 1rem; color: black;'>Follow Campaign</a></div>";
     const emailTemplateDOM = new JSDOM(emailTemplate);
     const maskContactButton = emailTemplateDOM.window.document.querySelector("#" + this.MARK_ASK_CONTACT_BUTTON_ID);
 
