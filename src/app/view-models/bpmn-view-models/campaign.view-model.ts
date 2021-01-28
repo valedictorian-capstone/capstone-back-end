@@ -7,6 +7,7 @@ import { CampaignGroupVM } from "./campaign-group.view-model";
 import { DealVM } from "./deal.view-model";
 import { LogVM } from "./log.view-model";
 import { NoteVM } from "./note.view-model";
+import { CustomerVM } from '@view-models';
 
 export class CampaignVM {
 
@@ -34,7 +35,7 @@ export class CampaignVM {
     @AutoMap()
     public readonly status: string;
 
-    // public readonly groups: GroupVM[];
+    public readonly followers: CustomerVM[];
 
     public readonly campaignGroups: CampaignGroupVM;
 
