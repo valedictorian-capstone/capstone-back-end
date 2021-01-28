@@ -51,6 +51,14 @@ export class CampaignController {
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public query(@Query('key') key: string, @Query('id') id: string): Promise<CampaignVM[]> {
     return this.service.query(key, id);
+  }
+  @Get('/statistical/:id')
+  @ApiOperation({ summary: 'Get an Campaign by Id' })
+  @ApiOkResponse({ description: "Success return an Campaign's information" })
+  @ApiNotFoundResponse({ description: 'Fail to find Campaign by Id' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public statistical(@Param('id') id: string): Promise<any> {
+    return this.service.statistical(id);
 }
 
   @Get(':id')

@@ -61,8 +61,8 @@ export class Deal extends BaseEntity {
   public feedbackAssigneeRating: number;
 
   @AutoMap()
-  @Column({ default: false })
-  public feedbackStatus: boolean;
+  @Column({ default: 'not-start' })
+  public feedbackStatus: string;
 
   @OneToMany(() => Activity, activitys => activitys.deal)
   public activitys: Activity[];
@@ -75,6 +75,9 @@ export class Deal extends BaseEntity {
 
   @ManyToOne(() => Employee, employee => employee.deals)
   public assignee: Employee;
+
+  @ManyToOne(() => Employee, employee => employee.deals)
+  public feedbackAssignee: Employee;
 
   @ManyToOne(() => Campaign, campaign => campaign.deals)
   public campaign: Campaign;

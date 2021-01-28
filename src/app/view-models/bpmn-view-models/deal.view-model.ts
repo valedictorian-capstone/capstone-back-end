@@ -41,9 +41,11 @@ export class DealVM {
   public readonly feedbackAssigneeRating: number;
 
   @AutoMap()
-  public readonly feedbackStatus: boolean;
+  public readonly feedbackStatus: string;
 
   public readonly assignee: EmployeeVM;
+
+  public readonly feedbackAssignee: EmployeeVM;
 
   public readonly activitys: ActivityVM;
 
@@ -113,7 +115,7 @@ export class DealCM {
 
   @AutoMap()
   @ApiProperty({ required: true, format: 'boolean' })
-  public readonly feedbackStatus: boolean;
+  public readonly feedbackStatus: string;
 
   @ApiProperty()
   public readonly feedbackAssignee: {id : string};
@@ -169,8 +171,8 @@ export class DealUM {
   public readonly feedbackAssingeeRating: number;
 
   @AutoMap()
-  @ApiProperty({ required: true, format: 'boolean' })
-  public readonly feedbackStatus: boolean;
+  @ApiProperty({ required: true, format: 'string' })
+  public readonly feedbackStatus: string;
 
   @ApiProperty()
   public readonly feedbackAssignee: {id : string};
@@ -178,6 +180,9 @@ export class DealUM {
   @ApiProperty()
   public readonly activitys: {id : string}[];
 
+  @ApiProperty()
+  public readonly dealDetails: { id: string }[];
+  
   @ApiProperty()
   public readonly campaign: {id : string};
 }

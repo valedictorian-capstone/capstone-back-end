@@ -83,6 +83,8 @@ export class RoleVM {
   public readonly canAccessTicket: boolean;
 
   @AutoMap()
+  public readonly canGetAllTicket: boolean;
+  @AutoMap()
   public readonly canGetDealTicket: boolean;
 
   @AutoMap()
@@ -229,6 +231,8 @@ export class RoleCM {
   public readonly canAccessTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
+  public readonly canGetAllTicket: boolean;
+  @ApiProperty({ required: true, format: 'boolean' })
   public readonly canGetDealTicket: boolean;
 
   @ApiProperty({ required: true, format: 'boolean' })
@@ -358,6 +362,8 @@ export class RoleUM {
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canAccessTicket: boolean;
 
+  @ApiProperty({ required: true, format: 'boolean' })
+  public readonly canGetAllTicket: boolean;
   @ApiProperty({ required: true, format: 'boolean' })
   public readonly canGetDealTicket: boolean;
 

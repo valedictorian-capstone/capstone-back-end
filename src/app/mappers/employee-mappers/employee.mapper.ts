@@ -1,6 +1,6 @@
 import { Employee } from "@models";
-import { AutoMapper, mapDefer, mapWith, preCondition, ProfileBase } from '@nartc/automapper';
-import { EmployeeUM, EmployeeVM, ActivityVM, DeviceVM, NotificationVM, RoleVM, TicketVM } from "@view-models";
+import { AutoMapper, mapWith, preCondition, ProfileBase } from '@nartc/automapper';
+import { ActivityVM, DealVM, DeviceVM, EmployeeUM, EmployeeVM, NotificationVM, RoleVM, TicketVM } from "@view-models";
 
 export class EmployeeMapper extends ProfileBase {
   constructor(mapper: AutoMapper) {
@@ -30,26 +30,9 @@ export class EmployeeMapper extends ProfileBase {
         preCondition((s) => s.devices != null, []),
         mapWith(DeviceVM, s => s.devices)
       )
-      .forMember(
-        d => d.wonDealCount,
+      .forMember(d => d.deals,
         preCondition((s) => s.deals != null, []),
-        mapWith(EmployeeVM, s => {
-          s.deals.filter(deal => deal.status === 'won').length
-        })
-      )
-      .forMember(
-        d => d.lostDealCount,
-        preCondition((s) => s.deals != null, []),
-        mapWith(EmployeeVM, s => {
-          console.log(s.deals.filter(deal => deal.status === 'lost').length)
-          return s.deals.filter(deal => deal.status === 'lost').length
-        }, () => Employee
-        )
-      )
-      .forMember(
-        d => d.processingDealCount,
-        preCondition((s) => s.deals != null, []),
-        mapWith(EmployeeVM, s => s.deals.filter(deal => deal.status === 'processing').length)
+        mapWith(DealVM, s => s.deals)
       );
     mapper.createMap(EmployeeUM, EmployeeVM);
   }

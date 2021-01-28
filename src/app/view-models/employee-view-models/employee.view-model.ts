@@ -4,6 +4,7 @@ import { RoleVM } from '.';
 import { DeviceVM, NotificationVM } from '../basic-view-models';
 import { ActivityVM } from '../bpmn-view-models';
 import { TicketVM } from '../product-view-models';
+import { DealVM } from '@view-models';
 
 export class EmployeeVM {
 
@@ -42,12 +43,7 @@ export class EmployeeVM {
   public tickets: TicketVM[];
 
   public feedbackTickets: TicketVM[];
-
-  public wonDealCount: number;
-
-  public lostDealCount: number;
-
-  public processingDealCount: number;
+  public deals: DealVM[];
   
   @AutoMap()
   public isDelete: boolean;

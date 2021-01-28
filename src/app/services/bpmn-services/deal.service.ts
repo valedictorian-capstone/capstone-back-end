@@ -55,7 +55,7 @@ export class DealService {
       )
   }
   public readonly findById = async (id: string): Promise<DealVM> => {
-    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee', 'campaign'] })
+    return await this.dealRepository.useHTTP().findOne({ where: { id: id }, relations: ['stage', 'stage.pipeline', 'stage.pipeline.stages', 'customer', 'dealDetails', 'dealDetails.product', 'logs', 'activitys', 'activitys.assignee', 'activitys.assignBy', 'notes', 'attachments', 'assignee', 'feedbackAssignee', 'campaign'] })
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
@@ -141,12 +141,16 @@ export class DealService {
       this.socketService.with('deals', rs, 'list');
       return rs;
     } else {
-      return await this.dealRepository.useHTTP().findOne({ id: (body as DealUM).id }, { relations: ['stage'] })
+      return await this.dealRepository.useHTTP().findOne({ id: (body as DealUM).id }, { relations: ['stage', 'dealDetails'] })
         .then(async (oldModel) => {
           if (!oldModel) {
             throw new NotFoundException(
               `Can not find ${(body as DealUM).id}`,
             );
+          }
+          if ((body as DealUM).dealDetails) {
+            await this.dealDetailRepository.useHTTP().remove(oldModel.dealDetails);
+            await this.dealDetailRepository.useHTTP().insert((body as DealUM).dealDetails);
           }
           return await this.dealRepository.useHTTP()
             .save(body as any)
@@ -273,7 +277,7 @@ export class DealService {
   }
 
   public readonly createDealsForGroup = async (groupId: string, dealCM: DealCM) => {
-    let result = {
+    const result = {
       success: 0,
       fail: 0,
       total: 0
@@ -285,7 +289,7 @@ export class DealService {
       .getMany()
     result.total = customerList.length
     for await (const customer of customerList) {
-      let deal = new Deal();
+      const deal = new Deal();
       await Object.assign(deal, dealCM)
       deal.customer = customer
 

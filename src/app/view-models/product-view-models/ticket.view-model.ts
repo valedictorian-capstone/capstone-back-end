@@ -35,7 +35,7 @@ export class TicketVM {
     public readonly feedbackRating: number;
 
     @AutoMap()
-    public readonly feedbackStatus: boolean;
+    public readonly feedbackStatus: string;
 
     public readonly feedbackAssignee: EmployeeVM;
 
@@ -89,8 +89,8 @@ export class TicketCM {
     public readonly feedbackRating: number;
 
     @AutoMap()
-    @ApiProperty({ required: true, format: 'boolean' })
-    public readonly feedbackStatus: boolean;
+    @ApiProperty({ required: true, format: 'string' })
+    public readonly feedbackStatus: string;
 
     @ApiProperty()
     public readonly feedbackAssignee: { id: string };
