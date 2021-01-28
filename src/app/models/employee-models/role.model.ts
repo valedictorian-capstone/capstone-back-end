@@ -111,6 +111,10 @@ export class Role extends BaseEntity {
 
   @AutoMap()
   @Column({ default: true })
+  public readonly canGetAllTicket: boolean;
+
+  @AutoMap()
+  @Column({ default: true })
   public readonly canGetFeedbackTicket: boolean;
 
   @AutoMap()

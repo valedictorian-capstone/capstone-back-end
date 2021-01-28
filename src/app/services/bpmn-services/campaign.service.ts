@@ -1,10 +1,10 @@
 
-import { Campaign } from "@models";
+import { Campaign, Deal } from '@models';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { DealRepository, CampaignRepository, CustomerRepository, StageRepository, GroupRepository } from "@repositories";
+import { DealRepository, CampaignRepository, CustomerRepository, StageRepository, GroupRepository, CampaignGroupRepository } from "@repositories";
 import { DEAL_REPOSITORY, CAMPAIGN_REPOSITORY, SOCKET_SERVICE, CUSTOMER_REPOSITORY, STAGE_REPOSITORY, EMAIL_SERVICE, GROUP_REPOSITORY, CAMPAIGN_GROUP_REPOSITORY } from "@types";
-import { CampaignCM, CampaignUM, CampaignVM } from "@view-models";
+import { CampaignCM, CampaignUM, CampaignVM, DealVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { In } from "typeorm";
 import { EmailService, SocketService } from "../extra-services";
@@ -19,6 +19,7 @@ export class CampaignService {
 
   constructor(
     @Inject(CAMPAIGN_REPOSITORY) protected readonly campaignRepository: CampaignRepository,
+    @Inject(CAMPAIGN_GROUP_REPOSITORY) protected readonly campaignGroupRepository: CampaignGroupRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
@@ -62,10 +63,38 @@ export class CampaignService {
         }
       })
   }
+  public readonly statistical = async (id: string): Promise<any> => {
+    return await this.campaignRepository.useHTTP().findOne({ where: { id: id }, relations: ['deals', 'deals.customers', 'deals.customers.group', 'deals.dealDetails', 'deals.dealDetails.product', 'followers', 'campaignGroups', 'campaignGroups.group', 'campaignGroups.group.customers', 'campaignGroups.group.customers.group'] })
+      .then(async (model) => {
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${id}`,
+          );
+        } else {
+          return {
+            total: [model.deals.filter((e) => e.status === 'processing'), model.deals.filter((e) => e.status === 'won'), model.deals.filter((e) => e.status === 'lost'), model.deals.filter((e) => e.status === 'other')],
+            totalValue: new Intl.NumberFormat('en', {
+              minimumFractionDigits: 0
+            }).format(Number(model.deals.length > 0 ? model.deals.filter((e) => e.status === 'won' && e.feedbackStatus === 'resolve')
+              .map((deal) => (deal.dealDetails.length > 0 ? deal.dealDetails
+                .map((e) => e.quantity * e.product.price)
+                .reduce((p, c) => (p + c)) : 0))
+              .reduce((p, c) => (p + c)) : 0)),
+            totalGroupValues: model.campaignGroups.map((campaignGroup) => new Intl.NumberFormat('en', {
+              minimumFractionDigits: 0
+            }).format(Number(model.deals.length > 0 ? model.deals.filter((e) => e.status === 'won' && e.feedbackStatus === 'resolve' && e.customer.groups.filter((gr) => gr.id === campaignGroup.group.id).length > 0)
+              .map((deal) => (deal.dealDetails.length > 0 ? deal.dealDetails
+                .map((e) => e.quantity * e.product.price)
+                .reduce((p, c) => (p + c)) : 0))
+              .reduce((p, c) => (p + c)) : 0)))
+          };
+        }
+      })
+  }
   public readonly query = async (key: string, id: string): Promise<CampaignVM[]> => {
     return await this.campaignRepository.useHTTP().find({
       where: key && id ? {
-        [key]:  { id }
+        [key]: { id }
       } : {},
       relations: ["campaignGroups", "pipeline", "pipeline.stages"],
     })
@@ -88,13 +117,25 @@ export class CampaignService {
   }
 
   public readonly update = async (body: CampaignUM): Promise<CampaignVM> => {
-    return await this.campaignRepository.useHTTP()
-      .save(body as any)
+    return await this.campaignRepository.useHTTP().findOne({ id: body.id }, { relations: ['campaignGroups'] })
       .then(async (model) => {
-        const rs = await this.findById(model.id);
-        this.socketService.with('campaigns', rs, 'update');
-        return rs;
-      })
+        if (!model) {
+          throw new NotFoundException(
+            `Can not find ${body.id}`,
+          );
+        }
+        if (body.campaignGroups) {
+          await this.campaignGroupRepository.useHTTP().remove(model.campaignGroups);
+          await this.campaignGroupRepository.useHTTP().insert(body.campaignGroups as any);
+        }
+        return await this.campaignRepository.useHTTP()
+          .save(body as any)
+          .then(async (model) => {
+            const rs = await this.findById(model.id);
+            this.socketService.with('campaigns', rs, 'update');
+            return rs;
+          })
+      });
   }
 
   public readonly remove = async (id: string): Promise<any> => {
@@ -121,9 +162,10 @@ export class CampaignService {
     const ids = listCamp.map((e) => e.id);
     if (ids.length != 0) {
       const campaigns = await this.campaignRepository.useHTTP().find({ where: { id: In(ids) }, relations: ["campaignGroups", "pipeline", "campaignGroups.group", "campaignGroups.group.customers"] });
+      const rs = [];
       for (let index = 0; index < campaigns.length; index++) {
         const campaign = campaigns[index];
-        await this.campaignRepository.useHTTP().save({...campaign, status: "active"});
+        await this.campaignRepository.useHTTP().save({ ...campaign, status: "active" });
         if (campaign.campaignGroups != null && campaign.autoCreateDeal == true) {
           const stage = await this.stageRepository.useHTTP().findOne({ where: { position: 1, pipeline: campaign.pipeline } });
           console.log("campaign.campaignGroups");
@@ -141,11 +183,13 @@ export class CampaignService {
                 stage: stage,
                 status: "processing"
               }
-              await this.dealRepository.useHTTP().save({ ...deal });
+              const dealCreated = await this.dealRepository.useHTTP().save({ ...deal });
+              rs.push(this.mapper.map(dealCreated, DealVM, Deal));
             }
           }
         }
       }
+      this.socketService.with('deals', rs, 'list');
     }
   }
 
@@ -154,10 +198,11 @@ export class CampaignService {
     const listCamp = await this.campaignRepository.useHTTP().query("SELECT id FROM crm.campaign WHERE YEAR(dateEnd) = YEAR(NOW()) AND MONTH(dateEnd) = MONTH(NOW()) AND DAY(dateEnd) = DAY(NOW()) AND HOUR(dateEnd) = HOUR(NOW()) AND MINUTE(dateEnd) = MINUTE(NOW()) AND status = 'active'");
     const ids = listCamp.map((e) => e.id);
     if (ids.length != 0) {
-      const campaigns = await this.campaignRepository.useHTTP().find({ where: { id: In(ids) }, relations: ["campaignGroups"]});
+      const campaigns = await this.campaignRepository.useHTTP().find({ where: { id: In(ids) }, relations: ["campaignGroups"] });
+      const rs = [];
       for (let index = 0; index < campaigns.length; index++) {
         const campaign = campaigns[index];
-        await this.campaignRepository.useHTTP().save({...campaign, status: "complete"});
+        await this.campaignRepository.useHTTP().save({ ...campaign, status: "complete" });
         if (campaign.campaignGroups != null) {
           const deals = await this.dealRepository.useHTTP().find({ where: { campaign: campaign } });
           if (deals.length != 0) {
@@ -170,11 +215,13 @@ export class CampaignService {
               }
             }
             if (dealsUpdate.length != 0) {
-              await this.dealRepository.useHTTP().save(dealsUpdate);
+              const dealUpdated = await this.dealRepository.useHTTP().save(dealsUpdate as any) as Deal;
+              rs.push(this.mapper.map(dealUpdated, DealVM, Deal));
             }
           }
         }
       }
+      this.socketService.with('deals', rs, 'list');
     }
   }
 
@@ -201,12 +248,12 @@ export class CampaignService {
 
     for await (const group of groups) {
       for await (const customer of group.customers) {
-          //set email template
-          const buttonPath = await this.maskContactURLBuilder(campaignId, customer.id);
-          maskContactButton.setAttribute("href", buttonPath);
+        //set email template
+        const buttonPath = await this.maskContactURLBuilder(campaignId, customer.id);
+        maskContactButton.setAttribute("href", buttonPath);
 
-          //send email
-          await this.emailService.sendEmailToCustomerByCustomerId(customer.id, emailTemplateDOM.serialize());
+        //send email
+        await this.emailService.sendEmailToCustomerByCustomerId(customer.id, emailTemplateDOM.serialize());
       }
     }
 

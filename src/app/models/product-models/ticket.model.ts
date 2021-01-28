@@ -53,8 +53,8 @@ export class Ticket extends BaseEntity {
     public feedbackRating: number;
 
     @AutoMap()
-    @Column({ default: false })
-    public feedbackStatus: boolean;
+    @Column({ default: 'not-start' })
+    public feedbackStatus: string;
 
     @ManyToOne(() => Employee, assignee => assignee.feedbackTickets)
     public feedbackAssignee: Employee;

@@ -17,7 +17,11 @@ export class DealMapper extends ProfileBase {
       .forMember(d => d.assignee,
         preCondition(s => s.assignee != null),
         mapWith(EmployeeVM, s => s.assignee)
-      )
+    )
+    .forMember(d => d.feedbackAssignee,
+      preCondition(s => s.feedbackAssignee != null),
+      mapWith(EmployeeVM, s => s.feedbackAssignee)
+    )
       .forMember(d => d.activitys,
         preCondition(s => s.activitys != null, []),
         mapWith(ActivityVM, s => s.activitys)
