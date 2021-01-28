@@ -128,6 +128,8 @@ export class CampaignService {
           const stage = await this.stageRepository.useHTTP().findOne({ where: { position: 1, pipeline: campaign.pipeline } });
           console.log("campaign.campaignGroups");
           console.log(campaign.campaignGroups);
+          const groupIds = campaign.campaignGroups.map(item => item.id);
+          this.sendCampaign(campaign.id, groupIds, null);
           for (let index1 = 0; index1 < campaign.campaignGroups.length; index1++) {
             const group = campaign.campaignGroups[index1].group;
             for (let index2 = 0; index2 < group.customers.length; index2++) {

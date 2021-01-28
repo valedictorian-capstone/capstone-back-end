@@ -28,7 +28,7 @@ export class EmployeeService {
       id: In(ids)
     } : {};
     return await this.mapper.mapArray(await this.employeeRepository.useHTTP()
-      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys","deals"] }), EmployeeVM, Employee)
+      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys", "deals"] }), EmployeeVM, Employee)
       .filter((employee) => level != null && Math.min(...employee.roles.map((e) => e.level)) > level);
   };
 
