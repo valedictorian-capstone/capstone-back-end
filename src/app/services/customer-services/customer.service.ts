@@ -126,7 +126,18 @@ export class CustomerService {
       });
     });
   };
-
+  public readonly valid = async (data: { phone: string, email: string, position: number }[]): Promise<{ phone: string, email: string, position: number }[]> => {
+    const rs = [];
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+      rs.push({
+        position: item.position,
+        email: (await this.checkUnique('email', item.email)) || data.find((it) => it.position !== item.position && it.email === item.email) ? 'Duplicated' : undefined,
+        phone: (await this.checkUnique('phone', item.phone)) || data.find((it) => it.position !== item.position && it.phone === item.phone) ? 'Duplicated' : undefined,
+      })
+    }
+    return rs;
+  }
   public readonly insert = async (body: CustomerCM): Promise<any> => {
     const customer = { ...body };
     if (customer.avatar && customer.avatar.includes(';base64')) {
@@ -285,9 +296,9 @@ export class CustomerService {
     }
     //check exits user
     const customer = await this.customerRepository.useHTTP().findOne({ where: { id: customerId }, relations: ["groups", "followingCampaigns"] })
-      if (!customer) {
-        throw new NotFoundException("CustomerId is not found");
-      }
+    if (!customer) {
+      throw new NotFoundException("CustomerId is not found");
+    }
     const campaignRelation = { id: campaign.id };
     customer.followingCampaigns.push(campaignRelation as any);
     await this.customerRepository.useHTTP().save(customer);
