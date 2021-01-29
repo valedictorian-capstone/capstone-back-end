@@ -5,7 +5,8 @@ import {
   Get,
   Param,
   Post,
-  Put
+  Put,
+  Res
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -18,7 +19,8 @@ import {
 } from '@nestjs/swagger';
 import { CampaignService } from '@services';
 import { CampaignCM, CampaignSendEmailRequest, CampaignUM, CampaignVM } from '@view-models';
-import { Query } from '@nestjs/common';
+import { Query, HttpStatus } from '@nestjs/common';
+import { Response } from 'express';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Campaign')
@@ -102,6 +104,14 @@ export class CampaignController {
   public async sendCampaignEmail(@Body() body: CampaignSendEmailRequest) {
     return this.service.sendCampaign(body.campaignId, body.groupIds, body.emailTemplate);
   }
-
+  @Post('contact/:customerId/:campaignId')
+  @ApiOperation({ summary: 'mark CustomerAs Contact by Customer Id and Campaign' })
+  public markCustomerAsContact(@Param('customerId') customerId: string,
+    @Param('campaignId') campaingId: string,
+    @Res() res: Response) {
+    this.service.maskCustomerAsContactGroup(campaingId, customerId).then(
+      () => res.status(HttpStatus.NO_CONTENT).send()
+    )
+  }
 
 }
