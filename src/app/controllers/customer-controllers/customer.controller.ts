@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
+
 
 
   HttpStatus,
@@ -82,6 +82,13 @@ export class CustomerController {
   @ApiBadRequestResponse({ description: 'Have error in run time' })
   public import(@Body() body: CustomerCM[]): Promise<any> {
     return this.service.import(body);
+  }
+  @Post('/multiple-validate')
+  @ApiOperation({ summary: 'Validate Information Customer' })
+  @ApiCreatedResponse({ description: 'Success insert list to database' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public valid(@Body() body: {phone: string, email: string, position: number}[]): Promise<{phone: string, email: string, position: number}[]> {
+    return this.service.valid(body);
   }
   @Post()
   @ApiOperation({ summary: 'Insert new Customer' })
