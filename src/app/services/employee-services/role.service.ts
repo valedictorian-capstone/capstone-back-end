@@ -63,7 +63,7 @@ export class RoleService {
         }
       });
   };
-  public readonly remove = async (id: string): Promise<RoleVM> => {
+  public readonly remove = async (id: string): Promise<any> => {
     return await this.roleRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -71,30 +71,12 @@ export class RoleService {
             `Can not find ${id}`,
           );
         }
-        return await this.roleRepository.useHTTP()
-          .save({ id, isDelete: true })
+        return await this.roleRepository.useHTTP().remove(model)
           .then(async () => {
-            const rs = await this.findById(id)
-            this.socketService.with('roles', rs, 'update');
+            const rs = this.mapper.map({ ...model, id } as Role, RoleVM, Role);
+            this.socketService.with('roles', rs, 'remove');
             return rs;
           })
       });
-  };
-  public readonly restore = async (id: string): Promise<RoleVM> => {
-    return await this.roleRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.roleRepository.useHTTP()
-          .save({ id, isDelete: false })
-          .then(async () => {
-            const rs = await this.findById(id)
-            this.socketService.with('roles', rs, 'update');
-            return rs;
-          })
-      });
-  };
+  }
 }

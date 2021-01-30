@@ -22,33 +22,33 @@ export class TicketService {
   public readonly findAll = async (requester: EmployeeVM): Promise<TicketVM[]> => {
     return await this.ticketRepository.useHTTP().find({ relations: ["customer", "assignee", "feedbackAssignee"] })
       .then(async (models) => {
-        const canGetDealTicket = requester.roles.filter((e) => e.canGetDealTicket).length > 0;
-        const canGetSupportTicket = requester.roles.filter((e) => e.canGetSupportTicket).length > 0;
-        const canGetFeedbackTicket = requester.roles.filter((e) => e.canGetFeedbackTicket).length > 0;
-        if (canGetDealTicket && canGetSupportTicket) {
-        } else if (!canGetDealTicket && !canGetSupportTicket) {
-          if (canGetFeedbackTicket) {
-            models = models.filter((e) => e.status === 'resolve' && (e.feedbackAssignee ? (e.feedbackAssignee?.id === requester.id) : true));
-          } else {
-            models = [];
-          }
-        } else {
-          if (canGetDealTicket) {
-            if (canGetFeedbackTicket) {
-              models = models.filter((e) => (e.status === 'resolve' && (e.feedbackAssignee ? (e.feedbackAssignee?.id === requester.id) : true) || (e.type === 'deal' && (e.assignee ? (e.assignee?.id === requester.id) : true))));
-            } else {
-              models = models.filter((e) => e.type === 'deal' && (e.assignee ? (e.assignee?.id === requester.id) : true));
-            }
-          }
-          if (canGetSupportTicket) {
-            if (canGetFeedbackTicket) {
-              models = models.filter((e) => (e.status === 'resolve' && (e.feedbackAssignee ? (e.feedbackAssignee?.id === requester.id) : true) || (e.type === 'other' && (e.assignee ? (e.assignee?.id === requester.id) : true))));
-            } else {
-              models = models.filter((e) => e.type === 'other' && (e.assignee ? (e.assignee?.id === requester.id) : true));
-            }
-          }
+        // const canGetDealTicket = requester.roles.filter((e) => e.canGetDealTicket).length > 0;
+        // const canGetSupportTicket = requester.roles.filter((e) => e.canGetSupportTicket).length > 0;
+        // const canGetFeedbackTicket = requester.roles.filter((e) => e.canGetFeedbackTicket).length > 0;
+        // if (canGetDealTicket && canGetSupportTicket) {
+        // } else if (!canGetDealTicket && !canGetSupportTicket) {
+        //   if (canGetFeedbackTicket) {
+        //     models = models.filter((e) => e.status === 'resolve' && (e.feedbackAssignee ? (e.feedbackAssignee?.id === requester.id) : true));
+        //   } else {
+        //     models = [];
+        //   }
+        // } else {
+        //   if (canGetDealTicket) {
+        //     if (canGetFeedbackTicket) {
+        //       models = models.filter((e) => (e.status === 'resolve' && (e.feedbackAssignee ? (e.feedbackAssignee?.id === requester.id) : true) || (e.type === 'deal' && (e.assignee ? (e.assignee?.id === requester.id) : true))));
+        //     } else {
+        //       models = models.filter((e) => e.type === 'deal' && (e.assignee ? (e.assignee?.id === requester.id) : true));
+        //     }
+        //   }
+        //   if (canGetSupportTicket) {
+        //     if (canGetFeedbackTicket) {
+        //       models = models.filter((e) => (e.status === 'resolve' && (e.feedbackAssignee ? (e.feedbackAssignee?.id === requester.id) : true) || (e.type === 'other' && (e.assignee ? (e.assignee?.id === requester.id) : true))));
+        //     } else {
+        //       models = models.filter((e) => e.type === 'other' && (e.assignee ? (e.assignee?.id === requester.id) : true));
+        //     }
+        //   }
 
-        }
+        // }
         return this.mapper.mapArray(models, TicketVM, Ticket);
       }).catch((err) => {
         throw new InvalidException(err);
@@ -76,8 +76,9 @@ export class TicketService {
       const employees = (await this.employeeRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
       for (const employee of employees) {
         const canGetDealTicket = employee.roles.filter((e) => e.canGetDealTicket).length > 0;
+        const canGetAllTicket = employee.roles.filter((e) => e.canGetAllTicket).length > 0;
         const canGetSupportTicket = employee.roles.filter((e) => e.canGetSupportTicket).length > 0;
-        if ((model.type === 'deal' && canGetDealTicket) || (model.type === 'other' && canGetSupportTicket)) {
+        if ((model.type === 'deal' && canGetDealTicket) || (model.type === 'other' && canGetSupportTicket) || canGetAllTicket) {
           await this.notificationRepository.useHTTP().save({
             body: `New ticket need to resolve`,
             title: "Have a new ticket",
@@ -112,8 +113,9 @@ export class TicketService {
       const employees = (await this.employeeRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
       for (const employee of employees) {
         const canGetDealTicket = employee.roles.filter((e) => e.canGetDealTicket).length > 0;
+        const canGetAllTicket = employee.roles.filter((e) => e.canGetAllTicket).length > 0;
         const canGetSupportTicket = employee.roles.filter((e) => e.canGetSupportTicket).length > 0;
-        if ((model.type === 'deal' && canGetDealTicket) || (model.type === 'other' && canGetSupportTicket)) {
+        if ((model.type === 'deal' && canGetDealTicket) || (model.type === 'other' && canGetSupportTicket) || canGetAllTicket) {
           await this.notificationRepository.useHTTP().save({
             body: `New ticket need to resolve`,
             title: "Have a new ticket",
@@ -149,8 +151,9 @@ export class TicketService {
       const employees = (await this.employeeRepository.useHTTP().find({ relations: ['devices', 'roles'] }));
       for (const employee of employees) {
         const canGetDealTicket = employee.roles.filter((e) => e.canGetDealTicket).length > 0;
+        const canGetAllTicket = employee.roles.filter((e) => e.canGetAllTicket).length > 0;
         const canGetSupportTicket = employee.roles.filter((e) => e.canGetSupportTicket).length > 0;
-        if ((model.type === 'deal' && canGetDealTicket) || (model.type === 'other' && canGetSupportTicket)) {
+        if ((model.type === 'deal' && canGetDealTicket) || (model.type === 'other' && canGetSupportTicket) || canGetAllTicket) {
           await this.notificationRepository.useHTTP().save({
             body: `New ticket need to resolve`,
             title: "Have a new ticket",

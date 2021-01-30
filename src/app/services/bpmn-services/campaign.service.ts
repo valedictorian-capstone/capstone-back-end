@@ -2,8 +2,8 @@
 import { Campaign, Deal } from '@models';
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { CampaignGroupRepository, CampaignRepository, CustomerRepository, DealRepository, GroupRepository, StageRepository } from "@repositories";
-import { CAMPAIGN_GROUP_REPOSITORY, CAMPAIGN_REPOSITORY, CUSTOMER_REPOSITORY, DEAL_REPOSITORY, GROUP_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY } from "@types";
+import { ActivityRepository, AttachmentRepository, CampaignGroupRepository, CampaignRepository, CustomerRepository, DealRepository, GroupRepository, LogRepository, NoteRepository, StageRepository } from "@repositories";
+import { CAMPAIGN_GROUP_REPOSITORY, CAMPAIGN_REPOSITORY, CUSTOMER_REPOSITORY, DEAL_REPOSITORY, GROUP_REPOSITORY, SOCKET_SERVICE, STAGE_REPOSITORY, ACTIVITY_REPOSITORY, ATTACHMENT_REPOSITORY, NOTE_REPOSITORY, LOG_REPOSITORY } from '@types';
 import { CampaignCM, CampaignUM, CampaignVM, DealVM } from "@view-models";
 import { AutoMapper, InjectMapper } from "nestjsx-automapper";
 import { In } from "typeorm";
@@ -21,6 +21,10 @@ export class CampaignService {
     @Inject(CAMPAIGN_REPOSITORY) protected readonly campaignRepository: CampaignRepository,
     @Inject(CAMPAIGN_GROUP_REPOSITORY) protected readonly campaignGroupRepository: CampaignGroupRepository,
     @Inject(DEAL_REPOSITORY) protected readonly dealRepository: DealRepository,
+    @Inject(LOG_REPOSITORY) protected readonly logRepository: LogRepository,
+    @Inject(NOTE_REPOSITORY) protected readonly noteRepository: NoteRepository,
+    @Inject(ATTACHMENT_REPOSITORY) protected readonly attachmentRepository: AttachmentRepository,
+    @Inject(ACTIVITY_REPOSITORY) protected readonly activityRepository: ActivityRepository,
     @InjectMapper() protected readonly mapper: AutoMapper,
     @Inject(CUSTOMER_REPOSITORY) protected readonly customerRepository: CustomerRepository,
     @Inject(SOCKET_SERVICE) protected readonly socketService: SocketService,
@@ -78,7 +82,8 @@ export class CampaignService {
             totalGroupValues: model.campaignGroups.map((campaignGroup) => ({
               name: campaignGroup.group.name,
               value: this.transform(model.deals.filter((e) => e.status === 'won' && e.feedbackStatus === 'resolve' && e.customer.groups.filter((gr) => gr.id === campaignGroup.group.id).length > 0)),
-            }))
+            })),
+            totalStart: [model.deals.filter((e) => e.feedbackRating === 1 && e.feedbackStatus === 'resolve'), model.deals.filter((e) => e.feedbackRating === 2 && e.feedbackStatus === 'resolve'), model.deals.filter((e) => e.feedbackRating === 3 && e.feedbackStatus === 'resolve'), model.deals.filter((e) => e.feedbackRating === 4 && e.feedbackStatus === 'resolve'), model.deals.filter((e) => e.feedbackRating === 5 && e.feedbackStatus === 'resolve')],
           };
         }
       })
@@ -140,13 +145,15 @@ export class CampaignService {
   }
 
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.campaignRepository.useHTTP().findOne({ id: id })
+    return await this.campaignRepository.useHTTP().findOne({ id: id },{relations: ['logs', 'campaignGroups']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
+        await this.logRepository.useHTTP().remove(model.logs);
+        await this.campaignGroupRepository.useHTTP().remove(model.campaignGroups);
         return await this.campaignRepository.useHTTP()
           .remove(model)
           .then(() => {
@@ -189,6 +196,8 @@ export class CampaignService {
             }
           }
         }
+        this.socketService.with('campaigns', await this.findById(campaign.id), 'update');
+
       }
       this.socketService.with('deals', rs, 'list');
     }
@@ -221,6 +230,7 @@ export class CampaignService {
             }
           }
         }
+        this.socketService.with('campaigns', await this.findById(campaign.id), 'update');
       }
       this.socketService.with('deals', rs, 'list');
     }

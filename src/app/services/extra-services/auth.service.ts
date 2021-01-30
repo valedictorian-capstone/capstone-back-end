@@ -78,7 +78,7 @@ export class AuthService {
   public readonly updateProfile = async (data: EmployeeVM, requester: EmployeeVM) => {
     const acc = { ...requester, ...data };
     if (acc.avatar && acc.avatar.includes(';base64')) {
-      acc.avatar = await this.solveImage(acc.avatar, acc.id, 'employee/avatars') as any;
+      acc.avatar = await this.solveImage(acc.avatar, acc.id, 'employee/avatars/') as any;
     }
     const employee = await this.employeeRepository.useHTTP().save(acc as any);
     return this.mapper.map(await this.employeeRepository.useHTTP().findOne({ id: employee.id }, { relations: ['devices', 'roles', 'notifications'] }), EmployeeVM, Employee)

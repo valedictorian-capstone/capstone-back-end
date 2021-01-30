@@ -84,11 +84,11 @@ export class ProductController{
   public remove(@Param('id') id: string): Promise<ProductVM> {
     return this.service.remove(id);
   }
-  @Put('restore/:id')
-  @ApiOperation({ summary: 'Restore an product by Id' })
-  @ApiCreatedResponse({ description: 'Success restore new Product' })
+  @Post('/multiple-validate')
+  @ApiOperation({ summary: 'Validate Information Product' })
+  @ApiCreatedResponse({ description: 'Success insert list to database' })
   @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public restore(@Param('id') id: string): Promise<ProductVM> {
-    return this.service.restore(id);
+  public valid(@Body() body: {code: string, position: number}[]): Promise<{code: string, position: number}[]> {
+    return this.service.valid(body);
   }
 }

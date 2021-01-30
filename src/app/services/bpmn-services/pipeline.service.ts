@@ -51,33 +51,6 @@ export class PipelineService {
       })
   }
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.pipelineRepository.useHTTP().findOne({ id: id }, { relations: ['stages'] })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await
-          (
-            model.stages.length === 0
-              ? this.pipelineRepository.useHTTP().remove(model)
-              : this.pipelineRepository.useHTTP().save({ id, isDelete: true })
-          )
-            .then(async () => {
-              if (model.stages.length === 0) {
-                const rs = this.mapper.map({...model, id} as Pipeline, PipelineVM, Pipeline);
-                this.socketService.with('pipelines', rs, 'remove');
-                return rs;
-              } else {
-                const rs = await this.findById(model.id);
-                this.socketService.with('pipelines', rs, 'update');
-                return rs;
-              }
-            })
-      });
-  }
-  public readonly restore = async (id: string): Promise<any> => {
     return await this.pipelineRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -85,11 +58,10 @@ export class PipelineService {
             `Can not find ${id}`,
           );
         }
-        return await this.pipelineRepository.useHTTP()
-          .save({ id, isDelete: false })
+        return await this.pipelineRepository.useHTTP().remove(model)
           .then(async () => {
-            const rs = await this.findById(id);
-            this.socketService.with('pipelines', rs, 'update');
+            const rs = this.mapper.map({ ...model, id } as Pipeline, PipelineVM, Pipeline);
+            this.socketService.with('pipelines', rs, 'remove');
             return rs;
           })
       });

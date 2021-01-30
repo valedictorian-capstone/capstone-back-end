@@ -91,13 +91,6 @@ export class EmployeeController {
   public remove(@Param('id') id: string): Promise<EmployeeVM> {
     return this.service.remove(id);
   }
-  @Put('restore/:id')
-  @ApiOperation({ summary: 'Restore an employee by Id' })
-  @ApiCreatedResponse({ description: 'Success active new Employee' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public restore(@Param('id') id: string): Promise<EmployeeVM> {
-    return this.service.restore(id);
-  }
 
   @Post(':id/assign')
   @ApiOperation({ summary: 'assign deals an employee deals' })
@@ -105,5 +98,12 @@ export class EmployeeController {
   @ApiBadRequestResponse({ description: 'Have assign deals an employee deals' })
   public assignDealForEmployee(@Param('id') employeeId: string, @Body() dealIds: string[]) {
     return this.service.assignDealForEmployees(employeeId, dealIds);
+  }
+  @Post('/multiple-validate')
+  @ApiOperation({ summary: 'Validate Information Employee' })
+  @ApiCreatedResponse({ description: 'Success insert list to database' })
+  @ApiBadRequestResponse({ description: 'Have error in run time' })
+  public valid(@Body() body: {code: string, phone: string, email: string, position: number}[]): Promise<{code: string, phone: string, email: string, position: number}[]> {
+    return this.service.valid(body);
   }
 }

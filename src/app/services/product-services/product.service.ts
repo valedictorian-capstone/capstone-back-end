@@ -20,7 +20,7 @@ export class ProductService {
   ) { }
 
   public readonly findAll = async (ids?: string[]): Promise<ProductVM[]> => {
-    return await this.productRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ['category'] })
+    return await this.productRepository.useHTTP().find({ where: (ids ? { id: In(ids) } : {}), relations: ['dealDetails', 'category'] })
       .then(async (models) => {
         return this.mapper.mapArray(models, ProductVM, Product)
       }).catch((err) => {
@@ -89,7 +89,18 @@ export class ProductService {
         }
       });
   };
-  public readonly remove = async (id: string): Promise<ProductVM> => {
+  public readonly valid = async (data: {  code: string, position: number }[]): Promise<{  code: string, position: number }[]> => {
+    const rs = [];
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+      rs.push({
+        position: item.position,
+        code: (await this.checkUnique('code', item.code)) || data.find((it) => it.position !== item.position && it.code === item.code) ? 'Duplicated' : undefined,
+      })
+    }
+    return rs;
+  }
+  public readonly remove = async (id: string): Promise<any> => {
     return await this.productRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -97,32 +108,14 @@ export class ProductService {
             `Can not find ${id}`,
           );
         }
-        return await this.productRepository.useHTTP()
-          .save({ id, isDelete: true })
-          .then(async (model) => {
-            const rs = await this.findById(model.id)
-            this.socketService.with('products', rs, 'update');
+        return await this.productRepository.useHTTP().remove(model)
+          .then(async () => {
+            const rs = this.mapper.map({ ...model, id } as Product, ProductVM, Product);
+            this.socketService.with('products', rs, 'remove');
             return rs;
           })
       });
-  };
-  public readonly restore = async (id: string): Promise<ProductVM> => {
-    return await this.productRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.productRepository.useHTTP()
-          .save({ id, isDelete: false })
-          .then(async (model) => {
-            const rs = await this.findById(model.id)
-            this.socketService.with('products', rs, 'update');
-            return rs;
-          })
-      });
-  };
+  }
   private readonly solveImage = async (image: string) => {
     const id = uuid();
     await this.firebaseService.useUploadFileBase64("product/images/" + id + "." + image.substring(image.indexOf("data:image/") + 11, image.indexOf(";base64")), image, image.substring(image.indexOf("data:image/") + 5, image.indexOf(";base64")));

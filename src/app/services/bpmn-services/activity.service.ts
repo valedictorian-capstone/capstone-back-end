@@ -21,9 +21,6 @@ export class ActivityService {
   ) { }
   public readonly findAll = async (requester: EmployeeVM): Promise<ActivityVM[]> => {
     const query = {};
-    if (requester.roles.filter((e) => e.canAccessDeal && e.canGetAllActivity).length === 0) {
-      query['assignee'] = { id: requester.id };
-    }
     return await this.activityRepository.useHTTP()
       .find({ where: query, relations: ['assignee', 'deal', 'assignBy', 'campaign'] })
       .then((models) =>

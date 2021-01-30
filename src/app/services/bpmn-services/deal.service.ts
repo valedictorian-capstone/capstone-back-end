@@ -264,35 +264,20 @@ export class DealService {
     });
   }
   public readonly remove = async (id: string): Promise<any> => {
-    return await this.dealRepository.useHTTP().findOne({ id: id })
+    return await this.dealRepository.useHTTP().findOne({ id: id },{relations: ['logs', 'dealDetails']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
+        await this.logRepository.useHTTP().remove(model.logs);
+        await this.dealDetailRepository.useHTTP().remove(model.dealDetails);
         return await this.dealRepository.useHTTP()
-          .save({ id, isDelete: true })
-          .then(async (model) => {
-            const rs = await this.findById(model.id);
-            this.socketService.with('deals', rs, 'update');
-            return rs;
-          })
-      });
-  }
-  public readonly restore = async (id: string): Promise<any> => {
-    return await this.dealRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.dealRepository.useHTTP()
-          .save({ id, isDelete: false })
-          .then(async (model) => {
-            const rs = await this.findById(model.id);
-            this.socketService.with('deals', rs, 'update');
+          .remove(model)
+          .then(() => {
+            const rs = this.mapper.map({ ...model, id } as Deal, DealVM, Deal);
+            this.socketService.with('deals', rs, 'remove');
             return rs;
           })
       });
