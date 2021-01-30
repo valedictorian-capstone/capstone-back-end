@@ -71,7 +71,7 @@ export class Campaign extends BaseEntity {
   public followers: Customer[]
   
   @AutoMap()
-  @Column({ default: null })
+  @Column({ default: null, length: 500 })
   public emailTemplate: string;
 
   @AutoMap()
