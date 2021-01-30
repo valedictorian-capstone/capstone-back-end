@@ -77,12 +77,4 @@ export class RoleController {
   public remove(@Param('id') id: string): Promise<RoleVM> {
     return this.service.remove(id);
   }
-
-  @Put('restore/:id')
-  @ApiOperation({ summary: 'Restore an role by Id' })
-  @ApiCreatedResponse({ description: 'Success active new Role' })
-  @ApiBadRequestResponse({ description: 'Have error in run time' })
-  public active(@Param('id') id: string): Promise<RoleVM> {
-    return this.service.restore(id);
-  }
 }

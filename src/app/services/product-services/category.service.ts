@@ -18,7 +18,7 @@ export class CategoryService {
   ) { }
   public readonly findAll = async (ids?: string[]): Promise<CategoryVM[]> => {
     return await this.categoryRepository.useHTTP().find({
-      where: ids ? { id: In(ids) } : {}, relations: []
+      where: ids ? { id: In(ids) } : {}, relations: ['products']
     })
       .then((models) => {
         return this.mapper.mapArray(models, CategoryVM, Category)
@@ -44,7 +44,7 @@ export class CategoryService {
         return rs;
       })
   }
-  public readonly restore = async (id: string): Promise<any> => {
+  public readonly remove = async (id: string): Promise<any> => {
     return await this.categoryRepository.useHTTP().findOne({ id: id })
       .then(async (model) => {
         if (!model) {
@@ -52,40 +52,12 @@ export class CategoryService {
             `Can not find ${id}`,
           );
         }
-        return await this.categoryRepository.useHTTP()
-          .save({ id, isDelete: false })
-          .then(async (model) => {
-            const rs = await this.findById(model.id)
-            this.socketService.with('categorys', rs, 'update');
+        return await this.categoryRepository.useHTTP().remove(model)
+          .then(async () => {
+            const rs = this.mapper.map({ ...model, id } as Category, CategoryVM, Category);
+            this.socketService.with('categorys', rs, 'remove');
             return rs;
           })
-      });
-  }
-  public readonly remove = async (id: string): Promise<any> => {
-    return await this.categoryRepository.useHTTP().findOne({ id: id }, { relations: ['products'] })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await
-          (
-            model.products.length === 0
-              ? this.categoryRepository.useHTTP().remove(model)
-              : this.categoryRepository.useHTTP().save({ id, isDelete: true })
-          )
-            .then(async () => {
-              if (model.products.length === 0) {
-                const rs = this.mapper.map({...model, id} as Category, CategoryVM, Category);
-                this.socketService.with('categorys', rs, 'remove');
-                return rs;
-              } else {
-                const rs = await this.findById(id)
-                this.socketService.with('categorys', rs, 'update');
-                return rs;
-              }
-            })
       });
   }
 }

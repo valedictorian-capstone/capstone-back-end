@@ -51,6 +51,7 @@ export class CommentService {
       .then(async (model) => {
         const rs = await this.findById(model.id);
         this.socketService.with('comment-product-' + body.product.id, rs, 'update');
+        this.socketService.with('comments', rs, 'update');
       return rs;
     })
   };
@@ -59,6 +60,7 @@ export class CommentService {
       .then(async (model) => {
         const rs = await this.findById(model.id);
         this.socketService.with('comment-product-' + body.product.id, rs, 'create');
+        this.socketService.with('comments', rs, 'create');
       return rs;
     })
   };
@@ -73,8 +75,9 @@ export class CommentService {
         return await this.repository.useHTTP()
           .remove(model)
           .then(() => {
-            const rs = this.mapper.map({...model, id} as Comment, CommentVM, Comment);
+            const rs = this.mapper.map({ ...model, id } as Comment, CommentVM, Comment);
             this.socketService.with('comment-product-' + model.product.id, rs, 'remove');
+            this.socketService.with('comments', rs, 'remove');
             return rs;
           })
       });

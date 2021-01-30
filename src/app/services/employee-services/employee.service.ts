@@ -1,8 +1,8 @@
 import { NotFoundException } from '@exceptions';
 import { Employee } from '@models';
 import { Inject, Injectable } from '@nestjs/common';
-import { EmployeeRepository, RoleRepository } from '@repositories';
-import { EMPLOYEE_REPOSITORY, FIREBASE_SERVICE, ROLE_REPOSITORY, SOCKET_SERVICE } from '@types';
+import { DeviceRepository, EmployeeRepository, NotificationRepository, RoleRepository } from '@repositories';
+import { DEVICE_REPOSITORY, EMPLOYEE_REPOSITORY, FIREBASE_SERVICE, NOTIFICATION_REPOSITORY, ROLE_REPOSITORY, SOCKET_SERVICE } from '@types';
 import { EmployeeCM, EmployeeUM, EmployeeVM } from '@view-models';
 import { hashSync } from 'bcrypt';
 import { AutoMapper, InjectMapper } from 'nestjsx-automapper';
@@ -16,6 +16,8 @@ export class EmployeeService {
   constructor(
     @Inject(EMPLOYEE_REPOSITORY) protected readonly employeeRepository: EmployeeRepository,
     @Inject(ROLE_REPOSITORY) protected readonly roleRepository: RoleRepository,
+    @Inject(NOTIFICATION_REPOSITORY) protected readonly notificationRepository: NotificationRepository,
+    @Inject(DEVICE_REPOSITORY) protected readonly deviceRepository: DeviceRepository,
     @Inject(FIREBASE_SERVICE) protected readonly firebaseService: FirebaseService,
     protected readonly emailService: EmailService,
     @InjectMapper() protected readonly mapper: AutoMapper,
@@ -28,7 +30,7 @@ export class EmployeeService {
       id: In(ids)
     } : {};
     return await this.mapper.mapArray(await this.employeeRepository.useHTTP()
-      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys","deals"] }), EmployeeVM, Employee)
+      .find({ where: { ...queryId }, relations: ["devices", "roles", "activitys","deals", "tickets", "feedbackTickets"] }), EmployeeVM, Employee)
       .filter((employee) => requester && (Math.min(...employee.roles.map((e) => e.level)) > level) || requester.id === employee.id);
   };
 
@@ -43,6 +45,20 @@ export class EmployeeService {
         );
       })
   };
+
+  public readonly valid = async (data: { code: string, phone: string, email: string, position: number }[]): Promise<{ code: string, phone: string, email: string, position: number }[]> => {
+    const rs = [];
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+      rs.push({
+        position: item.position,
+        email: (await this.checkUnique('email', item.email)) || data.find((it) => it.position !== item.position && it.email === item.email) ? 'Duplicated' : undefined,
+        phone: (await this.checkUnique('phone', item.phone)) || data.find((it) => it.position !== item.position && it.phone === item.phone) ? 'Duplicated' : undefined,
+                code: (await this.checkUnique('code', item.code)) || data.find((it) => it.position !== item.position && it.code === item.code) ? 'Duplicated' : undefined,
+      })
+    }
+    return rs;
+  }
 
   public readonly checkUnique = async (label: string, value: string): Promise<boolean> => {
     const query = { [label]: value };
@@ -125,13 +141,15 @@ export class EmployeeService {
   };
 
   public readonly remove = async (id: string): Promise<EmployeeVM> => {
-    return await this.employeeRepository.useHTTP().findOne({ id: id })
+    return await this.employeeRepository.useHTTP().findOne({ id: id }, {relations: ['notifications', 'devices']})
       .then(async (model) => {
         if (!model) {
           throw new NotFoundException(
             `Can not find ${id}`,
           );
         }
+        await this.deviceRepository.useHTTP().remove(model.devices);
+        await this.notificationRepository.useHTTP().remove(model.notifications);
         return await this.employeeRepository.useHTTP()
           .remove(model)
           .then(() => {
@@ -141,24 +159,6 @@ export class EmployeeService {
           })
       });
   }
-
-  public readonly restore = async (id: string): Promise<EmployeeVM> => {
-    return await this.employeeRepository.useHTTP().findOne({ id: id })
-      .then(async (model) => {
-        if (!model) {
-          throw new NotFoundException(
-            `Can not find ${id}`,
-          );
-        }
-        return await this.employeeRepository.useHTTP()
-          .save({ id, isDelete: false })
-          .then(async () => {
-            const rs = await this.findById(id)
-            this.socketService.with('employees', rs, 'update');
-            return rs;
-          })
-      });
-  };
 
   public readonly assignDealForEmployees = async (employeeID: string, dealIds: string[]): Promise<any> => {
     //check exist employees
