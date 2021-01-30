@@ -143,7 +143,7 @@ export class EmailService {
         return {
             from: 'CRM Capstone',
             to: customer.email,
-            subject: 'Tri ân khách hàng',
+            subject: 'CRM Restaurent new campagin.',
             text: 'You recieved message from ',
             html: '<p>Dear ' + customer.fullname + ',</p></b><p>Best regard,</p></b><p>CRM</p>'
         }
@@ -153,7 +153,7 @@ export class EmailService {
         return {
             from: 'CRM Capstone',
             to: customer.email,
-            subject: 'Tri ân khách hàng',
+            subject: 'CRM Restaurent new campagin.',
             text: 'You recieved message from ',
             html: emailContent
         }
